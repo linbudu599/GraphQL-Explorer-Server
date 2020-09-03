@@ -1,0 +1,31 @@
+{
+  "name": "Apollo-FullAPI-Explorer",
+  "restartable": "r",
+  "delay": "500",
+  "ignore": [
+    ".git",
+    "node_modules/**",
+    "./client/dist",
+    "./client/.cache",
+    "./server/logs",
+    "./**/*.json"
+  ],
+  "verbose": true,
+  "execMap": {
+    "": "node",
+    "js": "node --harmony",
+    "ts": "ts-node "
+  },
+  "events": {
+    "start": "",
+    "crash": "",
+    "exit": "",
+    "restart": ""
+  },
+  "ext": "js json ts ts",
+  "watch": ["./server/**/*.ts", "./client/**/*.ts"],
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "legacy-watch": false
+}
