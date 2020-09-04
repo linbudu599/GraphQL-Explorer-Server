@@ -1,27 +1,17 @@
-import { ApolloServer, gql } from "apollo-server";
+import "reflect-metadata";
+import dotenv from "dotenv";
+import initialize from "./utils/init";
+import { log } from "./utils";
 
-import { mockResolver } from "./utils";
+const dev = process.env.NODE_ENV === "dev";
 
-const typeDefs = gql`
-  type User {
-    name: String
-    age: Int
-    isFool: Boolean
-  }
+dotenv.config({ path: dev ? ".env.dev" : ".env.prod" });
 
-  type Query {
-    user: User
-  }
-`;
+async function start() {
+  const server = await initialize();
+  server.listen().then(({ url }) => {
+    log(`Server ready at ${url}`);
+  });
+}
 
-const resolvers = {
-  Query: {
-    user: mockResolver,
-  },
-};
-
-const server = new ApolloServer({ typeDefs, resolvers });
-
-server.listen().then(({ url }) => {
-  console.log(`Server ready at ${url}`);
-});
+start();

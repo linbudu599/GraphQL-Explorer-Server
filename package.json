@@ -25,6 +25,8 @@
     "apollo-client": "^2.6.10",
     "apollo-datasource-rest": "^0.9.3",
     "apollo-server": "^2.17.0",
+    "chalk": "^4.1.0",
+    "class-validator": "^0.12.2",
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
     "graphql": "^15.3.0",
@@ -33,7 +35,9 @@
     "react-dom": "^16.13.1",
     "sqlite3": "^5.0.0",
     "type-graphql": "^1.0.0",
+    "typedi": "^0.8.0",
     "typeorm": "^0.2.25",
+    "typeorm-typedi-extensions": "^0.2.3",
     "typescript": "^4.0.2"
   },
   "devDependencies": {

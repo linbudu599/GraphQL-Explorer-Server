@@ -1,0 +1,9 @@
+{
+  "type": "sqlite",
+  "database": "./info.db",
+  "synchronize": true,
+  "dropSchema": true,
+  "logging": true,
+  "logger": "advanced-console",
+  "entities": ["./server/entity/*.ts"]
+}
