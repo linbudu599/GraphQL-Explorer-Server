@@ -19,6 +19,7 @@ export default async (): Promise<ApolloServer> => {
   await dbConnect();
 
   const server = new ApolloServer({
+    // override typeDefs & resolvers
     schema,
     context: async ({ req }) => {
       const context = {
@@ -26,8 +27,24 @@ export default async (): Promise<ApolloServer> => {
       };
       return context;
     },
+    rootValue: (documentAST) => {
+      // const op = getOperationAST(documentNode);
+      // return op === "mutation" ? mutationRoot : queryRoot;
+    },
     tracing: true,
     engine: true,
+    // formatError: () => {},
+    // formatResponse: () => {},
+    cors: true,
+    playground: {
+      settings: {
+        "editor.theme": "dark",
+        "editor.fontSize": 16,
+        "tracing.hideTracingResponse": false,
+        "queryPlan.hideQueryPlanResponse": false,
+        "editor.fontFamily": `'Fira Code', 'Source Code Pro', 'Consolas'`,
+      },
+    },
   });
 
   return server;
