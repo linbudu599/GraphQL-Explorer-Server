@@ -1,4 +1,4 @@
-import { Field, ObjectType, Int, InputType } from "type-graphql";
+import { Field, ObjectType, Int, InputType, ArgsType } from "type-graphql";
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 import {
   Length,
@@ -18,24 +18,29 @@ export default class User {
   uid!: number;
 
   @Field()
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
   name!: string;
 
   @Field()
-  @Column({ default: 0 })
+  @Column({ default: 0, nullable: true })
   age!: number;
 
   @Field()
-  @Column({ default: false })
+  @Column({ default: false, nullable: true })
   isFool!: boolean;
 }
 
 @InputType()
-export class UserInput {
+@ArgsType()
+export class UserInputOrArgs {
+  @Field()
+  @IsNumber()
+  uid?: number;
+
   @Field()
   @Length(1, 20)
   @IsString()
-  name!: string;
+  name?: string;
 
   @Field((type) => Int, { nullable: true })
   @IsOptional()

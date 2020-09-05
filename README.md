@@ -4,18 +4,38 @@
 
 ## Progress
 
-- [ ] Apollo-Server Basic
-- [ ] Apollo-Server Full
-- [ ] Apollo-Client Basic
-- [ ] Apollo-Client Full
+[ WIP ]
 
 see [Apollo-GraphQL Docs](https://www.apollographql.com/docs/) for more information.
 
-## Apollo-Server
+## Project Global
 
 - [ ] Service Layer Split
 - [ ] Migrate to Koa Implemention
+
+## GraphQL
+
+- Basic
+- Types Controll: Union Types & (Inline) Fragment
+- Directives
+- Subscription
+
+## Apollo-Server
+
 - [ ] Basic Configuration
 - [ ] File Upload(Enable Mutliple / Split Chunks)
-- [ ] BFF
+- [ ] BFF(by [Apollo-Datasource-REST])
 - [ ] Testing
+
+## Apollo-Client
+
+## Type-GraphQL
+
+## TypeORM
+
+## TypeStack
+
+> Included:
+> - [class-validator](https://github.com/typestack/class-validator)
+> - [typedi](https://github.com/typestack/typedi)
+> - [routing-controllers](https://github.com/typestack/routing-controllers)
