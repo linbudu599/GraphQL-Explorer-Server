@@ -24,6 +24,7 @@ export default async (): Promise<ApolloServer> => {
     context: async ({ req }) => {
       const context = {
         req,
+        env: process.env.NODE_ENV,
       };
       return context;
     },
@@ -31,8 +32,9 @@ export default async (): Promise<ApolloServer> => {
       // const op = getOperationAST(documentNode);
       // return op === "mutation" ? mutationRoot : queryRoot;
     },
+    introspection: true,
     tracing: true,
-    engine: true,
+    // engine: true,
     // formatError: () => {},
     // formatResponse: () => {},
     cors: true,

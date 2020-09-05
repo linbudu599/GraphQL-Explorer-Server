@@ -10,3 +10,12 @@
 - [ ] Apollo-Client Full
 
 see [Apollo-GraphQL Docs](https://www.apollographql.com/docs/) for more information.
+
+## Apollo-Server
+
+- [ ] Service Layer Split
+- [ ] Migrate to Koa Implemention
+- [ ] Basic Configuration
+- [ ] File Upload(Enable Mutliple / Split Chunks)
+- [ ] BFF
+- [ ] Testing
