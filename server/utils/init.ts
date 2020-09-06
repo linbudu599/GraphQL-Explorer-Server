@@ -14,6 +14,7 @@ export default async (): Promise<ApolloServer> => {
   const schema = await buildSchema({
     resolvers: [UserResolver],
     container: Container,
+    dateScalarMode: "timestamp",
   });
 
   await dbConnect();

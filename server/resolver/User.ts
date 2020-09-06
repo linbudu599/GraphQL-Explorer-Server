@@ -1,10 +1,17 @@
-import { Resolver, Query, Arg, Mutation } from "type-graphql";
+import {
+  Resolver,
+  Query,
+  Arg,
+  Mutation,
+  Root,
+  FieldResolver,
+} from "type-graphql";
 import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
-import User, { UserInputOrArgs } from "../entity/User";
+import User from "../entity/User";
 import { Status, StatusHandler } from "../utils/helper";
-
+import { UserInputOrArgs } from "../graphql/User";
 @Resolver(() => User)
 export default class UserResolver {
   constructor(
@@ -56,4 +63,14 @@ export default class UserResolver {
       console.error(error);
     }
   }
+
+  // @FieldResolver()
+  // async FieldRootResolver(@Root() user: User): Promise<any> {
+  //   try {
+  //     console.log(user);
+  //     return null;
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
 }
