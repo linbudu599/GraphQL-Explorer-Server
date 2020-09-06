@@ -16,7 +16,7 @@ const client = new ApolloClient({
   uri: 'http://localhost:4000/',
   headers: {
     authorization: localStorage.getItem('token') || '',
-    'client-name': 'Apollo-FullAPI-Explorer',
+    'client-name': 'Apollo-FullAPI-Explorer[Client]',
     'client-version': '0.1.0',
   },
 });
@@ -30,7 +30,8 @@ const IS_LOGGED_IN = gql`
 cache.writeQuery({
   query: IS_LOGGED_IN,
   data: {
-    isLoggedIn: !!localStorage.getItem('token'),
+    // isLoggedIn: !!localStorage.getItem('token'),
+    isLoggedIn: true,
   },
 });
 

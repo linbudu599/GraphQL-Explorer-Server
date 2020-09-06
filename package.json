@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev:server": "nodemon ./server/app.ts",
+    "start:server": "ts-node ./server/app.ts",
     "dev:client": "cross-env NODE_ENV=dev parcel ./client/public/index.html --out-dir ./client/dist --target browser --cache-dir ./client/.cache --port 5999 --log-level 3",
     "build:client": "cross-env NODE_ENV=prod parcel build ./client/public/index.html --out-dir ./client/dist --target bwoser --cache-dir ./client/.cache --experimental-scope-hoisting"
   },
