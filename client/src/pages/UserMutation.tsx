@@ -11,6 +11,17 @@ const Hello: React.FC = () => {
     }
   `;
 
+  const CREATE_USER = gql`
+    mutation createUser($userInfo: UserInputOrArgs!) {
+      CreateUser(newUserInfo: $userInfo) {
+        name
+        age
+        isFool
+        job
+      }
+    }
+  `;
+
   const [fool, { data, loading, error, called }] = useMutation(
     NOT_LONGER_FULL,
     {
@@ -33,6 +44,13 @@ const Hello: React.FC = () => {
     }
   );
 
+  const [
+    createUser,
+    { data: creationData, loading: creationLoading },
+  ] = useMutation(CREATE_USER, {
+    onCompleted: (data) => console.log(data),
+  });
+
   return (
     <>
       <button
@@ -45,6 +63,25 @@ const Hello: React.FC = () => {
         }}
       >
         Not Longer Full
+      </button>
+      <br />
+      {creationLoading ? (
+        <p>Creating...</p>
+      ) : (
+        <p>{JSON.stringify(creationData)}</p>
+      )}
+      <button
+        onClick={() => {
+          createUser({
+            variables: {
+              userInfo: {
+                name: 'Penumbra',
+              },
+            },
+          });
+        }}
+      >
+        Create User
       </button>
     </>
   );
