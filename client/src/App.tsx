@@ -1,6 +1,7 @@
 import React from 'react';
 import UserQuery from './pages/UserQuery';
 import DelayedUserQuery from './pages/DelayedUserQuery';
+import UserMutation from './pages/UserMutation';
 
 const App = () => (
   <>
@@ -8,6 +9,8 @@ const App = () => (
     <UserQuery />
     <p>DelayedUserQuery</p>
     <DelayedUserQuery />
+    <p>UserMutation</p>
+    <UserMutation />
   </>
 );
 

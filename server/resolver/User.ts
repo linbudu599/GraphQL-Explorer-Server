@@ -45,7 +45,7 @@ export default class UserResolver {
     @Arg("modifiedUserInfo") user: UserInputOrArgs
   ): Promise<Status | undefined> {
     try {
-      const res = await this.userRepository.update({ uid: user.uid }, user);
+      // const res = await this.userRepository.update({ uid: user.uid }, user);
       // TODO: res check & error handler
       return new StatusHandler(true, "Success");
     } catch (error) {
@@ -58,6 +58,16 @@ export default class UserResolver {
     try {
       const res = await this.userRepository.delete({ uid });
       // TODO: check res
+      return new StatusHandler(true, "Success");
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  @Mutation(() => Status, { nullable: true })
+  async NotLongerFull(@Arg("uid") uid: number): Promise<Status | undefined> {
+    try {
+      const item = await this.userRepository.update({ uid }, { isFool: false });
       return new StatusHandler(true, "Success");
     } catch (error) {
       console.error(error);

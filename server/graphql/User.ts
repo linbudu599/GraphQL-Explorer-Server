@@ -51,9 +51,9 @@ export abstract class IUser {
 @InputType({ description: " User InputObject/Args" })
 @ArgsType()
 export class UserInputOrArgs implements Partial<IUser> {
-  @Field()
-  @IsNumber()
-  uid?: number;
+  // @Field()
+  // @IsNumber()
+  // uid?: number;
 
   @Field()
   @Length(1, 20)
