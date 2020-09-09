@@ -4,17 +4,20 @@ import { buildSchema } from "type-graphql";
 import { Container } from "typedi";
 import * as TypeORM from "typeorm";
 
-import UserResolver from "../resolver/User";
+import UserResolver from "../resolver/User.resolver";
+import RecipeResolver from "../resolver/Recipe.resolver";
 import User from "../entity/User";
 import { log } from "./";
+import { authChecker } from "../lib/authChecker";
 
 TypeORM.useContainer(Container);
 
 export default async (): Promise<ApolloServer> => {
   const schema = await buildSchema({
-    resolvers: [UserResolver],
+    resolvers: [UserResolver, RecipeResolver],
     container: Container,
     dateScalarMode: "timestamp",
+    authChecker,
   });
 
   await dbConnect();
@@ -26,6 +29,12 @@ export default async (): Promise<ApolloServer> => {
       const context = {
         req,
         env: process.env.NODE_ENV,
+        token: req.headers.authorization || "",
+        currentUser: {
+          uid: "0001",
+          name: "Test Account 001",
+          roles: ["ADMIN"],
+        },
       };
       return context;
     },

@@ -4,6 +4,7 @@ import {
   Int,
   registerEnumType,
   createUnionType,
+  Authorized,
 } from "type-graphql";
 
 export enum Difficulty {
@@ -36,9 +37,11 @@ export class Recipe {
   @Field({ nullable: true })
   description?: string;
 
+  @Authorized()
   @Field((type) => [String])
   ingredients!: string[];
 
+  @Authorized("ADMIN")
   @Field((type) => Difficulty)
   preparationDifficulty!: Difficulty;
 
