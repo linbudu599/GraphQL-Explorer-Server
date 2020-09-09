@@ -29,6 +29,7 @@ see **Docs** for more information.
 ## Apollo-Server
 
 - [x] Basic Configuration
+- [ ] Custom Scalar Definition
 - [ ] Auth
 - [ ] Cache
 - [ ] File Upload(Enable Mutliple / Split Chunks)

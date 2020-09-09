@@ -11,9 +11,14 @@ import { InjectRepository } from "typeorm-typedi-extensions";
 
 import User from "../entity/User";
 import { Status, StatusHandler } from "../utils/helper";
+import { sampleCooks, sampleRecipes } from "../utils/mock";
 import { UserInputOrArgs } from "../graphql/User";
+import { SearchResult, Difficulty, Cook, Recipe } from "../graphql/Recipe";
 @Resolver(() => User)
 export default class UserResolver {
+  private recipesData: Recipe[] = sampleRecipes;
+  private cooks: Cook[] = sampleCooks;
+
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>
   ) {}
@@ -26,6 +31,32 @@ export default class UserResolver {
   @Query(() => User)
   async FindUserById(@Arg("uid") uid: number): Promise<User | undefined> {
     return this.userRepository.findOne({ uid });
+  }
+
+  @Query(() => [SearchResult])
+  async Search(
+    @Arg("cookName") cookName: string
+  ): Promise<typeof SearchResult[]> {
+    const recipes = this.recipesData.filter((recipe) =>
+      recipe.cook.name.match(cookName)
+    );
+    const cooks = this.cooks.filter((cook) => cook.name.match(cookName));
+
+    return [...recipes, ...cooks];
+  }
+
+  @Query((returns) => [Recipe])
+  async Recipes(
+    @Arg("difficulty", (type) => Difficulty, { nullable: true })
+    difficulty?: Difficulty
+  ): Promise<Recipe[]> {
+    if (!difficulty) {
+      return this.recipesData;
+    }
+
+    return this.recipesData.filter(
+      (recipe) => recipe.preparationDifficulty === difficulty
+    );
   }
 
   @Mutation(() => User)
