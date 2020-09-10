@@ -1,5 +1,6 @@
 import "reflect-metadata";
-import { ApolloServer } from "apollo-server";
+import { ApolloServer } from "apollo-server-koa";
+import { Context } from "koa";
 import { buildSchema } from "type-graphql";
 import { Container } from "typedi";
 import * as TypeORM from "typeorm";
@@ -7,8 +8,10 @@ import * as TypeORM from "typeorm";
 import UserResolver from "../resolver/User.resolver";
 import RecipeResolver from "../resolver/Recipe.resolver";
 import User from "../entity/User";
+import path from "path";
 import { log } from "./";
 import { authChecker } from "../lib/authChecker";
+import ResolveTime from "../middleware/time";
 
 TypeORM.useContainer(Container);
 
@@ -18,6 +21,10 @@ export default async (): Promise<ApolloServer> => {
     container: Container,
     dateScalarMode: "timestamp",
     authChecker,
+    authMode: "error",
+    emitSchemaFile: path.resolve(__dirname, "../gql/shema.gql"),
+    validate: true,
+    globalMiddlewares: [ResolveTime],
   });
 
   await dbConnect();
@@ -25,11 +32,11 @@ export default async (): Promise<ApolloServer> => {
   const server = new ApolloServer({
     // override typeDefs & resolvers
     schema,
-    context: async ({ req }) => {
+    context: async (ctx: Context) => {
       const context = {
-        req,
+        // req,
         env: process.env.NODE_ENV,
-        token: req.headers.authorization || "",
+        // token: ctx.headers.authorization,
         currentUser: {
           uid: "0001",
           name: "Test Account 001",
@@ -47,7 +54,7 @@ export default async (): Promise<ApolloServer> => {
     // engine: true,
     // formatError: () => {},
     // formatResponse: () => {},
-    cors: true,
+    // cors: true,
     playground: {
       settings: {
         "editor.theme": "dark",

@@ -8,6 +8,7 @@ import {
   registerEnumType,
   InterfaceType,
   Directive,
+  UseMiddleware,
 } from "type-graphql";
 import {
   Length,
@@ -40,7 +41,6 @@ export abstract class IUser {
   @Field()
   age!: number;
 
-  @Directive('@deprecated(reason: "Use newField")')
   @Field()
   job!: string;
 
