@@ -12,6 +12,9 @@ import path from "path";
 import { log } from "./";
 import { authChecker } from "../lib/authChecker";
 import ResolveTime from "../middleware/time";
+import studentTypeDefs from "../graphql/Student.type";
+import studentResolver from "../resolver/Student.resolver";
+import dataSource from "../datasource/Student";
 
 TypeORM.useContainer(Container);
 
@@ -30,8 +33,10 @@ export default async (): Promise<ApolloServer> => {
   await dbConnect();
 
   const server = new ApolloServer({
+    typeDefs: [studentTypeDefs],
+    resolvers: [studentResolver],
     // override typeDefs & resolvers
-    schema,
+    // schema,
     context: async (ctx: Context) => {
       const context = {
         // req,
@@ -49,6 +54,9 @@ export default async (): Promise<ApolloServer> => {
       // const op = getOperationAST(documentNode);
       // return op === "mutation" ? mutationRoot : queryRoot;
     },
+    dataSources: () => ({
+      DataAPI: new dataSource(),
+    }),
     introspection: true,
     tracing: true,
     // engine: true,
