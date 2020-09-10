@@ -2,6 +2,7 @@ import {
   Resolver,
   Query,
   Arg,
+  Args,
   Mutation,
   Root,
   FieldResolver,
@@ -11,7 +12,14 @@ import { InjectRepository } from "typeorm-typedi-extensions";
 
 import User from "../entity/User";
 import { Status, StatusHandler } from "../utils/helper";
-import { UserInputOrArgs } from "../graphql/User";
+import {
+  UserCreateInput,
+  UserUpdateInput,
+  IUser,
+  UserQueryArgs,
+} from "../graphql/User";
+import ArgsValidator from "../decorators/argsValidator";
+
 @Resolver(() => User)
 export default class UserResolver {
   constructor(
@@ -28,10 +36,19 @@ export default class UserResolver {
     return this.userRepository.findOne({ uid });
   }
 
+  @Query(() => [User]!)
+  // @ArgsValidator(UserQueryArgs)
+  async FindUserByConditions(
+    @Args({ validate: false }) conditions: UserQueryArgs
+  ): Promise<User[]> {
+    const res = await this.userRepository.find({ ...conditions });
+    return res;
+  }
+
   @Mutation(() => User)
   async CreateUser(
-    @Arg("newUserInfo") user: UserInputOrArgs
-  ): Promise<(User & UserInputOrArgs) | undefined> {
+    @Arg("newUserInfo") user: UserCreateInput
+  ): Promise<(User & UserCreateInput) | undefined> {
     try {
       const res = await this.userRepository.save(user);
       return res;
@@ -42,10 +59,10 @@ export default class UserResolver {
 
   @Mutation(() => Status, { nullable: true })
   async UpdateUser(
-    @Arg("modifiedUserInfo") user: UserInputOrArgs
+    @Arg("modifiedUserInfo") user: UserUpdateInput
   ): Promise<Status | undefined> {
     try {
-      // const res = await this.userRepository.update({ uid: user.uid }, user);
+      const res = await this.userRepository.update({ uid: user.uid }, user);
       // TODO: res check & error handler
       return new StatusHandler(true, "Success");
     } catch (error) {

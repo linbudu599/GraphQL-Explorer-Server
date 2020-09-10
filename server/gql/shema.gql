@@ -26,13 +26,14 @@ interface IUser {
 }
 
 type Mutation {
-  CreateUser(newUserInfo: UserInputOrArgs!): User!
+  CreateUser(newUserInfo: UserCreateInput!): User!
   DeleteUser(uid: Float!): Status
   NotLongerFull(uid: Float!): Status
-  UpdateUser(modifiedUserInfo: UserInputOrArgs!): Status
+  UpdateUser(modifiedUserInfo: UserUpdateInput!): Status
 }
 
 type Query {
+  FindUserByConditions(age: Int, isFool: Boolean, name: String!): [User!]!
   FindUserById(uid: Float!): User!
   Recipes(difficulty: Difficulty): [Recipe!]!
   Search(cookName: String!): [SearchResult!]!
@@ -63,8 +64,16 @@ type User implements IUser {
 }
 
 """ User InputObject/Args"""
-input UserInputOrArgs {
+input UserCreateInput {
   age: Int
   isFool: Boolean
   name: String!
+}
+
+"""Args On Updating User"""
+input UserUpdateInput {
+  age: Int
+  isFool: Boolean
+  name: String!
+  uid: Float!
 }

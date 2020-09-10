@@ -18,6 +18,7 @@ import {
   IsOptional,
   Max,
   Min,
+  IsPositive,
 } from "class-validator";
 
 export enum Job {
@@ -49,12 +50,7 @@ export abstract class IUser {
 }
 
 @InputType({ description: " User InputObject/Args" })
-@ArgsType()
-export class UserInputOrArgs implements Partial<IUser> {
-  // @Field()
-  // @IsNumber()
-  // uid?: number;
-
+export class UserCreateInput implements Partial<IUser> {
   @Field()
   @Length(1, 20)
   @IsString()
@@ -71,4 +67,34 @@ export class UserInputOrArgs implements Partial<IUser> {
   @IsOptional()
   @IsBoolean()
   isFool?: boolean;
+}
+
+@ArgsType()
+// extends UserCreateInput will result in error GraphQL Schema
+export class UserQueryArgs {
+  @Field()
+  @Length(1, 20)
+  @IsString()
+  name?: string;
+
+  @Field((type) => Int, { nullable: true })
+  @IsOptional()
+  @Max(100)
+  @Min(18)
+  @IsNumber()
+  age?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  isFool?: boolean;
+}
+
+@InputType({ description: "Args On Updating User" })
+export class UserUpdateInput extends UserCreateInput {
+  @Field({ nullable: false })
+  @IsNumber()
+  @IsPositive()
+  @Min(0)
+  uid!: number;
 }
