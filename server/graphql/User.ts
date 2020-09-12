@@ -9,6 +9,7 @@ import {
   InterfaceType,
   Directive,
   UseMiddleware,
+  Float,
 } from "type-graphql";
 import {
   Length,
@@ -47,6 +48,9 @@ export abstract class IUser {
 
   @Field()
   isFool!: boolean;
+
+  @Field((type) => Float)
+  registryDate!: number;
 }
 
 @InputType({ description: " User InputObject/Args" })

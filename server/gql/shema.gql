@@ -22,6 +22,7 @@ interface IUser {
   isFool: Boolean!
   job: String!
   name: String!
+  registryDate: Float!
   uid: ID!
 }
 
@@ -60,6 +61,7 @@ type User implements IUser {
   isFool: Boolean!
   job: String!
   name: String!
+  registryDate: Float!
   uid: ID!
 }
 

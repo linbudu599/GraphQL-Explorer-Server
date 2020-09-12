@@ -2,15 +2,18 @@ import React from 'react';
 import UserQuery from './pages/UserQuery';
 import DelayedUserQuery from './pages/DelayedUserQuery';
 import UserMutation from './pages/UserMutation';
+import SingleFileUpload from './pages/FileUpload';
 
 const App = () => (
   <>
-    <p>UserQuery</p>
+    {/* <p>UserQuery</p>
     <UserQuery />
     <p>DelayedUserQuery</p>
     <DelayedUserQuery />
     <p>UserMutation</p>
-    <UserMutation />
+    <UserMutation /> */}
+    <p>SingleFileUpload</p>
+    <SingleFileUpload />
   </>
 );
 

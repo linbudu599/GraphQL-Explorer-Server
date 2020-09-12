@@ -7,13 +7,19 @@ import {
   ApolloClient,
   gql,
 } from '@apollo/client';
-
+import { createUploadLink } from 'apollo-upload-client';
 import App from './App';
 
-const cache = new InMemoryCache();
+const cache = new InMemoryCache({
+  // __typename added
+  addTypename: true,
+  // use === to compare query result & cache
+  resultCaching: true,
+});
 const client = new ApolloClient({
   cache,
-  uri: 'http://localhost:4000/',
+  // uri: 'http://localhost:4000/',
+  link: createUploadLink({ uri: 'http://localhost:4000/graphql' }),
   headers: {
     authorization: localStorage.getItem('token') || '',
     'client-name': 'Apollo-FullAPI-Explorer[Client]',

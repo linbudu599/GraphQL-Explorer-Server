@@ -3,17 +3,20 @@ import { ApolloServer } from "apollo-server-koa";
 import { Context } from "koa";
 import { buildSchema } from "type-graphql";
 import { Container } from "typedi";
+import path from "path";
 import * as TypeORM from "typeorm";
 
 import UserResolver from "../resolver/User.resolver";
 import RecipeResolver from "../resolver/Recipe.resolver";
 import User from "../entity/User";
-import path from "path";
 import { log } from "./";
 import { authChecker } from "../lib/authChecker";
 import ResolveTime from "../middleware/time";
 import studentTypeDefs from "../graphql/Student.type";
 import studentResolver from "../resolver/Student.resolver";
+import fileSchema from "../graphql/File.type";
+// import fileTypeDefs from "../graphql/File.type";
+// import fileResolver from "../resolver/File.resolver";
 import dataSource from "../datasource/Student";
 
 TypeORM.useContainer(Container);
@@ -33,10 +36,13 @@ export default async (): Promise<ApolloServer> => {
   await dbConnect();
 
   const server = new ApolloServer({
-    typeDefs: [studentTypeDefs],
-    resolvers: [studentResolver],
+    // TODO: merge resolver automatically
+    // typeDefs: [fileTypeDefs],
+    // resolvers: [fileResolver],
+    uploads: false,
     // override typeDefs & resolvers
-    // schema,
+    // schema: fileSchema,
+    schema,
     context: async (ctx: Context) => {
       const context = {
         // req,

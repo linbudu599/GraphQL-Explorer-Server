@@ -20,4 +20,7 @@ export default class User implements IUser {
 
   @Column({ default: false, nullable: true })
   isFool!: boolean;
+
+  @Column({ default: Date.now() })
+  registryDate!: number;
 }
