@@ -1,9 +1,9 @@
 {
-  "include": ["./server/**/*.ts"],
+  "include": ["./server/**/*.ts", "./client/**/*.ts"],
   "compilerOptions": {
     "incremental": true /* Enable incremental compilation */,
-    "lib": ["esnext.asynciterable", "es2016"],
-    "target": "es2016" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */,
+    "lib": ["esnext.asynciterable", "ES2018"],
+    "target": "ES6" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */,
     "module": "commonjs" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */,
     "allowJs": false /* Allow javascript files to be compiled. */,
     "checkJs": false /* Report errors in .js files. */,

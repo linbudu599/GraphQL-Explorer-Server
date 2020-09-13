@@ -1,6 +1,16 @@
 {
   "presets": [
     ["@babel/preset-env", { "modules": false }],
-    ["@babel/preset-react"]
+    ["@babel/preset-react"],
+    ["@babel/preset-typescript"]
+  ],
+  "plugins": [
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "regenerator": true
+      }
+    ],
+    ["transform-async-to-promises"]
   ]
 }
