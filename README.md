@@ -21,9 +21,9 @@ see **Docs** for more information.
 ## GraphQL & TypeGraphQL
 
 - [x] Basic
-- [ ] Type Controll: `Union Types` & `(Inline) Fragment` & `interface`
-- [ ] Directive Implemention
-- [ ] Subscription
+- [x] Type Controll: `Union Types` & `(Inline) Fragment` & `interface`
+- [x] Directive Implemention
+- [ ] ~~Subscription~~
 - [ ] Extension
 
 ## Apollo-Server
@@ -33,9 +33,9 @@ see **Docs** for more information.
 - [ ] Auth
 - [ ] Cache
 - [ ] File Upload(Enable Mutliple / Split Chunks)
-- [ ] BFF(by [Apollo-Datasource-REST](https://www.npmjs.com/package/apollo-datasource-rest))
-- [ ] Subscription
-- [ ] Error/Res Formatter
+- [x] BFF(by [Apollo-Datasource-REST](https://www.npmjs.com/package/apollo-datasource-rest))
+- [ ] ~~Subscription~~
+- [ ] ~~Error/Res Formatter~~
 - [ ] Testing
 - [ ] Deployment
 

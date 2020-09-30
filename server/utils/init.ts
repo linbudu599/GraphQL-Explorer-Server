@@ -10,7 +10,7 @@ import UserResolver from "../resolver/User.resolver";
 import RecipeResolver from "../resolver/Recipe.resolver";
 import User from "../entity/User";
 import { log } from "./";
-import { authChecker } from "../lib/authChecker";
+import { authChecker } from "./authChecker";
 import ResolveTime from "../middleware/time";
 import studentTypeDefs from "../graphql/Student.type";
 import studentResolver from "../resolver/Student.resolver";
@@ -28,7 +28,7 @@ export default async (): Promise<ApolloServer> => {
     dateScalarMode: "timestamp",
     authChecker,
     authMode: "error",
-    emitSchemaFile: path.resolve(__dirname, "../gql/shema.gql"),
+    emitSchemaFile: path.resolve(__dirname, "../typegraphql/shema.gql"),
     validate: true,
     globalMiddlewares: [ResolveTime],
   });
