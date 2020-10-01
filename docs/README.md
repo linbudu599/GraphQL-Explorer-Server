@@ -64,6 +64,7 @@
 
 > 大部分能力使用TypeGraphQL提供的即可, 这里只列举不兼容的实现
 
+- [ ] serve by basic graphql schema
 - [ ] schema directives
 - [ ] custom directives implement
 - [ ] custom scalars & enums & union types & ...

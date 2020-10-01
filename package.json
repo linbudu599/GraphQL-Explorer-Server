@@ -1,8 +1,7 @@
 {
-  "name": "Apollo-FullAPI-Explorer",
+  "name": "GraphQL-Explorer",
   "version": "1.0.0",
-  "description": "> Full API & Ability Usage of Apollo Client/Server.",
-  "main": "index.js",
+  "description": "Full API & Ability Usage of Apollo Client/Server.",
   "scripts": {
     "dev": "npm-run-all --parallel dev:server dev:client",
     "clean": "rimraf ./server/**/*.js ./server/**/*.d.ts ./server/**/*.js.map ./server/**/*.d.ts.map",

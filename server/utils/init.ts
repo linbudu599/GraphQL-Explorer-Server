@@ -22,7 +22,7 @@ import studentResolver from "../resolver/Student.resolver";
 import fileSchema from "../graphql/File.type";
 // import fileTypeDefs from "../graphql/File.type";
 // import fileResolver from "../resolver/File.resolver";
-import dataSource from "../datasource/Student";
+import workerDataSource from "../datasource/worker";
 
 TypeORM.useContainer(Container);
 
@@ -42,12 +42,14 @@ export default async (): Promise<ApolloServer> => {
 
   const server = new ApolloServer({
     // TODO: merge resolver automatically
-    // typeDefs: [fileTypeDefs],
-    // resolvers: [fileResolver],
+    // options schema will override typeDefs & resolvers
+    // so u donot use typegraphql and apollo-server to merge schema
+    typeDefs: [studentTypeDefs],
+    resolvers: [studentResolver],
     // uploads: false,
     // override typeDefs & resolvers
     // schema: fileSchema,
-    schema,
+    // schema,
     context: async (ctx: Context) => {
       const context = {
         // req,
@@ -66,7 +68,7 @@ export default async (): Promise<ApolloServer> => {
       // return op === "mutation" ? mutationRoot : queryRoot;
     },
     dataSources: () => ({
-      DataAPI: new dataSource(),
+      workerAPI: new workerDataSource(),
     }),
     introspection: true,
     tracing: true,

@@ -1,9 +1,9 @@
 import studentTypeDefs, { IStudent } from "../graphql/Student.type";
-import { IData } from "../datasource/Student";
+import { IWorkerData } from "../graphql/Student.type";
 
 const studentResolver = {
   Query: {
-    students: (): IStudent[] => [
+    students: (parent, args, context, info): IStudent[] => [
       {
         name: "小林",
         classID: "001",
@@ -18,8 +18,9 @@ const studentResolver = {
       },
     ],
 
-    datas: async (_source, { id }, { dataSources }): Promise<IData[]> => {
-      const origin = await dataSources.DataAPI.getAllData();
+    workers: async (_, __, context): Promise<IWorkerData[]> => {
+      const { dataSources } = context;
+      const origin = await dataSources.workerAPI.getAllData();
       return origin.map(({ uid, name, age, gender, stage, favoTech }) => ({
         uid,
         name,
@@ -28,6 +29,15 @@ const studentResolver = {
         stage,
         favoTech,
       }));
+    },
+
+    getWorkerById: async (
+      _,
+      { uid },
+      { dataSources }
+    ): Promise<IWorkerData> => {
+      const res = await dataSources.workerAPI.getByUid(uid);
+      return res;
     },
   },
 };
