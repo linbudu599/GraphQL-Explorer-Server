@@ -1,6 +1,12 @@
 import { plainToClass } from "class-transformer";
 import { Difficulty, Cook, Recipe } from "../graphql/Recipe";
 
+const createCook = (cookData: Partial<Cook>): Cook =>
+  plainToClass(Cook, cookData);
+
+const createRecipe = (recipeData: Partial<Recipe>): Recipe =>
+  plainToClass(Recipe, recipeData);
+
 export const sampleCooks = [
   createCook({
     name: "Gordon Ramsay",
@@ -11,10 +17,6 @@ export const sampleCooks = [
     yearsOfExperience: 1,
   }),
 ];
-
-function createCook(cookData: Partial<Cook>): Cook {
-  return plainToClass(Cook, cookData);
-}
 
 export const sampleRecipes = [
   createRecipe({
@@ -51,7 +53,3 @@ export const sampleRecipes = [
     cook: sampleCooks[0],
   }),
 ];
-
-function createRecipe(recipeData: Partial<Recipe>): Recipe {
-  return plainToClass(Recipe, recipeData);
-}

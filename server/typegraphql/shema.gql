@@ -21,8 +21,9 @@ interface IUser {
   age: Float!
   isFool: Boolean!
   job: String!
+  lastUpdateDate: Timestamp!
   name: String!
-  registryDate: Float!
+  registryDate: Timestamp!
   uid: ID!
 }
 
@@ -56,12 +57,18 @@ type Status {
   success: Boolean!
 }
 
+"""
+The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
+
 type User implements IUser {
   age: Float!
   isFool: Boolean!
   job: String!
+  lastUpdateDate: Timestamp!
   name: String!
-  registryDate: Float!
+  registryDate: Timestamp!
   uid: ID!
 }
 

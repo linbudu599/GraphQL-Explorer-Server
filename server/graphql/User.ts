@@ -49,8 +49,11 @@ export abstract class IUser {
   @Field()
   isFool!: boolean;
 
-  @Field((type) => Float)
-  registryDate!: number;
+  @Field((type) => Date)
+  registryDate!: Date;
+
+  @Field((type) => Date)
+  lastUpdateDate!: Date;
 }
 
 @InputType({ description: " User InputObject/Args" })

@@ -1,11 +1,18 @@
 import { ObjectType, Directive } from "type-graphql";
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  BaseEntity,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
 import { IUser, Job } from "../graphql/User";
 
-@Directive('@deprecated(reason: "Use newField")')
+@Directive('@deprecated(reason: "Use `newField`")')
 @ObjectType({ implements: IUser })
 @Entity()
-export default class User implements IUser {
+export default class User extends BaseEntity implements IUser {
   @PrimaryGeneratedColumn()
   uid!: number;
 
@@ -21,6 +28,9 @@ export default class User implements IUser {
   @Column({ default: false, nullable: true })
   isFool!: boolean;
 
-  @Column({ default: Date.now() })
-  registryDate!: number;
+  @CreateDateColumn()
+  registryDate!: Date;
+
+  @UpdateDateColumn()
+  lastUpdateDate!: Date;
 }

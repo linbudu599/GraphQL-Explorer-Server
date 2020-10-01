@@ -6,6 +6,7 @@ import {
   Mutation,
   Root,
   FieldResolver,
+  ResolverInterface,
 } from "type-graphql";
 import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
@@ -20,7 +21,7 @@ import {
 } from "../graphql/User";
 import ArgsValidator from "../decorators/argsValidator";
 
-@Resolver(() => User)
+@Resolver((of) => User)
 export default class UserResolver {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>
@@ -41,8 +42,7 @@ export default class UserResolver {
   async FindUserByConditions(
     @Args({ validate: false }) conditions: UserQueryArgs
   ): Promise<User[]> {
-    const res = await this.userRepository.find({ ...conditions });
-    return res;
+    return await this.userRepository.find({ ...conditions });
   }
 
   @Mutation(() => User)
@@ -92,12 +92,7 @@ export default class UserResolver {
   }
 
   // @FieldResolver()
-  // async FieldRootResolver(@Root() user: User): Promise<any> {
-  //   try {
-  //     console.log(user);
-  //     return null;
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
+  // async FieldRootResolver(@Root() user: User): Promise<null> {
+  //   return null;
   // }
 }

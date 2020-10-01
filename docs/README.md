@@ -23,6 +23,8 @@
 
 - [ ] RootResolver
 
+- [ ] FieldResolver
+
 - [x] Arg & Args 一般Arg用来处理单个形参, Args用来处理整个输入对象类型
 
 - [ ] Scalar 内置标量与自定义标量(需要提供序列化与解析方法)
@@ -33,7 +35,7 @@
 
 - [x] InterfaceType 就是原生GraphQL中的Interface, 类似抽象类的存在
 
-- [ ] Directives 
+- [x] Directives  @Directive('@deprecated(reason: "Use newField")')
 
 - [ ] Extensions
 
@@ -48,6 +50,7 @@
   > 中间件可以是函数的形式, 也可以是类(内部定义`use`方法)
 
   - [x] ResolveTime, 获取schema各个字段解析时间
+  - [x] Interceptor, 拦截执行结果并作出修改, 或者拦截参数/上下文中的信息进行特殊处理
 
 - [x] DIY Decorators
 
@@ -74,6 +77,8 @@
 > TODO
 
 ## TypeORM
+
+- [ ] TypeORM-TypeDI-Extensions
 
 - [x] Transaction
 - [ ] OneToOne

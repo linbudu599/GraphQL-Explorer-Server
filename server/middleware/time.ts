@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import { MiddlewareFn } from "type-graphql";
 
 const ResolveTimeMiddleware: MiddlewareFn = async (
@@ -7,7 +8,11 @@ const ResolveTimeMiddleware: MiddlewareFn = async (
   const start = Date.now();
   await next();
   const resolveTime = Date.now() - start;
-  console.log(`${info.parentType.name}.${info.fieldName} [${resolveTime} ms]`);
+  console.log(
+    chalk.green(
+      `[Resolve Time] ${info.operation.operation} ${info.parentType.name}.${info.fieldName} [${resolveTime} ms]`
+    )
+  );
 };
 
 export default ResolveTimeMiddleware;

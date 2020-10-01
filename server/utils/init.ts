@@ -5,13 +5,18 @@ import { buildSchema } from "type-graphql";
 import { Container } from "typedi";
 import path from "path";
 import * as TypeORM from "typeorm";
+import { log } from "./";
 
+// TypeGraphQL
 import UserResolver from "../resolver/User.resolver";
 import RecipeResolver from "../resolver/Recipe.resolver";
 import User from "../entity/User";
-import { log } from "./";
 import { authChecker } from "./authChecker";
 import ResolveTime from "../middleware/time";
+import InterceptorOnUid1 from "../middleware/interceptor";
+import LogMiddleware from "../middleware/time";
+
+// Apollo-Server
 import studentTypeDefs from "../graphql/Student.type";
 import studentResolver from "../resolver/Student.resolver";
 import fileSchema from "../graphql/File.type";
@@ -30,7 +35,7 @@ export default async (): Promise<ApolloServer> => {
     authMode: "error",
     emitSchemaFile: path.resolve(__dirname, "../typegraphql/shema.gql"),
     validate: true,
-    globalMiddlewares: [ResolveTime],
+    globalMiddlewares: [LogMiddleware, ResolveTime, InterceptorOnUid1],
   });
 
   await dbConnect();
@@ -39,7 +44,7 @@ export default async (): Promise<ApolloServer> => {
     // TODO: merge resolver automatically
     // typeDefs: [fileTypeDefs],
     // resolvers: [fileResolver],
-    uploads: false,
+    // uploads: false,
     // override typeDefs & resolvers
     // schema: fileSchema,
     schema,
