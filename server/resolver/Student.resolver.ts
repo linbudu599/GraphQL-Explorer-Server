@@ -1,6 +1,8 @@
 import studentTypeDefs, { IStudent } from "../graphql/Student.type";
 import { IWorkerData } from "../graphql/Student.type";
 
+// TODO: Strict Type Defs
+
 const studentResolver = {
   Query: {
     students: (parent, args, context, info): IStudent[] => [
@@ -38,6 +40,36 @@ const studentResolver = {
     ): Promise<IWorkerData> => {
       const res = await dataSources.workerAPI.getByUid(uid);
       return res;
+    },
+
+    variousReturnType: async (): Promise<any> => {
+      return Math.floor(Math.random() * 100) % 2 === 0
+        ? {
+            hooks: "React Hooks",
+          }
+        : {
+            compositionAPI: "Vue3 Composition API",
+          };
+    },
+  },
+
+  Mutation: {
+    createWorker: async (_, { info }, __): Promise<Object> => {
+      // Validated!
+      console.log(info);
+      return {
+        code: 100,
+        success: true,
+        msg: "Gotcha!",
+        ...info,
+      };
+    },
+  },
+
+  VariousType: {
+    __resolveType(obj, context, info) {
+      // should return determined object type [name] here!!
+      return obj?.hooks ? "React" : "Vue";
     },
   },
 };
