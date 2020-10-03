@@ -14,12 +14,12 @@ async function bootstrap() {
   const app = new Koa();
   const server = await initialize();
   app.use(cors);
-  app.use(
-    graphqlUploadKoa({
-      maxFileSize: 10 * 1024 * 1024,
-      maxFiles: 20,
-    })
-  );
+  // app.use(
+  //   graphqlUploadKoa({
+  //     maxFileSize: 10 * 1024 * 1024,
+  //     maxFiles: 20,
+  //   })
+  // );
   server.applyMiddleware({ app });
 
   app.listen(4000, () =>
@@ -27,4 +27,6 @@ async function bootstrap() {
   );
 }
 
-bootstrap();
+(async () => {
+  await bootstrap();
+})()

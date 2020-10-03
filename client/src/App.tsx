@@ -1,19 +1,23 @@
 import React from 'react';
-import UserQuery from './pages/UserQuery';
-import DelayedUserQuery from './pages/DelayedUserQuery';
+import GetAllUsers from './pages/GetAllUsers';
+import QueryUser from './pages/QueryUser';
+import GetAllUsersManually from './pages/GetAllUsersManually';
 import UserMutation from './pages/UserMutation';
 import SingleFileUpload from './pages/FileUpload';
 
 const App = () => (
   <>
-    {/* <p>UserQuery</p>
-    <UserQuery />
-    <p>DelayedUserQuery</p>
-    <DelayedUserQuery />
-    <p>UserMutation</p>
-    <UserMutation /> */}
-    <p>SingleFileUpload</p>
-    <SingleFileUpload />
+    <p>Query(TypeGraphQL-Server) Get All Users</p>
+    <GetAllUsers />
+
+
+    <p>Query(TypeGraphQL-Server) Query User By Conditions</p>
+    <QueryUser />
+
+
+    <p>Delayed Query(TypeGraphQL-Server) Query User Manually</p>
+    <GetAllUsersManually />
+
   </>
 );
 

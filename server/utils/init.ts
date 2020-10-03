@@ -49,7 +49,7 @@ export default async (): Promise<ApolloServer> => {
     // uploads: false,
     // override typeDefs & resolvers
     // schema: fileSchema,
-    // schema,
+    schema,
     context: async (ctx: Context) => {
       const context = {
         // req,

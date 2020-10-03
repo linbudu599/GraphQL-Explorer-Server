@@ -1,14 +1,15 @@
 {
-  "name": "Apollo-FullAPI-Explorer",
+  "name": "GraphQL-Explorer",
   "restartable": "r",
   "delay": "500",
   "ignore": [
     ".git",
     "node_modules/**",
-    "./client/dist",
-    "./client/.cache",
-    "./server/logs",
-    "./**/*.json"
+    "client/dist",
+    "client/src",
+    "client/.cache",
+    "server/logs",
+    "/**/*.json"
   ],
   "verbose": true,
   "execMap": {
@@ -23,7 +24,10 @@
     "restart": ""
   },
   "ext": "js json ts ts",
-  "watch": ["./server/**/*.ts", "./client/**/*.ts"],
+  "watch": [
+    "./server/**/*.ts",
+    "./client/**/*.ts"
+  ],
   "env": {
     "NODE_ENV": "development"
   },

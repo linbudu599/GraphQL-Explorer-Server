@@ -24,15 +24,13 @@ export default function createApolloClient() {
 
   const client = new ApolloClient({
     cache,
-    // uri: 'http://localhost:4000/',
-    link: createUploadLink({ uri: 'http://localhost:4000/graphql' }),
+    uri: 'http://localhost:4000/graphql',
+    // link: createUploadLink({ uri: 'http://localhost:4000/graphql' }),
     headers: {
       // authorization: localStorage.getItem('token') || '',
-      'client-name': 'Apollo-FullAPI-Explorer[Client]',
+      'client-name': 'GraphQL-Explorer[Client]',
       'client-version': '0.1.0',
     },
-    // typeDefs,
-    // resolvers: resolvers as Resolvers,
   });
 
   cache.writeQuery({

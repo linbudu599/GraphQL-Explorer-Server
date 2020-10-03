@@ -5,6 +5,8 @@
 - TypeGraphQL 与 Apollo-Server 的能力不是完全兼容的
 - 看起来schema会完全覆盖掉typeDefs与resolvers, 而不是只覆盖掉相同的Field和Type, 淦. 那这样TypeGraphQL和Apollo-Server看起来并不是兼容的很美好. 这样Apollo-Datasource-REST也就不能用了阿.
 
+
+
 ## TypeGraphQL
 
 - [x] ObjectType 基本对象类型
@@ -75,7 +77,17 @@
 
 ## Apollo-Client
 
-> TODO
+- [ ] Common Usage: Auth by Client Query
+- [ ] useQuery(useLazyQuery) API
+- [ ] useMutation
+- [ ] Cache handler after operation
+- [ ] Pagination
+- [ ] (Inline) Fragment
+- [ ] Error Handling
+- [ ] Global Cache Read/Write/...
+- [ ] Local State
+- [ ] With TypeGraphQL
+- [ ] API Collections
 
 ## TypeORM
 

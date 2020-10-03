@@ -1,4 +1,4 @@
-# Apollo-FullAPI-Explorer
+# GraphQL-Explorer
 
 This is a demo which contains GraphQL and framework based on it(or work with it perfectly), including these for now:
 
