@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { gql, useMutation } from '@apollo/client';
 
-const Hello: React.FC = () => {
+const UserMutation: React.FC = () => {
   const NOT_LONGER_FULL = gql`
     mutation notLongerFull($uid: Float!) {
       NotLongerFull(uid: $uid) {
@@ -12,7 +12,7 @@ const Hello: React.FC = () => {
   `;
 
   const CREATE_USER = gql`
-    mutation createUser($userInfo: UserInputOrArgs!) {
+    mutation createUser($userInfo: UserCreateInput!) {
       CreateUser(newUserInfo: $userInfo) {
         name
         age
@@ -20,9 +20,19 @@ const Hello: React.FC = () => {
         job
       }
     }
+    
   `;
 
-  const [fool, { data, loading, error, called }] = useMutation(
+  const UPDATE_USER = gql`
+      mutation updateUser($modifiedUserInfo: UserUpdateInput!){
+        UpdateUser(modifiedUserInfo: $modifiedUserInfo) {
+          success
+          message
+        }
+      }
+    `
+
+  const [fool, { data: foolData, loading, error, called }] = useMutation(
     NOT_LONGER_FULL,
     {
       update(cache, { data: { fool } }) {
@@ -51,6 +61,10 @@ const Hello: React.FC = () => {
     onCompleted: (data) => console.log(data),
   });
 
+  const [updateUser, { data: updateData, loading: updateLoading }] = useMutation(UPDATE_USER, {
+
+  })
+
   return (
     <>
       <button
@@ -65,17 +79,19 @@ const Hello: React.FC = () => {
         Not Longer Full
       </button>
       <br />
+      {foolData && JSON.stringify(foolData)}
+      <br />
       {creationLoading ? (
         <p>Creating...</p>
       ) : (
-        <p>{JSON.stringify(creationData)}</p>
-      )}
+          <p>{JSON.stringify(creationData)}</p>
+        )}
       <button
         onClick={() => {
           createUser({
             variables: {
               userInfo: {
-                name: 'Penumbra',
+                name: `Penumbra${Math.floor(Math.random() * 100)}`,
               },
             },
           });
@@ -83,8 +99,28 @@ const Hello: React.FC = () => {
       >
         Create User
       </button>
+      <br />
+      {updateLoading ? (
+        <p>Updating...</p>
+      ) : (
+          <p>{JSON.stringify(updateData)}</p>
+        )}
+      <button
+        onClick={() => {
+          updateUser({
+            variables: {
+              modifiedUserInfo: {
+                uid: 1,
+                name: 'Penumbra!!!!',
+              }
+            },
+          });
+        }}
+      >
+        Update User
+      </button>
     </>
   );
 };
 
-export default Hello;
+export default UserMutation;

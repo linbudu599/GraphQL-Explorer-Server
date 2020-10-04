@@ -75,7 +75,35 @@
 - [ ] File(这个似乎有一定问题)
 - [ ] Auth
 
+
+
 ## Apollo-Client
+
+- [x] useQuery
+
+  - [x] with vars
+  - [x] cache control 返回的结果会被自动缓存, 如果想更新缓存, 可以使用轮询或者refetch方法
+  - [x] refetch 支持变量更改, 通常用于提供给用户进行某些操作
+  - [x] networkStatus  可以用来更精细的判断请求状态, 甚至可以判断是否正在refetch
+  - [x] errorPolicy, 错误控制, none -> 丢弃掉返回的结果, all -> 不会丢弃, 允许你根据错误信息渲染界面
+  - [x] fetch-policy
+    - **cache-first** 优先向缓存发起查询 如果有数据不存在 那么还是会向服务器发起请求, 并且在缓存新数据后返回这些数据
+    - cache-only 只向缓存查询 并且在无法查询到结果时抛出错误
+    - cache-and-network  同时向服务器和缓存发起完整请求 会自动更新缓存字段
+    - network-only 不会检查缓存 但会缓存结果 直接向服务器发起请求
+    - no-cache 不会检查缓存, 并且不会缓存
+    - standby 类似缓存优先, 但是不会自动更新缓存
+  - [ ] updateQuery   更新缓存内的查询结果
+
+- [x] useMutation
+
+  - [x] basic 类似useLazyQuery 需要手动调用  
+
+  - [ ] cache apollo基于id去识别实体  会在mutation后自动更新缓存  同时UI也会自动变化
+
+  - [ ] update 用于非当前实体的缓存更新,  这个函数接收缓存与本次变更结果作为入参, 使用`readQuery`, `writeQuery`, `readFragment`, `writeFragment` and `modify`来更新缓存
+
+    
 
 - [ ] Common Usage: Auth by Client Query
 - [ ] useQuery(useLazyQuery) API
@@ -88,6 +116,8 @@
 - [ ] Local State
 - [ ] With TypeGraphQL
 - [ ] API Collections
+
+
 
 ## TypeORM
 

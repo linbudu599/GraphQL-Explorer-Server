@@ -7,7 +7,7 @@ import SingleFileUpload from './pages/FileUpload';
 
 const App = () => (
   <>
-    <p>Query(TypeGraphQL-Server) Get All Users</p>
+    {/* <p>Query(TypeGraphQL-Server) Get All Users</p>
     <GetAllUsers />
 
 
@@ -16,8 +16,11 @@ const App = () => (
 
 
     <p>Delayed Query(TypeGraphQL-Server) Query User Manually</p>
-    <GetAllUsersManually />
+    <GetAllUsersManually /> */}
 
+
+    <p>Mutations(TypeGraphQL-Server) Create User</p>
+    <UserMutation />
   </>
 );
 
