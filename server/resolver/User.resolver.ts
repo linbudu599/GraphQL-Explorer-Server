@@ -1,25 +1,14 @@
-import {
-  Resolver,
-  Query,
-  Arg,
-  Args,
-  Mutation,
-  Root,
-  FieldResolver,
-  ResolverInterface,
-} from "type-graphql";
+import { Resolver, Query, Arg, Args, Mutation } from "type-graphql";
 import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import User from "../entity/User";
-import { Status, StatusHandler } from "../utils/helper";
+import { Status, StatusHandler } from "../graphql/Status";
 import {
   UserCreateInput,
   UserUpdateInput,
-  IUser,
   UserQueryArgs,
 } from "../graphql/User";
-import ArgsValidator from "../decorators/argsValidator";
 
 @Resolver((of) => User)
 export default class UserResolver {
@@ -29,26 +18,31 @@ export default class UserResolver {
 
   @Query(() => [User]!)
   async Users(): Promise<User[]> {
+    // TODO: req wrapper
     return await this.userRepository.find();
   }
 
   @Query(() => User)
-  async FindUserById(@Arg("uid") uid: number): Promise<User | undefined> {
+  async FindUserById(@Arg("uid") uid: string): Promise<User | undefined> {
+    // TODO: req wrapper
+    // TODO: number -> string
     return this.userRepository.findOne({ uid });
   }
 
   @Query(() => [User]!)
-  // @ArgsValidator(UserQueryArgs)
   async FindUserByConditions(
     @Args({ validate: false }) conditions: UserQueryArgs
   ): Promise<User[]> {
+    // TODO: req wrapper
     return await this.userRepository.find({ ...conditions });
   }
 
+  // TODO: admin auth required
   @Mutation(() => User)
   async CreateUser(
     @Arg("newUserInfo") user: UserCreateInput
   ): Promise<(User & UserCreateInput) | undefined> {
+    // TODO: validate params
     try {
       const res = await this.userRepository.save(user);
       return res;
@@ -57,10 +51,12 @@ export default class UserResolver {
     }
   }
 
+  // TODO: auth
   @Mutation(() => Status, { nullable: true })
   async UpdateUser(
     @Arg("modifiedUserInfo") user: UserUpdateInput
   ): Promise<Status | undefined> {
+    // TODO: find first
     try {
       const res = await this.userRepository.update({ uid: user.uid }, user);
       // TODO: res check & error handler
@@ -70,8 +66,10 @@ export default class UserResolver {
     }
   }
 
+  // TODO: auth
   @Mutation(() => Status, { nullable: true })
-  async DeleteUser(@Arg("uid") uid: number): Promise<Status | undefined> {
+  async DeleteUser(@Arg("uid") uid: string): Promise<Status | undefined> {
+    // TODO: find first
     try {
       const res = await this.userRepository.delete({ uid });
       // TODO: check res
@@ -81,8 +79,9 @@ export default class UserResolver {
     }
   }
 
+  // TODO: auth
   @Mutation(() => Status, { nullable: true })
-  async NotLongerFull(@Arg("uid") uid: number): Promise<Status | undefined> {
+  async NotLongerFull(@Arg("uid") uid: string): Promise<Status | undefined> {
     try {
       const item = await this.userRepository.update({ uid }, { isFool: false });
       return new StatusHandler(true, "Success");

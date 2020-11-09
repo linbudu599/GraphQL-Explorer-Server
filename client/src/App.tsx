@@ -3,7 +3,6 @@ import GetAllUsers from './pages/GetAllUsers';
 import QueryUser from './pages/QueryUser';
 import GetAllUsersManually from './pages/GetAllUsersManually';
 import UserMutation from './pages/UserMutation';
-import SingleFileUpload from './pages/FileUpload';
 
 const App = () => (
   <>
@@ -17,7 +16,6 @@ const App = () => (
 
     <p>Delayed Query(TypeGraphQL-Server) Query User Manually</p>
     <GetAllUsersManually /> */}
-
 
     <p>Mutations(TypeGraphQL-Server) Create User</p>
     <UserMutation />

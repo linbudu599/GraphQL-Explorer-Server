@@ -1,6 +1,7 @@
 import { Field, ObjectType } from "type-graphql";
 import { Service } from "typedi";
 import chalk from "chalk";
+
 @ObjectType()
 export class Status {
   @Field()

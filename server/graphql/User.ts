@@ -22,12 +22,12 @@ import {
   IsPositive,
 } from "class-validator";
 
-export enum Job {
+export enum JOB {
   FE = "FE",
   BE = "BE",
 }
 
-registerEnumType(Job, {
+registerEnumType(JOB, {
   name: "Job",
   description: "Job Enum Type",
 });
@@ -35,7 +35,7 @@ registerEnumType(Job, {
 @InterfaceType()
 export abstract class IUser {
   @Field((type) => ID)
-  uid!: number;
+  uid!: string;
 
   @Field()
   name!: string;
@@ -100,8 +100,6 @@ export class UserQueryArgs {
 @InputType({ description: "Args On Updating User" })
 export class UserUpdateInput extends UserCreateInput {
   @Field({ nullable: false })
-  @IsNumber()
-  @IsPositive()
-  @Min(0)
-  uid!: number;
+  @IsString()
+  uid!: string;
 }

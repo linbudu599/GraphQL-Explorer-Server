@@ -16,14 +16,6 @@ import ResolveTime from "../middleware/time";
 import InterceptorOnUid1 from "../middleware/interceptor";
 import LogMiddleware from "../middleware/time";
 
-// Apollo-Server
-import studentTypeDefs from "../graphql/Student.type";
-import studentResolver from "../resolver/Student.resolver";
-import fileSchema from "../graphql/File.type";
-// import fileTypeDefs from "../graphql/File.type";
-// import fileResolver from "../resolver/File.resolver";
-import workerDataSource from "../datasource/worker";
-
 TypeORM.useContainer(Container);
 
 export default async (): Promise<ApolloServer> => {
@@ -44,11 +36,7 @@ export default async (): Promise<ApolloServer> => {
     // TODO: merge resolver automatically
     // options schema will override typeDefs & resolvers
     // so u donot use typegraphql and apollo-server to merge schema
-    typeDefs: [studentTypeDefs],
-    resolvers: [studentResolver],
-    // uploads: false,
     // override typeDefs & resolvers
-    // schema: fileSchema,
     schema,
     context: async (ctx: Context) => {
       const context = {
@@ -67,11 +55,8 @@ export default async (): Promise<ApolloServer> => {
       // const op = getOperationAST(documentNode);
       // return op === "mutation" ? mutationRoot : queryRoot;
     },
-    dataSources: () => ({
-      workerAPI: new workerDataSource(),
-    }),
-    introspection: true,
-    tracing: true,
+    // introspection: true,
+    // tracing: true,
     // engine: true,
     // formatError: () => {},
     // formatResponse: () => {},
@@ -91,10 +76,10 @@ export default async (): Promise<ApolloServer> => {
 };
 
 export const dbConnect = async (): Promise<any> => {
-  log("=== TypeORM Connecting ===");
+  log("=== [TypeORM] TypeORM Connecting ===");
   try {
     const connection = await TypeORM.createConnection();
-    log("=== Database Connection Established ===");
+    log("=== [TypeORM] Database Connection Established ===");
     await connection.manager.insert(User, {
       name: "林不渡1",
       age: 21,
@@ -110,6 +95,7 @@ export const dbConnect = async (): Promise<any> => {
       age: 21,
       isFool: true,
     });
+    log("=== [TypeORM] Initial Mock Data Inserted ===");
   } catch (error) {
     log(error, "red");
   }

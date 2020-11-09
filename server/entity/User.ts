@@ -1,4 +1,4 @@
-import { ObjectType, Directive } from "type-graphql";
+import { ObjectType } from "type-graphql";
 import {
   Entity,
   Column,
@@ -7,14 +7,14 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { IUser, Job } from "../graphql/User";
+import { IUser, JOB } from "../graphql/User";
 
-@Directive('@deprecated(reason: "Use `newField`")')
+// TODO: 更复杂的数据库表结构
 @ObjectType({ implements: IUser })
 @Entity()
 export default class User extends BaseEntity implements IUser {
   @PrimaryGeneratedColumn()
-  uid!: number;
+  uid!: string;
 
   @Column({ unique: true, nullable: true })
   name!: string;
@@ -22,8 +22,8 @@ export default class User extends BaseEntity implements IUser {
   @Column({ default: 0, nullable: true })
   age!: number;
 
-  @Column({ default: Job.FE })
-  job!: string;
+  @Column({ default: JOB.FE })
+  job!: JOB;
 
   @Column({ default: false, nullable: true })
   isFool!: boolean;

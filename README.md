@@ -5,7 +5,7 @@ This is a demo which contains GraphQL and framework based on it(or work with it 
 - TypeGraphQL
 - Apollo-Client & React & Parcel
 - Apollo-Server
-- TypeORM
+- TypeORM + SQLite3
 - TypeStack Product
 
 ## Progress: 30%
@@ -30,4 +30,3 @@ see offcial docs for more information.
 - [TypeGraphQL](https://typegraphql.com/)
 - [TypeStack](https://github.com/typestack)
 - [TypeORM](https://github.com/typeorm)
-
