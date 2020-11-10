@@ -1,15 +1,11 @@
 import {
   Field,
-  ObjectType,
   Int,
   InputType,
   ArgsType,
   ID,
   registerEnumType,
   InterfaceType,
-  Directive,
-  UseMiddleware,
-  Float,
 } from "type-graphql";
 import {
   Length,
@@ -19,7 +15,6 @@ import {
   IsOptional,
   Max,
   Min,
-  IsPositive,
 } from "class-validator";
 
 export enum JOB {
@@ -54,6 +49,30 @@ export abstract class IUser {
 
   @Field((type) => Date)
   lastUpdateDate!: Date;
+}
+
+@InterfaceType()
+export abstract class ITask {
+  @Field((type) => ID)
+  taskId!: string;
+
+  @Field()
+  taskTitle!: string;
+
+  @Field()
+  assignee?: IUser;
+
+  @Field()
+  taskContent!: string;
+
+  @Field()
+  taskStatus!: Boolean;
+
+  @Field()
+  taskReward!: number;
+
+  @Field()
+  taskRate?: number;
 }
 
 @InputType({ description: " User InputObject/Args" })

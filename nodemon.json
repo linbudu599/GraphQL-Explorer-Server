@@ -1,5 +1,5 @@
 {
-  "name": "GraphQL-Explorer",
+  "name": "GraphQL-Explorer-Server",
   "restartable": "r",
   "delay": "500",
   "ignore": [
@@ -17,17 +17,8 @@
     "js": "node --harmony",
     "ts": "ts-node "
   },
-  "events": {
-    "start": "",
-    "crash": "",
-    "exit": "",
-    "restart": ""
-  },
-  "ext": "js json ts ts",
-  "watch": [
-    "./server/**/*.ts",
-    "./client/**/*.ts"
-  ],
+  "ext": "js json ts db",
+  "watch": ["./server/**/*.ts"],
   "env": {
     "NODE_ENV": "development"
   },

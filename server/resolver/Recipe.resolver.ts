@@ -1,11 +1,4 @@
-import {
-  Resolver,
-  Query,
-  Arg,
-  Mutation,
-  Root,
-  FieldResolver,
-} from "type-graphql";
+import { Resolver, Query, Arg } from "type-graphql";
 import { sampleCooks, sampleRecipes } from "../utils/mock";
 import { SearchResult, Difficulty, Cook, Recipe } from "../graphql/Recipe";
 

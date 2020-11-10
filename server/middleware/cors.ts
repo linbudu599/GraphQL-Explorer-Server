@@ -2,8 +2,8 @@ import { Context, Next } from "koa";
 import { log } from "../utils";
 
 export default async (ctx: Context, next: Next) => {
-  log(`[CORS] request method: ${ctx.request.method}\n`);
-  log(`[CORS] request path: ${ctx.request.origin}\n`);
+  // log(`[CORS] request method: ${ctx.request.method}\n`);
+  // log(`[CORS] request path: ${ctx.request.origin}\n`);
 
   ctx.set("Access-Control-Allow-Origin", "*");
   ctx.set(

@@ -1,10 +1,10 @@
 import "reflect-metadata";
-import { ApolloServer } from "apollo-server-koa";
 import { Context } from "koa";
-import { buildSchema } from "type-graphql";
-import { Container } from "typedi";
 import path from "path";
+import { Container } from "typedi";
 import * as TypeORM from "typeorm";
+import { buildSchema } from "type-graphql";
+import { ApolloServer } from "apollo-server-koa";
 import { log } from "./";
 
 import { ACCOUNT_AUTH } from "./constants";
@@ -14,6 +14,9 @@ import UserResolver from "../resolver/User.resolver";
 import RecipeResolver from "../resolver/Recipe.resolver";
 
 import User from "../entity/User";
+import Task from "../entity/Task";
+
+import { JOB } from "../graphql/User";
 
 import { authChecker } from "./authChecker";
 
@@ -33,7 +36,7 @@ export default async (): Promise<ApolloServer> => {
     authMode: "error",
     emitSchemaFile: path.resolve(__dirname, "../typegraphql/shema.gql"),
     validate: true,
-    globalMiddlewares: [LogMiddleware, ResolveTime, InterceptorOnUid1],
+    globalMiddlewares: [ResolveTime, InterceptorOnUid1],
   });
 
   await dbConnect();
@@ -100,6 +103,23 @@ export const dbConnect = async (): Promise<any> => {
   log("=== [TypeORM] TypeORM Connecting ===");
   try {
     const connection = await TypeORM.createConnection();
+
+    // TODO: reorganize data table
+    const user = new User();
+    user.name = "林不渡-Lv1";
+    user.job = JOB.FE;
+
+    await connection.manager.insert(User, user);
+
+    const task = new Task();
+    task.taskTitle = "xxx";
+    task.taskContent = "XXX";
+    task.taskReward = 1000;
+    task.taskRate = 1;
+    task.assignee = user;
+
+    await connection.manager.insert(Task, task);
+
     log("=== [TypeORM] Database Connection Established ===");
     await connection.manager.insert(User, {
       name: "林不渡1",

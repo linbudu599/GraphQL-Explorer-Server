@@ -1,4 +1,12 @@
-import { Resolver, Query, Arg, Args, Mutation, Authorized } from "type-graphql";
+import {
+  Resolver,
+  Query,
+  Arg,
+  Args,
+  Mutation,
+  Authorized,
+  UseMiddleware,
+} from "type-graphql";
 import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
@@ -13,6 +21,8 @@ import {
 
 import { ACCOUNT_AUTH } from "../utils/constants";
 
+import { LogAccessMiddleware } from "../middleware/log";
+
 @Resolver((of) => User)
 export default class UserResolver {
   constructor(
@@ -21,6 +31,7 @@ export default class UserResolver {
 
   @Authorized(ACCOUNT_AUTH.ADMIN)
   @Query(() => [User]!)
+  @UseMiddleware(LogAccessMiddleware)
   async Users(): Promise<User[]> {
     // TODO: req wrapper
     return await this.userRepository.find();

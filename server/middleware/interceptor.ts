@@ -1,6 +1,5 @@
-import chalk from "chalk";
 import { MiddlewareFn } from "type-graphql";
-import { IUser } from "../graphql/User";
+import { log } from "../utils/";
 
 // intercept exeuction result
 const InterceptorOnUIDFeild = (uid: number): MiddlewareFn => async (
@@ -9,7 +8,10 @@ const InterceptorOnUIDFeild = (uid: number): MiddlewareFn => async (
 ) => {
   const res = await next();
 
+  log("[Interceptor] UID Interceptor Invoked");
+
   if (res?.uid === uid) {
+    log(`[Interceptor] UID ${uid} intercepted`);
     return {
       ...res,
       name: "modified in interceptor",
