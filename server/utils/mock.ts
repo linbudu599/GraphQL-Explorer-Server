@@ -1,5 +1,18 @@
 import { plainToClass } from "class-transformer";
-import { Difficulty, Cook, Recipe } from "../graphql/Recipe";
+import {
+  Difficulty,
+  Cook,
+  Recipe,
+  Company,
+  WorkExperience,
+} from "../graphql/Recipe";
+
+const createWorkExperience = (
+  workExp: Partial<WorkExperience>
+): WorkExperience => plainToClass(WorkExperience, workExp);
+
+const createCompany = (company: Partial<Company>): Company =>
+  plainToClass(Company, company);
 
 const createCook = (cookData: Partial<Cook>): Cook =>
   plainToClass(Cook, cookData);
@@ -7,14 +20,42 @@ const createCook = (cookData: Partial<Cook>): Cook =>
 const createRecipe = (recipeData: Partial<Recipe>): Recipe =>
   plainToClass(Recipe, recipeData);
 
+export const sampleCompanies = [
+  createCompany({
+    name: "XX有限公司",
+    registerDate: new Date(),
+    description: "小公司罢了",
+  }),
+  createCompany({
+    name: "不渡科技有限公司",
+    registerDate: new Date(),
+    description: "我直接世界500强",
+  }),
+];
+
+export const sampleWorkExperience = [
+  createWorkExperience({
+    company: sampleCompanies[0],
+    isFired: true,
+    workYears: 1,
+  }),
+  createWorkExperience({
+    company: sampleCompanies[1],
+    isFired: false,
+    workYears: 10,
+  }),
+];
+
 export const sampleCooks = [
   createCook({
     name: "Gordon Ramsay",
     yearsOfExperience: 21,
+    experience: sampleWorkExperience[0],
   }),
   createCook({
     name: "Kim Kardashian",
     yearsOfExperience: 1,
+    experience: sampleWorkExperience[1],
   }),
 ];
 

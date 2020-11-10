@@ -21,12 +21,39 @@ registerEnumType(Difficulty, {
 });
 
 @ObjectType()
+export class Company {
+  @Field()
+  name!: string;
+
+  @Field()
+  registerDate!: Date;
+
+  @Field()
+  description!: string;
+}
+
+@ObjectType()
+export class WorkExperience {
+  @Field()
+  company!: Company;
+
+  @Field()
+  isFired!: boolean;
+
+  @Field()
+  workYears!: number;
+}
+
+@ObjectType()
 export class Cook {
   @Field()
   name!: string;
 
   @Field((type) => Int)
   yearsOfExperience!: number;
+
+  @Field()
+  experience!: WorkExperience;
 }
 
 @ObjectType()

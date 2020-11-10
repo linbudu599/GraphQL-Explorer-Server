@@ -1,8 +1,9 @@
-import { Resolver, Query, Arg, Args, Mutation } from "type-graphql";
+import { Resolver, Query, Arg, Args, Mutation, Authorized } from "type-graphql";
 import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import User from "../entity/User";
+
 import { Status, StatusHandler } from "../graphql/Status";
 import {
   UserCreateInput,
@@ -10,12 +11,15 @@ import {
   UserQueryArgs,
 } from "../graphql/User";
 
+import { ACCOUNT_AUTH } from "../utils/constants";
+
 @Resolver((of) => User)
 export default class UserResolver {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>
   ) {}
 
+  @Authorized(ACCOUNT_AUTH.ADMIN)
   @Query(() => [User]!)
   async Users(): Promise<User[]> {
     // TODO: req wrapper

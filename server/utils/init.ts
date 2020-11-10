@@ -7,11 +7,16 @@ import path from "path";
 import * as TypeORM from "typeorm";
 import { log } from "./";
 
+import { ACCOUNT_AUTH } from "./constants";
+
 // TypeGraphQL
 import UserResolver from "../resolver/User.resolver";
 import RecipeResolver from "../resolver/Recipe.resolver";
+
 import User from "../entity/User";
+
 import { authChecker } from "./authChecker";
+
 import ResolveTime from "../middleware/time";
 import InterceptorOnUid1 from "../middleware/interceptor";
 import LogMiddleware from "../middleware/time";
@@ -22,6 +27,7 @@ export default async (): Promise<ApolloServer> => {
   const schema = await buildSchema({
     resolvers: [UserResolver, RecipeResolver],
     container: Container,
+    // built-in Scalar Date
     dateScalarMode: "timestamp",
     authChecker,
     authMode: "error",
@@ -39,14 +45,30 @@ export default async (): Promise<ApolloServer> => {
     // override typeDefs & resolvers
     schema,
     context: async (ctx: Context) => {
+      // TODO: 把数据库连接注入到上下文?
+
+      const randomID = Math.floor(Math.random() * 100);
+      // 0-30 unlogin
+      // 31-60 common
+      // 61-100 admin
+
+      const UN_LOGIN = randomID >= 0 && randomID <= 30;
+      const COMMON = randomID >= 31 && randomID <= 60;
+      const ADMIN = randomID >= 61 && randomID <= 100;
+
+      const ACCOUNT_TYPE = UN_LOGIN
+        ? ACCOUNT_AUTH.UN_LOGIN
+        : COMMON
+        ? ACCOUNT_AUTH.COMMON
+        : ACCOUNT_AUTH.ADMIN;
+
       const context = {
         // req,
         env: process.env.NODE_ENV,
         // token: ctx.headers.authorization,
         currentUser: {
-          uid: "0001",
-          name: "Test Account 001",
-          roles: ["ADMIN"],
+          uid: randomID,
+          roles: ACCOUNT_TYPE,
         },
       };
       return context;
@@ -60,7 +82,6 @@ export default async (): Promise<ApolloServer> => {
     // engine: true,
     // formatError: () => {},
     // formatResponse: () => {},
-    // cors: true,
     playground: {
       settings: {
         "editor.theme": "dark",
@@ -95,7 +116,7 @@ export const dbConnect = async (): Promise<any> => {
       age: 21,
       isFool: true,
     });
-    log("=== [TypeORM] Initial Mock Data Inserted ===");
+    log("=== [TypeORM] Initial Mock Data Inserted ===\n");
   } catch (error) {
     log(error, "red");
   }

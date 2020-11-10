@@ -1,6 +1,9 @@
-import { USER_ROLES } from "./utils/constants";
+import { USER_ROLES, ACCOUNT_AUTH } from "./utils/constants";
 
 export interface IContext {
-  token: string;
-  roles: USER_ROLES[];
+  env: string;
+  currentUser: {
+    uid: string;
+    roles: ACCOUNT_AUTH;
+  };
 }
