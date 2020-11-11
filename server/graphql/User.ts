@@ -51,30 +51,6 @@ export abstract class IUser {
   lastUpdateDate!: Date;
 }
 
-@InterfaceType()
-export abstract class ITask {
-  @Field((type) => ID)
-  taskId!: string;
-
-  @Field()
-  taskTitle!: string;
-
-  @Field()
-  assignee?: IUser;
-
-  @Field()
-  taskContent!: string;
-
-  @Field()
-  taskStatus!: Boolean;
-
-  @Field()
-  taskReward!: number;
-
-  @Field()
-  taskRate?: number;
-}
-
 @InputType({ description: " User InputObject/Args" })
 export class UserCreateInput implements Partial<IUser> {
   @Field()

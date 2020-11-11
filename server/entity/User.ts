@@ -7,10 +7,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
-  ManyToOne,
-  JoinTable,
 } from "typeorm";
-import { IUser, JOB, ITask } from "../graphql/User";
+import { IUser, JOB } from "../graphql/User";
 
 import Task from "./Task";
 
@@ -45,7 +43,6 @@ export default class User extends BaseEntity implements IUser {
   @UpdateDateColumn()
   lastUpdateDate!: Date;
 
-  @OneToMany(() => Task, (task) => task.assignee, { cascade: true })
-  @JoinTable()
-  tasks?: ITask[];
+  @OneToMany(() => Task, (task) => task.assignee)
+  tasks?: Task[];
 }

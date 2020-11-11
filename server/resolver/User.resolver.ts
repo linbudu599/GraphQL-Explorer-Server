@@ -11,6 +11,7 @@ import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import User from "../entity/User";
+import Task from "../entity/Task";
 
 import { Status, StatusHandler } from "../graphql/Status";
 import {
@@ -26,7 +27,8 @@ import { LogAccessMiddleware } from "../middleware/log";
 @Resolver((of) => User)
 export default class UserResolver {
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(Task) private readonly taskRepository: Repository<Task>
   ) {}
 
   @Authorized(ACCOUNT_AUTH.ADMIN)
@@ -34,6 +36,21 @@ export default class UserResolver {
   @UseMiddleware(LogAccessMiddleware)
   async Users(): Promise<User[]> {
     // TODO: req wrapper
+
+    const a = await this.taskRepository.find({
+      where: {
+        assignee: {
+          uid: 1,
+        },
+      },
+
+      relations: ["assignee"],
+    });
+
+    console.log(a);
+
+    // console.log(await this.userRepository.find({ relations: ["tasks"] }));
+
     return await this.userRepository.find();
   }
 

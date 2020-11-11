@@ -12,6 +12,7 @@ import { ACCOUNT_AUTH } from "./constants";
 // TypeGraphQL
 import UserResolver from "../resolver/User.resolver";
 import RecipeResolver from "../resolver/Recipe.resolver";
+import TaskResolver from "../resolver/Task.resolver";
 
 import User from "../entity/User";
 import Task from "../entity/Task";
@@ -28,7 +29,7 @@ TypeORM.useContainer(Container);
 
 export default async (): Promise<ApolloServer> => {
   const schema = await buildSchema({
-    resolvers: [UserResolver, RecipeResolver],
+    resolvers: [UserResolver, RecipeResolver, TaskResolver],
     container: Container,
     // built-in Scalar Date
     dateScalarMode: "timestamp",
@@ -104,21 +105,37 @@ export const dbConnect = async (): Promise<any> => {
   try {
     const connection = await TypeORM.createConnection();
 
-    // TODO: reorganize data table
+    const task1 = new Task();
+    task1.taskTitle = "task1";
+    task1.taskContent = "task1";
+    task1.taskReward = 1000;
+    task1.taskRate = 1;
+
+    await connection.manager.save(task1);
+
+    const task2 = new Task();
+    task2.taskTitle = "task2";
+    task2.taskContent = "task2";
+    task2.taskReward = 1000;
+    task2.taskRate = 1;
+
+    await connection.manager.save(task2);
+
+    const task3 = new Task();
+    task3.taskTitle = "task3";
+    task3.taskContent = "task3";
+    task3.taskReward = 1000;
+    task3.taskRate = 1;
+
+    await connection.manager.save(task3);
+
     const user = new User();
     user.name = "林不渡-Lv1";
     user.job = JOB.FE;
 
-    await connection.manager.insert(User, user);
+    user.tasks = [task1, task2];
 
-    const task = new Task();
-    task.taskTitle = "xxx";
-    task.taskContent = "XXX";
-    task.taskReward = 1000;
-    task.taskRate = 1;
-    task.assignee = user;
-
-    await connection.manager.insert(Task, task);
+    await connection.manager.save(user);
 
     log("=== [TypeORM] Database Connection Established ===");
     await connection.manager.insert(User, {

@@ -5,8 +5,9 @@ import {
   PrimaryGeneratedColumn,
   BaseEntity,
   ManyToOne,
+  JoinColumn,
 } from "typeorm";
-import { ITask } from "../graphql/User";
+import { ITask } from "../graphql/Task";
 
 import User from "./User";
 
@@ -19,8 +20,8 @@ export default class Task extends BaseEntity implements ITask {
   @Column({ unique: true })
   taskTitle!: string;
 
-  // @Column({ default: "UN_ASSIGNED" })
   @ManyToOne(() => User, (user) => user.tasks)
+  @JoinColumn({ name: "assigneeUID" })
   assignee?: User;
 
   @Column()
