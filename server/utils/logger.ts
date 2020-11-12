@@ -3,11 +3,11 @@ import { log as tmpLogger } from "./";
 
 @Service()
 export class Logger {
-  log(args: string) {
+  log(...args: any[]) {
     tmpLogger("");
     tmpLogger("=== Logger Start ===\n");
 
-    tmpLogger(args + "\n");
+    console.log(...args);
 
     tmpLogger("=== Logger End ===\n");
   }

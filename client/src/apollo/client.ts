@@ -9,12 +9,19 @@ export const IS_LOGGED_IN = gql`
   }
 `;
 
+export interface ICheckLoginedIn {
+  data: {
+    isLoggedIn: boolean;
+  };
+}
+
 export default function createApolloClient() {
   // const { typeDefs, resolvers } = await buildTypeDefsAndResolvers({
   //   resolvers: [CounterResolver],
   //   skipCheck: true, // allow for schema without queries
   // });
 
+  // TODO: explore cache control
   const cache = new InMemoryCache({
     // __typename added
     addTypename: true,
@@ -25,10 +32,10 @@ export default function createApolloClient() {
   const client = new ApolloClient({
     cache,
     uri: 'http://localhost:4000/graphql',
-    // link: createUploadLink({ uri: 'http://localhost:4000/graphql' }),
     headers: {
-      // authorization: localStorage.getItem('token') || '',
-      'client-name': 'GraphQL-Explorer[Client]',
+      // @ts-ignore
+      authorization: localStorage.getItem('token') || '',
+      'client-name': 'GraphQL-Explorer [Client]',
       'client-version': '0.1.0',
     },
   });
@@ -36,6 +43,7 @@ export default function createApolloClient() {
   cache.writeQuery({
     query: IS_LOGGED_IN,
     data: {
+      // TODO: check is token valid by request
       // isLoggedIn: !!localStorage.getItem('token'),
       isLoggedIn: true,
     },

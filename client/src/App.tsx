@@ -6,19 +6,18 @@ import UserMutation from './pages/UserMutation';
 
 const App = () => (
   <>
-    {/* <p>Query(TypeGraphQL-Server) Get All Users</p>
     <GetAllUsers />
 
-
+    {/* 
     <p>Query(TypeGraphQL-Server) Query User By Conditions</p>
     <QueryUser />
 
 
     <p>Delayed Query(TypeGraphQL-Server) Query User Manually</p>
-    <GetAllUsersManually /> */}
+    <GetAllUsersManually />
 
     <p>Mutations(TypeGraphQL-Server) Create User</p>
-    <UserMutation />
+    <UserMutation /> */}
   </>
 );
 

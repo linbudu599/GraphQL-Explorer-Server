@@ -1,24 +1,24 @@
 import React, { useState } from 'react';
 import { gql, useQuery, NetworkStatus } from '@apollo/client';
-import UserItem from "../components/UsertItem";
+import UserItem from '../components/UsertItem';
+
+import { IUser } from '../typings';
 
 export const GET_ALL_USERS = gql`
-    query {
-      Users {
-        uid
-        name
-        age
-        job
-        isFool
-        registryDate
-        lastUpdateDate
-      }
+  query {
+    Users {
+      uid
+      name
+      age
+      job
+      isFool
+      registryDate
+      lastUpdateDate
     }
-  `;
+  }
+`;
 
 const GetAllUsers: React.FC = () => {
-
-
   const {
     loading,
     error,
@@ -50,11 +50,16 @@ const GetAllUsers: React.FC = () => {
 
   if (networkStatus === NetworkStatus.refetch) return <p>'Refetching!'</p>;
   if (loading) return <p>Loading</p>;
+  if (error?.message.includes('Access denied')) return <p>Auth Error</p>;
   if (error) return <p>Error Occured</p>;
 
   return (
     <>
-      {data.Users.map((user) => <UserItem key={user.uid} user={user} />)}
+      <p>{`[Query]`} Get All Users</p>
+
+      {(data.Users as IUser[]).map((user) => (
+        <UserItem key={user.uid} user={user} />
+      ))}
     </>
   );
 };
