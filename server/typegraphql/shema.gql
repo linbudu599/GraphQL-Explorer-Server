@@ -50,11 +50,21 @@ type Mutation {
   CreateUser(newUserInfo: UserCreateInput!): User!
   DeleteUser(uid: String!): Status
   NotLongerFull(uid: String!): Status
+  publisherMutation(message: String): Boolean!
+  pubSubMutation(message: String): Boolean!
+  pubSubMutationToDynamicTopic(message: String, topic: String!): Boolean!
   UpdateTaskInfo(taskUpdateParam: TaskUpdateInput!): Status!
   UpdateUser(modifiedUserInfo: UserUpdateInput!): Status
 }
 
+type Notification {
+  date: Timestamp!
+  id: ID!
+  message: String
+}
+
 type Query {
+  currentDate: Timestamp!
   DeleteTask(taskId: Float!): Task!
   FindUserByConditions(age: Int, isFool: Boolean, name: String!): [User!]!
   FindUserById(uid: String!): User!
@@ -81,6 +91,12 @@ union SearchResult = Cook | Recipe
 type Status {
   message: String!
   success: Boolean!
+}
+
+type Subscription {
+  normalSubscription: Notification!
+  subscriptionWithFilter: Notification!
+  subscriptionWithFilterToDynamicTopic(topic: String!): Notification!
 }
 
 type Task implements ITask {

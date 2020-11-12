@@ -13,6 +13,7 @@ import { ACCOUNT_AUTH } from "./constants";
 import UserResolver from "../resolver/User.resolver";
 import RecipeResolver from "../resolver/Recipe.resolver";
 import TaskResolver from "../resolver/Task.resolver";
+import PubSubResolver from "../resolver/PubSub.resolver";
 
 import User from "../entity/User";
 import Task from "../entity/Task";
@@ -29,7 +30,7 @@ TypeORM.useContainer(Container);
 
 export default async (): Promise<ApolloServer> => {
   const schema = await buildSchema({
-    resolvers: [UserResolver, RecipeResolver, TaskResolver],
+    resolvers: [UserResolver, RecipeResolver, TaskResolver, PubSubResolver],
     container: Container,
     // built-in Scalar Date
     dateScalarMode: "timestamp",
@@ -48,6 +49,7 @@ export default async (): Promise<ApolloServer> => {
     // so u donot use typegraphql and apollo-server to merge schema
     // override typeDefs & resolvers
     schema,
+    // subscriptions: "/pubsub",
     context: async (ctx: Context) => {
       // TODO: 把数据库连接注入到上下文?
 
