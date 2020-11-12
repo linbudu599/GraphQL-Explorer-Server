@@ -11,13 +11,6 @@ export class Status {
   message: string = "";
 }
 
-export class StatusHandler {
+export default class StatusHandler {
   constructor(public success: boolean, public message: string) {}
-}
-
-@Service()
-export class Logger {
-  log(...args: any[]) {
-    console.log(chalk.green(...args));
-  }
 }

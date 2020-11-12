@@ -13,7 +13,7 @@ import { InjectRepository } from "typeorm-typedi-extensions";
 import User from "../entity/User";
 import Task from "../entity/Task";
 
-import { Status, StatusHandler } from "../graphql/Status";
+import StatusHandler, { Status } from "../graphql/Status";
 import {
   UserCreateInput,
   UserUpdateInput,
@@ -46,10 +46,6 @@ export default class UserResolver {
 
       relations: ["assignee"],
     });
-
-    console.log(a);
-
-    // console.log(await this.userRepository.find({ relations: ["tasks"] }));
 
     return await this.userRepository.find();
   }

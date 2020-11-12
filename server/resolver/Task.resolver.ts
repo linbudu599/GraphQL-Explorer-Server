@@ -1,28 +1,12 @@
-import {
-  Resolver,
-  Query,
-  Arg,
-  Args,
-  Mutation,
-  Authorized,
-  UseMiddleware,
-} from "type-graphql";
-import { DeleteResult, Repository } from "typeorm";
+import { Resolver, Query, Arg, Mutation } from "type-graphql";
+import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import User from "../entity/User";
 import Task from "../entity/Task";
 
-import { Status, StatusHandler } from "../graphql/Status";
-import {
-  UserCreateInput,
-  UserUpdateInput,
-  UserQueryArgs,
-} from "../graphql/User";
-
-import { ACCOUNT_AUTH } from "../utils/constants";
-
-import { LogAccessMiddleware } from "../middleware/log";
+import StatusHandler, { Status } from "../graphql/Status";
+import { TaskCreateInput, TaskUpdateInput } from "../graphql/Task";
 
 @Resolver((of) => Task)
 export default class TaskResolver {
@@ -99,5 +83,48 @@ export default class TaskResolver {
     await this.taskRepository.delete(taskId);
 
     return taskDetail ?? null;
+  }
+
+  @Mutation(() => Task)
+  async CreateNewTask(
+    @Arg("taskCreateParam") param: TaskCreateInput
+  ): Promise<Task> {
+    const result = await this.taskRepository.save(param);
+    return result;
+  }
+
+  // TODO: Status -> TaskStatus / UserStatus
+  @Mutation(() => Status)
+  async UpdateTaskInfo(
+    @Arg("taskUpdateParam") param: TaskUpdateInput
+  ): Promise<Status> {
+    const result = await this.taskRepository.update(param.taskId, param);
+    console.log(result);
+    return new StatusHandler(true, "Success");
+  }
+
+  @Mutation(() => Status)
+  async AssignTask(
+    @Arg("taskId") taskId: string,
+    @Arg("uid") uid: string
+    // TODO: handle status
+  ): Promise<any> {
+    const assignee = await this.userRepository.findOne({ uid });
+    const task = await this.taskRepository.findOne(
+      {
+        taskId,
+      },
+      {
+        relations: ["assignee"],
+      }
+    );
+
+    // if (task?.assignee) {
+    //   return new StatusHandler(false, "Assigned");
+    // }
+    task!.assignee = assignee;
+
+    const assign = await this.taskRepository.save(task!);
+    return assign;
   }
 }

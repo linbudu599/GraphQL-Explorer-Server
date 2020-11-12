@@ -45,9 +45,12 @@ interface IUser {
 }
 
 type Mutation {
+  AssignTask(taskId: String!, uid: String!): Status!
+  CreateNewTask(taskCreateParam: TaskCreateInput!): Task!
   CreateUser(newUserInfo: UserCreateInput!): User!
   DeleteUser(uid: String!): Status
   NotLongerFull(uid: String!): Status
+  UpdateTaskInfo(taskUpdateParam: TaskUpdateInput!): Status!
   UpdateUser(modifiedUserInfo: UserUpdateInput!): Status
 }
 
@@ -90,6 +93,22 @@ type Task implements ITask {
   taskTitle: String!
 }
 
+"""Task InputObject"""
+input TaskCreateInput {
+  taskContent: String
+  taskReward: Float
+  taskTitle: String!
+}
+
+"""Args On Task Update"""
+input TaskUpdateInput {
+  taskContent: String
+  taskId: String!
+  taskRate: Float
+  taskReward: Float
+  taskTitle: String
+}
+
 """
 The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
 """
@@ -112,7 +131,7 @@ input UserCreateInput {
   name: String!
 }
 
-"""Args On Updating User"""
+"""Args On User Update"""
 input UserUpdateInput {
   age: Int
   isFool: Boolean

@@ -92,7 +92,7 @@ export class UserQueryArgs {
   isFool?: boolean;
 }
 
-@InputType({ description: "Args On Updating User" })
+@InputType({ description: "Args On User Update" })
 export class UserUpdateInput extends UserCreateInput {
   @Field({ nullable: false })
   @IsString()

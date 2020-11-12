@@ -17,22 +17,22 @@ export default class Task extends BaseEntity implements ITask {
   @PrimaryGeneratedColumn()
   taskId!: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: false })
   taskTitle!: string;
 
-  @ManyToOne(() => User, (user) => user.tasks)
+  @ManyToOne(() => User, (user) => user.tasks, { nullable: true })
   @JoinColumn({ name: "assigneeUID" })
   assignee?: User;
 
-  @Column()
+  @Column({ nullable: false, default: "" })
   taskContent!: string;
 
-  @Column({ default: false })
+  @Column({ nullable: false, default: false })
   taskStatus!: Boolean;
 
-  @Column()
+  @Column({ nullable: false, default: 0 })
   taskReward!: number;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, default: 0 })
   taskRate?: number;
 }
