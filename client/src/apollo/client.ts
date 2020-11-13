@@ -1,7 +1,7 @@
 import { InMemoryCache, ApolloClient, gql, Resolvers } from '@apollo/client';
 import { buildTypeDefsAndResolvers } from 'type-graphql';
 import { createUploadLink } from 'apollo-upload-client';
-import CounterResolver from '../local/Counter/resolver';
+import CounterResolver from '../local/Counter/counter.resolver';
 
 export const IS_LOGGED_IN = gql`
   query IsUserLoggedIn {

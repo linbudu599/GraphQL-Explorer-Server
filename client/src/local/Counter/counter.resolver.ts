@@ -1,28 +1,11 @@
-import {
-  ApolloProvider,
-  useQuery,
-  InMemoryCache,
-  ApolloClient,
-  gql,
-  ApolloCache,
-} from '@apollo/client';
+import { gql, ApolloCache } from '@apollo/client';
 
 import { Resolver, Mutation, Ctx } from 'type-graphql';
 import ApolloContext from '../../apollo/context';
-import CounterType from './type';
+import CounterType from './counter.type';
 
 @Resolver((of) => CounterType)
 export default class CounterResolver {
-  @Mutation((returns) => Boolean, { nullable: true })
-  incrementCounter(@Ctx() { cache }: ApolloContext) {
-    this.updateCounter(cache, (value) => value + 1);
-  }
-
-  @Mutation((returns) => Boolean, { nullable: true })
-  decrementCounter(@Ctx() { cache }: ApolloContext) {
-    this.updateCounter(cache, (value) => Math.max(value - 1, 0));
-  }
-
   private updateCounter(
     cache: ApolloCache<any>,
     getNewValueCb: (value: number) => number
@@ -43,5 +26,15 @@ export default class CounterResolver {
       },
     };
     cache.writeQuery({ query, data });
+  }
+
+  @Mutation(() => Boolean, { nullable: true })
+  incrementCounter(@Ctx() { cache }: ApolloContext) {
+    this.updateCounter(cache, (value) => value + 1);
+  }
+
+  @Mutation(() => Boolean, { nullable: true })
+  decrementCounter(@Ctx() { cache }: ApolloContext) {
+    this.updateCounter(cache, (value) => Math.max(value - 1, 0));
   }
 }
