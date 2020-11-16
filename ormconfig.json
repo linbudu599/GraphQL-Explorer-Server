@@ -1,9 +1,14 @@
 {
   "type": "sqlite",
+  "name": "default",
   "database": "./info.db",
   "synchronize": true,
   "dropSchema": true,
-  "logging": true,
+  "logging": "all",
+  "maxQueryExecutionTime": 1000,
   "logger": "advanced-console",
-  "entities": ["./server/entity/*.ts"]
+  "entities": ["./server/entity/*.ts"],
+  "cache": {
+    "duration": 3000
+  }
 }

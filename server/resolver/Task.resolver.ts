@@ -1,5 +1,5 @@
 import { Resolver, Query, Arg, Mutation } from "type-graphql";
-import { Repository } from "typeorm";
+import { Repository, Transaction, TransactionRepository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import User from "../entity/User";
@@ -85,28 +85,37 @@ export default class TaskResolver {
     return taskDetail ?? null;
   }
 
+  @Transaction()
   @Mutation(() => Task)
   async CreateNewTask(
-    @Arg("taskCreateParam") param: TaskCreateInput
+    @Arg("taskCreateParam") param: TaskCreateInput,
+    @TransactionRepository(Task)
+    taskTransRepo: Repository<Task>
   ): Promise<Task> {
-    const result = await this.taskRepository.save(param);
+    const result = await taskTransRepo.save(param);
     return result;
   }
 
   // TODO: Status -> TaskStatus / UserStatus
+  @Transaction()
   @Mutation(() => Status)
   async UpdateTaskInfo(
-    @Arg("taskUpdateParam") param: TaskUpdateInput
+    @Arg("taskUpdateParam") param: TaskUpdateInput,
+    @TransactionRepository(Task)
+    taskTransRepo: Repository<Task>
   ): Promise<Status> {
-    const result = await this.taskRepository.update(param.taskId, param);
+    const result = await taskTransRepo.update(param.taskId, param);
     console.log(result);
     return new StatusHandler(true, "Success");
   }
 
+  @Transaction()
   @Mutation(() => Status)
   async AssignTask(
     @Arg("taskId") taskId: string,
-    @Arg("uid") uid: string
+    @Arg("uid") uid: string,
+    @TransactionRepository(Task)
+    taskTransRepo: Repository<Task>
     // TODO: handle status
   ): Promise<any> {
     const assignee = await this.userRepository.findOne({ uid });
@@ -124,7 +133,7 @@ export default class TaskResolver {
     // }
     task!.assignee = assignee;
 
-    const assign = await this.taskRepository.save(task!);
+    const assign = await taskTransRepo.save(task!);
     return assign;
   }
 }
