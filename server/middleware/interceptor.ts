@@ -1,5 +1,5 @@
 import { MiddlewareFn } from "type-graphql";
-import { log } from "../utils/";
+import { log } from "../utils/helper";
 
 // intercept exeuction result
 const InterceptorOnUIDFeild = (uid: number): MiddlewareFn => async (

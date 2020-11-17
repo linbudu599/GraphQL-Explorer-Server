@@ -137,6 +137,7 @@ type User implements IUser {
   lastUpdateDate: Timestamp!
   name: String!
   registryDate: Timestamp!
+  spAgeField(param: Float): Float
   uid: ID!
 }
 

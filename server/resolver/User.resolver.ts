@@ -6,6 +6,10 @@ import {
   Mutation,
   Authorized,
   UseMiddleware,
+  Ctx,
+  FieldResolver,
+  Root,
+  ResolverInterface,
 } from "type-graphql";
 import { Repository, Transaction, TransactionRepository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
@@ -23,6 +27,7 @@ import {
 import { ACCOUNT_AUTH } from "../utils/constants";
 
 import { LogAccessMiddleware } from "../middleware/log";
+import { IContext } from "../typding";
 
 @Resolver((of) => User)
 export default class UserResolver {
@@ -34,7 +39,7 @@ export default class UserResolver {
   // @Authorized(ACCOUNT_AUTH.ADMIN)
   @Query(() => [User]!)
   @UseMiddleware(LogAccessMiddleware)
-  async Users(): Promise<User[]> {
+  async Users(@Ctx() ctx: IContext): Promise<User[]> {
     // TODO: req wrapper
 
     const a = await this.taskRepository.find({
@@ -130,8 +135,12 @@ export default class UserResolver {
     }
   }
 
-  // @FieldResolver()
-  // async FieldRootResolver(@Root() user: User): Promise<null> {
-  //   return null;
-  // }
+  @FieldResolver()
+  async spAgeField(
+    @Root() user: User,
+    @Arg("param", { nullable: true }) param?: number
+  ): Promise<number> {
+    // ... do sth addtional
+    return user.age;
+  }
 }

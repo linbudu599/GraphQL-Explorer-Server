@@ -1,5 +1,5 @@
 import { Service } from "typedi";
-import { log as tmpLogger } from "./";
+import { log as tmpLogger } from "./helper";
 
 @Service()
 export class Logger {

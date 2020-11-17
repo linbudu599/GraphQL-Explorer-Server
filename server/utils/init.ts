@@ -5,26 +5,25 @@ import { Container } from "typedi";
 import * as TypeORM from "typeorm";
 import { buildSchema } from "type-graphql";
 import { ApolloServer } from "apollo-server-koa";
-import { log } from "./";
-
-import { ACCOUNT_AUTH } from "./constants";
 
 // TypeGraphQL
+import { JOB } from "../graphql/User";
 import UserResolver from "../resolver/User.resolver";
 import RecipeResolver from "../resolver/Recipe.resolver";
 import TaskResolver from "../resolver/Task.resolver";
 import PubSubResolver from "../resolver/PubSub.resolver";
 
+// TypeORM
 import User from "../entity/User";
 import Task from "../entity/Task";
 
-import { JOB } from "../graphql/User";
-
+import { log } from "./helper";
 import { authChecker } from "./authChecker";
+import { ACCOUNT_AUTH } from "./constants";
 
+// Middlewares applied on TypeGraphQL
 import ResolveTime from "../middleware/time";
-import InterceptorOnUid1 from "../middleware/interceptor";
-import LogMiddleware from "../middleware/time";
+import InterceptorOnUID1 from "../middleware/interceptor";
 
 TypeORM.useContainer(Container);
 
@@ -32,27 +31,24 @@ export default async (): Promise<ApolloServer> => {
   const schema = await buildSchema({
     resolvers: [UserResolver, RecipeResolver, TaskResolver, PubSubResolver],
     container: Container,
-    // built-in Scalar Date
+    // TypeGraphQL built-in Scalar Date
     dateScalarMode: "timestamp",
     authChecker,
     authMode: "error",
     emitSchemaFile: path.resolve(__dirname, "../typegraphql/shema.gql"),
     validate: true,
-    globalMiddlewares: [ResolveTime, InterceptorOnUid1],
+    globalMiddlewares: [ResolveTime, InterceptorOnUID1],
   });
 
   await dbConnect();
 
   const server = new ApolloServer({
-    // TODO: merge resolver automatically
     // options schema will override typeDefs & resolvers
-    // so u donot use typegraphql and apollo-server to merge schema
-    // override typeDefs & resolvers
+    // so donot use typegraphql and apollo-server to merge schema
     schema,
     // subscriptions: "/pubsub",
     context: async (ctx: Context) => {
-      // TODO: 把数据库连接注入到上下文?
-
+      // 随机鉴权
       const randomID = Math.floor(Math.random() * 100);
       // 0-30 unlogin
       // 31-60 common
@@ -79,11 +75,14 @@ export default async (): Promise<ApolloServer> => {
       };
       return context;
     },
+    // 关于RootValue和Context：https://stackoverflow.com/questions/44344560/context-vs-rootvalue-in-apollo-graphql
+    // 简单的说，RootValue就像是一个自定义的类型（和其他类型一样），但它只拥有一个动态解析的字段
+    // RootValue是解析链的初始值 也就是入口Resolver的parent参数
     rootValue: (documentAST) => {
       // const op = getOperationAST(documentNode);
       // return op === "mutation" ? mutationRoot : queryRoot;
     },
-    // introspection: true,
+    introspection: true,
     // tracing: true,
     // engine: true,
     // formatError: () => {},

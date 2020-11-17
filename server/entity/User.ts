@@ -1,4 +1,4 @@
-import { ObjectType } from "type-graphql";
+import { Arg, Field, Float, ObjectType } from "type-graphql";
 import {
   Entity,
   Column,
@@ -45,4 +45,7 @@ export default class User extends BaseEntity implements IUser {
 
   @OneToMany(() => Task, (task) => task.assignee)
   tasks?: Task[];
+
+  @Field((type) => Float, { nullable: true })
+  spAgeField?: number;
 }

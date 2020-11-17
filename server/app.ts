@@ -1,19 +1,23 @@
 import "reflect-metadata";
 import Koa from "koa";
 import dotenv from "dotenv";
-import initialize from "./utils/init";
-import cors from "./middleware/cors";
-import { log } from "./utils";
 
-const dev = process.env.NODE_ENV === "dev";
+import initialize from "./utils/init";
+import { log } from "./utils/helper";
+
+import cors from "./middleware/cors";
+
+const dev = process.env.NODE_ENV === "development";
 
 dotenv.config({ path: dev ? ".env.dev" : ".env.prod" });
 
+log(`[Env] Loading ${dev ? "DEV" : "PROD"} File`);
+
 async function bootstrap() {
   const app = new Koa();
-  const server = await initialize();
   app.use(cors);
 
+  const server = await initialize();
   server.applyMiddleware({ app });
 
   app.listen(4000, () =>

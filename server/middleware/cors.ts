@@ -1,5 +1,6 @@
 import { Context, Next } from "koa";
-import { log } from "../utils";
+
+import { log } from "../utils/helper";
 
 export default async (ctx: Context, next: Next) => {
   // log(`[CORS] request method: ${ctx.request.method}\n`);
