@@ -1,5 +1,8 @@
 import { PubSubEngine } from "graphql-subscriptions";
-import Notification, { NotificationPayload } from "../graphql/PubSub";
+import Notification, {
+  NotificationPayload,
+  SUBSCRIPTION_MSG,
+} from "../graphql/PubSub";
 
 import {
   Resolver,
@@ -13,6 +16,8 @@ import {
   ResolverFilterData,
 } from "type-graphql";
 
+// Mutation -> Trigger Subscription -> Push to Client
+
 @Resolver((of) => Notification)
 export default class PubSubResolver {
   private autoIncrePointer: number = 0;
@@ -22,6 +27,7 @@ export default class PubSubResolver {
     return new Date();
   }
 
+  // 自定义载荷中的message
   @Mutation(() => Boolean)
   async pubSubMutation(
     @PubSub() pubSub: PubSubEngine,
@@ -31,20 +37,21 @@ export default class PubSubResolver {
       id: ++this.autoIncrePointer,
       message,
     };
-    await pubSub.publish("NOTIFICATIONS", payload);
+    await pubSub.publish(SUBSCRIPTION_MSG.NOTIFICATIONS, payload);
     return true;
   }
 
   @Mutation((returns) => Boolean)
   async publisherMutation(
-    @PubSub("NOTIFICATIONS") publish: Publisher<NotificationPayload>,
+    @PubSub(SUBSCRIPTION_MSG.NOTIFICATIONS)
+    publish: Publisher<NotificationPayload>,
     @Arg("message", { nullable: true }) message?: string
   ): Promise<boolean> {
     await publish({ id: ++this.autoIncrePointer, message });
     return true;
   }
 
-  @Subscription({ topics: "NOTIFICATIONS" })
+  @Subscription({ topics: SUBSCRIPTION_MSG.NOTIFICATIONS })
   normalSubscription(
     @Root() { id, message }: NotificationPayload
   ): Notification {
@@ -52,7 +59,9 @@ export default class PubSubResolver {
   }
 
   @Subscription(() => Notification, {
-    topics: "NOTIFICATIONS",
+    // 订阅此话题
+    topics: SUBSCRIPTION_MSG.NOTIFICATIONS,
+    // 只在符合条件时推送信息
     filter: ({ payload }: ResolverFilterData<NotificationPayload>) =>
       payload.id % 2 === 0,
   })
@@ -61,6 +70,7 @@ export default class PubSubResolver {
     return newNotification;
   }
 
+  // 自定义发布消息类型
   @Mutation((returns) => Boolean)
   async pubSubMutationToDynamicTopic(
     @PubSub() pubSub: PubSubEngine,
@@ -75,6 +85,7 @@ export default class PubSubResolver {
     return true;
   }
 
+  // 推送动态类型的消息类型
   @Subscription({
     topics: ({ args }) => args.topic,
   })

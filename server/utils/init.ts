@@ -46,7 +46,9 @@ export default async (): Promise<ApolloServer> => {
     // options schema will override typeDefs & resolvers
     // so donot use typegraphql and apollo-server to merge schema
     schema,
-    // subscriptions: "/pubsub",
+    subscriptions: {
+      path: "/pubsub",
+    },
     context: async (ctx: Context) => {
       // 随机鉴权
       const randomID = Math.floor(Math.random() * 100);

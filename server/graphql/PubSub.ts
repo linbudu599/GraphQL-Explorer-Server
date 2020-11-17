@@ -16,3 +16,8 @@ export interface NotificationPayload {
   id: number;
   message?: string;
 }
+
+// TODO: more topics for subscriptions
+export enum SUBSCRIPTION_MSG {
+  NOTIFICATIONS = "NOTIFICATIONS",
+}
