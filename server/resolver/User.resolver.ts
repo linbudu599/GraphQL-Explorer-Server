@@ -7,7 +7,7 @@ import {
   Authorized,
   UseMiddleware,
 } from "type-graphql";
-import { Repository } from "typeorm";
+import { Repository, Transaction, TransactionRepository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import User from "../entity/User";
@@ -31,7 +31,7 @@ export default class UserResolver {
     @InjectRepository(Task) private readonly taskRepository: Repository<Task>
   ) {}
 
-  @Authorized(ACCOUNT_AUTH.ADMIN)
+  // @Authorized(ACCOUNT_AUTH.ADMIN)
   @Query(() => [User]!)
   @UseMiddleware(LogAccessMiddleware)
   async Users(): Promise<User[]> {
@@ -43,7 +43,6 @@ export default class UserResolver {
           uid: 1,
         },
       },
-
       relations: ["assignee"],
     });
 
@@ -66,27 +65,32 @@ export default class UserResolver {
   }
 
   // TODO: admin auth required
+  @Transaction()
   @Mutation(() => User)
   async CreateUser(
-    @Arg("newUserInfo") user: UserCreateInput
+    @Arg("newUserInfo") user: UserCreateInput,
+    @TransactionRepository(User)
+    userTransRepo: Repository<User>
   ): Promise<(User & UserCreateInput) | undefined> {
     // TODO: validate params
     try {
-      const res = await this.userRepository.save(user);
+      const res = await userTransRepo.save(user);
       return res;
     } catch (error) {
       console.error(error);
     }
   }
 
-  // TODO: auth
+  @Transaction()
   @Mutation(() => Status, { nullable: true })
   async UpdateUser(
-    @Arg("modifiedUserInfo") user: UserUpdateInput
+    @Arg("modifiedUserInfo") user: UserUpdateInput,
+    @TransactionRepository(User)
+    userTransRepo: Repository<User>
   ): Promise<Status | undefined> {
     // TODO: find first
     try {
-      const res = await this.userRepository.update({ uid: user.uid }, user);
+      const res = await userTransRepo.update({ uid: user.uid }, user);
       // TODO: res check & error handler
       return new StatusHandler(true, "Success");
     } catch (error) {
@@ -94,12 +98,16 @@ export default class UserResolver {
     }
   }
 
-  // TODO: auth
+  @Transaction()
   @Mutation(() => Status, { nullable: true })
-  async DeleteUser(@Arg("uid") uid: string): Promise<Status | undefined> {
+  async DeleteUser(
+    @Arg("uid") uid: string,
+    @TransactionRepository(User)
+    userTransRepo: Repository<User>
+  ): Promise<Status | undefined> {
     // TODO: find first
     try {
-      const res = await this.userRepository.delete({ uid });
+      const res = await userTransRepo.delete({ uid });
       // TODO: check res
       return new StatusHandler(true, "Success");
     } catch (error) {
@@ -107,11 +115,15 @@ export default class UserResolver {
     }
   }
 
-  // TODO: auth
+  @Transaction()
   @Mutation(() => Status, { nullable: true })
-  async NotLongerFull(@Arg("uid") uid: string): Promise<Status | undefined> {
+  async NotLongerFull(
+    @Arg("uid") uid: string,
+    @TransactionRepository(User)
+    userTransRepo: Repository<User>
+  ): Promise<Status | undefined> {
     try {
-      const item = await this.userRepository.update({ uid }, { isFool: false });
+      const item = await userTransRepo.update({ uid }, { isFool: false });
       return new StatusHandler(true, "Success");
     } catch (error) {
       console.error(error);
