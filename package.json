@@ -4,22 +4,29 @@
   "description": "Full API & Ability Usage of Apollo Client/Server.",
   "scripts": {
     "dev": "npm-run-all --parallel dev:server dev:client",
-    "clean": "rimraf ./server/**/*.js ./server/**/*.d.ts ./server/**/*.js.map ./server/**/*.d.ts.map",
-    "dev:server": "cross-env NODE_ENV=development nodemon ./server/app.ts",
-    "build:server": "tsc",
-    "debug:server": "tsc --watch && nodemon ./server/app.js",
-    "start:server": "ts-node ./server/app.ts",
     "dev:client": "cross-env NODE_ENV=development parcel ./client/public/index.html --out-dir ./client/dist --target browser --cache-dir ./client/.cache --port 5999 --log-level 3",
     "test:client": "cross-env TEST=development jest --forceExit",
-    "build:client": "cross-env NODE_ENV=production parcel build ./client/public/index.html --out-dir ./client/dist --target bwoser --cache-dir ./client/.cache --experimental-scope-hoisting"
+    "build:client": "cross-env NODE_ENV=production parcel build ./client/public/index.html --out-dir ./client/dist --target bwoser --cache-dir ./client/.cache --experimental-scope-hoisting",
+    "clean:server": "rimraf ./server/\\*\\*/\\*.js ./server/\\*\\*/\\*.d.ts",
+    "dev:server": "cross-env NODE_ENV=development nodemon ./server/app.ts",
+    "compile:server": "npm run clean:server && tsc",
+    "start:server": "cross-env NODE_ENV=production npm run compile:server && nodemon ./server/app.js",
+    "pm2:dev": "npm run compile:server && pm2 start ecosystem.config.js",
+    "pressure-test": "node ./pt-main.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/linbudu599/GraphQL-Explorer.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "GraphQL",
+    "Parcel",
+    "TypeGraphQL",
+    "Apollo-Server",
+    "Apollo-Client"
+  ],
+  "author": "linbudu599",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/linbudu599/GraphQL-Explorer/issues"
   },
@@ -47,6 +54,7 @@
     "npm-run": "^5.0.1",
     "npm-run-all": "^4.1.5",
     "parcel-bundler": "^1.12.4",
+    "pm2": "^4.5.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "sqlite3": "^5.0.0",
@@ -86,6 +94,7 @@
     "nodemon": "^2.0.4",
     "react-test-renderer": "^16.13.1",
     "rimraf": "^3.0.2",
+    "superagent": "^6.1.0",
     "ts-jest": "^26.3.0",
     "ts-node": "^9.0.0"
   }

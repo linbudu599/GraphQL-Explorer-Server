@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { Context } from "koa";
 import path from "path";
+import dotenv from "dotenv";
 import { Container } from "typedi";
 import * as TypeORM from "typeorm";
 import { buildSchema } from "type-graphql";
@@ -26,6 +27,12 @@ import ResolveTime from "../middleware/time";
 import InterceptorOnUID1 from "../middleware/interceptor";
 
 TypeORM.useContainer(Container);
+
+const dev = process.env.NODE_ENV === "development";
+
+dotenv.config({ path: dev ? ".env.dev" : ".env.prod" });
+
+log(`[Env] Loading ${dev ? "[DEV]" : "[PROD]"} File`);
 
 export default async (): Promise<ApolloServer> => {
   const schema = await buildSchema({
@@ -106,7 +113,23 @@ export default async (): Promise<ApolloServer> => {
 export const dbConnect = async (): Promise<any> => {
   log("=== [TypeORM] TypeORM Connecting ===");
   try {
-    const connection = await TypeORM.createConnection();
+    const connection = await TypeORM.createConnection({
+      type: "sqlite",
+      name: "default",
+      // use different databse
+      database: "./info.db",
+      // disabled in prod
+      synchronize: true,
+      dropSchema: true,
+      logging: "all",
+      maxQueryExecutionTime: 1000,
+      logger: "advanced-console",
+      // TODO: remove to env variables
+      entities: [dev ? "server/entity/*.ts" : "server/entity/*.js"],
+      cache: {
+        duration: 3000,
+      },
+    });
 
     const task1 = new Task();
     task1.taskTitle = "task1";

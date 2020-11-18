@@ -22,6 +22,19 @@ npm run dev:client
 npm run dev:server
 ```
 
+## Script
+
+- `dev`: `dev:client` + `dev:server`
+- `dev:client`: develop client application
+- `dev:server`: develop server
+- `test:client`: invoke test cases in client
+- `build:client`: build client application by Parcel
+- `clean:server`: clear `tsc` compile file in server
+- `start:server`: run in prod by nodemon
+- `compile:server`: compile server code
+- `pm2:dev`: run in prod by PM2(fork mode)
+- `pressure-test`: run pressure test to server, see[pressure-fork.js](./pt-fork.js) & [pressure-main.js](./pt-main.js)
+
 ## Document
 
 see offcial docs for more information.
