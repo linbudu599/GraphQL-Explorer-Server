@@ -19,6 +19,7 @@ import {
 } from "class-validator";
 
 import { IUser } from "./User";
+import User from "../entity/User";
 
 @InterfaceType()
 export abstract class ITask {
@@ -28,7 +29,7 @@ export abstract class ITask {
   @Field()
   taskTitle!: string;
 
-  @Field()
+  @Field(() => User, { nullable: true })
   assignee?: IUser;
 
   @Field()

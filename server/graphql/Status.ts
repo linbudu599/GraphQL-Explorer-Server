@@ -1,16 +1,22 @@
 import { Field, ObjectType } from "type-graphql";
-import { Service } from "typedi";
-import chalk from "chalk";
+import User from "../entity/User";
 
-@ObjectType()
+@ObjectType({ description: "Response Status Indicator" })
 export class Status {
-  @Field()
+  @Field({ nullable: false })
   success!: boolean;
 
-  @Field()
-  message: string = "";
+  @Field({ nullable: false })
+  message!: string;
+
+  @Field(() => [User]!, { nullable: true })
+  data?: User[];
 }
 
 export default class StatusHandler {
-  constructor(public success: boolean, public message: string) {}
+  constructor(
+    public success: boolean,
+    public message: string,
+    public data: any = []
+  ) {}
 }

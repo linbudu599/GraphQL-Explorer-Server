@@ -11,3 +11,10 @@ export enum ACCOUNT_AUTH {
   COMMON = 0,
   ADMIN = 1,
 }
+
+export enum RESPONSE_INDICATOR {
+  NOT_FOUND = "Resource Not Found",
+  EXISTED = "Resource Existed",
+  SUCCESS = "Success",
+  FAILED = "Operation Failed",
+}

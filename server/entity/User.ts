@@ -44,6 +44,7 @@ export default class User extends BaseEntity implements IUser {
   lastUpdateDate!: Date;
 
   @OneToMany(() => Task, (task) => task.assignee)
+  @Field((type) => [Task]!, { nullable: true })
   tasks?: Task[];
 
   @Field((type) => Float, { nullable: true })

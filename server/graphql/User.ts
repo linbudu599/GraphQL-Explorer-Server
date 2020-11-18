@@ -15,6 +15,8 @@ import {
   IsOptional,
   Max,
   Min,
+  IsEnum,
+  IsPositive,
 } from "class-validator";
 
 export enum JOB {
@@ -51,30 +53,11 @@ export abstract class IUser {
   lastUpdateDate!: Date;
 }
 
-@InputType({ description: " User InputObject/Args" })
-export class UserCreateInput implements Partial<IUser> {
-  @Field()
-  @Length(1, 20)
-  @IsString()
-  name?: string;
-
-  @Field((type) => Int, { nullable: true })
-  @IsOptional()
-  @Max(100)
-  @Min(18)
-  @IsNumber()
-  age?: number;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsBoolean()
-  isFool?: boolean;
-}
-
 @ArgsType()
 // extends UserCreateInput will result in error GraphQL Schema
 export class UserQueryArgs {
-  @Field()
+  @Field({ nullable: true })
+  @IsOptional()
   @Length(1, 20)
   @IsString()
   name?: string;
@@ -90,6 +73,37 @@ export class UserQueryArgs {
   @IsOptional()
   @IsBoolean()
   isFool?: boolean;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsEnum(JOB)
+  job?: JOB;
+}
+
+@InputType({ description: " User InputObject/Args" })
+export class UserCreateInput implements Partial<IUser> {
+  @Field({ nullable: false })
+  @Length(1, 20)
+  @IsString()
+  name!: string;
+
+  @Field((type) => Int, { nullable: true })
+  @IsOptional()
+  @Max(80)
+  @Min(0)
+  @IsPositive()
+  @IsNumber()
+  age?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  isFool?: boolean;
+
+  @Field((type) => JOB, { nullable: true })
+  @IsOptional()
+  @IsEnum(JOB)
+  job?: JOB;
 }
 
 @InputType({ description: "Args On User Update" })

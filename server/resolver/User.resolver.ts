@@ -24,7 +24,7 @@ import {
   UserQueryArgs,
 } from "../graphql/User";
 
-import { ACCOUNT_AUTH } from "../utils/constants";
+import { ACCOUNT_AUTH, RESPONSE_INDICATOR } from "../utils/constants";
 
 import { LogAccessMiddleware } from "../middleware/log";
 import { IContext } from "../typding";
@@ -37,52 +37,75 @@ export default class UserResolver {
   ) {}
 
   // @Authorized(ACCOUNT_AUTH.ADMIN)
-  @Query(() => [User]!)
+  @Query(() => Status)
   @UseMiddleware(LogAccessMiddleware)
-  async Users(@Ctx() ctx: IContext): Promise<User[]> {
-    // TODO: req wrapper
-
-    const a = await this.taskRepository.find({
-      where: {
-        assignee: {
-          uid: 1,
-        },
-      },
-      relations: ["assignee"],
-    });
-
-    return await this.userRepository.find();
+  async Users(@Ctx() ctx: IContext): Promise<Status> {
+    try {
+      const usersWithTasks = await this.userRepository.find({
+        relations: ["tasks"],
+      });
+      return new StatusHandler(
+        true,
+        RESPONSE_INDICATOR.SUCCESS,
+        usersWithTasks
+      );
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 
-  @Query(() => User)
-  async FindUserById(@Arg("uid") uid: string): Promise<User | undefined> {
-    // TODO: req wrapper
-    // TODO: number -> string
-    return this.userRepository.findOne({ uid });
+  @Query(() => Status)
+  async FindUserById(@Arg("uid") uid: string): Promise<Status> {
+    const user = await this.userRepository.findOne(
+      { uid },
+      {
+        relations: ["tasks"],
+      }
+    );
+    if (!user) {
+      return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
+    }
+    return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [user]);
   }
 
-  @Query(() => [User]!)
+  // Use another service to query by user.tasks
+  @Query(() => Status)
   async FindUserByConditions(
-    @Args({ validate: false }) conditions: UserQueryArgs
-  ): Promise<User[]> {
-    // TODO: req wrapper
-    return await this.userRepository.find({ ...conditions });
+    @Args() conditions: UserQueryArgs
+  ): Promise<Status> {
+    try {
+      const res = await this.userRepository.find({ ...conditions });
+      const isEmpty = res.length === 0;
+      return new StatusHandler(
+        !isEmpty,
+        isEmpty ? RESPONSE_INDICATOR.NOT_FOUND : RESPONSE_INDICATOR.SUCCESS,
+        res
+      );
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 
-  // TODO: admin auth required
   @Transaction()
-  @Mutation(() => User)
+  @Mutation(() => Status)
   async CreateUser(
     @Arg("newUserInfo") user: UserCreateInput,
     @TransactionRepository(User)
     userTransRepo: Repository<User>
-  ): Promise<(User & UserCreateInput) | undefined> {
-    // TODO: validate params
+  ): Promise<Status> {
     try {
+      const isExistingUser = await this.userRepository.findOne({
+        name: user.name,
+      });
+      if (isExistingUser) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.EXISTED, []);
+      }
+
       const res = await userTransRepo.save(user);
-      return res;
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
     } catch (error) {
-      console.error(error);
+      // FIXME: should filter sensitive data on throwing
+      return new StatusHandler(false, JSON.stringify(error), []);
     }
   }
 
@@ -93,45 +116,44 @@ export default class UserResolver {
     @TransactionRepository(User)
     userTransRepo: Repository<User>
   ): Promise<Status | undefined> {
-    // TODO: find first
     try {
+      const isExistingUser = await this.userRepository.findOne({
+        uid: user.uid,
+      });
+      if (!isExistingUser) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
+      }
+
+      // PUZZLE: should judge by generatedMaps?
       const res = await userTransRepo.update({ uid: user.uid }, user);
-      // TODO: res check & error handler
-      return new StatusHandler(true, "Success");
+      const updatedItem = await this.userRepository.findOne({
+        uid: user.uid,
+      });
+
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updatedItem]);
     } catch (error) {
-      console.error(error);
+      return new StatusHandler(false, JSON.stringify(error), []);
     }
   }
 
+  // TODO: constraint fix
   @Transaction()
-  @Mutation(() => Status, { nullable: true })
+  @Mutation(() => Status)
   async DeleteUser(
     @Arg("uid") uid: string,
     @TransactionRepository(User)
     userTransRepo: Repository<User>
-  ): Promise<Status | undefined> {
-    // TODO: find first
+  ): Promise<Status> {
     try {
+      const isExistingUser = await this.userRepository.findOne(uid);
+      if (!isExistingUser) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
+      }
       const res = await userTransRepo.delete({ uid });
-      // TODO: check res
-      return new StatusHandler(true, "Success");
+      console.log(res);
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
     } catch (error) {
-      console.error(error);
-    }
-  }
-
-  @Transaction()
-  @Mutation(() => Status, { nullable: true })
-  async NotLongerFull(
-    @Arg("uid") uid: string,
-    @TransactionRepository(User)
-    userTransRepo: Repository<User>
-  ): Promise<Status | undefined> {
-    try {
-      const item = await userTransRepo.update({ uid }, { isFool: false });
-      return new StatusHandler(true, "Success");
-    } catch (error) {
-      console.error(error);
+      return new StatusHandler(false, JSON.stringify(error), []);
     }
   }
 
@@ -140,7 +162,7 @@ export default class UserResolver {
     @Root() user: User,
     @Arg("param", { nullable: true }) param?: number
   ): Promise<number> {
-    // ... do sth addtional
+    // ... do sth addtional here
     return user.age;
   }
 }

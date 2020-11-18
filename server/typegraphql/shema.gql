@@ -25,7 +25,7 @@ enum Difficulty {
 }
 
 interface ITask {
-  assignee: IUser!
+  assignee: User
   taskContent: String!
   taskId: ID!
   taskRate: Float!
@@ -44,12 +44,17 @@ interface IUser {
   uid: ID!
 }
 
+"""Job Enum Type"""
+enum Job {
+  BE
+  FE
+}
+
 type Mutation {
   AssignTask(taskId: String!, uid: String!): Status!
   CreateNewTask(taskCreateParam: TaskCreateInput!): Task!
-  CreateUser(newUserInfo: UserCreateInput!): User!
-  DeleteUser(uid: String!): Status
-  NotLongerFull(uid: String!): Status
+  CreateUser(newUserInfo: UserCreateInput!): Status!
+  DeleteUser(uid: String!): Status!
   publisherMutation(message: String): Boolean!
   pubSubMutation(message: String): Boolean!
   pubSubMutationToDynamicTopic(message: String, topic: String!): Boolean!
@@ -66,8 +71,8 @@ type Notification {
 type Query {
   currentDate: Timestamp!
   DeleteTask(taskId: Float!): Task!
-  FindUserByConditions(age: Int, isFool: Boolean, name: String!): [User!]!
-  FindUserById(uid: String!): User!
+  FindUserByConditions(age: Int, isFool: Boolean, job: String, name: String): Status!
+  FindUserById(uid: String!): Status!
   GetTaskByID(taskId: Float!): Task!
   QueryTaskAssignee(taskId: Float!): User!
   QueryUserTasks(uid: Float!): [Task!]!
@@ -75,7 +80,7 @@ type Query {
   Search(cookName: String!): [SearchResult!]!
   Tasks: [Task!]!
   ToggleTaskStatus(taskId: Float!): Task!
-  Users: [User!]!
+  Users: Status!
 }
 
 type Recipe {
@@ -88,7 +93,9 @@ type Recipe {
 
 union SearchResult = Cook | Recipe
 
+"""Response Status Indicator"""
 type Status {
+  data: [User!]
   message: String!
   success: Boolean!
 }
@@ -100,7 +107,7 @@ type Subscription {
 }
 
 type Task implements ITask {
-  assignee: IUser!
+  assignee: User
   taskContent: String!
   taskId: ID!
   taskRate: Float!
@@ -138,6 +145,7 @@ type User implements IUser {
   name: String!
   registryDate: Timestamp!
   spAgeField(param: Float): Float
+  tasks: [Task!]
   uid: ID!
 }
 
@@ -145,6 +153,7 @@ type User implements IUser {
 input UserCreateInput {
   age: Int
   isFool: Boolean
+  job: Job
   name: String!
 }
 
@@ -152,6 +161,7 @@ input UserCreateInput {
 input UserUpdateInput {
   age: Int
   isFool: Boolean
+  job: Job
   name: String!
   uid: String!
 }
