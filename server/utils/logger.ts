@@ -5,10 +5,9 @@ import { log as tmpLogger } from "./helper";
 export class Logger {
   log(...args: any[]) {
     tmpLogger("");
-    tmpLogger("=== Logger Start ===\n");
 
     console.log(...args);
 
-    tmpLogger("=== Logger End ===\n");
+    tmpLogger("");
   }
 }

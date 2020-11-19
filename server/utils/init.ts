@@ -25,6 +25,9 @@ import { ACCOUNT_AUTH } from "./constants";
 // Middlewares applied on TypeGraphQL
 import ResolveTime from "../middleware/time";
 import InterceptorOnUID1 from "../middleware/interceptor";
+import LogAccessMiddleware from "../middleware/log";
+
+import { ExtensionsMetadataRetriever } from "../extensions/GetMetadata";
 
 TypeORM.useContainer(Container);
 
@@ -44,7 +47,12 @@ export default async (): Promise<ApolloServer> => {
     authMode: "error",
     emitSchemaFile: path.resolve(__dirname, "../typegraphql/shema.gql"),
     validate: true,
-    globalMiddlewares: [ResolveTime, InterceptorOnUID1],
+    globalMiddlewares: [
+      ResolveTime,
+      InterceptorOnUID1,
+      ExtensionsMetadataRetriever,
+      LogAccessMiddleware,
+    ],
   });
 
   await dbConnect();

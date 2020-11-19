@@ -26,7 +26,6 @@ import {
 
 import { ACCOUNT_AUTH, RESPONSE_INDICATOR } from "../utils/constants";
 
-import { LogAccessMiddleware } from "../middleware/log";
 import { IContext } from "../typding";
 
 @Resolver((of) => User)
@@ -38,7 +37,6 @@ export default class UserResolver {
 
   // @Authorized(ACCOUNT_AUTH.ADMIN)
   @Query(() => Status)
-  @UseMiddleware(LogAccessMiddleware)
   async Users(@Ctx() ctx: IContext): Promise<Status> {
     try {
       const usersWithTasks = await this.userRepository.find({

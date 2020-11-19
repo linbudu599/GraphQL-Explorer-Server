@@ -1,4 +1,4 @@
-import { Arg, Field, Float, ObjectType } from "type-graphql";
+import { Extensions, Field, Float, ObjectType } from "type-graphql";
 import {
   Entity,
   Column,
@@ -8,6 +8,8 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from "typeorm";
+
+import { LogExtension } from "../extensions/LogExtension";
 import { IUser, JOB } from "../graphql/User";
 
 import Task from "./Task";
@@ -47,6 +49,9 @@ export default class User extends BaseEntity implements IUser {
   @Field((type) => [Task]!, { nullable: true })
   tasks?: Task[];
 
+  @Extensions({ info: "User.name Field" })
+  @Extensions({ complexity: 1 })
+  @LogExtension({ message: "我直接好家伙" })
   @Field((type) => Float, { nullable: true })
   spAgeField?: number;
 }

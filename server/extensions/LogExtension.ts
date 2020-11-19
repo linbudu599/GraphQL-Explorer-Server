@@ -7,7 +7,8 @@ interface ILogOptions {
 
 type Decorators = PropertyDecorator & MethodDecorator & ClassDecorator;
 
-export const Log = (msgOrOpts: string | ILogOptions): Decorators => {
+// use: @LogExtension("xxx")
+export const LogExtension = (msgOrOpts: string | ILogOptions): Decorators => {
   return Extensions({
     log:
       typeof msgOrOpts === "string"
