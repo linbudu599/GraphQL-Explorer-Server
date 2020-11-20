@@ -3,9 +3,9 @@ export default {
   bail: 5,
   clearMocks: true,
   collectCoverage: true,
-  collectCoverageFrom: ["./client/src/components/*.{ts|tsx}"],
+  collectCoverageFrom: ["./client/src/components/*.tsx"],
+  // only collect coverage reports in client for now
   coverageDirectory: "coverage",
-  coveragePathIgnorePatterns: ["/**/node_modules/"],
   coverageProvider: "v8",
   coverageReporters: ["json", "text", "lcov", "clover"],
   moduleFileExtensions: ["js", "json", "jsx", "ts", "tsx", "node"],

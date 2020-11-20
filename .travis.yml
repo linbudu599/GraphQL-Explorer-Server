@@ -1,0 +1,20 @@
+language: node_js
+
+node_js:
+  - 12
+  - 14
+  - node
+  - lts/*
+
+branches:
+  - master
+  - main
+
+install:
+  - npm ci
+script:
+  - npm run test:client
+  - npm run build:client
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

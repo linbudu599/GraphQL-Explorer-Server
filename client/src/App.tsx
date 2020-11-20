@@ -1,6 +1,5 @@
 import React from 'react';
 
-import Counter from './pages/Counter';
 import GetAllUsers from './pages/GetAllUsers';
 import QueryUser from './pages/QueryUser';
 import GetAllUsersManually from './pages/GetAllUsersManually';
@@ -8,6 +7,7 @@ import UserMutation from './pages/UserMutation';
 
 const App = () => (
   <>
+  <h1>UNDER DEVELOPING</h1>
     {/* <Counter /> */}
 
     {/* <GetAllUsers /> */}
