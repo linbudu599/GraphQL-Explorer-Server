@@ -1,11 +1,20 @@
+import { Service } from "typedi";
 import { Resolver, Query, Arg } from "type-graphql";
 import { sampleCooks, sampleRecipes } from "../utils/mock";
 import { SearchResult, Difficulty, Cook, Recipe } from "../graphql/Recipe";
+import RecipeService from "../service/Recipe.service";
+import { log } from "../utils/helper";
 
-@Resolver()
+@Service()
+@Resolver((of) => Recipe)
 export default class RecipeResolver {
   private recipesData: Recipe[] = sampleRecipes;
   private cooks: Cook[] = sampleCooks;
+
+  constructor(private readonly recipeService: RecipeService) {
+    // created for each request (which means scoped)
+    log("RecipeService Created!");
+  }
 
   @Query(() => [SearchResult])
   async Search(
@@ -25,10 +34,10 @@ export default class RecipeResolver {
     difficulty?: Difficulty
   ): Promise<Recipe[]> {
     if (!difficulty) {
-      return this.recipesData;
+      return await this.recipeService.getAllRecipes();
     }
 
-    return this.recipesData.filter(
+    return (await this.recipeService.getAllRecipes()).filter(
       (recipe) => recipe.preparationDifficulty === difficulty
     );
   }

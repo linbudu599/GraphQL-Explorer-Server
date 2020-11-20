@@ -1,3 +1,4 @@
+import Container from "typedi";
 import { plainToClass } from "class-transformer";
 import {
   Difficulty,
@@ -6,6 +7,7 @@ import {
   Company,
   WorkExperience,
 } from "../graphql/Recipe";
+import { log } from "./helper";
 
 const createWorkExperience = (
   workExp: Partial<WorkExperience>
@@ -94,3 +96,13 @@ export const sampleRecipes = [
     cook: sampleCooks[0],
   }),
 ];
+
+export const setRecipeInContainer = (): void => {
+  log("[TypeDI] Recipe Set to Container");
+  Container.set({
+    id: "RECIPES_DATA",
+    // create a copy for each request
+    transient: true,
+    factory: () => sampleRecipes.slice(),
+  });
+};

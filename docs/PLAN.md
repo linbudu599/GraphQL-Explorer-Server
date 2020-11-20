@@ -19,6 +19,8 @@
 - [ ] 订阅类型
 - [ ] 错误信息统一处理
 - [ ] 缓存、APQ
+- [ ] TypeORM 能力
+- [ ] 拆开 service 和 resolver
 
 ## Client
 

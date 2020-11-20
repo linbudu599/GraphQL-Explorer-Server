@@ -15,13 +15,14 @@ setInterval(() => {
   sa.post("http://localhost:4000/graphql")
     .send({
       operationName: null,
-      query: "{ Users {    success    message    data {      uid    } }}",
+      // query: "{ Users {    success    message    data {      uid    } }}",
+      query: "{  Recipes {    title  }}",
       variables: {},
     })
     .set("accept", "json")
     .end((err, res) => {
       counter++;
-      console.log(`Request Success: ${res.body.data.Users.success}`);
+      // console.log(`Request Success: ${res.body.data.Users.success}`);
       console.log(`${process.argv[2]}: ${counter}`);
     });
 }, 100);

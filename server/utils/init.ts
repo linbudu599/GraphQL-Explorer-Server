@@ -2,10 +2,14 @@ import "reflect-metadata";
 import { Context } from "koa";
 import path from "path";
 import dotenv from "dotenv";
-import { Container } from "typedi";
+import { Container, ContainerInstance } from "typedi";
 import * as TypeORM from "typeorm";
-import { buildSchema } from "type-graphql";
+import { buildSchema, ResolverData } from "type-graphql";
 import { ApolloServer } from "apollo-server-koa";
+import {
+  GraphQLRequestContext,
+  ApolloServerPlugin,
+} from "apollo-server-plugin-base";
 
 // TypeGraphQL
 import { JOB } from "../graphql/User";
@@ -21,6 +25,7 @@ import Task from "../entity/Task";
 import { log } from "./helper";
 import { authChecker } from "./authChecker";
 import { ACCOUNT_AUTH } from "./constants";
+import { setRecipeInContainer } from "./mock";
 
 // Middlewares applied on TypeGraphQL
 import ResolveTime from "../middleware/time";
@@ -28,6 +33,10 @@ import InterceptorOnUID1 from "../middleware/interceptor";
 import LogAccessMiddleware from "../middleware/log";
 
 import { ExtensionsMetadataRetriever } from "../extensions/GetMetadata";
+
+import { IContext } from "../typding";
+
+Container.set({ id: "INIT_INJECT_DATA", factory: () => new Date() });
 
 TypeORM.useContainer(Container);
 
@@ -38,9 +47,13 @@ dotenv.config({ path: dev ? ".env.dev" : ".env.prod" });
 log(`[Env] Loading ${dev ? "[DEV]" : "[PROD]"} File`);
 
 export default async (): Promise<ApolloServer> => {
+  setRecipeInContainer();
+
   const schema = await buildSchema({
     resolvers: [UserResolver, RecipeResolver, TaskResolver, PubSubResolver],
-    container: Container,
+    // container: Container,
+    // scoped-container，每次从context中拿到本次注册容器
+    container: ({ context }: ResolverData<IContext>) => context.container,
     // TypeGraphQL built-in Scalar Date
     dateScalarMode: "timestamp",
     authChecker,
@@ -61,25 +74,29 @@ export default async (): Promise<ApolloServer> => {
     // options schema will override typeDefs & resolvers
     // so donot use typegraphql and apollo-server to merge schema
     schema,
-    subscriptions: {
-      path: "/pubsub",
-    },
+    // subscriptions: {
+    //   path: "/pubsub",
+    // },
     context: async (ctx: Context) => {
       // 随机鉴权
-      const randomID = Math.floor(Math.random() * 100);
-      // 0-30 unlogin
-      // 31-60 common
-      // 61-100 admin
+      // 为0时TypeDI容器注册会失败
+      const randomID = Math.floor(Math.random() * 100) + 1;
+      // 1-31 unlogin
+      // 32-61 common
+      // 62-101 admin
 
-      const UN_LOGIN = randomID >= 0 && randomID <= 30;
-      const COMMON = randomID >= 31 && randomID <= 60;
-      const ADMIN = randomID >= 61 && randomID <= 100;
+      const UN_LOGIN = randomID >= 1 && randomID <= 31;
+      const COMMON = randomID >= 32 && randomID <= 61;
+      const ADMIN = randomID >= 62 && randomID <= 101;
 
       const ACCOUNT_TYPE = UN_LOGIN
         ? ACCOUNT_AUTH.UN_LOGIN
         : COMMON
         ? ACCOUNT_AUTH.COMMON
         : ACCOUNT_AUTH.ADMIN;
+
+      // 每次请求使用一个随机ID注册容器
+      const container = Container.of(randomID);
 
       const context = {
         // req,
@@ -89,9 +106,27 @@ export default async (): Promise<ApolloServer> => {
           uid: randomID,
           roles: ACCOUNT_TYPE,
         },
+        container,
       };
+
+      container.set("context", context);
       return context;
     },
+    plugins: [
+      {
+        // 在每次请求开始前销毁上一个容器
+        requestDidStart: () => ({
+          willSendResponse(
+            reqContext: GraphQLRequestContext<Partial<IContext>>
+          ) {
+            Container.reset(reqContext.context.currentUser!.uid);
+            const instancesIds = ((Container as any)
+              .instances as ContainerInstance[]).map((instance) => instance.id);
+            console.log("instances left in memory:", instancesIds);
+          },
+        }),
+      },
+    ],
     // 关于RootValue和Context：https://stackoverflow.com/questions/44344560/context-vs-rootvalue-in-apollo-graphql
     // 简单的说，RootValue就像是一个自定义的类型（和其他类型一样），但它只拥有一个动态解析的字段
     // RootValue是解析链的初始值 也就是入口Resolver的parent参数

@@ -17,6 +17,8 @@ import { InjectRepository } from "typeorm-typedi-extensions";
 import User from "../entity/User";
 import Task from "../entity/Task";
 
+import UserService from "../service/User.service";
+
 import StatusHandler, { Status } from "../graphql/Status";
 import {
   UserCreateInput,
@@ -25,19 +27,27 @@ import {
 } from "../graphql/User";
 
 import { ACCOUNT_AUTH, RESPONSE_INDICATOR } from "../utils/constants";
+import { InjectCurrentUser, CustomArgsValidation } from "../decorators";
 
 import { IContext } from "../typding";
+import { log } from "../utils/helper";
 
 @Resolver((of) => User)
 export default class UserResolver {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
-    @InjectRepository(Task) private readonly taskRepository: Repository<Task>
+    @InjectRepository(Task) private readonly taskRepository: Repository<Task>,
+    private readonly userService: UserService
   ) {}
 
   // @Authorized(ACCOUNT_AUTH.ADMIN)
   @Query(() => Status)
-  async Users(@Ctx() ctx: IContext): Promise<Status> {
+  async Users(
+    @Ctx() ctx: IContext,
+    @InjectCurrentUser() user: IContext["currentUser"]
+  ): Promise<Status> {
+    log("=== UserServie ===");
+    log(await this.userService.someMethod("x"));
     try {
       const usersWithTasks = await this.userRepository.find({
         relations: ["tasks"],
@@ -68,8 +78,9 @@ export default class UserResolver {
 
   // Use another service to query by user.tasks
   @Query(() => Status)
+  @CustomArgsValidation(UserQueryArgs)
   async FindUserByConditions(
-    @Args() conditions: UserQueryArgs
+    @Args({ validate: false }) conditions: UserQueryArgs
   ): Promise<Status> {
     try {
       const res = await this.userRepository.find({ ...conditions });
