@@ -168,7 +168,7 @@ export const dbConnect = async (): Promise<any> => {
       maxQueryExecutionTime: 1000,
       logger: "advanced-console",
       // TODO: remove to env variables
-      entities: [dev ? "server/entity/*.ts" : "server/entity/*.js"],
+      entities: [dev ? "server/entity/*.ts" : "server-dist/entity/*.js"],
       cache: {
         duration: 3000,
       },

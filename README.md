@@ -1,5 +1,12 @@
 # GraphQL-Explorer
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/9b1032ca-eb12-4cfd-bfad-52da4b8b5451/deploy-status)](https://app.netlify.com/sites/linbudu-graphql-explorer/deploys)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/linbudu599/GraphQL-Explorer/GraphQL-Explorer-Client/master?label=GitHub%20Actions%20Client)
+![Travis (.com)](https://img.shields.io/travis/com/linbudu599/GraphQL-Explorer?label=travis%20client)
+![Codecov](https://img.shields.io/codecov/c/github/linbudu599/GraphQL-Explorer)
+![GitHub](https://img.shields.io/github/license/linbudu599/GraphQL-Explorer?color=deepgreen)
+
+
 This is a demo which contains GraphQL and framework based on it(or work with it perfectly), including these for now:
 
 - TypeGraphQL
@@ -10,8 +17,8 @@ This is a demo which contains GraphQL and framework based on it(or work with it 
 
 ## Site & Server Deploy
 
-- [ ] [Client-Vercel]
-- [ ] [Client-Netlify]
+- [x] [Client-Vercel](https://linbudu-graphql-explorer.vercel.app/)
+- [x] [Client-Netlify](linbudu-graphql-explorer.netlify.app)
 - [ ] [Server-ALI-Cloud]
 - [ ] [Server-Heroku]
 

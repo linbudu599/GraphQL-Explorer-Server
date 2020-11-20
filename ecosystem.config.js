@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "GraphQL-Explorer-Backend",
-      script: "./server/app.js",
+      script: "./server-dist/app.js",
       // instances: "max",
       // exec_mode: "cluster",
       env: {

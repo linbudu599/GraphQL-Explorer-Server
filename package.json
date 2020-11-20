@@ -4,15 +4,16 @@
   "description": "Full API & Ability Usage of Apollo Client/Server.",
   "scripts": {
     "dev": "npm-run-all --parallel dev:server dev:client",
-    "dev:client": "cross-env NODE_ENV=development parcel ./client/public/index.html --out-dir ./client/dist --target browser --cache-dir ./client/.cache --port 5999 --log-level 3",
+    "build": "npm-run-all --parallel build:server build:client",
+    "clean": "node ./scripts/clean.js --server --client",
+    "dev:client": "cross-env NODE_ENV=development parcel ./client/public/index.html --out-dir ./client/dist --port 5999",
     "test:client": "cross-env NODE_ENV=test jest --forceExit",
-    "build:client": "cross-env NODE_ENV=production parcel build ./client/public/index.html --out-dir ./client/dist --target bwoser --cache-dir ./client/.cache",
-    "clean:server": "rimraf ./server/\\*\\*/\\*.js ./server/\\*\\*/\\*.d.ts",
+    "build:client": "cross-env NODE_ENV=production parcel build ./client/public/index.html --out-dir ./client-dist",
     "dev:server": "cross-env NODE_ENV=development nodemon ./server/app.ts",
-    "compile:server": "npm run clean:server && tsc",
-    "start:server": "cross-env NODE_ENV=production npm run compile:server && nodemon ./server/app.js",
-    "pm2:dev": "npm run compile:server && pm2 start ecosystem.config.js",
-    "pressure-test": "node ./pt-main.js"
+    "build:server": "node ./scripts/clean.js --server && tsc",
+    "start:server": "cross-env NODE_ENV=production npm run build:server && nodemon ./server-dist/app.js",
+    "pm2:dev": "npm run build:server && pm2 start ecosystem.config.js",
+    "pressure-test": "node ./scripts/pt-main.js"
   },
   "repository": {
     "type": "git",
@@ -51,6 +52,7 @@
     "graphql-upload": "^11.0.0",
     "koa": "^2.13.0",
     "log4js": "^6.3.0",
+    "minimist": "^1.2.5",
     "mkdirp": "^1.0.4",
     "npm-run": "^5.0.1",
     "npm-run-all": "^4.1.5",

@@ -20,6 +20,8 @@
     "alwaysStrict": true /* Parse in strict mode and emit "use strict" for each source file. */,
     "noUnusedLocals": false /* Report errors on unused locals. */,
     "inlineSourceMap": false,
+    "baseUrl": "./",
+    "outDir": "./server-dist",
     "noUnusedParameters": false /* Report errors on unused parameters. */,
     "noImplicitReturns": false /* Report error when not all code paths in function return a value. */,
     "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
