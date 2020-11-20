@@ -1,5 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 
 import { ApolloProvider, useQuery } from '@apollo/client';
 
@@ -19,8 +19,9 @@ const Entry: React.FC = () => {
 const client = createApolloClient();
 
 ReactDOM.render(
-  <ApolloProvider client={client}>
-    <Entry />
-  </ApolloProvider>,
+  // <ApolloProvider client={client}>
+  //   <Entry />
+  // </ApolloProvider>,
+  <App />,
   document.getElementById('root')
 );

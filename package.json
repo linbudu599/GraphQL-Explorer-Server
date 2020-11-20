@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "npm-run-all --parallel dev:server dev:client",
     "dev:client": "cross-env NODE_ENV=development parcel ./client/public/index.html --out-dir ./client/dist --target browser --cache-dir ./client/.cache --port 5999 --log-level 3",
-    "test:client": "cross-env TEST=development jest --forceExit",
+    "test:client": "cross-env NODE_ENV=test jest --forceExit",
     "build:client": "cross-env NODE_ENV=production parcel build ./client/public/index.html --out-dir ./client/dist --target bwoser --cache-dir ./client/.cache",
     "clean:server": "rimraf ./server/\\*\\*/\\*.js ./server/\\*\\*/\\*.d.ts",
     "dev:server": "cross-env NODE_ENV=development nodemon ./server/app.ts",

@@ -23,13 +23,13 @@
 
 - [x] Resolver Resolver装饰的类会被合并, 因为只会根据Query/Mutation进行分类
 
-- [ ] RootResolver
+- [x] RootResolver
 
-- [ ] FieldResolver
+- [x] FieldResolver
 
 - [x] Arg & Args 一般Arg用来处理单个形参, Args用来处理整个输入对象类型
 
-- [ ] Scalar 内置标量与自定义标量(需要提供序列化与解析方法)
+- [x] Scalar 内置标量与自定义标量(需要提供序列化与解析方法)
 
 - [x] Enums 由于TS装饰器只能在类上(内)使用, 需要手动调用方法注册
 
@@ -39,7 +39,7 @@
 
 - [x] Directives  @Directive('@deprecated(reason: "Use newField")')
 
-- [ ] Extensions
+- [x] Extensions
 
 - [x] Auth 被`@Authorization`装饰的field, 会走在`buildSchema`时传入的`authChecker`, 这个方法内能获取到上下文(包括当前用户的`token`以及权限级别控制)
 
@@ -60,22 +60,15 @@
 
   - [x] ArgsValidator, 更灵活的参数校验
 
-- [ ] With DI
+- [x] With DI
 
 ## Apollo-Server
 
 > 大部分能力使用TypeGraphQL提供的即可, 这里只列举不兼容的实现
 
-- [ ] serve by basic graphql schema
-- [ ] schema directives
-- [ ] custom directives implement
-- [ ] custom scalars & enums & union types & ...
 - [ ] data-source(BFF)
 - [ ] Error Handling
 - [ ] File(这个似乎有一定问题)
-- [ ] Auth
-
-
 
 ## Apollo-Client
 
@@ -121,16 +114,15 @@
 
 ## TypeORM
 
-- [ ] TypeORM-TypeDI-Extensions
-
+- [x] TypeORM-TypeDI-Extensions
 - [x] Transaction
 - [ ] OneToOne
-- [ ] ManyToOne & ManyToOne
+- [x] ManyToOne & ManyToOne
 - [ ] ManyToMany
-- [ ] Entity & Repo Manager
+- [x] Entity & Repo Manager
 - [ ] Lazy Relation?
 - [ ] Listener
-- [ ] Log
+- [x] Log
 
 
 

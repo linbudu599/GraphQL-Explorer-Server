@@ -8,7 +8,14 @@ This is a demo which contains GraphQL and framework based on it(or work with it 
 - TypeORM + SQLite3
 - TypeStack Product
 
-## Progress: 50%
+## Site & Server Deploy
+
+- [ ] [Client-Vercel]
+- [ ] [Client-Netlify]
+- [ ] [Server-ALI-Cloud]
+- [ ] [Server-Heroku]
+
+## Progress
 
 see [docs](docs/README.md) for API will be used in this demo.
 
