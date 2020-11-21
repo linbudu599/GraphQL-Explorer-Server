@@ -9,13 +9,19 @@
 
 This is a demo which contains GraphQL and framework based on it(or work with it perfectly), including these for now:
 
-- TypeGraphQL
-- Apollo-Client & React & Parcel
-- Apollo-Server
-- TypeORM + SQLite3
-- TypeStack Product
+- [x] GraphQL
+- [x] TypeGraphQL
+- [x] Apollo-Client & React & Parcel
+- [x] Apollo-Server
+- [ ] DataLoader
+- [x] TypeORM + SQLite3
+- [ ] Redis + IORedis
+- [ ] Winston
+- [x] TypeStack Product
+  - Class-Validator
+  - Class-Transformer
 
-## Site & Server Deploy
+## Client & Server Deploy
 
 - [x] [Client-Vercel](https://linbudu-graphql-explorer.vercel.app/)
 - [x] [Client-Netlify](linbudu-graphql-explorer.netlify.app)
@@ -36,17 +42,17 @@ npm run dev:client
 npm run dev:server
 ```
 
-## Script
+## Available Scripts
 
 - `dev`: `dev:client` + `dev:server`
 - `dev:client`: develop client application
 - `dev:server`: develop server
 - `test:client`: invoke test cases in client
 - `build:client`: build client application by Parcel
-- `clean:server`: clear `tsc` compile file in server
+- `clean`: remove `/client-dist` & `/server-dist` directory
 - `start:server`: run in prod by nodemon
 - `compile:server`: compile server code
-- `pm2:dev`: run in prod by PM2(fork mode)
+- `pm2:dev`: run in prod by PM2(`fork mode`)
 - `pressure-test`: run pressure test to server, see[pressure-fork.js](./pt-fork.js) & [pressure-main.js](./pt-main.js)
 
 ## Document

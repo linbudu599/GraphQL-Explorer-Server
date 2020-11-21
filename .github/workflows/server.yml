@@ -1,4 +1,4 @@
-name: GraphQL-Explorer-Client
+name: GraphQL-Explorer-Server
 
 on:
   push:
@@ -8,15 +8,9 @@ on:
 jobs:
   job1:
     strategy:
-      fail-fast: false
       matrix:
         node-version: [12.x]
         os: [ubuntu-latest, windows-latest, macOS-latest]
-        include:
-          # 额外启用一台使用node14 Ubuntu18的实验任务
-          - node-version: 14
-            os: ubuntu-18.04
-            experimental: true
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -26,8 +20,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install Dependencies
-        run: npm install
-      - name: Client Tests
-        run: npm run test:client
-      - name: Client Build
-        run: npm run build:client
+        run: |
+          npm install
+          npm install pm2 -g
+      - name: Serve By PM2
+        run: npm run pm2:dev
+      - name: Delete PM2 Process
+        run: pm2 delete all
