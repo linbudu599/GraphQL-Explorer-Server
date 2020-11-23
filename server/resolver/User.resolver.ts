@@ -19,12 +19,12 @@ import Task from "../entity/Task";
 
 import UserService from "../service/User.service";
 
-import StatusHandler, { Status } from "../graphql/Status";
 import {
   UserCreateInput,
   UserUpdateInput,
   UserQueryArgs,
 } from "../graphql/User";
+import { PaginationOptions, StatusHandler, Status } from "../graphql/Common";
 
 import { ACCOUNT_AUTH, RESPONSE_INDICATOR } from "../utils/constants";
 import { InjectCurrentUser, CustomArgsValidation } from "../decorators";
@@ -44,18 +44,21 @@ export default class UserResolver {
   @Query(() => Status)
   async Users(
     @Ctx() ctx: IContext,
-    @InjectCurrentUser() user: IContext["currentUser"]
+    @InjectCurrentUser() user: IContext["currentUser"],
+    @Arg("pagination") { cursor, offset }: PaginationOptions
   ): Promise<Status> {
-    log("=== UserServie ===");
-    log(await this.userService.someMethod("x"));
     try {
       const usersWithTasks = await this.userRepository.find({
         relations: ["tasks"],
       });
+      let end = offset ? offset : usersWithTasks.length + 1;
+      if (end > usersWithTasks.length) {
+        end = usersWithTasks.length + 1;
+      }
       return new StatusHandler(
         true,
         RESPONSE_INDICATOR.SUCCESS,
-        usersWithTasks
+        usersWithTasks.slice(cursor ?? 0, end)
       );
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);

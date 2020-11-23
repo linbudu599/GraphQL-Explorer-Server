@@ -6,13 +6,12 @@ import { Container, ContainerInstance } from "typedi";
 import * as TypeORM from "typeorm";
 import { buildSchema, ResolverData } from "type-graphql";
 import { ApolloServer } from "apollo-server-koa";
-import {
-  GraphQLRequestContext,
-  ApolloServerPlugin,
-} from "apollo-server-plugin-base";
+import { GraphQLRequestContext } from "apollo-server-plugin-base";
+import { ApolloServerLoaderPlugin } from "type-graphql-dataloader";
 
 // TypeGraphQL
 import { JOB } from "../graphql/User";
+
 import UserResolver from "../resolver/User.resolver";
 import RecipeResolver from "../resolver/Recipe.resolver";
 import TaskResolver from "../resolver/Task.resolver";
@@ -25,13 +24,14 @@ import Task from "../entity/Task";
 import { log } from "./helper";
 import { authChecker } from "./authChecker";
 import { ACCOUNT_AUTH } from "./constants";
-import { setRecipeInContainer } from "./mock";
+import { setRecipeInContainer, mockUser, mockTask } from "./mock";
 
 // Middlewares applied on TypeGraphQL
 import ResolveTime from "../middleware/time";
 import InterceptorOnUID1 from "../middleware/interceptor";
 import LogAccessMiddleware from "../middleware/log";
 
+// Extensions powered by TypeGraphQL
 import { ExtensionsMetadataRetriever } from "../extensions/GetMetadata";
 
 import { IContext } from "../typding";
@@ -41,7 +41,6 @@ Container.set({ id: "INIT_INJECT_DATA", factory: () => new Date() });
 TypeORM.useContainer(Container);
 
 const dev = process.env.NODE_ENV === "development";
-
 dotenv.config({ path: dev ? ".env.dev" : ".env.prod" });
 
 log(`[Env] Loading ${dev ? "[DEV]" : "[PROD]"} File`);
@@ -71,8 +70,6 @@ export default async (): Promise<ApolloServer> => {
   await dbConnect();
 
   const server = new ApolloServer({
-    // options schema will override typeDefs & resolvers
-    // so donot use typegraphql and apollo-server to merge schema
     schema,
     // subscriptions: {
     //   path: "/pubsub",
@@ -126,6 +123,9 @@ export default async (): Promise<ApolloServer> => {
           },
         }),
       },
+      ApolloServerLoaderPlugin({
+        typeormGetConnection: TypeORM.getConnection, // for use with TypeORM
+      }),
     ],
     // 关于RootValue和Context：https://stackoverflow.com/questions/44344560/context-vs-rootvalue-in-apollo-graphql
     // 简单的说，RootValue就像是一个自定义的类型（和其他类型一样），但它只拥有一个动态解析的字段
@@ -173,55 +173,19 @@ export const dbConnect = async (): Promise<any> => {
         duration: 3000,
       },
     });
+    log("=== [TypeORM] Database Connection Established ===");
 
-    const task1 = new Task();
-    task1.taskTitle = "task1";
-    task1.taskContent = "task1";
-    task1.taskReward = 1000;
-    task1.taskRate = 1;
-
-    await connection.manager.save(task1);
-
-    const task2 = new Task();
-    task2.taskTitle = "task2";
-    task2.taskContent = "task2";
-    task2.taskReward = 1000;
-    task2.taskRate = 1;
-
-    await connection.manager.save(task2);
-
-    const task3 = new Task();
-    task3.taskTitle = "task3";
-    task3.taskContent = "task3";
-    task3.taskReward = 1000;
-    task3.taskRate = 1;
-
-    await connection.manager.save(task3);
+    await connection.manager.save(mockTask);
 
     const user = new User();
     user.name = "林不渡-Lv1";
-    user.job = JOB.FE;
 
-    user.tasks = [task1, task2];
+    user.tasks = mockTask.slice(0, 2);
 
     await connection.manager.save(user);
 
-    log("=== [TypeORM] Database Connection Established ===");
-    await connection.manager.insert(User, {
-      name: "林不渡1",
-      age: 21,
-      isFool: true,
-    });
-    await connection.manager.insert(User, {
-      name: "林不渡2",
-      age: 21,
-      isFool: true,
-    });
-    await connection.manager.insert(User, {
-      name: "林不渡3",
-      age: 21,
-      isFool: true,
-    });
+    await connection.manager.save(mockUser);
+
     log("=== [TypeORM] Initial Mock Data Inserted ===\n");
   } catch (error) {
     log(error, "red");

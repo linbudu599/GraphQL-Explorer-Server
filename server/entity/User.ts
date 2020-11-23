@@ -1,4 +1,5 @@
 import { Extensions, Field, Float, ObjectType } from "type-graphql";
+import { TypeormLoader } from "type-graphql-dataloader";
 import {
   Entity,
   Column,
@@ -7,6 +8,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  RelationId,
 } from "typeorm";
 
 import { LogExtension } from "../extensions/LogExtension";
@@ -47,7 +49,11 @@ export default class User extends BaseEntity implements IUser {
 
   @OneToMany(() => Task, (task) => task.assignee)
   @Field((type) => [Task]!, { nullable: true })
+  @TypeormLoader((type) => User, (user: User) => user.taskIds)
   tasks?: Task[];
+
+  @RelationId((user: User) => user.tasks)
+  taskIds?: number[];
 
   @Extensions({ info: "User.name Field" })
   @Extensions({ complexity: 1 })

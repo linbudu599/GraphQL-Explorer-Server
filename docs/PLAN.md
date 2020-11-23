@@ -1,5 +1,12 @@
 # PLAN
 
+## TODO
+
+- [ ] DataLoader + TypeGraphQL-DataLoader 原理
+- [ ] TypeORM RelationId Decorator
+- [ ] 参数错误校验错误统一处理
+- [ ] JWT
+
 ## Server
 
 - [x] 3层以上的解析链
@@ -20,6 +27,8 @@
 - [ ] 错误信息统一处理
 - [ ] 缓存、APQ
 - [ ] TypeORM 能力
+- [x] Fix N+1 >>> DataLoader
+  - > 如本例中查看用户及用户任务 会是查询所有用户1次+查询所有用户任务N次
 - [ ] 拆开 service 和 resolver
 
 ## Client

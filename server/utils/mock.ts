@@ -7,6 +7,8 @@ import {
   Company,
   WorkExperience,
 } from "../graphql/Recipe";
+import User from "../entity/User";
+import Task from "../entity/Task";
 import { log } from "./helper";
 
 const createWorkExperience = (
@@ -106,3 +108,46 @@ export const setRecipeInContainer = (): void => {
     factory: () => sampleRecipes.slice(),
   });
 };
+
+const createTask = (task: Partial<Task>): Task => plainToClass(Task, task);
+
+export const mockTask = [
+  createTask({
+    taskTitle: "task1",
+    taskContent: "task1 content",
+    taskReward: 1000,
+    taskRate: 2,
+  }),
+  createTask({
+    taskTitle: "task2",
+    taskContent: "task2 content",
+    taskReward: 4000,
+    taskRate: 3,
+  }),
+  createTask({
+    taskTitle: "task3",
+    taskContent: "task3 content",
+    taskReward: 2000,
+    taskRate: 8,
+  }),
+];
+
+const createUser = (user: Partial<User>): User => plainToClass(User, user);
+
+export const mockUser = [
+  createUser({
+    name: "林不渡111",
+    age: 21,
+    isFool: true,
+  }),
+  createUser({
+    name: "林不渡222",
+    age: 25,
+    isFool: true,
+  }),
+  createUser({
+    name: "林不渡333",
+    age: 22,
+    isFool: true,
+  }),
+];

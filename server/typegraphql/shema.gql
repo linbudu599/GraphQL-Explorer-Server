@@ -68,6 +68,11 @@ type Notification {
   message: String
 }
 
+input PaginationOptions {
+  cursor: Float
+  offset: Float
+}
+
 type Query {
   currentDate: Timestamp!
   DeleteTask(taskId: Float!): Task!
@@ -80,7 +85,7 @@ type Query {
   Search(cookName: String!): [SearchResult!]!
   Tasks: [Task!]!
   ToggleTaskStatus(taskId: Float!): Task!
-  Users: Status!
+  Users(pagination: PaginationOptions!): Status!
 }
 
 type Recipe {

@@ -11,7 +11,7 @@ branches:
   - main
 
 install:
-  - npm ci
+  - npm install
 script:
   - npm run test:client
   - npm run build:client

@@ -5,7 +5,7 @@ import { InjectRepository } from "typeorm-typedi-extensions";
 import User from "../entity/User";
 import Task from "../entity/Task";
 
-import StatusHandler, { Status } from "../graphql/Status";
+import { Status, StatusHandler } from "../graphql/Common";
 import { TaskCreateInput, TaskUpdateInput } from "../graphql/Task";
 
 @Resolver((of) => Task)

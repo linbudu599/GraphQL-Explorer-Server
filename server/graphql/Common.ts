@@ -1,4 +1,5 @@
-import { Field, ObjectType } from "type-graphql";
+import { IsNumber, Max, Min } from "class-validator";
+import { Field, ObjectType, InputType } from "type-graphql";
 import User from "../entity/User";
 
 @ObjectType({ description: "Response Status Indicator" })
@@ -13,10 +14,25 @@ export class Status {
   data?: User[];
 }
 
-export default class StatusHandler {
+export class StatusHandler {
   constructor(
     public success: boolean,
     public message: string,
     public data: any = []
   ) {}
+}
+
+@InputType()
+export class PaginationOptions {
+  @Field({ nullable: true })
+  @Max(10)
+  @Min(0)
+  @IsNumber()
+  cursor?: number;
+
+  @Field({ nullable: true })
+  @Max(100)
+  @Min(0)
+  @IsNumber()
+  offset?: number;
 }

@@ -6,7 +6,9 @@ import {
   BaseEntity,
   ManyToOne,
   JoinColumn,
+  RelationId,
 } from "typeorm";
+import { TypeormLoader } from "type-graphql-dataloader";
 import { ITask } from "../graphql/Task";
 
 import User from "./User";
@@ -22,7 +24,11 @@ export default class Task extends BaseEntity implements ITask {
 
   @ManyToOne(() => User, (user) => user.tasks, { nullable: true })
   @JoinColumn({ name: "assigneeUID" })
+  @TypeormLoader((type) => User, (task: Task) => task.assigneeUID)
   assignee?: User;
+
+  @RelationId((task: Task) => task.assignee)
+  assigneeUID?: number;
 
   @Column({ nullable: false, default: "" })
   taskContent!: string;
