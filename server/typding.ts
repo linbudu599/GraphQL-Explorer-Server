@@ -1,6 +1,17 @@
 import { ContainerInstance } from "typedi";
+
+import User from "./entity/User";
+import Task from "./entity/Task";
+
+import {
+  UserCreateInput,
+  UserQueryArgs,
+  UserUpdateInput,
+} from "./graphql/User";
 import { Recipe } from "./graphql/Recipe";
+
 import { USER_ROLES, ACCOUNT_AUTH } from "./utils/constants";
+import { DeleteResult } from "typeorm";
 
 export interface IContext {
   env: string;
@@ -12,7 +23,9 @@ export interface IContext {
 }
 
 export interface IUserService {
-  someMethod(methodName: string): Promise<string>;
+  // Query
+  Users(cursor: number, offset: number): Promise<User[]>;
+  ContainerRegisterTime(): Promise<Date>;
 }
 
 export interface IRecipeService {

@@ -1,4 +1,4 @@
-import { ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import {
   Entity,
   Column,
@@ -20,6 +20,7 @@ export default class Task extends BaseEntity implements ITask {
   taskId!: string;
 
   @Column({ unique: true, nullable: false })
+  // @Field({ complexity: 100 })
   taskTitle!: string;
 
   @ManyToOne(() => User, (user) => user.tasks, { nullable: true })

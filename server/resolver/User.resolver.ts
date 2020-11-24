@@ -55,6 +55,8 @@ export default class UserResolver {
       if (end > usersWithTasks.length) {
         end = usersWithTasks.length + 1;
       }
+      console.log(await this.userService.Users(cursor ?? 0, end));
+
       return new StatusHandler(
         true,
         RESPONSE_INDICATOR.SUCCESS,
@@ -176,5 +178,14 @@ export default class UserResolver {
   ): Promise<number> {
     // ... do sth addtional here
     return user.age;
+  }
+
+  @Query(() => Status)
+  async InjectDataFromService() {
+    const registerDate = await this.userService.ContainerRegisterTime();
+    const data = {
+      time: registerDate,
+    };
+    return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [data]);
   }
 }

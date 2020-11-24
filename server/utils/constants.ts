@@ -18,3 +18,5 @@ export enum RESPONSE_INDICATOR {
   SUCCESS = "Success",
   FAILED = "Operation Failed",
 }
+
+export const MAX_ALLOWED_COMPLEXITY = 20;

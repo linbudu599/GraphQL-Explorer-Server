@@ -6,17 +6,16 @@
 ![Codecov](https://img.shields.io/codecov/c/github/linbudu599/GraphQL-Explorer)
 ![GitHub](https://img.shields.io/github/license/linbudu599/GraphQL-Explorer?color=deepgreen)
 
-
 This is a demo which contains GraphQL and framework based on it(or work with it perfectly), including these for now:
 
 - [x] GraphQL
 - [x] TypeGraphQL
 - [x] Apollo-Client & React & Parcel
 - [x] Apollo-Server
-- [ ] DataLoader
+- [x] DataLoader
 - [x] TypeORM + SQLite3
 - [ ] Redis + IORedis
-- [ ] Winston
+- [x] Winston
 - [x] TypeStack Product
   - Class-Validator
   - Class-Transformer
@@ -30,7 +29,7 @@ This is a demo which contains GraphQL and framework based on it(or work with it 
 
 ## Progress
 
-see [docs](docs/README.md) for API will be used in this demo.
+**IN_PROGRESS**
 
 ## Explore
 
