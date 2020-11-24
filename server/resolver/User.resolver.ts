@@ -45,22 +45,17 @@ export default class UserResolver {
   async Users(
     @Ctx() ctx: IContext,
     @InjectCurrentUser() user: IContext["currentUser"],
-    @Arg("pagination") { cursor, offset }: PaginationOptions
+    @Arg("pagination", { nullable: true })
+    pagination: PaginationOptions
   ): Promise<Status> {
     try {
-      const usersWithTasks = await this.userRepository.find({
-        relations: ["tasks"],
-      });
-      let end = offset ? offset : usersWithTasks.length + 1;
-      if (end > usersWithTasks.length) {
-        end = usersWithTasks.length + 1;
-      }
-      console.log(await this.userService.Users(cursor ?? 0, end));
+      const { cursor, offset } = pagination ?? { cursor: 0, offset: 5 };
+      const usersWithTasks = await this.userService.Users(cursor!, offset!);
 
       return new StatusHandler(
         true,
         RESPONSE_INDICATOR.SUCCESS,
-        usersWithTasks.slice(cursor ?? 0, end)
+        usersWithTasks
       );
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);

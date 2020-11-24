@@ -1,5 +1,5 @@
-query {
-  Users(pagination: { cursor: 0, offset: 12 }) {
+query SimpleQuery {
+  QueryAllUsers: Users(pagination: { cursor: 1, offset: 10 }) {
     data {
       uid
       tasks {

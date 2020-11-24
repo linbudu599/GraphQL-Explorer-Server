@@ -22,8 +22,9 @@ This is a demo which contains GraphQL and framework based on it(or work with it 
 
 ## Client & Server Deploy
 
-- [x] [Client-Vercel](https://linbudu-graphql-explorer.vercel.app/)
-- [x] [Client-Netlify](linbudu-graphql-explorer.netlify.app)
+- [x] [Client by Vercel](https://linbudu-graphql-explorer.vercel.app/)
+- [x] [Docs by Netlify](linbudu-graphql-explorer.netlify.app)
+- [x] [Docs by Surge](http://graphql-explorer-docs.surge.sh/)
 - [ ] [Server-ALI-Cloud]
 - [ ] [Server-Heroku]
 - [x] [Apollo-Engine(private)](https://studio.apollographql.com/graph/My-Graph-innqj/explorer?schemaTag=current)
@@ -56,7 +57,8 @@ npm run dev:server
 - `pressure-test`: run pressure test to server, see[pressure-fork.js](./pt-fork.js) & [pressure-main.js](./pt-main.js)
 - `voyager`: represent GraphQL API as an interactive graph by [graphql-voyager](https://github.com/APIs-guru/graphql-voyager), require server to be active.
 - `gen:code`: generate type definitions from GraphQL schema
-- `gen:docs`: generate documentation site from GraphQL schema in https://localhost:5000
+- `gen:docs`: generate documentation site from GraphQL schema
+- `serve:docs`: generate & serve documentation site
 
 ## Document
 

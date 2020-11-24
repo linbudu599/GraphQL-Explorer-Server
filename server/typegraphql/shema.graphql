@@ -86,7 +86,7 @@ type Query {
   Search(cookName: String!): [SearchResult!]!
   Tasks: [Task!]!
   ToggleTaskStatus(taskId: Float!): Task!
-  Users(pagination: PaginationOptions!): Status!
+  Users(pagination: PaginationOptions): Status!
 }
 
 type Recipe {
