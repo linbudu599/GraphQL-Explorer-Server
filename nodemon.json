@@ -9,7 +9,9 @@
     "client/src",
     "client/.cache",
     "server/logs",
-    "/**/*.json"
+    "/**/*.json",
+    "/**/*.graphql",
+    "/**/*.gql"
   ],
   "verbose": true,
   "execMap": {

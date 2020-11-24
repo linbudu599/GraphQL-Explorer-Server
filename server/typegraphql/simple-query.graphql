@@ -1,0 +1,11 @@
+query {
+  Users(pagination: { cursor: 0, offset: 12 }) {
+    data {
+      uid
+      tasks {
+        taskId
+        taskTitle
+      }
+    }
+  }
+}

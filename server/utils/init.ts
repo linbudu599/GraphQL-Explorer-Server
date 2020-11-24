@@ -61,7 +61,7 @@ export default async (): Promise<ApolloServer> => {
     dateScalarMode: "timestamp",
     authChecker,
     authMode: "error",
-    emitSchemaFile: path.resolve(__dirname, "../typegraphql/shema.gql"),
+    emitSchemaFile: path.resolve(__dirname, "../typegraphql/shema.graphql"),
     validate: true,
     globalMiddlewares: [
       ResolveTime,

@@ -26,6 +26,7 @@ This is a demo which contains GraphQL and framework based on it(or work with it 
 - [x] [Client-Netlify](linbudu-graphql-explorer.netlify.app)
 - [ ] [Server-ALI-Cloud]
 - [ ] [Server-Heroku]
+- [x] [Apollo-Engine(private)](https://studio.apollographql.com/graph/My-Graph-innqj/explorer?schemaTag=current)
 
 ## Progress
 
@@ -45,14 +46,17 @@ npm run dev:server
 
 - `dev`: `dev:client` + `dev:server`
 - `dev:client`: develop client application
-- `test:client`: run test cases in client
-- `build:client`: build client application by `Parcel`
-- `clean`: remove build ooutput `/client-dist` & `/server-dist` directory
 - `dev:server`: develop server
+- `test:client`: invoke test cases in client
+- `build:client`: build client application by Parcel
+- `clean`: remove `/client-dist` & `/server-dist` directory
 - `start:server`: run in prod by nodemon
 - `build:server`: compile server code
-- `pm2`: run in prod by PM2(`fork mode`)
-- `stress-test`: run stress test to server, see [stress-fork.js](./pt-fork.js) & [stress-main.js](./st-main.js)
+- `pm2:dev`: run in prod by PM2(`fork mode`)
+- `pressure-test`: run pressure test to server, see[pressure-fork.js](./pt-fork.js) & [pressure-main.js](./pt-main.js)
+- `voyager`: represent GraphQL API as an interactive graph by [graphql-voyager](https://github.com/APIs-guru/graphql-voyager), require server to be active.
+- `gen:code`: generate type definitions from GraphQL schema
+- `gen:docs`: generate documentation site from GraphQL schema in https://localhost:5000
 
 ## Document
 

@@ -79,6 +79,7 @@ type Query {
   FindUserByConditions(age: Int, isFool: Boolean, job: String, name: String): Status!
   FindUserById(uid: String!): Status!
   GetTaskByID(taskId: Float!): Task!
+  InjectDataFromService: Status!
   QueryTaskAssignee(taskId: Float!): User!
   QueryUserTasks(uid: Float!): [Task!]!
   Recipes(difficulty: Difficulty): [Recipe!]!
