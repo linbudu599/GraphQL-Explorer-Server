@@ -24,6 +24,6 @@ jobs:
           npm install
           npm install pm2 -g
       - name: Serve By PM2
-        run: npm run pm2:dev
+        run: npm run pm2
       - name: Delete PM2 Process
         run: pm2 delete all

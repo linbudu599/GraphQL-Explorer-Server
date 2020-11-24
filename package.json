@@ -12,8 +12,8 @@
     "dev:server": "cross-env NODE_ENV=development nodemon ./server/app.ts",
     "build:server": "node ./scripts/clean.js --server && tsc",
     "start:server": "cross-env NODE_ENV=production npm run build:server && nodemon ./server-dist/app.js",
-    "pm2:dev": "npm run build:server && pm2 start ecosystem.config.js",
-    "pressure-test": "node ./scripts/pt-main.js"
+    "pm2": "npm run build:server && pm2 start ecosystem.config.js",
+    "stress-test": "node ./scripts/st-main.js"
   },
   "repository": {
     "type": "git",

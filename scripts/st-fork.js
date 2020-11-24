@@ -22,6 +22,7 @@ setInterval(() => {
     .set("accept", "json")
     .end((err, res) => {
       counter++;
+      console.log(res.body.data.Recipes);
       // console.log(`Request Success: ${res.body.data.Users.success}`);
       console.log(`${process.argv[2]}: ${counter}`);
     });

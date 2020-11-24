@@ -45,14 +45,14 @@ npm run dev:server
 
 - `dev`: `dev:client` + `dev:server`
 - `dev:client`: develop client application
+- `test:client`: run test cases in client
+- `build:client`: build client application by `Parcel`
+- `clean`: remove build ooutput `/client-dist` & `/server-dist` directory
 - `dev:server`: develop server
-- `test:client`: invoke test cases in client
-- `build:client`: build client application by Parcel
-- `clean`: remove `/client-dist` & `/server-dist` directory
 - `start:server`: run in prod by nodemon
-- `compile:server`: compile server code
-- `pm2:dev`: run in prod by PM2(`fork mode`)
-- `pressure-test`: run pressure test to server, see[pressure-fork.js](./pt-fork.js) & [pressure-main.js](./pt-main.js)
+- `build:server`: compile server code
+- `pm2`: run in prod by PM2(`fork mode`)
+- `stress-test`: run stress test to server, see [stress-fork.js](./pt-fork.js) & [stress-main.js](./st-main.js)
 
 ## Document
 

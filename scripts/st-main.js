@@ -4,7 +4,7 @@ const path = require("path");
 
 const cpuNums = os.cpus().length;
 
-const PATH = path.resolve(__dirname, "./pt-fork.js");
+const PATH = path.resolve(__dirname, "./st-fork.js");
 
 for (let i = 0; i < cpuNums; i++) {
   const child = fork(PATH, [i]);
