@@ -1,10 +1,9 @@
-import { Service } from "typedi";
-import { MiddlewareInterface, ResolverData, NextFn } from "type-graphql";
-import { getLoggerExtensions, log } from "../utils/helper";
+import { Service } from 'typedi';
+import { MiddlewareInterface, ResolverData, NextFn } from 'type-graphql';
+import { getLoggerExtensions, log } from '../utils/helper';
 
-// import { Logger } from "../utils/logger";
-import { Logger, LOG_TYPE } from "../utils/winston";
-import { IContext } from "../typding";
+import { Logger, LOG_TYPE } from '../utils/winston';
+import { IContext } from '../typding';
 
 @Service()
 export default class LogAccessMiddleware
@@ -15,7 +14,7 @@ export default class LogAccessMiddleware
     try {
       const { message, level = 0 } = getLoggerExtensions(info);
 
-      log("=== [LogAccessMiddleware Start] ===");
+      log('=== [LogAccessMiddleware Start] ===');
 
       if (message) {
         this.logger.log(LOG_TYPE.DATA, `message: ${message}, level: ${level}`);
@@ -26,7 +25,7 @@ export default class LogAccessMiddleware
         `Logging Access: UID ${context.currentUser.uid} -> ${info.parentType.name}.${info.fieldName}`
       );
 
-      log("=== [LogAccessMiddleware End] ===");
+      log('=== [LogAccessMiddleware End] ===');
 
       return await next();
     } catch (error) {

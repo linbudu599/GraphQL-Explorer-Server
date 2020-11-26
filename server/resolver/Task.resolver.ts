@@ -1,12 +1,18 @@
-import { Resolver, Query, Arg, Mutation } from "type-graphql";
-import { Repository, Transaction, TransactionRepository } from "typeorm";
-import { InjectRepository } from "typeorm-typedi-extensions";
+import { Resolver, Query, Arg, Mutation } from 'type-graphql';
+import { Repository, Transaction, TransactionRepository } from 'typeorm';
+import { InjectRepository } from 'typeorm-typedi-extensions';
 
-import User from "../entity/User";
-import Task from "../entity/Task";
+import User from '../entity/User';
+import Task from '../entity/Task';
 
-import { Status, StatusHandler } from "../graphql/Common";
-import { TaskCreateInput, TaskUpdateInput } from "../graphql/Task";
+import {
+  PaginationOptions,
+  StatusHandler,
+  TaskStatus,
+  UserStatus,
+} from '../graphql/Common';
+import { TaskCreateInput, TaskUpdateInput } from '../graphql/Task';
+import { RESPONSE_INDICATOR } from '../utils/constants';
 
 @Resolver((of) => Task)
 export default class TaskResolver {
@@ -15,125 +21,188 @@ export default class TaskResolver {
     @InjectRepository(Task) private readonly taskRepository: Repository<Task>
   ) {}
 
-  @Query(() => [Task]!)
-  async Tasks(): Promise<Task[]> {
-    return await this.taskRepository.find();
+  @Query(() => TaskStatus)
+  async Tasks(
+    @Arg('pagination', { nullable: true })
+    pagination: PaginationOptions
+  ): Promise<TaskStatus> {
+    try {
+      const { cursor, offset } = pagination ?? { cursor: 0, offset: 10 };
+      const res = await this.taskRepository.find({
+        skip: cursor,
+        take: offset,
+        relations: ['assignee'],
+      });
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, res);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 
-  @Query(() => Task)
-  async GetTaskByID(@Arg("taskId") taskId: number): Promise<Task | null> {
-    const result =
-      (await this.taskRepository.findOne({
+  @Query(() => TaskStatus)
+  async FindTaskByID(@Arg('taskId') taskId: number): Promise<TaskStatus> {
+    try {
+      const res = await this.taskRepository.findOne({
         where: {
           taskId,
         },
-      })) ?? null;
+        relations: ['assignee'],
+      });
 
-    return result;
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res] ?? []);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 
-  @Query(() => Task)
-  async ToggleTaskStatus(@Arg("taskId") taskId: number): Promise<Task | null> {
-    const origin = await this.taskRepository.findOne({ where: { taskId } });
-    if (!origin) return null;
-
-    const updateRes = await this.taskRepository.update(taskId, {
-      taskStatus: !origin.taskStatus,
-    });
-
-    return (await this.taskRepository.findOne({ where: { taskId } })) ?? null;
-  }
-
-  @Query(() => User)
-  async QueryTaskAssignee(@Arg("taskId") taskId: number): Promise<User | null> {
-    const taskDetail = await this.taskRepository.findOne({
-      where: {
-        taskId,
-      },
-      relations: ["assignee"],
-    });
-
-    if (!taskDetail) return null;
-
-    return taskDetail.assignee ?? null;
-  }
-
-  @Query(() => [Task]!)
-  async QueryUserTasks(@Arg("uid") uid: number) {
-    const res = await this.taskRepository.find({
-      where: {
-        assignee: {
-          uid,
+  @Query(() => UserStatus)
+  async QueryTaskAssignee(@Arg('taskId') taskId: number): Promise<UserStatus> {
+    try {
+      const res = await this.taskRepository.findOne({
+        where: {
+          taskId,
         },
-      },
-    });
-    return res;
+        relations: ['assignee'],
+      });
+
+      return new StatusHandler(
+        true,
+        RESPONSE_INDICATOR.SUCCESS,
+        res ? [res.assignee] : []
+      );
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 
-  // TODO: return status
-  @Query(() => Task)
-  async DeleteTask(@Arg("taskId") taskId: number): Promise<Task | null> {
-    const taskDetail = await this.taskRepository.findOne({
-      where: {
-        taskId,
-      },
-    });
-    if (!taskDetail) return null;
+  @Query(() => TaskStatus)
+  async QueryUserTasks(@Arg('uid') uid: number) {
+    try {
+      const res = await this.taskRepository.find({
+        where: {
+          assignee: {
+            uid,
+          },
+        },
+      });
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, res);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
+  }
 
-    await this.taskRepository.delete(taskId);
+  @Transaction()
+  @Mutation(() => TaskStatus)
+  async ToggleTaskStatus(
+    @Arg('taskId') taskId: number,
+    @TransactionRepository(Task) taskTransRepo: Repository<Task>
+  ): Promise<TaskStatus> {
+    try {
+      const origin = await taskTransRepo.findOne({ where: { taskId } });
 
-    return taskDetail ?? null;
+      if (!origin)
+        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
+
+      const updateRes = await taskTransRepo.update(taskId, {
+        taskStatus: !origin.taskStatus,
+      });
+
+      const updatedItem = await taskTransRepo.findOne({
+        where: { taskId },
+      });
+
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updatedItem]);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
+  }
+
+  @Transaction()
+  @Mutation(() => Task)
+  async DeleteTask(
+    @Arg('taskId') taskId: number,
+    @TransactionRepository(Task) taskTransRepo: Repository<Task>
+  ): Promise<TaskStatus> {
+    try {
+      const res = await taskTransRepo.findOne({
+        where: {
+          taskId,
+        },
+      });
+
+      if (!res) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
+      }
+
+      await taskTransRepo.delete(taskId);
+
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, []);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 
   @Transaction()
   @Mutation(() => Task)
   async CreateNewTask(
-    @Arg("taskCreateParam") param: TaskCreateInput,
+    @Arg('taskCreateParam') param: TaskCreateInput,
     @TransactionRepository(Task)
     taskTransRepo: Repository<Task>
-  ): Promise<Task> {
-    const result = await taskTransRepo.save(param);
-    return result;
+  ): Promise<TaskStatus> {
+    try {
+      const res = await taskTransRepo.save(param);
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 
-  // TODO: Status -> TaskStatus / UserStatus
   @Transaction()
-  @Mutation(() => Status)
+  @Mutation(() => TaskStatus)
   async UpdateTaskInfo(
-    @Arg("taskUpdateParam") param: TaskUpdateInput,
+    @Arg('taskUpdateParam') param: TaskUpdateInput,
     @TransactionRepository(Task)
     taskTransRepo: Repository<Task>
-  ): Promise<Status> {
-    const result = await taskTransRepo.update(param.taskId, param);
-    console.log(result);
-    return new StatusHandler(true, "Success");
+  ): Promise<TaskStatus> {
+    try {
+      const res = await taskTransRepo.update(param.taskId, param);
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 
   @Transaction()
-  @Mutation(() => Status)
+  @Mutation(() => TaskStatus)
   async AssignTask(
-    @Arg("taskId") taskId: string,
-    @Arg("uid") uid: string,
+    @Arg('taskId') taskId: string,
+    @Arg('uid') uid: string,
     @TransactionRepository(Task)
     taskTransRepo: Repository<Task>
-    // TODO: handle status
-  ): Promise<any> {
-    const assignee = await this.userRepository.findOne({ uid });
-    const task = await this.taskRepository.findOne(
-      {
-        taskId,
-      },
-      {
-        relations: ["assignee"],
+  ): Promise<TaskStatus> {
+    try {
+      const assignee = await this.userRepository.findOne({ uid });
+      if (!assignee) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
-    );
+      const task = await this.taskRepository.findOne(
+        {
+          taskId,
+        },
+        {
+          relations: ['assignee'],
+        }
+      );
+      if (task?.assignee) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.EXISTED, [task]);
+      }
 
-    // if (task?.assignee) {
-    //   return new StatusHandler(false, "Assigned");
-    // }
-    task!.assignee = assignee;
+      task!.assignee = assignee;
 
-    const assign = await taskTransRepo.save(task!);
-    return assign;
+      const assignRes = await taskTransRepo.save(task!);
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [assignRes]);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 }

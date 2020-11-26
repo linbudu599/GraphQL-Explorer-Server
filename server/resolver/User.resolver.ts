@@ -24,7 +24,11 @@ import {
   UserUpdateInput,
   UserQueryArgs,
 } from '../graphql/User';
-import { PaginationOptions, StatusHandler, Status } from '../graphql/Common';
+import {
+  PaginationOptions,
+  StatusHandler,
+  UserStatus,
+} from '../graphql/Common';
 
 import { ACCOUNT_AUTH, RESPONSE_INDICATOR } from '../utils/constants';
 import { InjectCurrentUser, CustomArgsValidation } from '../decorators';
@@ -42,13 +46,13 @@ export default class UserResolver {
 
   // 先给个最低权限
   @Authorized(ACCOUNT_AUTH.UN_LOGIN)
-  @Query(() => Status)
+  @Query(() => UserStatus)
   async Users(
     @Ctx() ctx: IContext,
     @InjectCurrentUser() user: IContext['currentUser'],
     @Arg('pagination', { nullable: true })
     pagination: PaginationOptions
-  ): Promise<Status> {
+  ): Promise<UserStatus> {
     try {
       const { cursor, offset } = pagination ?? { cursor: 0, offset: 5 };
       const usersWithTasks = await this.userService.Users(cursor!, offset!);
@@ -63,8 +67,8 @@ export default class UserResolver {
     }
   }
 
-  @Query(() => Status)
-  async FindUserById(@Arg('uid') uid: string): Promise<Status> {
+  @Query(() => UserStatus)
+  async FindUserById(@Arg('uid') uid: string): Promise<UserStatus> {
     const user = await this.userRepository.findOne(
       { uid },
       {
@@ -78,11 +82,11 @@ export default class UserResolver {
   }
 
   // Use another service to query by user.tasks
-  @Query(() => Status)
+  @Query(() => UserStatus)
   @CustomArgsValidation(UserQueryArgs)
   async FindUserByConditions(
     @Args({ validate: false }) conditions: UserQueryArgs
-  ): Promise<Status> {
+  ): Promise<UserStatus> {
     try {
       const res = await this.userRepository.find({ ...conditions });
       const isEmpty = res.length === 0;
@@ -97,12 +101,12 @@ export default class UserResolver {
   }
 
   @Transaction()
-  @Mutation(() => Status)
+  @Mutation(() => UserStatus)
   async CreateUser(
     @Arg('newUserInfo') user: UserCreateInput,
     @TransactionRepository(User)
     userTransRepo: Repository<User>
-  ): Promise<Status> {
+  ): Promise<UserStatus> {
     try {
       const isExistingUser = await this.userRepository.findOne({
         name: user.name,
@@ -120,12 +124,12 @@ export default class UserResolver {
   }
 
   @Transaction()
-  @Mutation(() => Status, { nullable: true })
+  @Mutation(() => UserStatus, { nullable: true })
   async UpdateUser(
     @Arg('modifiedUserInfo') user: UserUpdateInput,
     @TransactionRepository(User)
     userTransRepo: Repository<User>
-  ): Promise<Status | undefined> {
+  ): Promise<UserStatus> {
     try {
       const isExistingUser = await this.userRepository.findOne({
         uid: user.uid,
@@ -148,12 +152,12 @@ export default class UserResolver {
 
   // TODO: constraint fix
   @Transaction()
-  @Mutation(() => Status)
+  @Mutation(() => UserStatus)
   async DeleteUser(
     @Arg('uid') uid: string,
     @TransactionRepository(User)
     userTransRepo: Repository<User>
-  ): Promise<Status> {
+  ): Promise<UserStatus> {
     try {
       const isExistingUser = await this.userRepository.findOne(uid);
       if (!isExistingUser) {
@@ -176,7 +180,7 @@ export default class UserResolver {
     return user.age;
   }
 
-  @Query(() => Status)
+  @Query(() => UserStatus)
   async InjectDataFromService() {
     const registerDate = await this.userService.ContainerRegisterTime();
     const data = {

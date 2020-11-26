@@ -15,7 +15,9 @@ type Cook {
   yearsOfExperience: Int!
 }
 
-"""All possible preparation difficulty levels"""
+"""
+All possible preparation difficulty levels
+"""
 enum Difficulty {
   Beginner
   Easy
@@ -44,22 +46,26 @@ interface IUser {
   uid: ID!
 }
 
-"""Job Enum Type"""
+"""
+Job Enum Type
+"""
 enum Job {
   BE
   FE
 }
 
 type Mutation {
-  AssignTask(taskId: String!, uid: String!): Status!
+  AssignTask(taskId: String!, uid: String!): TaskStatus!
   CreateNewTask(taskCreateParam: TaskCreateInput!): Task!
-  CreateUser(newUserInfo: UserCreateInput!): Status!
-  DeleteUser(uid: String!): Status!
+  CreateUser(newUserInfo: UserCreateInput!): UserStatus!
+  DeleteTask(taskId: Float!): Task!
+  DeleteUser(uid: String!): UserStatus!
   publisherMutation(message: String): Boolean!
   pubSubMutation(message: String): Boolean!
   pubSubMutationToDynamicTopic(message: String, topic: String!): Boolean!
-  UpdateTaskInfo(taskUpdateParam: TaskUpdateInput!): Status!
-  UpdateUser(modifiedUserInfo: UserUpdateInput!): Status
+  ToggleTaskStatus(taskId: Float!): TaskStatus!
+  UpdateTaskInfo(taskUpdateParam: TaskUpdateInput!): TaskStatus!
+  UpdateUser(modifiedUserInfo: UserUpdateInput!): UserStatus
 }
 
 type Notification {
@@ -75,18 +81,21 @@ input PaginationOptions {
 
 type Query {
   currentDate: Timestamp!
-  DeleteTask(taskId: Float!): Task!
-  FindUserByConditions(age: Int, isFool: Boolean, job: String, name: String): Status!
-  FindUserById(uid: String!): Status!
-  GetTaskByID(taskId: Float!): Task!
-  InjectDataFromService: Status!
-  QueryTaskAssignee(taskId: Float!): User!
-  QueryUserTasks(uid: Float!): [Task!]!
+  FindTaskByID(taskId: Float!): TaskStatus!
+  FindUserByConditions(
+    age: Int
+    isFool: Boolean
+    job: String
+    name: String
+  ): UserStatus!
+  FindUserById(uid: String!): UserStatus!
+  InjectDataFromService: UserStatus!
+  QueryTaskAssignee(taskId: Float!): UserStatus!
+  QueryUserTasks(uid: Float!): TaskStatus!
   Recipes(difficulty: Difficulty): [Recipe!]!
   Search(cookName: String!): [SearchResult!]!
-  Tasks: [Task!]!
-  ToggleTaskStatus(taskId: Float!): Task!
-  Users(pagination: PaginationOptions): Status!
+  Tasks(pagination: PaginationOptions): TaskStatus!
+  Users(pagination: PaginationOptions): UserStatus!
 }
 
 type Recipe {
@@ -98,13 +107,6 @@ type Recipe {
 }
 
 union SearchResult = Cook | Recipe
-
-"""Response Status Indicator"""
-type Status {
-  data: [User!]
-  message: String!
-  success: Boolean!
-}
 
 type Subscription {
   normalSubscription: Notification!
@@ -122,14 +124,27 @@ type Task implements ITask {
   taskTitle: String!
 }
 
-"""Task InputObject"""
+"""
+Task InputObject
+"""
 input TaskCreateInput {
   taskContent: String
   taskReward: Float
   taskTitle: String!
 }
 
-"""Args On Task Update"""
+"""
+Task Response Status Indicator
+"""
+type TaskStatus {
+  data: [Task!]
+  message: String!
+  success: Boolean!
+}
+
+"""
+Args On Task Update
+"""
 input TaskUpdateInput {
   taskContent: String
   taskId: String!
@@ -155,7 +170,9 @@ type User implements IUser {
   uid: ID!
 }
 
-""" User InputObject/Args"""
+"""
+ User InputObject/Args
+"""
 input UserCreateInput {
   age: Int
   isFool: Boolean
@@ -163,7 +180,18 @@ input UserCreateInput {
   name: String!
 }
 
-"""Args On User Update"""
+"""
+User Response Status Indicator
+"""
+type UserStatus {
+  data: [User!]
+  message: String!
+  success: Boolean!
+}
+
+"""
+Args On User Update
+"""
 input UserUpdateInput {
   age: Int
   isFool: Boolean

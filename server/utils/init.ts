@@ -33,6 +33,7 @@ import { setRecipeInContainer, mockUser, mockTask } from './mock';
 import ResolveTime from '../middleware/time';
 import InterceptorOnUID1 from '../middleware/interceptor';
 import LogAccessMiddleware from '../middleware/log';
+import ErrorLoggerMiddleware from '../middleware/error';
 
 // Extensions powered by TypeGraphQL
 import { ExtensionsMetadataRetriever } from '../extensions/GetMetadata';
@@ -53,6 +54,13 @@ log(`[Env] Loading ${dev ? '[DEV]' : '[PROD]'} File`);
 export default async (): Promise<ApolloServer> => {
   setRecipeInContainer();
 
+  const basicMiddlewares = [
+    ResolveTime,
+    InterceptorOnUID1,
+    ExtensionsMetadataRetriever,
+    LogAccessMiddleware,
+  ];
+
   const schema = await buildSchema({
     resolvers: [UserResolver, RecipeResolver, TaskResolver, PubSubResolver],
     // container: Container,
@@ -64,12 +72,9 @@ export default async (): Promise<ApolloServer> => {
     authMode: 'error',
     emitSchemaFile: path.resolve(__dirname, '../typegraphql/shema.graphql'),
     validate: true,
-    globalMiddlewares: [
-      ResolveTime,
-      InterceptorOnUID1,
-      ExtensionsMetadataRetriever,
-      LogAccessMiddleware,
-    ],
+    globalMiddlewares: dev
+      ? [...basicMiddlewares, ErrorLoggerMiddleware]
+      : basicMiddlewares,
   });
 
   await dbConnect();
