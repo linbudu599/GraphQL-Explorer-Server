@@ -12,9 +12,29 @@ branches:
 
 install:
   - npm install
-script:
-  - npm run test:client
-  - npm run build:client
+
+stages:
+  - Test
+  - Build
+  - Serve
+  - Request
+
+jobs:
+  include:
+    - stage: Test
+      name: "Client Test"
+      script: npm run test:client
+    - stage: Build
+      name: "Client & Server Build"
+      script: npm run build:client
+      script: npm run build:server
+    - stage: Serve
+      name: "Serve By PM2"
+      script: npm run pm2
+    - stage: Request
+      name: "Request Server"
+      stage: npm run ci:req
+
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
