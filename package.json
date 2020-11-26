@@ -19,7 +19,7 @@
     "gen:docs": "rimraf -rf ./docs && graphdoc --force",
     "serve:docs": "npm run gen:docs && serve -s docs",
     "ci:req": "node ./scripts/simple-request.js",
-    "commit": "git-cz"
+    "commit": "git add -A && git-cz"
   },
   "repository": {
     "type": "git",
@@ -61,6 +61,7 @@
     "apollo-boost": "^0.4.9",
     "apollo-cache-inmemory": "^1.6.6",
     "apollo-client": "^2.6.10",
+    "apollo-datasource-rest": "^0.9.5",
     "apollo-link-http": "^1.5.17",
     "apollo-server": "^2.17.0",
     "apollo-server-koa": "^2.17.0",
@@ -75,6 +76,7 @@
     "dataloader": "^2.0.0",
     "dotenv": "^8.2.0",
     "graphql": "^15.3.0",
+    "graphql-scalars": "^1.5.0",
     "graphql-tag": "^2.11.0",
     "graphql-voyager": "^1.0.0-rc.31",
     "graphqldoc": "^2.5.2",
@@ -105,10 +107,12 @@
     "@graphql-codegen/cli": "^1.19.2",
     "@graphql-codegen/fragment-matcher": "^2.0.0",
     "@graphql-codegen/introspection": "^1.18.0",
+    "@graphql-codegen/time": "^2.0.1",
     "@graphql-codegen/typescript": "^1.17.11",
     "@graphql-codegen/typescript-operations": "^1.17.10",
     "@graphql-codegen/typescript-react-apollo": "^2.1.1",
     "@graphql-codegen/typescript-resolvers": "^1.17.11",
+    "@graphql-codegen/typescript-type-graphql": "^1.18.1",
     "@ice/spec": "^1.0.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.0.1",

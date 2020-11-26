@@ -12,6 +12,7 @@ branches:
 
 install:
   - npm install
+  - npm install pm2 -g
 
 stages:
   - Test
@@ -31,9 +32,9 @@ jobs:
     - stage: Serve
       name: "Serve By PM2"
       script: npm run pm2
-    - stage: Request
-      name: "Request Server"
-      stage: npm run ci:req
+    - stage: Exit
+      name: "Delete PM2 Process"
+      script: pm2 delete all
 
 
 after_success:

@@ -1,53 +1,54 @@
-import "reflect-metadata";
-import { Context } from "koa";
-import path from "path";
-import dotenv from "dotenv";
-import { Container, ContainerInstance } from "typedi";
-import * as TypeORM from "typeorm";
-import { buildSchema, ResolverData } from "type-graphql";
-import { ApolloServer } from "apollo-server-koa";
-import { GraphQLRequestContext } from "apollo-server-plugin-base";
-import { ApolloServerLoaderPlugin } from "type-graphql-dataloader";
+import 'reflect-metadata';
+import { Context } from 'koa';
+import path from 'path';
+import dotenv from 'dotenv';
+import { Container, ContainerInstance } from 'typedi';
+import * as TypeORM from 'typeorm';
+import { buildSchema, ResolverData } from 'type-graphql';
+import { ApolloServer } from 'apollo-server-koa';
+import { GraphQLRequestContext } from 'apollo-server-plugin-base';
+import { ApolloServerLoaderPlugin } from 'type-graphql-dataloader';
 import {
   getComplexity,
   simpleEstimator,
   fieldExtensionsEstimator,
-} from "graphql-query-complexity";
+} from 'graphql-query-complexity';
 // TypeGraphQL
-import { JOB } from "../graphql/User";
+import { JOB } from '../graphql/User';
 
-import UserResolver from "../resolver/User.resolver";
-import RecipeResolver from "../resolver/Recipe.resolver";
-import TaskResolver from "../resolver/Task.resolver";
-import PubSubResolver from "../resolver/PubSub.resolver";
+import UserResolver from '../resolver/User.resolver';
+import RecipeResolver from '../resolver/Recipe.resolver';
+import TaskResolver from '../resolver/Task.resolver';
+import PubSubResolver from '../resolver/PubSub.resolver';
 
 // TypeORM
-import User from "../entity/User";
-import Task from "../entity/Task";
+import User from '../entity/User';
 
-import { log } from "./helper";
-import { authChecker } from "./authChecker";
-import { ACCOUNT_AUTH, MAX_ALLOWED_COMPLEXITY } from "./constants";
-import { setRecipeInContainer, mockUser, mockTask } from "./mock";
+import { log } from './helper';
+import { authChecker } from './authChecker';
+import { ACCOUNT_AUTH, MAX_ALLOWED_COMPLEXITY } from './constants';
+import { setRecipeInContainer, mockUser, mockTask } from './mock';
 
 // Middlewares applied on TypeGraphQL
-import ResolveTime from "../middleware/time";
-import InterceptorOnUID1 from "../middleware/interceptor";
-import LogAccessMiddleware from "../middleware/log";
+import ResolveTime from '../middleware/time';
+import InterceptorOnUID1 from '../middleware/interceptor';
+import LogAccessMiddleware from '../middleware/log';
 
 // Extensions powered by TypeGraphQL
-import { ExtensionsMetadataRetriever } from "../extensions/GetMetadata";
+import { ExtensionsMetadataRetriever } from '../extensions/GetMetadata';
 
-import { IContext } from "../typding";
+import SpaceXDataSource from '../datasource/SpaceX';
 
-Container.set({ id: "INIT_INJECT_DATA", factory: () => new Date() });
+import { IContext } from '../typding';
+
+Container.set({ id: 'INIT_INJECT_DATA', factory: () => new Date() });
 
 TypeORM.useContainer(Container);
 
-const dev = process.env.NODE_ENV === "development";
-dotenv.config({ path: dev ? ".env.dev" : ".env.prod" });
+const dev = process.env.NODE_ENV === 'development';
+dotenv.config({ path: dev ? '.env.dev' : '.env.prod' });
 
-log(`[Env] Loading ${dev ? "[DEV]" : "[PROD]"} File`);
+log(`[Env] Loading ${dev ? '[DEV]' : '[PROD]'} File`);
 
 export default async (): Promise<ApolloServer> => {
   setRecipeInContainer();
@@ -58,10 +59,10 @@ export default async (): Promise<ApolloServer> => {
     // scoped-container，每次从context中拿到本次注册容器
     container: ({ context }: ResolverData<IContext>) => context.container,
     // TypeGraphQL built-in Scalar Date
-    dateScalarMode: "timestamp",
+    dateScalarMode: 'timestamp',
     authChecker,
-    authMode: "error",
-    emitSchemaFile: path.resolve(__dirname, "../typegraphql/shema.graphql"),
+    authMode: 'error',
+    emitSchemaFile: path.resolve(__dirname, '../typegraphql/shema.graphql'),
     validate: true,
     globalMiddlewares: [
       ResolveTime,
@@ -110,9 +111,13 @@ export default async (): Promise<ApolloServer> => {
         container,
       };
 
-      container.set("context", context);
+      container.set('context', context);
       return context;
     },
+    // 放在context里就可以自己用了
+    dataSources: () => ({
+      SpaceXAPI: new SpaceXDataSource(),
+    }),
     plugins: [
       {
         // 在每次请求开始前销毁上一个容器
@@ -139,7 +144,7 @@ export default async (): Promise<ApolloServer> => {
               );
             }
 
-            console.log("Used query complexity points:", complexity);
+            console.log('Used query complexity points:', complexity);
           },
 
           executionDidStart(
@@ -154,7 +159,7 @@ export default async (): Promise<ApolloServer> => {
             Container.reset(reqContext.context.currentUser!.uid);
             const instancesIds = ((Container as any)
               .instances as ContainerInstance[]).map((instance) => instance.id);
-            console.log("instances left in memory:", instancesIds);
+            console.log('instances left in memory:', instancesIds);
           },
         }),
       },
@@ -176,11 +181,11 @@ export default async (): Promise<ApolloServer> => {
     // formatResponse: () => {},
     playground: {
       settings: {
-        "editor.theme": "dark",
-        "editor.fontSize": 16,
-        "tracing.hideTracingResponse": false,
-        "queryPlan.hideQueryPlanResponse": false,
-        "editor.fontFamily": `'Fira Code', 'Source Code Pro', 'Consolas'`,
+        'editor.theme': 'dark',
+        'editor.fontSize': 16,
+        'tracing.hideTracingResponse': false,
+        'queryPlan.hideQueryPlanResponse': false,
+        'editor.fontFamily': `'Fira Code', 'Source Code Pro', 'Consolas'`,
       },
     },
   });
@@ -189,31 +194,31 @@ export default async (): Promise<ApolloServer> => {
 };
 
 export const dbConnect = async (): Promise<any> => {
-  log("=== [TypeORM] TypeORM Connecting ===");
+  log('=== [TypeORM] TypeORM Connecting ===');
   try {
     const connection = await TypeORM.createConnection({
-      type: "sqlite",
-      name: "default",
+      type: 'sqlite',
+      name: 'default',
       // use different databse
-      database: "./info.db",
+      database: './info.db',
       // disabled in prod
       synchronize: true,
       dropSchema: true,
-      logging: "all",
+      logging: 'all',
       maxQueryExecutionTime: 1000,
-      logger: "advanced-console",
+      logger: 'advanced-console',
       // TODO: remove to env variables
-      entities: [dev ? "server/entity/*.ts" : "server-dist/entity/*.js"],
+      entities: [dev ? 'server/entity/*.ts' : 'server-dist/entity/*.js'],
       cache: {
         duration: 3000,
       },
     });
-    log("=== [TypeORM] Database Connection Established ===");
+    log('=== [TypeORM] Database Connection Established ===');
 
     await connection.manager.save(mockTask);
 
     const user = new User();
-    user.name = "林不渡-Lv1";
+    user.name = '林不渡-Lv1';
 
     user.tasks = mockTask.slice(0, 2);
 
@@ -221,8 +226,8 @@ export const dbConnect = async (): Promise<any> => {
 
     await connection.manager.save(mockUser);
 
-    log("=== [TypeORM] Initial Mock Data Inserted ===\n");
+    log('=== [TypeORM] Initial Mock Data Inserted ===\n');
   } catch (error) {
-    log(error, "red");
+    log(error, 'red');
   }
 };

@@ -1,0 +1,8 @@
+server-dist
+client-dist
+.github
+coverage
+docs
+plan
+
+.travis.yml

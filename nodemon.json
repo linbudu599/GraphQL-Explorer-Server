@@ -11,7 +11,8 @@
     "server/logs",
     "/**/*.json",
     "/**/*.graphql",
-    "/**/*.gql"
+    "/**/*.gql",
+    "server/generated"
   ],
   "verbose": true,
   "execMap": {

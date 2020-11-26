@@ -4,7 +4,9 @@ export enum USER_ROLES {
   ADMIN = 1,
 }
 
-export const DATA_SOURCE_URL = "http://api.linbudu.top/data";
+export const DATA_SOURCE_URL = 'http://api.linbudu.top/data';
+
+export const SPACEX_API = 'https://api.spacexdata.com/v4';
 
 export enum ACCOUNT_AUTH {
   UN_LOGIN = -1,
@@ -13,10 +15,10 @@ export enum ACCOUNT_AUTH {
 }
 
 export enum RESPONSE_INDICATOR {
-  NOT_FOUND = "Resource Not Found",
-  EXISTED = "Resource Existed",
-  SUCCESS = "Success",
-  FAILED = "Operation Failed",
+  NOT_FOUND = 'Resource Not Found',
+  EXISTED = 'Resource Existed',
+  SUCCESS = 'Success',
+  FAILED = 'Operation Failed',
 }
 
 export const MAX_ALLOWED_COMPLEXITY = 20;
