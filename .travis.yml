@@ -3,7 +3,6 @@ language: node_js
 node_js:
   - 12
   - 14
-  - node
   - lts/*
 
 branches:
@@ -18,7 +17,7 @@ stages:
   - Test
   - Build
   - Serve
-  - Request
+  - Exit
 
 jobs:
   include:
