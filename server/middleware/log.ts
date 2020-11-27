@@ -1,5 +1,10 @@
 import { Service } from 'typedi';
-import { MiddlewareInterface, ResolverData, NextFn } from 'type-graphql';
+import {
+  MiddlewareInterface,
+  ResolverData,
+  NextFn,
+  MiddlewareFn,
+} from 'type-graphql';
 import { getLoggerExtensions, log } from '../utils/helper';
 
 import { Logger, LOG_TYPE } from '../utils/winston';
@@ -14,18 +19,18 @@ export default class LogAccessMiddleware
     try {
       const { message, level = 0 } = getLoggerExtensions(info);
 
-      log('=== [LogAccessMiddleware Start] ===');
+      // log('=== [LogAccessMiddleware Start] ===');
 
       if (message) {
         this.logger.log(LOG_TYPE.DATA, `message: ${message}, level: ${level}`);
       }
 
-      this.logger.log(
-        LOG_TYPE.INFO,
-        `Logging Access: UID ${context.currentUser.uid} -> ${info.parentType.name}.${info.fieldName}`
-      );
+      // this.logger.log(
+      //   LOG_TYPE.INFO,
+      //   `Logging Access: UID ${context.currentUser.uid} -> ${info.parentType.name}.${info.fieldName}`
+      // );
 
-      log('=== [LogAccessMiddleware End] ===');
+      // log('=== [LogAccessMiddleware End] ===');
 
       return await next();
     } catch (error) {
@@ -33,3 +38,20 @@ export default class LogAccessMiddleware
     }
   }
 }
+
+export const ExtraFieldLogMiddlewareGenerator = (
+  extra: string
+): MiddlewareFn<IContext> => {
+  const logger = new Logger();
+
+  return async ({ info }, next) => {
+    logger.log(
+      LOG_TYPE.INFO,
+      JSON.stringify({
+        extra,
+        field: info.fieldName,
+      })
+    );
+    await next();
+  };
+};

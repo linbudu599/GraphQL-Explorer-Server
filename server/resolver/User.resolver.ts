@@ -9,7 +9,6 @@ import {
   Ctx,
   FieldResolver,
   Root,
-  ResolverInterface,
 } from 'type-graphql';
 import { Repository, Transaction, TransactionRepository } from 'typeorm';
 import { InjectRepository } from 'typeorm-typedi-extensions';
@@ -27,11 +26,14 @@ import {
 import {
   PaginationOptions,
   StatusHandler,
+  TaskStatus,
   UserStatus,
 } from '../graphql/Common';
 
 import { ACCOUNT_AUTH, RESPONSE_INDICATOR } from '../utils/constants';
 import { InjectCurrentUser, CustomArgsValidation } from '../decorators';
+
+import { ExtraFieldLogMiddlewareGenerator } from '../middleware/log';
 
 import { IContext } from '../typding';
 import { log } from '../utils/helper';
@@ -47,6 +49,7 @@ export default class UserResolver {
   // 先给个最低权限
   @Authorized(ACCOUNT_AUTH.UN_LOGIN)
   @Query(() => UserStatus)
+  @UseMiddleware(ExtraFieldLogMiddlewareGenerator('CHECK ALL USERS'))
   async Users(
     @Ctx() ctx: IContext,
     @InjectCurrentUser() user: IContext['currentUser'],
@@ -81,7 +84,6 @@ export default class UserResolver {
     return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [user]);
   }
 
-  // Use another service to query by user.tasks
   @Query(() => UserStatus)
   @CustomArgsValidation(UserQueryArgs)
   async FindUserByConditions(
@@ -118,7 +120,6 @@ export default class UserResolver {
       const res = await userTransRepo.save(user);
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
     } catch (error) {
-      // FIXME: should filter sensitive data on throwing
       return new StatusHandler(false, JSON.stringify(error), []);
     }
   }
@@ -138,7 +139,6 @@ export default class UserResolver {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
 
-      // PUZZLE: should judge by generatedMaps?
       const res = await userTransRepo.update({ uid: user.uid }, user);
       const updatedItem = await this.userRepository.findOne({
         uid: user.uid,
@@ -150,22 +150,46 @@ export default class UserResolver {
     }
   }
 
-  // TODO: constraint fix
   @Transaction()
-  @Mutation(() => UserStatus)
+  @Mutation(() => TaskStatus)
   async DeleteUser(
     @Arg('uid') uid: string,
     @TransactionRepository(User)
-    userTransRepo: Repository<User>
-  ): Promise<UserStatus> {
+    userTransRepo: Repository<User>,
+    @TransactionRepository(Task)
+    taskTransRepo: Repository<Task>
+  ): Promise<TaskStatus> {
     try {
-      const isExistingUser = await this.userRepository.findOne(uid);
+      const isExistingUser = await userTransRepo.findOne(uid);
       if (!isExistingUser) {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
-      const res = await userTransRepo.delete({ uid });
-      console.log(res);
-      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
+      // TODO: 抽离到Task.service中
+      const hasAssignedTask = await taskTransRepo.find({
+        where: {
+          assignee: {
+            uid,
+          },
+        },
+      });
+
+      if (!hasAssignedTask) {
+        await userTransRepo.delete(uid);
+      } else {
+        await taskTransRepo.update(
+          {
+            assignee: {
+              uid,
+            },
+          },
+          {
+            assignee: undefined,
+          }
+        );
+      }
+
+      await userTransRepo.delete({ uid });
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, []);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
     }
