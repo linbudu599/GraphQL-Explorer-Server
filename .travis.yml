@@ -17,7 +17,6 @@ stages:
   - Test
   - Build
   - Serve
-  - Exit
 
 jobs:
   include:
@@ -31,8 +30,6 @@ jobs:
     - stage: Serve
       name: "Serve By PM2"
       script: npm run pm2
-    - stage: Exit
-      name: "Delete PM2 Process"
       script: pm2 delete all
 
 

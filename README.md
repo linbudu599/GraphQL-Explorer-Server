@@ -6,6 +6,12 @@
 ![Codecov](https://img.shields.io/codecov/c/github/linbudu599/GraphQL-Explorer)
 ![GitHub](https://img.shields.io/github/license/linbudu599/GraphQL-Explorer?color=deepgreen)
 
+![GitHub package.json dependency version (subfolder of monorepo)](https://img.shields.io/github/package-json/dependency-version/linbudu599/GraphQL-Explorer/graphql)
+![GitHub package.json dependency version (subfolder of monorepo)](https://img.shields.io/github/package-json/dependency-version/linbudu599/GraphQL-Explorer/type-graphql)
+![GitHub package.json dependency version (subfolder of monorepo)](https://img.shields.io/github/package-json/dependency-version/linbudu599/GraphQL-Explorer/apollo-server)
+![GitHub package.json dependency version (subfolder of monorepo)](https://img.shields.io/github/package-json/dependency-version/linbudu599/GraphQL-Explorer/react)
+![GitHub package.json dependency version (subfolder of monorepo)](https://img.shields.io/github/package-json/dependency-version/linbudu599/GraphQL-Explorer/parcel-bundler)
+
 This is a demo which contains GraphQL and framework based on it(or work with it perfectly), including these for now:
 
 - [x] GraphQL
@@ -48,81 +54,19 @@ npm run dev:server
 ## Available Scripts
 
 - `dev`: `dev:client` + `dev:server`
-- `dev:client`: develop client application
-- `dev:server`: develop server
-- `test:client`: invoke test cases in client
-- `build:client`: build client application by Parcel
+- `dev:client`: develop client application by `parcel`
+- `dev:server`: develop server by `nodemon`
+- `test:client`: run test cases in client by `jest`
+- `build:client`: build client application by `parcel`
 - `clean`: remove `/client-dist` & `/server-dist` directory
-- `start:server`: run in prod by nodemon
-- `build:server`: compile server code
-- `pm2:dev`: run in prod by PM2(`fork mode`)
-- `pressure-test`: run pressure test to server, see[pressure-fork.js](./pt-fork.js) & [pressure-main.js](./pt-main.js)
-- `voyager`: represent GraphQL API as an interactive graph by [graphql-voyager](https://github.com/APIs-guru/graphql-voyager), require server to be active.
-- `gen:code`: generate type definitions from GraphQL schema
-- `gen:docs`: generate documentation site from GraphQL schema
-- `serve:docs`: generate & serve documentation site
-
-## Document
-
-see offcial docs for more information.
-
-- [Apollo-GraphQL](https://www.apollographql.com/docs/)
-- [TypeGraphQL](https://typegraphql.com/)
-- [TypeStack](https://github.com/typestack)
-- [TypeORM](https://github.com/typeorm)
-
-- [x] GraphQL
-- [x] TypeGraphQL
-- [x] Apollo-Client & React & Parcel
-- [x] Apollo-Server
-- [x] DataLoader
-- [x] TypeORM + SQLite3
-- [ ] Redis + IORedis
-- [x] Winston
-- [x] TypeStack Product
-  - Class-Validator
-  - Class-Transformer
-
-## Client & Server Deploy
-
-- [x] [Client by Vercel](https://linbudu-graphql-explorer.vercel.app/)
-- [x] [Client by Netlify](https://linbudu-graphql-explorer.netlify.app/)
-- [x] [Docs by Surge](http://graphql-explorer-docs.surge.sh/)
-- [x] [Voyager by Surge](http://graphql-explorer-voyager.surge.sh/)
-- [ ] [Server-ALI-Cloud]
-- [ ] [Server-Heroku]
-- [x] [Apollo-Engine(private)](https://studio.apollographql.com/graph/My-Graph-innqj/explorer?schemaTag=current)
-
-## Progress
-
-**IN_PROGRESS**
-
-## Explore
-
-```bash
-npm install
-npm run dev
-# or use 2 terminals
-npm run dev:client
-npm run dev:server
-```
-
-## Available Scripts
-
-- `dev`: `dev:client` + `dev:server`
-- `dev:client`: develop client application
-- `dev:server`: develop server
-- `test:client`: invoke test cases in client
-- `build:client`: build client application by Parcel
-- `clean`: remove `/client-dist` & `/server-dist` directory
-- `start:server`: run in prod by nodemon
-- `build:server`: compile server code
-- `pm2:dev`: run in prod by PM2(`fork mode`)
-- `pressure-test`: run pressure test to server, see[pressure-fork.js](./pt-fork.js) & [pressure-main.js](./pt-main.js)
-- `voyager`: represent GraphQL API as an interactive graph by [graphql-voyager](https://github.com/APIs-guru/graphql-voyager), require server to be active.
-- `gen:code`: generate type definitions from GraphQL schema
-- `gen:docs`: generate documentation site from GraphQL schema
-- `serve:docs`: generate & serve documentation site
+- `start:server`: run in prod by `nodemon`
+- `build:server`: compile server code by `tsc`
+- `pm2`: run in prod by `PM2`
+- `stress-test`: run pressure test to server, see [stress-fork.js](./st-fork.js) & [stress-main.js](./st-main.js)
+- `voyager`: represent GraphQL API as an interactive graph by [graphql-voyager](https://github.com/APIs-guru/graphql-voyager), **require server to be active**.
+- `gen:code`: generate type definitions from GraphQL schema by `graphql-code-generator`
+- `gen:docs`: generate documentation site from GraphQL schema by `graphqldoc`
+- `serve:docs`: generate & serve documentation site by `serve`
 
 ## Document
 

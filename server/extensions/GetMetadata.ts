@@ -1,6 +1,6 @@
-import { MiddlewareInterface, NextFn, ResolverData } from "type-graphql";
-import { IContext } from "../typding";
-import { log } from "../utils/helper";
+import { MiddlewareInterface, NextFn, ResolverData } from 'type-graphql';
+import { IContext } from '../typding';
+import { log } from '../utils/helper';
 
 export class ExtensionsMetadataRetriever
   implements MiddlewareInterface<IContext> {
@@ -9,9 +9,9 @@ export class ExtensionsMetadataRetriever
     const extensions =
       info.parentType.getFields()[info.fieldName].extensions ?? {};
 
-    log("=== Extension Metadata ===");
-    console.log(info.fieldName);
-    console.log(extensions);
+    // log("=== Extension Metadata ===");
+    // console.log(info.fieldName);
+    // console.log(extensions);
     return next();
   }
 }

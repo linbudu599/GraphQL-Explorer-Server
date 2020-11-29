@@ -18,7 +18,6 @@
     "gen:code": "graphql-codegen --config codegen.yml",
     "gen:docs": "rimraf -rf ./docs && graphdoc --force",
     "serve:docs": "npm run gen:docs && serve -s docs",
-    "ci:req": "node ./scripts/simple-request.js",
     "commit": "git add -A && git-cz"
   },
   "repository": {
