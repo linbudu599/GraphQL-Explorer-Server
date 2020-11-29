@@ -20,14 +20,11 @@ import TaskResolver from '../resolver/Task.resolver';
 import PubSubResolver from '../resolver/PubSub.resolver';
 import AccountResolver from '../resolver/Account.resolver';
 
-// TypeORM
-import User from '../entity/User';
-
 import { log } from './helper';
 import { genarateRandomID } from './auth';
 import { authChecker } from './authChecker';
-import { ACCOUNT_AUTH, MAX_ALLOWED_COMPLEXITY } from './constants';
-import { setRecipeInContainer, mockUser, mockTask } from './mock';
+import { MAX_ALLOWED_COMPLEXITY } from './constants';
+import { setRecipeInContainer, dbConnect } from './mock';
 
 // Middlewares applied on TypeGraphQL
 import ResolveTime from '../middleware/time';
@@ -193,40 +190,4 @@ export default async (): Promise<ApolloServer> => {
   });
 
   return server;
-};
-
-export const dbConnect = async (): Promise<any> => {
-  log('=== [TypeORM] TypeORM Connecting ===');
-  try {
-    const connection = await TypeORM.createConnection({
-      type: 'sqlite',
-      name: 'default',
-      // use different databse
-      database: './info.db',
-      // disabled in prod
-      synchronize: true,
-      dropSchema: true,
-      logging: 'all',
-      maxQueryExecutionTime: 1000,
-      logger: 'advanced-console',
-      // TODO: remove to env variables
-      entities: [dev ? 'server/entity/*.ts' : 'server-dist/entity/*.js'],
-      cache: {
-        duration: 3000,
-      },
-    });
-    log('=== [TypeORM] Database Connection Established ===');
-
-    await connection.manager.save(mockTask);
-    await connection.manager.save(mockUser);
-
-    const user = new User();
-    user.name = '林不渡-Lv1';
-    user.tasks = mockTask.slice(0, 2);
-    await connection.manager.save(user);
-
-    log('=== [TypeORM] Initial Mock Data Inserted ===\n');
-  } catch (error) {
-    log(error, 'red');
-  }
 };

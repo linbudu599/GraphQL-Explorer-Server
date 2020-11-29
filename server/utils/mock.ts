@@ -1,3 +1,4 @@
+import * as TypeORM from 'typeorm';
 import Container from 'typedi';
 import { plainToClass } from 'class-transformer';
 import {
@@ -111,55 +112,79 @@ export const setRecipeInContainer = (): void => {
 
 const createTask = (task: Partial<Task>): Task => plainToClass(Task, task);
 
-export const mockTask = [
-  createTask({
-    taskTitle: 'task1',
-    taskContent: 'task1 content',
-    taskReward: 1000,
-    taskRate: 2,
-  }),
-  createTask({
-    taskTitle: 'task2',
-    taskContent: 'task2 content',
-    taskReward: 4000,
-    taskRate: 3,
-  }),
-  createTask({
-    taskTitle: 'task3',
-    taskContent: 'task3 content',
-    taskReward: 2000,
-    taskRate: 8,
-  }),
-  createTask({
-    taskTitle: 'task4',
-    taskContent: 'task4 content',
-    taskReward: 5000,
-    taskRate: 1,
-  }),
-  createTask({
-    taskTitle: 'task5',
-    taskContent: 'task5 content',
-    taskReward: 9000,
-    taskRate: 10,
-  }),
-];
+export const mockTask = (len: number) => {
+  const mockTaskInfo: Partial<Task>[] = [];
+
+  for (let i = 0; i < len; i++) {
+    mockTaskInfo.push(
+      createTask({
+        taskTitle: `task-${i}`,
+        taskContent: `task-${i} content`,
+        taskReward: Math.floor(Math.random() * 5000),
+        taskRate: Math.floor(Math.random() * 10),
+      })
+    );
+  }
+
+  return mockTaskInfo;
+};
 
 const createUser = (user: Partial<User>): User => plainToClass(User, user);
 
-export const mockUser = [
-  createUser({
-    name: '林不渡111',
-    age: 21,
-    isFool: true,
-  }),
-  createUser({
-    name: '林不渡222',
-    age: 25,
-    isFool: true,
-  }),
-  createUser({
-    name: '林不渡333',
-    age: 22,
-    isFool: true,
-  }),
-];
+export const mockUser = (len: number) => {
+  const mockUserInfo: Partial<User>[] = [];
+
+  for (let i = 0; i < len; i++) {
+    mockUserInfo.push(
+      createUser({
+        name: `林不渡-${i}`,
+        age: Math.floor(Math.random() * 30),
+        isFool: i % 2 === 0,
+      })
+    );
+  }
+
+  return mockUserInfo;
+};
+
+export const dbConnect = async (): Promise<any> => {
+  log('=== [TypeORM] TypeORM Connecting ===');
+  try {
+    const connection = await TypeORM.createConnection({
+      type: 'sqlite',
+      name: 'default',
+      // use different databse
+      database: './info.db',
+      // disabled in prod
+      synchronize: true,
+      dropSchema: true,
+      logging: 'all',
+      maxQueryExecutionTime: 1000,
+      logger: 'advanced-console',
+      entities: [
+        process.env.NODE_ENV === 'development'
+          ? 'server/entity/*.ts'
+          : 'server-dist/entity/*.js',
+      ],
+      cache: {
+        duration: 3000,
+      },
+    });
+    log('=== [TypeORM] Database Connection Established ===');
+
+    const mockTaskGroup = mockTask(5);
+    const mockUserGroup = mockUser(5);
+
+    await connection.manager.save(mockTaskGroup);
+    await connection.manager.save(mockUserGroup);
+
+    const user = new User();
+    user.name = '林不渡-Lv1';
+    user.tasks = (mockTaskGroup as Task[]).slice(0, 2);
+    await connection.manager.save(user);
+
+    log('=== [TypeORM] Initial Mock Data Inserted ===\n');
+  } catch (error) {
+    log(error, 'red');
+  }
+};

@@ -57,7 +57,7 @@ export default class UserResolver {
     pagination: PaginationOptions
   ): Promise<UserStatus> {
     try {
-      const { cursor, offset } = pagination ?? { cursor: 0, offset: 5 };
+      const { cursor, offset } = pagination ?? { cursor: 0, offset: 20 };
       const usersWithTasks = await this.userService.Users(cursor!, offset!);
 
       return new StatusHandler(

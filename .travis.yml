@@ -30,7 +30,6 @@ jobs:
     - stage: Serve
       name: "Serve By PM2"
       script: npm run pm2
-      script: pm2 delete all
 
 
 after_success:

@@ -27,7 +27,7 @@ export default class TaskResolver {
     pagination: PaginationOptions
   ): Promise<TaskStatus> {
     try {
-      const { cursor, offset } = pagination ?? { cursor: 0, offset: 10 };
+      const { cursor, offset } = pagination ?? { cursor: 0, offset: 20 };
       const res = await this.taskRepository.find({
         skip: cursor,
         take: offset,

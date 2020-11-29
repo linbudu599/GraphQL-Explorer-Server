@@ -6,7 +6,7 @@ import {
   ID,
   registerEnumType,
   InterfaceType,
-} from "type-graphql";
+} from 'type-graphql';
 import {
   Length,
   IsBoolean,
@@ -17,21 +17,21 @@ import {
   Min,
   IsEnum,
   IsPositive,
-} from "class-validator";
+} from 'class-validator';
 
 export enum JOB {
-  FE = "FE",
-  BE = "BE",
+  FE = 'FE',
+  BE = 'BE',
 }
 
 registerEnumType(JOB, {
-  name: "Job",
-  description: "Job Enum Type",
+  name: 'Job',
+  description: 'Job Enum Type',
 });
 
 @InterfaceType()
 export abstract class IUser {
-  @Field((type) => ID)
+  @Field((type) => ID, { nullable: false })
   uid!: string;
 
   @Field()
@@ -80,7 +80,7 @@ export class UserQueryArgs {
   job?: JOB;
 }
 
-@InputType({ description: " User InputObject/Args" })
+@InputType({ description: ' User InputObject/Args' })
 export class UserCreateInput implements Partial<IUser> {
   @Field({ nullable: false })
   @Length(1, 20)
@@ -106,7 +106,7 @@ export class UserCreateInput implements Partial<IUser> {
   job?: JOB;
 }
 
-@InputType({ description: "Args On User Update" })
+@InputType({ description: 'Args On User Update' })
 export class UserUpdateInput extends UserCreateInput {
   @Field({ nullable: false })
   @IsString()

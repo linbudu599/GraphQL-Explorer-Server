@@ -28,6 +28,8 @@ enum Difficulty {
 
 interface ITask {
   assignee: User
+  lastUpdateDate: Timestamp!
+  publishDate: Timestamp!
   taskContent: String!
   taskId: ID!
   taskRate: Float!
@@ -69,7 +71,7 @@ type Mutation {
   CreateNewTask(taskCreateParam: TaskCreateInput!): Task!
   CreateUser(newUserInfo: UserCreateInput!): UserStatus!
   DeleteTask(taskId: Float!): Task!
-  DeleteUser(uid: String!): UserStatus!
+  DeleteUser(uid: String!): TaskStatus!
   publisherMutation(message: String): Boolean!
   pubSubMutation(message: String): Boolean!
   pubSubMutationToDynamicTopic(message: String, topic: String!): Boolean!
@@ -128,6 +130,8 @@ type Subscription {
 
 type Task implements ITask {
   assignee: User
+  lastUpdateDate: Timestamp!
+  publishDate: Timestamp!
   taskContent: String!
   taskId: ID!
   taskRate: Float!
