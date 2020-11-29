@@ -1,6 +1,6 @@
 import { IsNumber, Max, Min } from 'class-validator';
 import Task from '../entity/Task';
-import { Field, ObjectType, InputType } from 'type-graphql';
+import { Field, ObjectType, InputType, Int } from 'type-graphql';
 import User from '../entity/User';
 
 @ObjectType({ description: 'User Response Status Indicator' })
@@ -28,6 +28,31 @@ export class TaskStatus {
   data?: Task[];
 }
 
+@ObjectType({ description: 'Login / Register Status Indicator' })
+export class LoginOrRegisterStatus {
+  @Field({ nullable: false })
+  success!: boolean;
+
+  @Field({ nullable: false })
+  message!: string;
+
+  @Field({ nullable: true })
+  token?: string;
+
+  // 下发token过期时间
+  @Field(() => Int, { nullable: true })
+  expiredDate?: number;
+}
+
+export class LoginOrRegisterStatusHandler {
+  constructor(
+    public success: boolean,
+    public message: string,
+    public token?: string,
+    public expiredDate?: number
+  ) {}
+}
+
 export class StatusHandler {
   constructor(
     public success: boolean,
@@ -38,13 +63,13 @@ export class StatusHandler {
 
 @InputType()
 export class PaginationOptions {
-  @Field({ nullable: true })
+  @Field(() => Int, { nullable: true })
   @Max(10)
   @Min(0)
   @IsNumber()
   cursor?: number;
 
-  @Field({ nullable: true })
+  @Field(() => Int, { nullable: true })
   @Max(100)
   @Min(0)
   @IsNumber()

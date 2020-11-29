@@ -54,6 +54,16 @@ enum Job {
   FE
 }
 
+"""
+Login / Register Status Indicator
+"""
+type LoginOrRegisterStatus {
+  expiredDate: Int
+  message: String!
+  success: Boolean!
+  token: String
+}
+
 type Mutation {
   AssignTask(taskId: String!, uid: String!): TaskStatus!
   CreateNewTask(taskCreateParam: TaskCreateInput!): Task!
@@ -75,11 +85,13 @@ type Notification {
 }
 
 input PaginationOptions {
-  cursor: Float
-  offset: Float
+  cursor: Int
+  offset: Int
 }
 
 type Query {
+  AccountLogin(account: String!, password: String!): LoginOrRegisterStatus!
+  CheckIsTokenValid(token: String!): LoginOrRegisterStatus!
   currentDate: Timestamp!
   FindTaskByID(taskId: Float!): TaskStatus!
   FindUserByConditions(

@@ -19,6 +19,13 @@ export enum RESPONSE_INDICATOR {
   EXISTED = 'Resource Existed',
   SUCCESS = 'Success',
   FAILED = 'Operation Failed',
+  INVALID_LOGIN_TYPE = 'Invalid Login Type',
+  TOKEN_EXPIRED = 'Token Expired',
+  PERMISSION_DENIED = 'Permission Denied',
+  MUTATION_NOT_ALLOWED = 'Mutation Not Allowed',
 }
 
 export const MAX_ALLOWED_COMPLEXITY = 20;
+
+// https://github.com/vercel/ms
+export const TOKEN_EXPIRED_IN = '7d';

@@ -13,18 +13,18 @@ import {
   simpleEstimator,
   fieldExtensionsEstimator,
 } from 'graphql-query-complexity';
-// TypeGraphQL
-import { JOB } from '../graphql/User';
 
 import UserResolver from '../resolver/User.resolver';
 import RecipeResolver from '../resolver/Recipe.resolver';
 import TaskResolver from '../resolver/Task.resolver';
 import PubSubResolver from '../resolver/PubSub.resolver';
+import AccountResolver from '../resolver/Account.resolver';
 
 // TypeORM
 import User from '../entity/User';
 
 import { log } from './helper';
+import { genarateRandomID } from './auth';
 import { authChecker } from './authChecker';
 import { ACCOUNT_AUTH, MAX_ALLOWED_COMPLEXITY } from './constants';
 import { setRecipeInContainer, mockUser, mockTask } from './mock';
@@ -38,6 +38,7 @@ import ErrorLoggerMiddleware from '../middleware/error';
 // Extensions powered by TypeGraphQL
 import { ExtensionsMetadataRetriever } from '../extensions/GetMetadata';
 
+// Apollo Data Source
 import SpaceXDataSource from '../datasource/SpaceX';
 
 import { IContext } from '../typding';
@@ -62,7 +63,14 @@ export default async (): Promise<ApolloServer> => {
   ];
 
   const schema = await buildSchema({
-    resolvers: [UserResolver, RecipeResolver, TaskResolver, PubSubResolver],
+    // TODO: get by generation
+    resolvers: [
+      UserResolver,
+      RecipeResolver,
+      TaskResolver,
+      PubSubResolver,
+      AccountResolver,
+    ],
     // container: Container,
     // scoped-container，每次从context中拿到本次注册容器
     container: ({ context }: ResolverData<IContext>) => context.container,
@@ -72,9 +80,10 @@ export default async (): Promise<ApolloServer> => {
     authMode: 'error',
     emitSchemaFile: path.resolve(__dirname, '../typegraphql/shema.graphql'),
     validate: true,
-    globalMiddlewares: dev
-      ? [...basicMiddlewares, ErrorLoggerMiddleware]
-      : basicMiddlewares,
+    globalMiddlewares: basicMiddlewares,
+    // globalMiddlewares: dev
+    //   ? [...basicMiddlewares, ErrorLoggerMiddleware]
+    //   : basicMiddlewares,
   });
 
   await dbConnect();
@@ -84,34 +93,22 @@ export default async (): Promise<ApolloServer> => {
     // subscriptions: {
     //   path: "/pubsub",
     // },
-    context: async (ctx: Context) => {
-      // 随机鉴权
-      // 为0时TypeDI容器注册会失败
-      const randomID = Math.floor(Math.random() * 100) + 1;
-      // 1-31 unlogin
-      // 32-61 common
-      // 62-101 admin
+    context: async ({ ctx }: { ctx: Context }) => {
+      log('=== TOKEN ===');
+      // TODO: validate token by koa-jwt
+      const token = ctx.request.headers['token'];
 
-      const UN_LOGIN = randomID >= 1 && randomID <= 31;
-      const COMMON = randomID >= 32 && randomID <= 61;
-      const ADMIN = randomID >= 62 && randomID <= 101;
-
-      const ACCOUNT_TYPE = UN_LOGIN
-        ? ACCOUNT_AUTH.UN_LOGIN
-        : COMMON
-        ? ACCOUNT_AUTH.COMMON
-        : ACCOUNT_AUTH.ADMIN;
-
+      const { id, type } = genarateRandomID();
       // 每次请求使用一个随机ID注册容器
-      const container = Container.of(randomID);
+      const container = Container.of(id);
 
       const context = {
         // req,
         env: process.env.NODE_ENV,
         // token: ctx.headers.authorization,
         currentUser: {
-          uid: randomID,
-          roles: ACCOUNT_TYPE,
+          uid: id,
+          roles: type,
         },
         container,
       };
@@ -221,15 +218,12 @@ export const dbConnect = async (): Promise<any> => {
     log('=== [TypeORM] Database Connection Established ===');
 
     await connection.manager.save(mockTask);
+    await connection.manager.save(mockUser);
 
     const user = new User();
     user.name = '林不渡-Lv1';
-
     user.tasks = mockTask.slice(0, 2);
-
     await connection.manager.save(user);
-
-    await connection.manager.save(mockUser);
 
     log('=== [TypeORM] Initial Mock Data Inserted ===\n');
   } catch (error) {
