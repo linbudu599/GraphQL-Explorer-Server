@@ -7,6 +7,16 @@ type Company {
   description: String!
   name: String!
   registerDate: Timestamp!
+  scale: CompanyScale
+}
+
+"""
+Company Scale
+"""
+enum CompanyScale {
+  Huge
+  Middle
+  Small
 }
 
 type Cook {
@@ -104,23 +114,31 @@ type Query {
   ): UserStatus!
   FindUserById(uid: String!): UserStatus!
   InjectDataFromService: UserStatus!
+  QueryRecipesByDifficulty(difficulty: Difficulty): [Recipe!]!
+  QueryRecipesByIngredients(ingredients: [String!]): [Recipe!]!
   QueryTaskAssignee(taskId: Float!): UserStatus!
   QueryUserTasks(uid: Float!): TaskStatus!
-  Recipes(difficulty: Difficulty): [Recipe!]!
   Search(cookName: String!): [SearchResult!]!
   Tasks(pagination: PaginationOptions): TaskStatus!
   Users(pagination: PaginationOptions): UserStatus!
 }
 
 type Recipe {
-  cook: Cook!
+  cook: Cook
   description: String
-  ingredients: [String!]!
-  preparationDifficulty: Difficulty!
+  ingredients: [String!]
+  preparationDifficulty: Difficulty
   title: String!
 }
 
-union SearchResult = Cook | Recipe
+"""
+useless object type in union type:)
+"""
+type SaltFish {
+  EngelCoefficient: Int!
+}
+
+union SearchResult = Cook | Recipe | SaltFish
 
 type Subscription {
   normalSubscription: Notification!

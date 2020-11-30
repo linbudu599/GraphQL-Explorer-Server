@@ -1,11 +1,11 @@
-import "reflect-metadata";
-import Koa from "koa";
-import dotenv from "dotenv";
+import 'reflect-metadata';
+import Koa from 'koa';
+import dotenv from 'dotenv';
 
-import initialize from "./utils/init";
-import { log } from "./utils/helper";
+import initialize from './utils/init';
+import { log } from './utils/helper';
 
-import cors from "./middleware/cors";
+import cors from './middleware/cors';
 
 async function bootstrap() {
   const app = new Koa();

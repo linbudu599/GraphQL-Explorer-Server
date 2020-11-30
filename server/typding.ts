@@ -1,17 +1,17 @@
-import { ContainerInstance } from "typedi";
+import { ContainerInstance } from 'typedi';
 
-import User from "./entity/User";
-import Task from "./entity/Task";
+import User from './entity/User';
+import Task from './entity/Task';
 
 import {
   UserCreateInput,
   UserQueryArgs,
   UserUpdateInput,
-} from "./graphql/User";
-import { Recipe } from "./graphql/Recipe";
+} from './graphql/User';
+import { Recipe } from './graphql/Recipe';
 
-import { USER_ROLES, ACCOUNT_AUTH } from "./utils/constants";
-import { DeleteResult } from "typeorm";
+import { USER_ROLES, ACCOUNT_AUTH } from './utils/constants';
+import { DeleteResult } from 'typeorm';
 
 export interface IContext {
   env: string;

@@ -4,8 +4,7 @@ import {
   Int,
   registerEnumType,
   createUnionType,
-  Authorized,
-} from "type-graphql";
+} from 'type-graphql';
 
 export enum Difficulty {
   Beginner,
@@ -15,15 +14,29 @@ export enum Difficulty {
   MasterChef,
 }
 
+export enum CompanyScale {
+  Small,
+  Middle,
+  Huge,
+}
+
 registerEnumType(Difficulty, {
-  name: "Difficulty",
-  description: "All possible preparation difficulty levels",
+  name: 'Difficulty',
+  description: 'All possible preparation difficulty levels',
+});
+
+registerEnumType(CompanyScale, {
+  name: 'CompanyScale',
+  description: 'Company Scale',
 });
 
 @ObjectType()
 export class Company {
   @Field()
   name!: string;
+
+  @Field(() => CompanyScale, { nullable: true })
+  scale!: CompanyScale;
 
   @Field()
   registerDate!: Date;
@@ -34,7 +47,7 @@ export class Company {
 
 @ObjectType()
 export class WorkExperience {
-  @Field()
+  @Field((type) => Company)
   company!: Company;
 
   @Field()
@@ -52,7 +65,7 @@ export class Cook {
   @Field((type) => Int)
   yearsOfExperience!: number;
 
-  @Field()
+  @Field((type) => WorkExperience)
   experience!: WorkExperience;
 }
 
@@ -64,19 +77,23 @@ export class Recipe {
   @Field({ nullable: true })
   description?: string;
 
-  @Authorized()
-  @Field((type) => [String])
+  @Field((type) => [String], { nullable: true })
   ingredients!: string[];
 
-  @Authorized("ADMIN")
-  @Field((type) => Difficulty)
+  @Field((type) => Difficulty, { nullable: true })
   preparationDifficulty!: Difficulty;
 
-  @Field()
+  @Field({ nullable: true })
   cook!: Cook;
 }
 
+@ObjectType({ description: 'useless object type in union type:)' })
+export class SaltFish {
+  @Field((type) => Int)
+  EngelCoefficient!: number;
+}
+
 export const SearchResult = createUnionType({
-  name: "SearchResult",
-  types: () => [Recipe, Cook] as const,
+  name: 'SearchResult',
+  types: () => [Recipe, Cook, SaltFish] as const,
 });

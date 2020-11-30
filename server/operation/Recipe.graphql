@@ -1,0 +1,31 @@
+query {
+  Search(cookName: "Gordon Ramsay") {
+    __typename
+    ... on Recipe {
+      title
+      preparationDifficulty
+      ingredients
+      cook {
+        name
+        yearsOfExperience
+        experience {
+          isFired
+          workYears
+          company {
+            name
+            scale
+            description
+          }
+        }
+      }
+    }
+    ... on Cook {
+      name
+      yearsOfExperience
+    }
+  }
+
+  QueryRecipesByIngredients(ingredients: ["one"]) {
+    description
+  }
+}

@@ -54,19 +54,21 @@ npm run dev:server
 ## Available Scripts
 
 - `dev`: `dev:client` + `dev:server`
-- `dev:client`: develop client application by `parcel`
-- `dev:server`: develop server by `nodemon`
-- `test:client`: run test cases in client by `jest`
-- `build:client`: build client application by `parcel`
+- `dev:client`: develop client application by [Parcel](https://github.com/parcel-bundler/parcel)
+- `dev:server`: develop server by [nodemon](https://github.com/remy/nodemon)
+- `test:client`: run test cases in client by [jest](https://github.com/facebook/jest)
+- `build:client`: build client application by [Parcel](https://github.com/parcel-bundler/parcel)
 - `clean`: remove `/client-dist` & `/server-dist` directory
-- `start:server`: run in prod by `nodemon`
-- `build:server`: compile server code by `tsc`
-- `pm2`: run in prod by `PM2`
+- `start:server`: run in prod by [nodemon](https://github.com/remy/nodemon)
+- `build:server`: compile server code by [tsc](https://github.com/microsoft/TypeScript)
+- `pm2`: run in prod by [PM2](https://github.com/Unitech/pm2)
 - `stress-test`: run pressure test to server, see [stress-fork.js](./st-fork.js) & [stress-main.js](./st-main.js)
-- `voyager`: represent GraphQL API as an interactive graph by [graphql-voyager](https://github.com/APIs-guru/graphql-voyager), **require server to be active**.
-- `gen:code`: generate type definitions from GraphQL schema by `graphql-code-generator`
-- `gen:docs`: generate documentation site from GraphQL schema by `graphqldoc`
-- `serve:docs`: generate & serve documentation site by `serve`
+- `voyager`: represent GraphQL API as an interactive graph by [GraphQL-Voyager](https://github.com/APIs-guru/graphql-voyager), **require server to be active**.
+- `gen:code`: generate type definitions from GraphQL schema by [graphql-code-generator](https://github.com/dotansimha/graphql-code-generator)
+- `gen:docs`: generate documentation site from GraphQL schema by [graphdoc](https://github.com/2fd/graphdoc)
+- `serve:docs`: generate & serve documentation site by [serve](https://github.com/vercel/serve)
+- `commit`: commit code by [custom commitlint config](.cz-config.js)
+- `prettier`: prettier all `.ts` / `.json` / `.graphql` ext file
 
 ## Document
 
