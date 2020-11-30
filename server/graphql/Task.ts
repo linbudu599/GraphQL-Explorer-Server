@@ -6,20 +6,32 @@ import {
   ID,
   registerEnumType,
   InterfaceType,
-} from 'type-graphql';
+} from "type-graphql";
 import {
   Length,
-  IsBoolean,
   IsString,
   IsNumber,
   IsOptional,
   Max,
   Min,
   IsPositive,
-} from 'class-validator';
+} from "class-validator";
 
-import { IUser } from './User';
-import User from '../entity/User';
+import { IUser } from "./User";
+import User from "../entity/User";
+
+export enum TaskSource {
+  GOV,
+  MERCHANT,
+  SCP,
+  PERSONAL,
+  OTHER,
+}
+
+registerEnumType(TaskSource, {
+  name: "TaskSource",
+  description: "Task Source",
+});
 
 @InterfaceType()
 export abstract class ITask {
@@ -35,8 +47,11 @@ export abstract class ITask {
   @Field()
   taskContent!: string;
 
+  @Field(() => TaskSource, { nullable: false })
+  taskSource!: TaskSource;
+
   @Field()
-  taskStatus!: Boolean;
+  taskAccmplished!: Boolean;
 
   @Field()
   taskReward!: number;
@@ -51,7 +66,7 @@ export abstract class ITask {
   lastUpdateDate!: Date;
 }
 
-@InputType({ description: 'Task InputObject' })
+@InputType({ description: "Task InputObject" })
 export class TaskCreateInput implements Partial<ITask> {
   @Field()
   @Length(5, 10)
@@ -73,7 +88,7 @@ export class TaskCreateInput implements Partial<ITask> {
   taskReward?: number;
 }
 
-@InputType({ description: 'Args On Task Update' })
+@InputType({ description: "Args On Task Update" })
 export class TaskUpdateInput {
   @Field()
   @IsString()

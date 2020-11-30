@@ -1,5 +1,5 @@
-import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest';
-import { SPACEX_API } from '../utils/constants';
+import { RESTDataSource, RequestOptions } from "apollo-datasource-rest";
+import { SPACEX_API } from "../utils/constants";
 
 export interface ICapsules {
   reuse_count: number;
@@ -8,7 +8,7 @@ export interface ICapsules {
   last_updated: string;
   launches: string[];
   serial: string;
-  status: 'unknown' | 'active' | 'destroyed' | 'retired';
+  status: "unknown" | "active" | "destroyed" | "retired";
   type: string;
   id: string;
 }
@@ -22,7 +22,7 @@ export default class WorkerAPI extends RESTDataSource {
   }
 
   willSendRequest(request: RequestOptions) {
-    request.headers.set('Authorization', 'xxx');
+    request.headers.set("Authorization", "xxx");
   }
 
   async getAllRockets(): Promise<ICapsules[]> {

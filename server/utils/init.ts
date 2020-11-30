@@ -1,63 +1,62 @@
-import 'reflect-metadata';
-import { Context } from 'koa';
-import path from 'path';
-import dotenv from 'dotenv';
-import { Container, ContainerInstance } from 'typedi';
-import * as TypeORM from 'typeorm';
-import { buildSchema, ResolverData } from 'type-graphql';
-import { ApolloServer } from 'apollo-server-koa';
-import { GraphQLRequestContext } from 'apollo-server-plugin-base';
-import { ApolloServerLoaderPlugin } from 'type-graphql-dataloader';
+import "reflect-metadata";
+import { Context } from "koa";
+import path from "path";
+import dotenv from "dotenv";
+import { Container, ContainerInstance } from "typedi";
+import * as TypeORM from "typeorm";
+import { buildSchema, ResolverData } from "type-graphql";
+import { ApolloServer } from "apollo-server-koa";
+import { GraphQLRequestContext } from "apollo-server-plugin-base";
+import { ApolloServerLoaderPlugin } from "type-graphql-dataloader";
 import {
   getComplexity,
   simpleEstimator,
   fieldExtensionsEstimator,
-} from 'graphql-query-complexity';
+} from "graphql-query-complexity";
 
-import UserResolver from '../resolver/User.resolver';
-import RecipeResolver from '../resolver/Recipe.resolver';
-import TaskResolver from '../resolver/Task.resolver';
-import PubSubResolver from '../resolver/PubSub.resolver';
-import AccountResolver from '../resolver/Account.resolver';
+import UserResolver from "../resolver/User.resolver";
+import RecipeResolver from "../resolver/Recipe.resolver";
+import TaskResolver from "../resolver/Task.resolver";
+import PubSubResolver from "../resolver/PubSub.resolver";
+import AccountResolver from "../resolver/Account.resolver";
 
-import { log } from './helper';
-import { genarateRandomID } from './auth';
-import { authChecker } from './authChecker';
-import { MAX_ALLOWED_COMPLEXITY } from './constants';
-import { setRecipeInContainer, dbConnect } from './mock';
+import { log } from "./helper";
+import { genarateRandomID } from "./auth";
+import { authChecker } from "./authChecker";
+import { MAX_ALLOWED_COMPLEXITY } from "./constants";
+import { setRecipeInContainer, dbConnect } from "./mock";
 
 // Middlewares applied on TypeGraphQL
-import ResolveTime from '../middleware/time';
-import InterceptorOnUID1 from '../middleware/interceptor';
-import LogAccessMiddleware from '../middleware/log';
-import ErrorLoggerMiddleware from '../middleware/error';
+import ResolveTime from "../middleware/time";
+import InterceptorOnUID1 from "../middleware/interceptor";
+import LogAccessMiddleware from "../middleware/log";
+import ErrorLoggerMiddleware from "../middleware/error";
 
 // Extensions powered by TypeGraphQL
-import { ExtensionsMetadataRetriever } from '../extensions/GetMetadata';
+import { ExtensionsMetadataRetriever } from "../extensions/GetMetadata";
 
 // Apollo Data Source
-import SpaceXDataSource from '../datasource/SpaceX';
+import SpaceXDataSource from "../datasource/SpaceX";
 
-import { IContext } from '../typding';
+import { IContext } from "../typding";
 
-Container.set({ id: 'INIT_INJECT_DATA', factory: () => new Date() });
-
+Container.set({ id: "INIT_INJECT_DATA", factory: () => new Date() });
 TypeORM.useContainer(Container);
 
-const dev = process.env.NODE_ENV === 'development';
-dotenv.config({ path: dev ? '.env.dev' : '.env.prod' });
+const dev = process.env.NODE_ENV === "development";
+dotenv.config({ path: dev ? ".env.dev" : ".env.prod" });
 
-log(`[Env] Loading ${dev ? '[DEV]' : '[PROD]'} File`);
+log(`[Env] Loading ${dev ? "[DEV]" : "[PROD]"} File`);
+
+const basicMiddlewares = [
+  ResolveTime,
+  InterceptorOnUID1,
+  ExtensionsMetadataRetriever,
+  LogAccessMiddleware,
+];
 
 export default async (): Promise<ApolloServer> => {
   setRecipeInContainer();
-
-  const basicMiddlewares = [
-    ResolveTime,
-    InterceptorOnUID1,
-    ExtensionsMetadataRetriever,
-    LogAccessMiddleware,
-  ];
 
   const schema = await buildSchema({
     // TODO: get by generation
@@ -72,10 +71,10 @@ export default async (): Promise<ApolloServer> => {
     // scoped-container，每次从context中拿到本次注册容器
     container: ({ context }: ResolverData<IContext>) => context.container,
     // TypeGraphQL built-in Scalar Date
-    dateScalarMode: 'timestamp',
+    dateScalarMode: "timestamp",
     authChecker,
-    authMode: 'error',
-    emitSchemaFile: path.resolve(__dirname, '../typegraphql/shema.graphql'),
+    authMode: "error",
+    emitSchemaFile: path.resolve(__dirname, "../typegraphql/shema.graphql"),
     validate: true,
     globalMiddlewares: basicMiddlewares,
     // globalMiddlewares: dev
@@ -91,9 +90,9 @@ export default async (): Promise<ApolloServer> => {
     //   path: "/pubsub",
     // },
     context: async ({ ctx }: { ctx: Context }) => {
-      log('=== TOKEN ===');
+      log("=== TOKEN ===");
       // TODO: validate token by koa-jwt
-      const token = ctx.request.headers['token'];
+      const token = ctx.request.headers["token"];
 
       const { id, type } = genarateRandomID();
       // 每次请求使用一个随机ID注册容器
@@ -110,7 +109,7 @@ export default async (): Promise<ApolloServer> => {
         container,
       };
 
-      container.set('context', context);
+      container.set("context", context);
       return context;
     },
     // 放在context里就可以自己用了
@@ -143,7 +142,7 @@ export default async (): Promise<ApolloServer> => {
               );
             }
 
-            console.log('Used query complexity points:', complexity);
+            console.log("Used query complexity points:", complexity);
           },
 
           executionDidStart(
@@ -158,7 +157,7 @@ export default async (): Promise<ApolloServer> => {
             Container.reset(reqContext.context.currentUser!.uid);
             const instancesIds = ((Container as any)
               .instances as ContainerInstance[]).map((instance) => instance.id);
-            console.log('instances left in memory:', instancesIds);
+            console.log("instances left in memory:", instancesIds);
           },
         }),
       },
@@ -180,11 +179,11 @@ export default async (): Promise<ApolloServer> => {
     // formatResponse: () => {},
     playground: {
       settings: {
-        'editor.theme': 'dark',
-        'editor.fontSize': 16,
-        'tracing.hideTracingResponse': false,
-        'queryPlan.hideQueryPlanResponse': false,
-        'editor.fontFamily': `'Fira Code', 'Source Code Pro', 'Consolas'`,
+        "editor.theme": "dark",
+        "editor.fontSize": 16,
+        "tracing.hideTracingResponse": false,
+        "queryPlan.hideQueryPlanResponse": false,
+        "editor.fontFamily": `'Fira Code', 'Source Code Pro', 'Consolas'`,
       },
     },
   });

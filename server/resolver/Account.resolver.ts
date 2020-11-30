@@ -10,14 +10,14 @@ import {
   FieldResolver,
   Root,
   ResolverInterface,
-} from 'type-graphql';
+} from "type-graphql";
 import {
   LoginOrRegisterStatus,
   LoginOrRegisterStatusHandler,
-} from '../graphql/Common';
+} from "../graphql/Common";
 
-import { dispatchToken, weekLaterTimeStamp, validateToken } from '../utils/jwt';
-import { RESPONSE_INDICATOR } from '../utils/constants';
+import { dispatchToken, weekLaterTimeStamp, validateToken } from "../utils/jwt";
+import { RESPONSE_INDICATOR } from "../utils/constants";
 
 // TODO: Register & Refresher Resolver
 @Resolver((of) => LoginOrRegisterStatus)
@@ -28,8 +28,8 @@ export default class AccountResolver {
   @Query(() => LoginOrRegisterStatus)
   // TODO: login type args
   async AccountLogin(
-    @Arg('account') account: string,
-    @Arg('password') password: string
+    @Arg("account") account: string,
+    @Arg("password") password: string
   ): Promise<LoginOrRegisterStatus> {
     const token = dispatchToken(account);
     // TODO: account entity system setup
@@ -42,7 +42,7 @@ export default class AccountResolver {
 
   @Query(() => LoginOrRegisterStatus)
   async CheckIsTokenValid(
-    @Arg('token') token: string
+    @Arg("token") token: string
   ): Promise<LoginOrRegisterStatus> {
     const { valid, info } = validateToken(token);
     if (valid) {

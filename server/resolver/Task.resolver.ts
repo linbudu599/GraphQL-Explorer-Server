@@ -1,18 +1,18 @@
-import { Resolver, Query, Arg, Mutation } from 'type-graphql';
-import { Repository, Transaction, TransactionRepository } from 'typeorm';
-import { InjectRepository } from 'typeorm-typedi-extensions';
+import { Resolver, Query, Arg, Mutation } from "type-graphql";
+import { Repository, Transaction, TransactionRepository } from "typeorm";
+import { InjectRepository } from "typeorm-typedi-extensions";
 
-import User from '../entity/User';
-import Task from '../entity/Task';
+import User from "../entity/User";
+import Task from "../entity/Task";
 
 import {
   PaginationOptions,
   StatusHandler,
   TaskStatus,
   UserStatus,
-} from '../graphql/Common';
-import { TaskCreateInput, TaskUpdateInput } from '../graphql/Task';
-import { RESPONSE_INDICATOR } from '../utils/constants';
+} from "../graphql/Common";
+import { TaskCreateInput, TaskUpdateInput } from "../graphql/Task";
+import { RESPONSE_INDICATOR } from "../utils/constants";
 
 @Resolver((of) => Task)
 export default class TaskResolver {
@@ -23,7 +23,7 @@ export default class TaskResolver {
 
   @Query(() => TaskStatus)
   async Tasks(
-    @Arg('pagination', { nullable: true })
+    @Arg("pagination", { nullable: true })
     pagination: PaginationOptions
   ): Promise<TaskStatus> {
     try {
@@ -31,7 +31,7 @@ export default class TaskResolver {
       const res = await this.taskRepository.find({
         skip: cursor,
         take: offset,
-        relations: ['assignee'],
+        relations: ["assignee"],
       });
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, res);
     } catch (error) {
@@ -40,13 +40,13 @@ export default class TaskResolver {
   }
 
   @Query(() => TaskStatus)
-  async FindTaskByID(@Arg('taskId') taskId: number): Promise<TaskStatus> {
+  async FindTaskByID(@Arg("taskId") taskId: number): Promise<TaskStatus> {
     try {
       const res = await this.taskRepository.findOne({
         where: {
           taskId,
         },
-        relations: ['assignee'],
+        relations: ["assignee"],
       });
 
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res] ?? []);
@@ -56,13 +56,13 @@ export default class TaskResolver {
   }
 
   @Query(() => UserStatus)
-  async QueryTaskAssignee(@Arg('taskId') taskId: number): Promise<UserStatus> {
+  async QueryTaskAssignee(@Arg("taskId") taskId: number): Promise<UserStatus> {
     try {
       const res = await this.taskRepository.findOne({
         where: {
           taskId,
         },
-        relations: ['assignee'],
+        relations: ["assignee"],
       });
 
       return new StatusHandler(
@@ -76,7 +76,7 @@ export default class TaskResolver {
   }
 
   @Query(() => TaskStatus)
-  async QueryUserTasks(@Arg('uid') uid: number) {
+  async QueryUserTasks(@Arg("uid") uid: number) {
     try {
       const res = await this.taskRepository.find({
         where: {
@@ -94,7 +94,7 @@ export default class TaskResolver {
   @Transaction()
   @Mutation(() => TaskStatus)
   async ToggleTaskStatus(
-    @Arg('taskId') taskId: number,
+    @Arg("taskId") taskId: number,
     @TransactionRepository(Task) taskTransRepo: Repository<Task>
   ): Promise<TaskStatus> {
     try {
@@ -104,7 +104,7 @@ export default class TaskResolver {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
 
       const updateRes = await taskTransRepo.update(taskId, {
-        taskStatus: !origin.taskStatus,
+        taskAccmplished: !origin.taskAccmplished,
       });
 
       const updatedItem = await taskTransRepo.findOne({
@@ -120,7 +120,7 @@ export default class TaskResolver {
   @Transaction()
   @Mutation(() => Task)
   async DeleteTask(
-    @Arg('taskId') taskId: number,
+    @Arg("taskId") taskId: number,
     @TransactionRepository(Task) taskTransRepo: Repository<Task>
   ): Promise<TaskStatus> {
     try {
@@ -145,7 +145,7 @@ export default class TaskResolver {
   @Transaction()
   @Mutation(() => Task)
   async CreateNewTask(
-    @Arg('taskCreateParam') param: TaskCreateInput,
+    @Arg("taskCreateParam") param: TaskCreateInput,
     @TransactionRepository(Task)
     taskTransRepo: Repository<Task>
   ): Promise<TaskStatus> {
@@ -160,7 +160,7 @@ export default class TaskResolver {
   @Transaction()
   @Mutation(() => TaskStatus)
   async UpdateTaskInfo(
-    @Arg('taskUpdateParam') param: TaskUpdateInput,
+    @Arg("taskUpdateParam") param: TaskUpdateInput,
     @TransactionRepository(Task)
     taskTransRepo: Repository<Task>
   ): Promise<TaskStatus> {
@@ -175,8 +175,8 @@ export default class TaskResolver {
   @Transaction()
   @Mutation(() => TaskStatus)
   async AssignTask(
-    @Arg('taskId') taskId: string,
-    @Arg('uid') uid: string,
+    @Arg("taskId") taskId: string,
+    @Arg("uid") uid: string,
     @TransactionRepository(Task)
     taskTransRepo: Repository<Task>
   ): Promise<TaskStatus> {
@@ -190,7 +190,7 @@ export default class TaskResolver {
           taskId,
         },
         {
-          relations: ['assignee'],
+          relations: ["assignee"],
         }
       );
       if (task?.assignee) {

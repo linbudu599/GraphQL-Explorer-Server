@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
-import { TOKEN_EXPIRED_IN } from './constants';
+import jwt from "jsonwebtoken";
+import { TOKEN_EXPIRED_IN } from "./constants";
 
 // TODO: tokenType & loginType -> enum definition
 // TODO: control expired date
@@ -9,7 +9,7 @@ export const dispatchToken = (username: string, tokenType?: string) =>
       username,
       tokenType,
     },
-    process.env.SECRET_KEY ?? 'dev_secret_key',
+    process.env.SECRET_KEY ?? "dev_secret_key",
     {
       expiresIn: TOKEN_EXPIRED_IN,
     }
@@ -33,8 +33,8 @@ export const validateToken = (token: string): ITokenValidation => {
   try {
     const info = jwt.verify(
       token,
-      process.env.SECRET_KEY ?? 'dev_secret_key'
-    ) as ITokenValidation['info'];
+      process.env.SECRET_KEY ?? "dev_secret_key"
+    ) as ITokenValidation["info"];
     return {
       valid: true,
       info,

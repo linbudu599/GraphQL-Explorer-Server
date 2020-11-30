@@ -6,7 +6,7 @@ import {
   ID,
   registerEnumType,
   InterfaceType,
-} from 'type-graphql';
+} from "type-graphql";
 import {
   Length,
   IsBoolean,
@@ -17,16 +17,32 @@ import {
   Min,
   IsEnum,
   IsPositive,
-} from 'class-validator';
+} from "class-validator";
+import Task from "../entity/Task";
 
 export enum JOB {
-  FE = 'FE',
-  BE = 'BE',
+  FE = "Frontend Engineer",
+  BE = "Backend Engineer",
+}
+
+export enum UserLevel {
+  ROOKIE,
+  NOVICE,
+  BEGINNER,
+  SKILLED,
+  MASTER,
+  LEGEND,
+  OLD_DOMINATOR,
 }
 
 registerEnumType(JOB, {
-  name: 'Job',
-  description: 'Job Enum Type',
+  name: "Job",
+  description: "Job Enum Type",
+});
+
+registerEnumType(UserLevel, {
+  name: "UserLevel",
+  description: "User Skill Level",
 });
 
 @InterfaceType()
@@ -40,11 +56,20 @@ export abstract class IUser {
   @Field()
   age!: number;
 
-  @Field()
-  job!: string;
+  @Field((type) => JOB)
+  job!: JOB;
 
   @Field()
   isFool!: boolean;
+
+  @Field((type) => UserLevel, { nullable: false })
+  level!: UserLevel;
+
+  @Field((type) => [Task]!, { nullable: true })
+  tasks?: Task[];
+
+  @Field((type) => Int, { nullable: true })
+  spAgeField?: number;
 
   @Field((type) => Date)
   registryDate!: Date;
@@ -80,7 +105,7 @@ export class UserQueryArgs {
   job?: JOB;
 }
 
-@InputType({ description: ' User InputObject/Args' })
+@InputType({ description: " User InputObject/Args" })
 export class UserCreateInput implements Partial<IUser> {
   @Field({ nullable: false })
   @Length(1, 20)
@@ -106,7 +131,7 @@ export class UserCreateInput implements Partial<IUser> {
   job?: JOB;
 }
 
-@InputType({ description: 'Args On User Update' })
+@InputType({ description: "Args On User Update" })
 export class UserUpdateInput extends UserCreateInput {
   @Field({ nullable: false })
   @IsString()

@@ -1,6 +1,6 @@
-import { AuthChecker } from 'type-graphql';
-import { IContext } from '../typding';
-import { log } from './helper';
+import { AuthChecker } from "type-graphql";
+import { IContext } from "../typding";
+import { log } from "./helper";
 
 export const authChecker: AuthChecker<IContext> = (
   {

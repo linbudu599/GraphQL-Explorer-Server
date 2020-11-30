@@ -1,13 +1,13 @@
-import { Service } from 'typedi';
+import { Service } from "typedi";
 import {
   MiddlewareInterface,
   NextFn,
   ResolverData,
   ArgumentValidationError,
-} from 'type-graphql';
+} from "type-graphql";
 
-import { Logger, LOG_TYPE } from '../utils/winston';
-import { IContext } from '../typding';
+import { Logger, LOG_TYPE } from "../utils/winston";
+import { IContext } from "../typding";
 
 @Service()
 export default class ErrorLoggerMiddleware
@@ -29,7 +29,7 @@ export default class ErrorLoggerMiddleware
       );
       if (!(err instanceof ArgumentValidationError)) {
         // hide errors from db like printing sql query
-        throw new Error('Unknown error occurred. Try again later!');
+        throw new Error("Unknown error occurred. Try again later!");
       }
       throw err;
     }

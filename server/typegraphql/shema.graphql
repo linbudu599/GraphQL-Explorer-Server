@@ -40,21 +40,25 @@ interface ITask {
   assignee: User
   lastUpdateDate: Timestamp!
   publishDate: Timestamp!
+  taskAccmplished: Boolean!
   taskContent: String!
   taskId: ID!
   taskRate: Float!
   taskReward: Float!
-  taskStatus: Boolean!
+  taskSource: TaskSource!
   taskTitle: String!
 }
 
 interface IUser {
   age: Float!
   isFool: Boolean!
-  job: String!
+  job: Job!
   lastUpdateDate: Timestamp!
+  level: UserLevel!
   name: String!
   registryDate: Timestamp!
+  spAgeField: Int
+  tasks: [Task!]
   uid: ID!
 }
 
@@ -150,11 +154,12 @@ type Task implements ITask {
   assignee: User
   lastUpdateDate: Timestamp!
   publishDate: Timestamp!
+  taskAccmplished: Boolean!
   taskContent: String!
   taskId: ID!
   taskRate: Float!
   taskReward: Float!
-  taskStatus: Boolean!
+  taskSource: TaskSource!
   taskTitle: String!
 }
 
@@ -165,6 +170,17 @@ input TaskCreateInput {
   taskContent: String
   taskReward: Float
   taskTitle: String!
+}
+
+"""
+Task Source
+"""
+enum TaskSource {
+  GOV
+  MERCHANT
+  OTHER
+  PERSONAL
+  SCP
 }
 
 """
@@ -195,11 +211,12 @@ scalar Timestamp
 type User implements IUser {
   age: Float!
   isFool: Boolean!
-  job: String!
+  job: Job!
   lastUpdateDate: Timestamp!
+  level: UserLevel!
   name: String!
   registryDate: Timestamp!
-  spAgeField(param: Float): Float
+  spAgeField(param: Float): Int!
   tasks: [Task!]
   uid: ID!
 }
@@ -212,6 +229,19 @@ input UserCreateInput {
   isFool: Boolean
   job: Job
   name: String!
+}
+
+"""
+User Skill Level
+"""
+enum UserLevel {
+  BEGINNER
+  LEGEND
+  MASTER
+  NOVICE
+  OLD_DOMINATOR
+  ROOKIE
+  SKILLED
 }
 
 """

@@ -1,7 +1,7 @@
-import { InMemoryCache, ApolloClient, gql, Resolvers } from '@apollo/client';
-import { buildTypeDefsAndResolvers } from 'type-graphql';
-import { createUploadLink } from 'apollo-upload-client';
-import CounterResolver from '../local/Counter/counter.resolver';
+import { InMemoryCache, ApolloClient, gql, Resolvers } from "@apollo/client";
+import { buildTypeDefsAndResolvers } from "type-graphql";
+import { createUploadLink } from "apollo-upload-client";
+import CounterResolver from "../local/Counter/counter.resolver";
 
 export const IS_LOGGED_IN = gql`
   query IsUserLoggedIn {
@@ -31,12 +31,12 @@ export default function createApolloClient() {
 
   const client = new ApolloClient({
     cache,
-    uri: 'http://localhost:4000/graphql',
+    uri: "http://localhost:4000/graphql",
     headers: {
       // @ts-ignore
-      authorization: localStorage.getItem('token') || '',
-      'client-name': 'GraphQL-Explorer [Client]',
-      'client-version': '0.1.0',
+      authorization: localStorage.getItem("token") || "",
+      "client-name": "GraphQL-Explorer [Client]",
+      "client-version": "0.1.0",
     },
   });
 

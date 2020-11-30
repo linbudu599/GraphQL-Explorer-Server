@@ -1,4 +1,4 @@
-query {
+query RecipeQuery {
   Search(cookName: "Gordon Ramsay") {
     __typename
     ... on Recipe {

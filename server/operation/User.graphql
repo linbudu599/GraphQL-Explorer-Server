@@ -1,0 +1,20 @@
+query UserQuery {
+  Users {
+    success
+    message
+    data {
+      uid
+      name
+      age
+      job
+      isFool
+      tasks {
+        taskId
+        taskSource
+      }
+      spAgeField
+      registryDate
+      lastUpdateDate
+    }
+  }
+}

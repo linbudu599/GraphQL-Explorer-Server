@@ -1,4 +1,4 @@
-import { ACCOUNT_AUTH } from './constants';
+import { ACCOUNT_AUTH } from "./constants";
 
 export const genarateRandomID = () => {
   // 随机鉴权

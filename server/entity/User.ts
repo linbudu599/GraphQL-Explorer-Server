@@ -1,5 +1,5 @@
-import { Extensions, Field, Float, ObjectType } from 'type-graphql';
-import { TypeormLoader } from 'type-graphql-dataloader';
+import { Extensions, Field, Float, ObjectType } from "type-graphql";
+import { TypeormLoader } from "type-graphql-dataloader";
 import {
   Entity,
   Column,
@@ -9,12 +9,12 @@ import {
   UpdateDateColumn,
   OneToMany,
   RelationId,
-} from 'typeorm';
+} from "typeorm";
 
-import { LogExtension } from '../extensions/LogExtension';
-import { IUser, JOB } from '../graphql/User';
+import { LogExtension } from "../extensions/LogExtension";
+import { IUser, JOB, UserLevel } from "../graphql/User";
 
-import Task from './Task';
+import Task from "./Task";
 
 // TODO: 更复杂的数据库表结构
 // User 有多个 任务
@@ -29,10 +29,10 @@ export default class User extends BaseEntity implements IUser {
   @PrimaryGeneratedColumn()
   uid!: string;
 
-  @Column({ unique: true, nullable: true })
+  @Column({ unique: true, nullable: false })
   name!: string;
 
-  @Column({ default: 0, nullable: true })
+  @Column({ default: 0, nullable: false })
   age!: number;
 
   @Column({ default: JOB.FE })
@@ -48,16 +48,17 @@ export default class User extends BaseEntity implements IUser {
   lastUpdateDate!: Date;
 
   @OneToMany(() => Task, (task) => task.assignee)
-  @Field((type) => [Task]!, { nullable: true })
   @TypeormLoader((type) => User, (user: User) => user.taskIds)
   tasks?: Task[];
+
+  @Column({ default: UserLevel.ROOKIE })
+  level!: UserLevel;
 
   @RelationId((user: User) => user.tasks)
   taskIds?: number[];
 
-  @Extensions({ info: 'User.name Field' })
+  @Extensions({ info: "User.name Field" })
   @Extensions({ complexity: 1 })
-  @LogExtension({ message: '我直接好家伙' })
-  @Field((type) => Float, { nullable: true })
+  @LogExtension({ message: "我直接好家伙" })
   spAgeField?: number;
 }

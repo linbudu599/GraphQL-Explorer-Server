@@ -9,34 +9,34 @@ import {
   Ctx,
   FieldResolver,
   Root,
-} from 'type-graphql';
-import { Repository, Transaction, TransactionRepository } from 'typeorm';
-import { InjectRepository } from 'typeorm-typedi-extensions';
+  Int,
+} from "type-graphql";
+import { Repository, Transaction, TransactionRepository } from "typeorm";
+import { InjectRepository } from "typeorm-typedi-extensions";
 
-import User from '../entity/User';
-import Task from '../entity/Task';
+import User from "../entity/User";
+import Task from "../entity/Task";
 
-import UserService from '../service/User.service';
+import UserService from "../service/User.service";
 
 import {
   UserCreateInput,
   UserUpdateInput,
   UserQueryArgs,
-} from '../graphql/User';
+} from "../graphql/User";
 import {
   PaginationOptions,
   StatusHandler,
   TaskStatus,
   UserStatus,
-} from '../graphql/Common';
+} from "../graphql/Common";
 
-import { ACCOUNT_AUTH, RESPONSE_INDICATOR } from '../utils/constants';
-import { InjectCurrentUser, CustomArgsValidation } from '../decorators';
+import { ACCOUNT_AUTH, RESPONSE_INDICATOR } from "../utils/constants";
+import { InjectCurrentUser, CustomArgsValidation } from "../decorators";
 
-import { ExtraFieldLogMiddlewareGenerator } from '../middleware/log';
+import { ExtraFieldLogMiddlewareGenerator } from "../middleware/log";
 
-import { IContext } from '../typding';
-import { log } from '../utils/helper';
+import { IContext } from "../typding";
 
 @Resolver((of) => User)
 export default class UserResolver {
@@ -49,11 +49,11 @@ export default class UserResolver {
   // 先给个最低权限
   @Authorized(ACCOUNT_AUTH.UN_LOGIN)
   @Query(() => UserStatus)
-  @UseMiddleware(ExtraFieldLogMiddlewareGenerator('CHECK ALL USERS'))
+  @UseMiddleware(ExtraFieldLogMiddlewareGenerator("CHECK ALL USERS"))
   async Users(
     @Ctx() ctx: IContext,
-    @InjectCurrentUser() user: IContext['currentUser'],
-    @Arg('pagination', { nullable: true })
+    @InjectCurrentUser() user: IContext["currentUser"],
+    @Arg("pagination", { nullable: true })
     pagination: PaginationOptions
   ): Promise<UserStatus> {
     try {
@@ -71,11 +71,11 @@ export default class UserResolver {
   }
 
   @Query(() => UserStatus)
-  async FindUserById(@Arg('uid') uid: string): Promise<UserStatus> {
+  async FindUserById(@Arg("uid") uid: string): Promise<UserStatus> {
     const user = await this.userRepository.findOne(
       { uid },
       {
-        relations: ['tasks'],
+        relations: ["tasks"],
       }
     );
     if (!user) {
@@ -105,7 +105,7 @@ export default class UserResolver {
   @Transaction()
   @Mutation(() => UserStatus)
   async CreateUser(
-    @Arg('newUserInfo') user: UserCreateInput,
+    @Arg("newUserInfo") user: UserCreateInput,
     @TransactionRepository(User)
     userTransRepo: Repository<User>
   ): Promise<UserStatus> {
@@ -127,7 +127,7 @@ export default class UserResolver {
   @Transaction()
   @Mutation(() => UserStatus, { nullable: true })
   async UpdateUser(
-    @Arg('modifiedUserInfo') user: UserUpdateInput,
+    @Arg("modifiedUserInfo") user: UserUpdateInput,
     @TransactionRepository(User)
     userTransRepo: Repository<User>
   ): Promise<UserStatus> {
@@ -153,7 +153,7 @@ export default class UserResolver {
   @Transaction()
   @Mutation(() => TaskStatus)
   async DeleteUser(
-    @Arg('uid') uid: string,
+    @Arg("uid") uid: string,
     @TransactionRepository(User)
     userTransRepo: Repository<User>,
     @TransactionRepository(Task)
@@ -195,10 +195,10 @@ export default class UserResolver {
     }
   }
 
-  @FieldResolver()
+  @FieldResolver(() => Int)
   async spAgeField(
     @Root() user: User,
-    @Arg('param', { nullable: true }) param?: number
+    @Arg("param", { nullable: true }) param?: number
   ): Promise<number> {
     // ... do sth addtional here
     return user.age;

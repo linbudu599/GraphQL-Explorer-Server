@@ -1,3 +1,6 @@
-const { prettier } = require('@ice/spec');
+const { prettier } = require("@ice/spec");
 
-module.exports = prettier;
+module.exports = {
+  ...prettier,
+  singleQuote: false,
+};

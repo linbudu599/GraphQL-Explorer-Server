@@ -1,0 +1,18 @@
+query TaskQuery {
+  Tasks {
+    data {
+      taskId
+      taskTitle
+      assignee {
+        uid
+      }
+      taskContent
+      taskSource
+      taskAccmplished
+      taskReward
+      taskRate
+      publishDate
+      lastUpdateDate
+    }
+  }
+}

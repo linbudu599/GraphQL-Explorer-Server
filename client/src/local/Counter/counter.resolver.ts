@@ -1,8 +1,8 @@
-import { gql, ApolloCache } from '@apollo/client';
+import { gql, ApolloCache } from "@apollo/client";
 
-import { Resolver, Mutation, Ctx } from 'type-graphql';
-import ApolloContext from '../../apollo/context';
-import CounterType from './counter.type';
+import { Resolver, Mutation, Ctx } from "type-graphql";
+import ApolloContext from "../../apollo/context";
+import CounterType from "./counter.type";
 
 @Resolver((of) => CounterType)
 export default class CounterResolver {

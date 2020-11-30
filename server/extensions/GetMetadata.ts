@@ -1,6 +1,6 @@
-import { MiddlewareInterface, NextFn, ResolverData } from 'type-graphql';
-import { IContext } from '../typding';
-import { log } from '../utils/helper';
+import { MiddlewareInterface, NextFn, ResolverData } from "type-graphql";
+import { IContext } from "../typding";
+import { log } from "../utils/helper";
 
 export class ExtensionsMetadataRetriever
   implements MiddlewareInterface<IContext> {

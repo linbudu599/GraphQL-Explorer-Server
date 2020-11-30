@@ -6,3 +6,5 @@ docs
 plan
 
 .travis.yml
+.cache
+/client/dist

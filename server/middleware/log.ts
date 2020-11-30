@@ -1,14 +1,14 @@
-import { Service } from 'typedi';
+import { Service } from "typedi";
 import {
   MiddlewareInterface,
   ResolverData,
   NextFn,
   MiddlewareFn,
-} from 'type-graphql';
-import { getLoggerExtensions, log } from '../utils/helper';
+} from "type-graphql";
+import { getLoggerExtensions, log } from "../utils/helper";
 
-import { Logger, LOG_TYPE } from '../utils/winston';
-import { IContext } from '../typding';
+import { Logger, LOG_TYPE } from "../utils/winston";
+import { IContext } from "../typding";
 
 @Service()
 export default class LogAccessMiddleware

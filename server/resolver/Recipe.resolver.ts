@@ -1,15 +1,15 @@
-import { Service } from 'typedi';
-import { Resolver, Query, Arg } from 'type-graphql';
-import { sampleCooks, sampleRecipes, sampleSaltFishes } from '../utils/mock';
+import { Service } from "typedi";
+import { Resolver, Query, Arg } from "type-graphql";
+import { sampleCooks, sampleRecipes, sampleSaltFishes } from "../utils/mock";
 import {
   SearchResult,
   Difficulty,
   Cook,
   Recipe,
   SaltFish,
-} from '../graphql/Recipe';
-import RecipeService from '../service/Recipe.service';
-import { log } from '../utils/helper';
+} from "../graphql/Recipe";
+import RecipeService from "../service/Recipe.service";
+import { log } from "../utils/helper";
 
 @Service()
 @Resolver()
@@ -20,12 +20,12 @@ export default class RecipeResolver {
 
   constructor(private readonly recipeService: RecipeService) {
     // created for each request (scoped)
-    log('RecipeService Created!');
+    log("RecipeService Created!");
   }
 
   @Query(() => [SearchResult])
   async Search(
-    @Arg('cookName') cookName: string
+    @Arg("cookName") cookName: string
   ): Promise<typeof SearchResult[]> {
     const recipes = this.recipesData.filter((recipe) =>
       recipe.cook.name.match(cookName)
@@ -38,7 +38,7 @@ export default class RecipeResolver {
 
   @Query(() => [Recipe])
   async QueryRecipesByDifficulty(
-    @Arg('difficulty', (type) => Difficulty, { nullable: true })
+    @Arg("difficulty", (type) => Difficulty, { nullable: true })
     difficulty?: Difficulty
   ): Promise<Recipe[]> {
     if (!difficulty) {
@@ -54,7 +54,7 @@ export default class RecipeResolver {
 
   @Query(() => [Recipe])
   async QueryRecipesByIngredients(
-    @Arg('ingredients', () => [String], { nullable: true })
+    @Arg("ingredients", () => [String], { nullable: true })
     ingredients: string[]
   ): Promise<Recipe[]> {
     const recipesList = await this.recipeService.getAllRecipes();

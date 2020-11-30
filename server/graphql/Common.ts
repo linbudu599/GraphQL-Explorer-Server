@@ -1,9 +1,9 @@
-import { IsNumber, Max, Min } from 'class-validator';
-import Task from '../entity/Task';
-import { Field, ObjectType, InputType, Int } from 'type-graphql';
-import User from '../entity/User';
+import { IsNumber, Max, Min } from "class-validator";
+import Task from "../entity/Task";
+import { Field, ObjectType, InputType, Int } from "type-graphql";
+import User from "../entity/User";
 
-@ObjectType({ description: 'User Response Status Indicator' })
+@ObjectType({ description: "User Response Status Indicator" })
 export class UserStatus {
   @Field({ nullable: false })
   success!: boolean;
@@ -16,7 +16,7 @@ export class UserStatus {
 }
 
 // TODO: 在TaskStatus上做一些定制逻辑如中间件/扩展
-@ObjectType({ description: 'Task Response Status Indicator' })
+@ObjectType({ description: "Task Response Status Indicator" })
 export class TaskStatus {
   @Field({ nullable: false })
   success!: boolean;
@@ -28,7 +28,7 @@ export class TaskStatus {
   data?: Task[];
 }
 
-@ObjectType({ description: 'Login / Register Status Indicator' })
+@ObjectType({ description: "Login / Register Status Indicator" })
 export class LoginOrRegisterStatus {
   @Field({ nullable: false })
   success!: boolean;
