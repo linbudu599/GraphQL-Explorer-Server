@@ -16,8 +16,10 @@ import {
 } from "class-validator";
 
 import { IUser } from "./User";
-import User from "../entity/User";
 import { DifficultyLevel } from "./Public";
+
+import User from "../entity/User";
+import Substance from "../entity/Substance";
 
 export enum TaskSource {
   GOV,
@@ -27,9 +29,24 @@ export enum TaskSource {
   OTHER,
 }
 
+export enum TaskTarget {
+  HUMAN,
+  AI,
+  WITCHER,
+  SCP_ITEM,
+  ALIEN,
+  CTHULHU,
+  OTHER,
+}
+
 registerEnumType(TaskSource, {
   name: "TaskSource",
   description: "Task Source",
+});
+
+registerEnumType(TaskTarget, {
+  name: "TaskTarget",
+  description: "Task Against",
 });
 
 @InterfaceType()
@@ -60,6 +77,12 @@ export abstract class ITask {
 
   @Field()
   taskRate?: number;
+
+  @Field(() => TaskTarget, { nullable: false })
+  taskTarget!: TaskTarget;
+
+  @Field(() => Substance, { nullable: true })
+  taskSubstance!: Substance;
 
   @Field()
   publishDate!: Date;

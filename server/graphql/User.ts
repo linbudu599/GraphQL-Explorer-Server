@@ -19,7 +19,9 @@ import {
   IsEnum,
   IsPositive,
 } from "class-validator";
+
 import Task from "../entity/Task";
+
 import { DifficultyLevel } from "./Public";
 
 export enum JOB {

@@ -19,6 +19,7 @@ import RecipeResolver from "../resolver/Recipe.resolver";
 import TaskResolver from "../resolver/Task.resolver";
 import PubSubResolver from "../resolver/PubSub.resolver";
 import AccountResolver from "../resolver/Account.resolver";
+import SubstanceResolver from "../resolver/Substance.resolver";
 
 import { log } from "./helper";
 import { genarateRandomID } from "./auth";
@@ -66,6 +67,7 @@ export default async (): Promise<ApolloServer> => {
       TaskResolver,
       PubSubResolver,
       AccountResolver,
+      SubstanceResolver,
     ],
     // container: Container,
     // scoped-container，每次从context中拿到本次注册容器

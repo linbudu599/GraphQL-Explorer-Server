@@ -1,6 +1,7 @@
 import * as TypeORM from "typeorm";
 import Container from "typedi";
 import { plainToClass } from "class-transformer";
+
 import {
   Difficulty,
   CompanyScale,
@@ -10,8 +11,12 @@ import {
   SaltFish,
   WorkExperience,
 } from "../graphql/Recipe";
+import { DifficultyLevel } from "../graphql/Public";
+
 import User, { UserDesc } from "../entity/User";
 import Task from "../entity/Task";
+import Substance from "../entity/Substance";
+
 import { log } from "./helper";
 
 const createWorkExperience = (
@@ -128,6 +133,25 @@ export const setRecipeInContainer = (): void => {
   });
 };
 
+const createSubstance = (substance: Partial<Substance>): Substance =>
+  plainToClass(Substance, substance);
+
+export const mockSubstance = (len: number) => {
+  const mockSubstanceInfo: Partial<Substance>[] = [];
+
+  for (let i = 0; i < len; i++) {
+    mockSubstanceInfo.push(
+      createSubstance({
+        substanceName: `Substance-${i}`,
+        substanceDesc: `Substance Desc ${i}`,
+        substanceLevel: i <= 6 ? i : i % 6,
+      })
+    );
+  }
+
+  return mockSubstanceInfo;
+};
+
 const createTask = (task: Partial<Task>): Task => plainToClass(Task, task);
 
 export const mockTask = (len: number) => {
@@ -204,14 +228,24 @@ export const dbConnect = async (): Promise<any> => {
 
     const mockTaskGroup = mockTask(5);
     const mockUserGroup = mockUser(5);
+    const mockSubstanceGroup = mockSubstance(5);
 
     await connection.manager.save(mockTaskGroup);
     await connection.manager.save(mockUserGroup);
+    await connection.manager.save(mockSubstanceGroup);
 
     const user = new User();
     user.name = "林不渡-Lv1";
     user.tasks = (mockTaskGroup as Task[]).slice(0, 2);
     await connection.manager.save(user);
+
+    const sub = new Substance();
+    sub.substanceName = "SCP-1128 深海巨妖";
+    sub.substanceDesc = "离谱";
+    sub.substanceLevel = DifficultyLevel.OLD_DOMINATOR;
+
+    mockTaskGroup[0].taskSubstance = sub;
+    await connection.manager.save(mockTaskGroup[0]);
 
     log("=== [TypeORM] Initial Mock Data Inserted ===\n");
   } catch (error) {

@@ -55,7 +55,7 @@ export default class UserResolver {
     difficulty: DifficultyLevel,
     @Arg("pagination", { nullable: true })
     pagination: PaginationOptions
-  ) {
+  ): Promise<(User | Task)[]> {
     const { cursor, offset } = pagination ?? { cursor: 0, offset: 20 };
 
     const users = await this.userService.Users(cursor!, offset!);

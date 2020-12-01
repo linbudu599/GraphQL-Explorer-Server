@@ -31,7 +31,7 @@ export default class TaskResolver {
       const res = await this.taskRepository.find({
         skip: cursor,
         take: offset,
-        relations: ["assignee"],
+        relations: ["assignee", "taskSubstance"],
       });
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, res);
     } catch (error) {

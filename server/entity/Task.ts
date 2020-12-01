@@ -9,12 +9,15 @@ import {
   RelationId,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToOne,
 } from "typeorm";
 import { TypeormLoader } from "type-graphql-dataloader";
-import { DifficultyLevel } from "../graphql/Public";
-import { ITask, TaskSource } from "../graphql/Task";
 
 import User from "./User";
+import Substance from "./Substance";
+
+import { DifficultyLevel } from "../graphql/Public";
+import { ITask, TaskSource, TaskTarget } from "../graphql/Task";
 
 @ObjectType({ implements: ITask })
 @Entity()
@@ -41,8 +44,19 @@ export default class Task extends BaseEntity implements ITask {
   @Column({ nullable: false, default: 1000 })
   taskReward!: number;
 
+  @Column({ nullable: false, default: TaskTarget.OTHER })
+  taskTarget!: TaskTarget;
+
   @Column({ nullable: true })
   taskRate?: number;
+
+  // 就假设一个任务只会有一个实体出现好了...
+  @OneToOne(() => Substance, (substance) => substance.relatedTask, {
+    nullable: true,
+    cascade: true,
+  })
+  @JoinColumn()
+  taskSubstance!: Substance;
 
   @ManyToOne(() => User, (user) => user.tasks, { nullable: true })
   @JoinColumn({ name: "assigneeUID" })

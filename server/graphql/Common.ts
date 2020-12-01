@@ -1,41 +1,51 @@
 import { IsNumber, Max, Min } from "class-validator";
-import Task from "../entity/Task";
-import { Field, ObjectType, InputType, Int } from "type-graphql";
-import User from "../entity/User";
+import { Field, ObjectType, InputType, Int, InterfaceType } from "type-graphql";
 
-@ObjectType({ description: "User Response Status Indicator" })
-export class UserStatus {
+import User from "../entity/User";
+import Task from "../entity/Task";
+import Substance from "../entity/Substance";
+
+@InterfaceType({ description: "Basic Status Wrapper" })
+export class BaseStatus {
   @Field({ nullable: false })
   success!: boolean;
 
   @Field({ nullable: false })
   message!: string;
+}
 
+@ObjectType({
+  implements: BaseStatus,
+  description: "Substance Response Status Indicator",
+})
+export class SubstanceStatus extends BaseStatus {
+  @Field(() => [Substance]!, { nullable: true })
+  data?: Substance[];
+}
+
+@ObjectType({
+  implements: BaseStatus,
+  description: "User Response Status Indicator",
+})
+export class UserStatus extends BaseStatus {
   @Field(() => [User]!, { nullable: true })
   data?: User[];
 }
 
-// TODO: 在TaskStatus上做一些定制逻辑如中间件/扩展
-@ObjectType({ description: "Task Response Status Indicator" })
-export class TaskStatus {
-  @Field({ nullable: false })
-  success!: boolean;
-
-  @Field({ nullable: false })
-  message!: string;
-
+@ObjectType({
+  implements: BaseStatus,
+  description: "Task Response Status Indicator",
+})
+export class TaskStatus extends BaseStatus {
   @Field(() => [Task]!, { nullable: true })
   data?: Task[];
 }
 
-@ObjectType({ description: "Login / Register Status Indicator" })
-export class LoginOrRegisterStatus {
-  @Field({ nullable: false })
-  success!: boolean;
-
-  @Field({ nullable: false })
-  message!: string;
-
+@ObjectType({
+  implements: BaseStatus,
+  description: "Login / Register Status Indicator",
+})
+export class LoginOrRegisterStatus extends BaseStatus {
   @Field({ nullable: true })
   token?: string;
 

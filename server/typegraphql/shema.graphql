@@ -3,6 +3,14 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+"""
+Basic Status Wrapper
+"""
+interface BaseStatus {
+  message: String!
+  success: Boolean!
+}
+
 type Company {
   description: String!
   name: String!
@@ -49,6 +57,18 @@ enum DifficultyLevek {
   SKILLED
 }
 
+interface ISubstance {
+  asylumed: Boolean!
+  lastActiveDate: Timestamp!
+  relatedTask: Task
+  substanceAppearDate: Timestamp!
+  substanceDesc: String!
+  substanceId: ID!
+  substanceIssues: String!
+  substanceLevel: DifficultyLevek!
+  substanceName: String!
+}
+
 interface ITask {
   assignee: User
   lastUpdateDate: Timestamp!
@@ -60,6 +80,8 @@ interface ITask {
   taskRate: Float!
   taskReward: Float!
   taskSource: TaskSource!
+  taskSubstance: Substance
+  taskTarget: TaskTarget!
   taskTitle: String!
 }
 
@@ -95,7 +117,7 @@ union LevelQueryResult = Task | User
 """
 Login / Register Status Indicator
 """
-type LoginOrRegisterStatus {
+type LoginOrRegisterStatus implements BaseStatus {
   expiredDate: Int
   message: String!
   success: Boolean!
@@ -140,6 +162,7 @@ type Query {
   ): UserStatus!
   FindUserById(uid: String!): UserStatus!
   InjectDataFromService: UserStatus!
+  QueryAllSubstances(pagination: PaginationOptions): SubstanceStatus!
   QueryByDifficultyLevel(
     difficulty: DifficultyLevek
     pagination: PaginationOptions
@@ -176,6 +199,27 @@ type Subscription {
   subscriptionWithFilterToDynamicTopic(topic: String!): Notification!
 }
 
+type Substance implements ISubstance {
+  asylumed: Boolean!
+  lastActiveDate: Timestamp!
+  relatedTask: Task
+  substanceAppearDate: Timestamp!
+  substanceDesc: String!
+  substanceId: ID!
+  substanceIssues: String!
+  substanceLevel: DifficultyLevek!
+  substanceName: String!
+}
+
+"""
+Substance Response Status Indicator
+"""
+type SubstanceStatus implements BaseStatus {
+  data: [Substance!]
+  message: String!
+  success: Boolean!
+}
+
 type Task implements ITask {
   assignee: User
   lastUpdateDate: Timestamp!
@@ -187,6 +231,8 @@ type Task implements ITask {
   taskRate: Float!
   taskReward: Float!
   taskSource: TaskSource!
+  taskSubstance: Substance
+  taskTarget: TaskTarget!
   taskTitle: String!
 }
 
@@ -213,10 +259,23 @@ enum TaskSource {
 """
 Task Response Status Indicator
 """
-type TaskStatus {
+type TaskStatus implements BaseStatus {
   data: [Task!]
   message: String!
   success: Boolean!
+}
+
+"""
+Task Against
+"""
+enum TaskTarget {
+  AI
+  ALIEN
+  CTHULHU
+  HUMAN
+  OTHER
+  SCP_ITEM
+  WITCHER
 }
 
 """
@@ -250,7 +309,7 @@ type User implements IUser {
 }
 
 """
- User InputObject/Args
+User InputObject/Args
 """
 input UserCreateInput {
   age: Int
@@ -268,7 +327,7 @@ type UserDesc implements IUserDesc {
 """
 User Response Status Indicator
 """
-type UserStatus {
+type UserStatus implements BaseStatus {
   data: [User!]
   message: String!
   success: Boolean!

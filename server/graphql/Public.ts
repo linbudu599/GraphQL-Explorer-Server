@@ -1,4 +1,5 @@
 import { registerEnumType, createUnionType } from "type-graphql";
+
 import User from "../entity/User";
 import Task from "../entity/Task";
 

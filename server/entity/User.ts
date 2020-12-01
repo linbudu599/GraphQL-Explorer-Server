@@ -14,10 +14,11 @@ import {
 } from "typeorm";
 
 import { LogExtension } from "../extensions/LogExtension";
-import { IUser, JOB, IUserDesc } from "../graphql/User";
-import { DifficultyLevel } from "../graphql/Public";
 
 import Task from "./Task";
+
+import { IUser, JOB, IUserDesc } from "../graphql/User";
+import { DifficultyLevel } from "../graphql/Public";
 
 @ObjectType({ implements: IUserDesc })
 export class UserDesc extends BaseEntity implements IUserDesc {
