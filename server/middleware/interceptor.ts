@@ -8,15 +8,15 @@ const InterceptorOnUIDFeild = (uid: number): MiddlewareFn => async (
 ) => {
   const res = await next();
 
-  log("[Interceptor] UID Interceptor Invoked");
+  // log("[Interceptor] UID Interceptor Invoked");
 
-  if (res?.uid === uid) {
-    log(`[Interceptor] UID ${uid} intercepted`);
-    return {
-      ...res,
-      name: "modified in interceptor",
-    };
-  }
+  // if (res?.uid === uid) {
+  //   log(`[Interceptor] UID ${uid} intercepted`);
+  //   return {
+  //     ...res,
+  //     name: "modified in interceptor",
+  //   };
+  // }
 
   return res;
 };

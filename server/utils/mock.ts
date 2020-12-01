@@ -10,7 +10,7 @@ import {
   SaltFish,
   WorkExperience,
 } from "../graphql/Recipe";
-import User from "../entity/User";
+import User, { UserDesc } from "../entity/User";
 import Task from "../entity/Task";
 import { log } from "./helper";
 
@@ -141,12 +141,16 @@ export const mockTask = (len: number) => {
         taskReward: Math.floor(Math.random() * 5000),
         taskRate: Math.floor(Math.random() * 10),
         taskSource: i <= 4 ? i : i % 4,
+        taskLevel: i <= 6 ? i : i % 6,
       })
     );
   }
 
   return mockTaskInfo;
 };
+
+const createUserDesc = (desc: Partial<UserDesc>): UserDesc =>
+  plainToClass(UserDesc, desc);
 
 const createUser = (user: Partial<User>): User => plainToClass(User, user);
 
@@ -159,7 +163,13 @@ export const mockUser = (len: number) => {
         name: `林不渡-${i}`,
         age: Math.floor(Math.random() * 30),
         isFool: i % 2 === 0,
-        level: i <= 6 ? i : i % 6,
+        desc: JSON.stringify(
+          createUserDesc({
+            level: i <= 6 ? i : i % 6,
+            successRate: Math.floor(Math.random() * 100),
+            satisfaction: Math.floor(Math.random() * 10),
+          })
+        ),
       })
     );
   }

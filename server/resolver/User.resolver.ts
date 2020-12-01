@@ -14,7 +14,7 @@ import {
 import { Repository, Transaction, TransactionRepository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
-import User from "../entity/User";
+import User, { UserDesc } from "../entity/User";
 import Task from "../entity/Task";
 
 import UserService from "../service/User.service";
@@ -23,6 +23,7 @@ import {
   UserCreateInput,
   UserUpdateInput,
   UserQueryArgs,
+  IUserDesc,
 } from "../graphql/User";
 import {
   PaginationOptions,
@@ -30,6 +31,7 @@ import {
   TaskStatus,
   UserStatus,
 } from "../graphql/Common";
+import { LevelQueryResult, DifficultyLevel } from "../graphql/Public";
 
 import { ACCOUNT_AUTH, RESPONSE_INDICATOR } from "../utils/constants";
 import { InjectCurrentUser, CustomArgsValidation } from "../decorators";
@@ -45,6 +47,37 @@ export default class UserResolver {
     @InjectRepository(Task) private readonly taskRepository: Repository<Task>,
     private readonly userService: UserService
   ) {}
+
+  // TODO: remove to Public.resolver.ts
+  @Query(() => [LevelQueryResult])
+  async QueryByDifficultyLevel(
+    @Arg("difficulty", (type) => DifficultyLevel, { nullable: true })
+    difficulty: DifficultyLevel,
+    @Arg("pagination", { nullable: true })
+    pagination: PaginationOptions
+  ) {
+    const { cursor, offset } = pagination ?? { cursor: 0, offset: 20 };
+
+    const users = await this.userService.Users(cursor!, offset!);
+    // TODO: Task Service
+    const tasks = await this.taskRepository.find({
+      skip: cursor,
+      take: offset,
+      relations: ["assignee"],
+    });
+
+    if (typeof difficulty === "undefined") {
+      return [...users, ...tasks];
+    }
+
+    const filterUsers = users.filter(
+      (user) => (JSON.parse(user.desc) as IUserDesc).level === difficulty
+    );
+
+    const filterTasks = tasks.filter((task) => task.taskLevel === difficulty);
+
+    return [...filterUsers, ...filterTasks];
+  }
 
   // 先给个最低权限
   @Authorized(ACCOUNT_AUTH.UN_LOGIN)
@@ -202,6 +235,16 @@ export default class UserResolver {
   ): Promise<number> {
     // ... do sth addtional here
     return user.age;
+  }
+
+  @FieldResolver(() => UserDesc)
+  async UserDescField(@Root() user: User): Promise<UserDesc | null> {
+    const { desc } = user;
+    try {
+      return JSON.parse(desc);
+    } catch (err) {
+      return null;
+    }
   }
 
   @Query(() => UserStatus)

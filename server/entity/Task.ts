@@ -11,6 +11,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { TypeormLoader } from "type-graphql-dataloader";
+import { DifficultyLevel } from "../graphql/Public";
 import { ITask, TaskSource } from "../graphql/Task";
 
 import User from "./User";
@@ -33,6 +34,9 @@ export default class Task extends BaseEntity implements ITask {
 
   @Column({ nullable: false, default: TaskSource.OTHER })
   taskSource!: TaskSource;
+
+  @Column({ nullable: false, default: DifficultyLevel.ROOKIE })
+  taskLevel!: DifficultyLevel;
 
   @Column({ nullable: false, default: 1000 })
   taskReward!: number;

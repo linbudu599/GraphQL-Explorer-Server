@@ -36,6 +36,19 @@ enum Difficulty {
   Medium
 }
 
+"""
+User / Task Difficulty Level
+"""
+enum DifficultyLevek {
+  BEGINNER
+  LEGEND
+  MASTER
+  NOVICE
+  OLD_DOMINATOR
+  ROOKIE
+  SKILLED
+}
+
 interface ITask {
   assignee: User
   lastUpdateDate: Timestamp!
@@ -43,6 +56,7 @@ interface ITask {
   taskAccmplished: Boolean!
   taskContent: String!
   taskId: ID!
+  taskLevel: DifficultyLevek!
   taskRate: Float!
   taskReward: Float!
   taskSource: TaskSource!
@@ -51,15 +65,21 @@ interface ITask {
 
 interface IUser {
   age: Float!
+  desc: String
   isFool: Boolean!
   job: Job!
   lastUpdateDate: Timestamp!
-  level: UserLevel!
   name: String!
   registryDate: Timestamp!
   spAgeField: Int
   tasks: [Task!]
   uid: ID!
+}
+
+interface IUserDesc {
+  level: DifficultyLevek!
+  satisfaction: Int
+  successRate: Int
 }
 
 """
@@ -69,6 +89,8 @@ enum Job {
   BE
   FE
 }
+
+union LevelQueryResult = Task | User
 
 """
 Login / Register Status Indicator
@@ -118,6 +140,10 @@ type Query {
   ): UserStatus!
   FindUserById(uid: String!): UserStatus!
   InjectDataFromService: UserStatus!
+  QueryByDifficultyLevel(
+    difficulty: DifficultyLevek
+    pagination: PaginationOptions
+  ): [LevelQueryResult!]!
   QueryRecipesByDifficulty(difficulty: Difficulty): [Recipe!]!
   QueryRecipesByIngredients(ingredients: [String!]): [Recipe!]!
   QueryTaskAssignee(taskId: Float!): UserStatus!
@@ -157,6 +183,7 @@ type Task implements ITask {
   taskAccmplished: Boolean!
   taskContent: String!
   taskId: ID!
+  taskLevel: DifficultyLevek!
   taskRate: Float!
   taskReward: Float!
   taskSource: TaskSource!
@@ -210,15 +237,16 @@ scalar Timestamp
 
 type User implements IUser {
   age: Float!
+  desc: String
   isFool: Boolean!
   job: Job!
   lastUpdateDate: Timestamp!
-  level: UserLevel!
   name: String!
   registryDate: Timestamp!
   spAgeField(param: Float): Int!
   tasks: [Task!]
   uid: ID!
+  UserDescField: UserDesc!
 }
 
 """
@@ -231,17 +259,10 @@ input UserCreateInput {
   name: String!
 }
 
-"""
-User Skill Level
-"""
-enum UserLevel {
-  BEGINNER
-  LEGEND
-  MASTER
-  NOVICE
-  OLD_DOMINATOR
-  ROOKIE
-  SKILLED
+type UserDesc implements IUserDesc {
+  level: DifficultyLevek!
+  satisfaction: Int
+  successRate: Int
 }
 
 """

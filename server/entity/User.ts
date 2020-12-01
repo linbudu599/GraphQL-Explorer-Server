@@ -1,5 +1,7 @@
-import { Extensions, Field, Float, ObjectType } from "type-graphql";
+import { Extensions, ObjectType } from "type-graphql";
 import { TypeormLoader } from "type-graphql-dataloader";
+import { plainToClass } from "class-transformer";
+
 import {
   Entity,
   Column,
@@ -12,17 +14,29 @@ import {
 } from "typeorm";
 
 import { LogExtension } from "../extensions/LogExtension";
-import { IUser, JOB, UserLevel } from "../graphql/User";
+import { IUser, JOB, IUserDesc } from "../graphql/User";
+import { DifficultyLevel } from "../graphql/Public";
 
 import Task from "./Task";
 
-// TODO: 更复杂的数据库表结构
-// User 有多个 任务
-// 任务包括执行时间 报酬 状态(完成) 评分
-// User 唯一的 身份标识
-// 身份标识包括 启用时间 失效时间 级别
-// 组织 有多个User
-// 组织包括 任务栏(Task Entity) 成员 管理层
+@ObjectType({ implements: IUserDesc })
+export class UserDesc extends BaseEntity implements IUserDesc {
+  @Column({ default: DifficultyLevel.ROOKIE, nullable: true })
+  level!: DifficultyLevel;
+
+  @Column({ default: 0, nullable: true })
+  successRate!: number;
+
+  @Column({ default: 0, nullable: true })
+  satisfaction!: number;
+}
+
+const USER_DESC_DEFAULT = plainToClass(UserDesc, {
+  level: DifficultyLevel.OLD_DOMINATOR,
+  successRate: 0,
+  satisfaction: 0,
+});
+
 @ObjectType({ implements: IUser })
 @Entity()
 export default class User extends BaseEntity implements IUser {
@@ -38,7 +52,7 @@ export default class User extends BaseEntity implements IUser {
   @Column({ default: JOB.FE })
   job!: JOB;
 
-  @Column({ default: false, nullable: true })
+  @Column({ default: false, nullable: false })
   isFool!: boolean;
 
   @CreateDateColumn()
@@ -51,8 +65,8 @@ export default class User extends BaseEntity implements IUser {
   @TypeormLoader((type) => User, (user: User) => user.taskIds)
   tasks?: Task[];
 
-  @Column({ default: UserLevel.ROOKIE })
-  level!: UserLevel;
+  @Column({ default: JSON.stringify(USER_DESC_DEFAULT) })
+  desc!: string;
 
   @RelationId((user: User) => user.tasks)
   taskIds?: number[];

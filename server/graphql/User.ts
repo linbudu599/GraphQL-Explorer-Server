@@ -6,6 +6,7 @@ import {
   ID,
   registerEnumType,
   InterfaceType,
+  ObjectType,
 } from "type-graphql";
 import {
   Length,
@@ -19,20 +20,11 @@ import {
   IsPositive,
 } from "class-validator";
 import Task from "../entity/Task";
+import { DifficultyLevel } from "./Public";
 
 export enum JOB {
   FE = "Frontend Engineer",
   BE = "Backend Engineer",
-}
-
-export enum UserLevel {
-  ROOKIE,
-  NOVICE,
-  BEGINNER,
-  SKILLED,
-  MASTER,
-  LEGEND,
-  OLD_DOMINATOR,
 }
 
 registerEnumType(JOB, {
@@ -40,30 +32,37 @@ registerEnumType(JOB, {
   description: "Job Enum Type",
 });
 
-registerEnumType(UserLevel, {
-  name: "UserLevel",
-  description: "User Skill Level",
-});
+@InterfaceType()
+export class IUserDesc {
+  @Field((type) => DifficultyLevel, { nullable: false })
+  level!: DifficultyLevel;
+
+  @Field((type) => Int, { nullable: true })
+  successRate!: number;
+
+  @Field((type) => Int, { nullable: true })
+  satisfaction!: number;
+}
 
 @InterfaceType()
 export abstract class IUser {
   @Field((type) => ID, { nullable: false })
   uid!: string;
 
-  @Field()
+  @Field({ nullable: false })
   name!: string;
 
-  @Field()
+  @Field({ nullable: false })
   age!: number;
 
-  @Field((type) => JOB)
+  @Field((type) => JOB, { nullable: false })
   job!: JOB;
 
-  @Field()
+  @Field({ nullable: false })
   isFool!: boolean;
 
-  @Field((type) => UserLevel, { nullable: false })
-  level!: UserLevel;
+  @Field({ nullable: true })
+  desc!: string;
 
   @Field((type) => [Task]!, { nullable: true })
   tasks?: Task[];

@@ -1,8 +1,6 @@
 import {
   Field,
-  Int,
   InputType,
-  ArgsType,
   ID,
   registerEnumType,
   InterfaceType,
@@ -19,6 +17,7 @@ import {
 
 import { IUser } from "./User";
 import User from "../entity/User";
+import { DifficultyLevel } from "./Public";
 
 export enum TaskSource {
   GOV,
@@ -49,6 +48,9 @@ export abstract class ITask {
 
   @Field(() => TaskSource, { nullable: false })
   taskSource!: TaskSource;
+
+  @Field(() => DifficultyLevel, { nullable: false })
+  taskLevel!: DifficultyLevel;
 
   @Field()
   taskAccmplished!: Boolean;
