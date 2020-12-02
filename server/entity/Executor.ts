@@ -17,11 +17,11 @@ import { LogExtension } from "../extensions/LogExtension";
 
 import Task from "./Task";
 
-import { IUser, JOB, IUserDesc } from "../graphql/User";
+import { IExecutor, JOB, IExecutorDesc } from "../graphql/Executor";
 import { DifficultyLevel } from "../graphql/Public";
 
-@ObjectType({ implements: IUserDesc })
-export class UserDesc extends BaseEntity implements IUserDesc {
+@ObjectType({ implements: IExecutorDesc })
+export class ExecutorDesc extends BaseEntity implements IExecutorDesc {
   @Column({ default: DifficultyLevel.ROOKIE, nullable: true })
   level!: DifficultyLevel;
 
@@ -32,15 +32,15 @@ export class UserDesc extends BaseEntity implements IUserDesc {
   satisfaction!: number;
 }
 
-const USER_DESC_DEFAULT = plainToClass(UserDesc, {
+const Executor_DESC_DEFAULT = plainToClass(ExecutorDesc, {
   level: DifficultyLevel.OLD_DOMINATOR,
   successRate: 0,
   satisfaction: 0,
 });
 
-@ObjectType({ implements: IUser })
+@ObjectType({ implements: IExecutor })
 @Entity()
-export default class User extends BaseEntity implements IUser {
+export default class Executor extends BaseEntity implements IExecutor {
   @PrimaryGeneratedColumn()
   uid!: string;
 
@@ -63,16 +63,16 @@ export default class User extends BaseEntity implements IUser {
   lastUpdateDate!: Date;
 
   @OneToMany(() => Task, (task) => task.assignee)
-  @TypeormLoader((type) => User, (user: User) => user.taskIds)
+  @TypeormLoader((type) => Executor, (Executor: Executor) => Executor.taskIds)
   tasks?: Task[];
 
-  @Column({ default: JSON.stringify(USER_DESC_DEFAULT) })
+  @Column({ default: JSON.stringify(Executor_DESC_DEFAULT) })
   desc!: string;
 
-  @RelationId((user: User) => user.tasks)
+  @RelationId((Executor: Executor) => Executor.tasks)
   taskIds?: number[];
 
-  @Extensions({ info: "User.name Field" })
+  @Extensions({ info: "Executor.name Field" })
   @Extensions({ complexity: 1 })
   @LogExtension({ message: "我直接好家伙" })
   spAgeField?: number;

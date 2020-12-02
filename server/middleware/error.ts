@@ -24,7 +24,7 @@ export default class ErrorLoggerMiddleware
           message: err.message,
           operation: info.operation.operation,
           fieldName: info.fieldName,
-          uid: context.currentUser.uid,
+          accountId: context.currentUser.accountId,
         })
       );
       if (!(err instanceof ArgumentValidationError)) {

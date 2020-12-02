@@ -1,11 +1,21 @@
 import "reflect-metadata";
 import { Context } from "koa";
 import path from "path";
+import { getOperationAST } from "graphql";
 import dotenv from "dotenv";
 import { Container, ContainerInstance } from "typedi";
 import * as TypeORM from "typeorm";
 import { buildSchema, ResolverData } from "type-graphql";
 import { ApolloServer } from "apollo-server-koa";
+// 上报API信息至Apollo-Engine
+import {
+  // API各operation与field的使用状况
+  ApolloServerPluginUsageReporting,
+  // APISchema
+  ApolloServerPluginSchemaReporting,
+  // API性能 更适用于apollo-gateway
+  // ApolloServerPluginInlineTrace,
+} from "apollo-server-core";
 import { GraphQLRequestContext } from "apollo-server-plugin-base";
 import { ApolloServerLoaderPlugin } from "type-graphql-dataloader";
 import {
@@ -14,32 +24,35 @@ import {
   fieldExtensionsEstimator,
 } from "graphql-query-complexity";
 
-import UserResolver from "../resolver/User.resolver";
-import RecipeResolver from "../resolver/Recipe.resolver";
-import TaskResolver from "../resolver/Task.resolver";
-import PubSubResolver from "../resolver/PubSub.resolver";
-import AccountResolver from "../resolver/Account.resolver";
-import SubstanceResolver from "../resolver/Substance.resolver";
+import ExecutorResolver from "./resolver/Executor.resolver";
+import RecipeResolver from "./resolver/Recipe.resolver";
+import TaskResolver from "./resolver/Task.resolver";
+import PubSubResolver from "./resolver/PubSub.resolver";
+import AccountResolver from "./resolver/Account.resolver";
+import SubstanceResolver from "./resolver/Substance.resolver";
 
-import { log } from "./helper";
-import { genarateRandomID } from "./auth";
-import { authChecker } from "./authChecker";
-import { MAX_ALLOWED_COMPLEXITY } from "./constants";
-import { setRecipeInContainer, dbConnect } from "./mock";
+import { log } from "./utils/helper";
+import { genarateRandomID } from "./utils/auth";
+import { authChecker } from "./utils/authChecker";
+import {
+  MAX_ALLOWED_COMPLEXITY,
+  PLAY_GROUND_SETTINGS,
+} from "./utils/constants";
+import { setRecipeInContainer, dbConnect } from "./utils/mock";
 
 // Middlewares applied on TypeGraphQL
-import ResolveTime from "../middleware/time";
-import InterceptorOnUID1 from "../middleware/interceptor";
-import LogAccessMiddleware from "../middleware/log";
-import ErrorLoggerMiddleware from "../middleware/error";
+import ResolveTime from "./middleware/time";
+import { InterceptorOnSCP1128 } from "./middleware/interceptor";
+import LogAccessMiddleware from "./middleware/log";
+import ErrorLoggerMiddleware from "./middleware/error";
 
 // Extensions powered by TypeGraphQL
-import { ExtensionsMetadataRetriever } from "../extensions/GetMetadata";
+import { ExtensionsMetadataRetriever } from "./extensions/GetMetadata";
 
 // Apollo Data Source
-import SpaceXDataSource from "../datasource/SpaceX";
+import SpaceXDataSource from "./datasource/SpaceX";
 
-import { IContext } from "../typding";
+import { IContext } from "./typding";
 
 Container.set({ id: "INIT_INJECT_DATA", factory: () => new Date() });
 TypeORM.useContainer(Container);
@@ -51,7 +64,7 @@ log(`[Env] Loading ${dev ? "[DEV]" : "[PROD]"} File`);
 
 const basicMiddlewares = [
   ResolveTime,
-  InterceptorOnUID1,
+  InterceptorOnSCP1128,
   ExtensionsMetadataRetriever,
   LogAccessMiddleware,
 ];
@@ -62,7 +75,7 @@ export default async (): Promise<ApolloServer> => {
   const schema = await buildSchema({
     // TODO: get by generation
     resolvers: [
-      UserResolver,
+      ExecutorResolver,
       RecipeResolver,
       TaskResolver,
       PubSubResolver,
@@ -74,14 +87,13 @@ export default async (): Promise<ApolloServer> => {
     container: ({ context }: ResolverData<IContext>) => context.container,
     // TypeGraphQL built-in Scalar Date
     dateScalarMode: "timestamp",
-    authChecker,
+    authChecker: dev ? () => true : authChecker,
     authMode: "error",
     emitSchemaFile: path.resolve(__dirname, "../typegraphql/shema.graphql"),
     validate: true,
-    globalMiddlewares: basicMiddlewares,
-    // globalMiddlewares: dev
-    //   ? [...basicMiddlewares, ErrorLoggerMiddleware]
-    //   : basicMiddlewares,
+    globalMiddlewares: dev
+      ? basicMiddlewares
+      : [...basicMiddlewares, ErrorLoggerMiddleware],
   });
 
   await dbConnect();
@@ -105,7 +117,7 @@ export default async (): Promise<ApolloServer> => {
         env: process.env.NODE_ENV,
         // token: ctx.headers.authorization,
         currentUser: {
-          uid: id,
+          accountId: id,
           roles: type,
         },
         container,
@@ -119,6 +131,15 @@ export default async (): Promise<ApolloServer> => {
       SpaceXAPI: new SpaceXDataSource(),
     }),
     plugins: [
+      process.env.APOLLO_KEY ? ApolloServerPluginSchemaReporting() : {},
+      process.env.APOLLO_KEY
+        ? ApolloServerPluginUsageReporting({
+            sendVariableValues: { all: true },
+            sendHeaders: { all: true },
+            sendReportsImmediately: true,
+          })
+        : {},
+
       {
         // 在每次请求开始前销毁上一个容器
         requestDidStart: () => ({
@@ -156,7 +177,7 @@ export default async (): Promise<ApolloServer> => {
           willSendResponse(
             reqContext: GraphQLRequestContext<Partial<IContext>>
           ) {
-            Container.reset(reqContext.context.currentUser!.uid);
+            Container.reset(reqContext.context.currentUser!.accountId);
             const instancesIds = ((Container as any)
               .instances as ContainerInstance[]).map((instance) => instance.id);
             console.log("instances left in memory:", instancesIds);
@@ -171,22 +192,18 @@ export default async (): Promise<ApolloServer> => {
     // 简单的说，RootValue就像是一个自定义的类型（和其他类型一样），但它只拥有一个动态解析的字段
     // RootValue是解析链的初始值 也就是入口Resolver的parent参数
     rootValue: (documentAST) => {
-      // const op = getOperationAST(documentNode);
-      // return op === "mutation" ? mutationRoot : queryRoot;
+      const op = getOperationAST(documentAST);
+      return {
+        operation: op?.operation,
+      };
     },
-    introspection: true,
+    introspection: dev,
     // tracing: true,
     // engine: true,
     // formatError: () => {},
     // formatResponse: () => {},
     playground: {
-      settings: {
-        "editor.theme": "dark",
-        "editor.fontSize": 16,
-        "tracing.hideTracingResponse": false,
-        "queryPlan.hideQueryPlanResponse": false,
-        "editor.fontFamily": `'Fira Code', 'Source Code Pro', 'Consolas'`,
-      },
+      settings: PLAY_GROUND_SETTINGS,
     },
   });
 

@@ -13,7 +13,7 @@ import {
 } from "typeorm";
 import { TypeormLoader } from "type-graphql-dataloader";
 
-import User from "./User";
+import Executor from "./Executor";
 import Substance from "./Substance";
 
 import { DifficultyLevel } from "../graphql/Public";
@@ -58,10 +58,10 @@ export default class Task extends BaseEntity implements ITask {
   @JoinColumn()
   taskSubstance!: Substance;
 
-  @ManyToOne(() => User, (user) => user.tasks, { nullable: true })
+  @ManyToOne(() => Executor, (executor) => executor.tasks, { nullable: true })
   @JoinColumn({ name: "assigneeUID" })
-  @TypeormLoader((type) => User, (task: Task) => task.assigneeUID)
-  assignee?: User;
+  @TypeormLoader((type) => Executor, (task: Task) => task.assigneeUID)
+  assignee?: Executor;
 
   @RelationId((task: Task) => task.assignee)
   assigneeUID?: number;

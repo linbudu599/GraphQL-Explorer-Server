@@ -15,10 +15,10 @@ import {
   IsPositive,
 } from "class-validator";
 
-import { IUser } from "./User";
+import { IExecutor } from "./Executor";
 import { DifficultyLevel } from "./Public";
 
-import User from "../entity/User";
+import Executor from "../entity/Executor";
 import Substance from "../entity/Substance";
 
 export enum TaskSource {
@@ -57,8 +57,8 @@ export abstract class ITask {
   @Field()
   taskTitle!: string;
 
-  @Field(() => User, { nullable: true })
-  assignee?: IUser;
+  @Field(() => Executor, { nullable: true })
+  assignee?: IExecutor;
 
   @Field()
   taskContent!: string;

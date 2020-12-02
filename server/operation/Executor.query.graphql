@@ -1,0 +1,49 @@
+query ExecutorQuery {
+  Executors {
+    data {
+      uid
+      name
+      age
+      job
+      isFool
+      tasks {
+        taskId
+        taskTitle
+        taskContent
+        taskSource
+        taskLevel
+        taskAccmplished
+        taskReward
+        taskRate
+        taskTarget
+        taskSubstance {
+          substanceId
+          substanceName
+          substanceDesc
+          substanceIssues
+          substanceLevel
+          asylumed
+          substanceAppearDate
+          lastActiveDate
+        }
+        publishDate
+        lastUpdateDate
+      }
+      registryDate
+      lastUpdateDate
+      ExecutorDescField {
+        level
+        successRate
+        satisfaction
+      }
+    }
+  }
+  FindExecutorByConditions(name: "林不渡-0") {
+    data {
+      name
+      ExecutorDescField {
+        level
+      }
+    }
+  }
+}

@@ -2,14 +2,14 @@ import { Resolver, Query, Arg, Mutation } from "type-graphql";
 import { Repository, Transaction, TransactionRepository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
-import User from "../entity/User";
+import Executor from "../entity/Executor";
 import Task from "../entity/Task";
 
 import {
   PaginationOptions,
   StatusHandler,
   TaskStatus,
-  UserStatus,
+  ExecutorStatus,
 } from "../graphql/Common";
 import { TaskCreateInput, TaskUpdateInput } from "../graphql/Task";
 import { RESPONSE_INDICATOR } from "../utils/constants";
@@ -17,7 +17,8 @@ import { RESPONSE_INDICATOR } from "../utils/constants";
 @Resolver((of) => Task)
 export default class TaskResolver {
   constructor(
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(Executor)
+    private readonly executorRepository: Repository<Executor>,
     @InjectRepository(Task) private readonly taskRepository: Repository<Task>
   ) {}
 
@@ -55,8 +56,10 @@ export default class TaskResolver {
     }
   }
 
-  @Query(() => UserStatus)
-  async QueryTaskAssignee(@Arg("taskId") taskId: number): Promise<UserStatus> {
+  @Query(() => ExecutorStatus)
+  async QueryTaskAssignee(
+    @Arg("taskId") taskId: number
+  ): Promise<ExecutorStatus> {
     try {
       const res = await this.taskRepository.findOne({
         where: {
@@ -181,7 +184,7 @@ export default class TaskResolver {
     taskTransRepo: Repository<Task>
   ): Promise<TaskStatus> {
     try {
-      const assignee = await this.userRepository.findOne({ uid });
+      const assignee = await this.executorRepository.findOne({ uid });
       if (!assignee) {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }

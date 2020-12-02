@@ -1,6 +1,6 @@
 import { registerEnumType, createUnionType } from "type-graphql";
 
-import User from "../entity/User";
+import User from "../entity/Executor";
 import Task from "../entity/Task";
 
 export enum DifficultyLevel {
@@ -14,7 +14,7 @@ export enum DifficultyLevel {
 }
 
 registerEnumType(DifficultyLevel, {
-  name: "DifficultyLevek",
+  name: "DifficultyLevel",
   description: "User / Task Difficulty Level",
 });
 

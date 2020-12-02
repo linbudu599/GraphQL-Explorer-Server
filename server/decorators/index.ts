@@ -24,7 +24,7 @@ export const InjectCurrentContainer = () =>
 
 /**
  * @desc 自定义校验schema
- * @example `@CustomArgsValidation(UserQueryArgs)`
+ * @example `@CustomArgsValidation(ExecutorQueryArgs)`
  * @requires 禁用Arg装饰器的校验`@Args({ validate: false })`
  */
 export const CustomArgsValidation = <T extends object>(

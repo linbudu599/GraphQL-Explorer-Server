@@ -1,7 +1,7 @@
 import { IsNumber, Max, Min } from "class-validator";
 import { Field, ObjectType, InputType, Int, InterfaceType } from "type-graphql";
 
-import User from "../entity/User";
+import Executor from "../entity/Executor";
 import Task from "../entity/Task";
 import Substance from "../entity/Substance";
 
@@ -16,6 +16,15 @@ export class BaseStatus {
 
 @ObjectType({
   implements: BaseStatus,
+  description: "Primitive Response Status Indicator",
+})
+export class PrimitiveStatus extends BaseStatus {
+  @Field(() => String, { nullable: true })
+  data?: any;
+}
+
+@ObjectType({
+  implements: BaseStatus,
   description: "Substance Response Status Indicator",
 })
 export class SubstanceStatus extends BaseStatus {
@@ -25,11 +34,11 @@ export class SubstanceStatus extends BaseStatus {
 
 @ObjectType({
   implements: BaseStatus,
-  description: "User Response Status Indicator",
+  description: "Executor Response Status Indicator",
 })
-export class UserStatus extends BaseStatus {
-  @Field(() => [User]!, { nullable: true })
-  data?: User[];
+export class ExecutorStatus extends BaseStatus {
+  @Field(() => [Executor]!, { nullable: true })
+  data?: Executor[];
 }
 
 @ObjectType({

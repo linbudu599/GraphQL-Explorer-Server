@@ -24,6 +24,7 @@ import Task from "../entity/Task";
 
 import { DifficultyLevel } from "./Public";
 
+// TODO: expand job enum
 export enum JOB {
   FE = "Frontend Engineer",
   BE = "Backend Engineer",
@@ -35,7 +36,7 @@ registerEnumType(JOB, {
 });
 
 @InterfaceType()
-export class IUserDesc {
+export class IExecutorDesc {
   @Field((type) => DifficultyLevel, { nullable: false })
   level!: DifficultyLevel;
 
@@ -47,7 +48,7 @@ export class IUserDesc {
 }
 
 @InterfaceType()
-export abstract class IUser {
+export abstract class IExecutor {
   @Field((type) => ID, { nullable: false })
   uid!: string;
 
@@ -80,8 +81,8 @@ export abstract class IUser {
 }
 
 @ArgsType()
-// extends UserCreateInput will result in error GraphQL Schema
-export class UserQueryArgs {
+// extends ExecutorCreateInput will result in error GraphQL Schema
+export class ExecutorQueryArgs {
   @Field({ nullable: true })
   @IsOptional()
   @Length(1, 20)
@@ -106,8 +107,8 @@ export class UserQueryArgs {
   job?: JOB;
 }
 
-@InputType({ description: " User InputObject/Args" })
-export class UserCreateInput implements Partial<IUser> {
+@InputType({ description: " Executor InputObject/Args" })
+export class ExecutorCreateInput implements Partial<IExecutor> {
   @Field({ nullable: false })
   @Length(1, 20)
   @IsString()
@@ -132,8 +133,8 @@ export class UserCreateInput implements Partial<IUser> {
   job?: JOB;
 }
 
-@InputType({ description: "Args On User Update" })
-export class UserUpdateInput extends UserCreateInput {
+@InputType({ description: "Args On Executor Update" })
+export class ExecutorUpdateInput extends ExecutorCreateInput {
   @Field({ nullable: false })
   @IsString()
   uid!: string;

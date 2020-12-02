@@ -1,30 +1,30 @@
 import { ContainerInstance } from "typedi";
 
-import User from "./entity/User";
+import Executor from "./entity/Executor";
 import Task from "./entity/Task";
 
 import {
-  UserCreateInput,
-  UserQueryArgs,
-  UserUpdateInput,
-} from "./graphql/User";
+  ExecutorCreateInput,
+  ExecutorQueryArgs,
+  ExecutorUpdateInput,
+} from "./graphql/Executor";
 import { Recipe } from "./graphql/Recipe";
 
-import { USER_ROLES, ACCOUNT_AUTH } from "./utils/constants";
+import { ACCOUNT_AUTH } from "./utils/constants";
 import { DeleteResult } from "typeorm";
 
 export interface IContext {
   env: string;
   currentUser: {
-    uid: string;
+    accountId: string;
     roles: ACCOUNT_AUTH;
   };
   container: ContainerInstance;
 }
 
-export interface IUserService {
+export interface IExecutorService {
   // Query
-  Users(cursor: number, offset: number): Promise<User[]>;
+  Executors(cursor: number, offset: number): Promise<Executor[]>;
   ContainerRegisterTime(): Promise<Date>;
 }
 

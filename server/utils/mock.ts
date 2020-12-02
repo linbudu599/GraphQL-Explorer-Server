@@ -13,7 +13,7 @@ import {
 } from "../graphql/Recipe";
 import { DifficultyLevel } from "../graphql/Public";
 
-import User, { UserDesc } from "../entity/User";
+import Executor, { ExecutorDesc } from "../entity/Executor";
 import Task from "../entity/Task";
 import Substance from "../entity/Substance";
 
@@ -173,22 +173,23 @@ export const mockTask = (len: number) => {
   return mockTaskInfo;
 };
 
-const createUserDesc = (desc: Partial<UserDesc>): UserDesc =>
-  plainToClass(UserDesc, desc);
+const createExecutorDesc = (desc: Partial<ExecutorDesc>): ExecutorDesc =>
+  plainToClass(ExecutorDesc, desc);
 
-const createUser = (user: Partial<User>): User => plainToClass(User, user);
+const createExecutor = (executor: Partial<Executor>): Executor =>
+  plainToClass(Executor, executor);
 
-export const mockUser = (len: number) => {
-  const mockUserInfo: Partial<User>[] = [];
+export const mockExecutor = (len: number) => {
+  const mockExecutorInfo: Partial<Executor>[] = [];
 
   for (let i = 0; i < len; i++) {
-    mockUserInfo.push(
-      createUser({
+    mockExecutorInfo.push(
+      createExecutor({
         name: `林不渡-${i}`,
         age: Math.floor(Math.random() * 30),
         isFool: i % 2 === 0,
         desc: JSON.stringify(
-          createUserDesc({
+          createExecutorDesc({
             level: i <= 6 ? i : i % 6,
             successRate: Math.floor(Math.random() * 100),
             satisfaction: Math.floor(Math.random() * 10),
@@ -198,7 +199,7 @@ export const mockUser = (len: number) => {
     );
   }
 
-  return mockUserInfo;
+  return mockExecutorInfo;
 };
 
 export const dbConnect = async (): Promise<any> => {
@@ -227,17 +228,17 @@ export const dbConnect = async (): Promise<any> => {
     log("=== [TypeORM] Database Connection Established ===");
 
     const mockTaskGroup = mockTask(5);
-    const mockUserGroup = mockUser(5);
+    const mockExecutorGroup = mockExecutor(5);
     const mockSubstanceGroup = mockSubstance(5);
 
     await connection.manager.save(mockTaskGroup);
-    await connection.manager.save(mockUserGroup);
+    await connection.manager.save(mockExecutorGroup);
     await connection.manager.save(mockSubstanceGroup);
 
-    const user = new User();
-    user.name = "林不渡-Lv1";
-    user.tasks = (mockTaskGroup as Task[]).slice(0, 2);
-    await connection.manager.save(user);
+    const executor = new Executor();
+    executor.name = "林不渡-Lv1";
+    executor.tasks = (mockTaskGroup as Task[]).slice(0, 2);
+    await connection.manager.save(executor);
 
     const sub = new Substance();
     sub.substanceName = "SCP-1128 深海巨妖";

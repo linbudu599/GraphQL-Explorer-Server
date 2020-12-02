@@ -1,0 +1,22 @@
+mutation ExecutorMutation {
+  CreateExecutor(newExecutorInfo: { name: "xxx" }) {
+    success
+    data {
+      desc
+    }
+  }
+
+  UpdateExecutor(modifiedExecutorInfo: { uid: "1", name: "xxxxx" }) {
+    success
+    data {
+      name
+    }
+  }
+
+  DeleteExecutor(uid: "1") {
+    success
+    data {
+      desc
+    }
+  }
+}

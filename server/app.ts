@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import Koa from "koa";
 
-import initialize from "./utils/init";
+import initialize from "./server";
 import { log } from "./utils/helper";
 
 import cors from "./middleware/cors";

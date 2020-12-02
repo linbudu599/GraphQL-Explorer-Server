@@ -7,16 +7,15 @@ export const authChecker: AuthChecker<IContext> = (
     root,
     args,
     context: {
-      currentUser: { uid, roles: userRoleLevel },
+      currentUser: { accountId, roles: userRoleLevel },
     },
     info,
   },
   requiredLevelGroup
 ): boolean => {
   const requiredLevel = Number(requiredLevelGroup[0]);
-  log(`[Auth Check] Current User UID: ${uid}`);
+  log(`[Auth Check] Current User ACCOUNT_ID: ${accountId}`);
   log(`[Auth Check] Current User Role: ${userRoleLevel}`);
 
-  // return userRoleLevel >= requiredLevel;
-  return true;
+  return userRoleLevel >= requiredLevel;
 };
