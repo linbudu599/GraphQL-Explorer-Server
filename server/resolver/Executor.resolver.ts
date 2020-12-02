@@ -23,13 +23,14 @@ import {
   ExecutorCreateInput,
   ExecutorUpdateInput,
   ExecutorQueryArgs,
+  ExecutorDescUpdateInput,
+  ExecutorDescQuery,
+  IExecutorDesc,
 } from "../graphql/Executor";
 import {
   PaginationOptions,
   StatusHandler,
-  TaskStatus,
   ExecutorStatus,
-  PrimitiveStatus,
 } from "../graphql/Common";
 
 import { ACCOUNT_AUTH, RESPONSE_INDICATOR } from "../utils/constants";
@@ -44,7 +45,7 @@ export default class ExecutorResolver {
   constructor(
     @InjectRepository(Executor)
     private readonly ExecutorRepository: Repository<Executor>,
-    private readonly ExecutorService: ExecutorService
+    private readonly executorService: ExecutorService
   ) {}
 
   // 先给个最低权限
@@ -53,13 +54,13 @@ export default class ExecutorResolver {
   @UseMiddleware(ExtraFieldLogMiddlewareGenerator("CHECK ALL ExecutorS"))
   async Executors(
     @Ctx() ctx: IContext,
-    @InjectCurrentUser() Executor: IContext["currentUser"],
+    @InjectCurrentUser() user: IContext["currentUser"],
     @Arg("pagination", { nullable: true })
     pagination: PaginationOptions
   ): Promise<ExecutorStatus> {
     try {
       const { cursor, offset } = pagination ?? { cursor: 0, offset: 20 };
-      const ExecutorsWithTasks = await this.ExecutorService.Executors(
+      const ExecutorsWithTasks = await this.executorService.Executors(
         cursor!,
         offset!
       );
@@ -106,6 +107,40 @@ export default class ExecutorResolver {
     }
   }
 
+  @Query(() => ExecutorStatus)
+  async FindExecutorByDesc(
+    @Args() desc: ExecutorDescQuery,
+    @Arg("pagination", { nullable: true })
+    pagination: PaginationOptions
+  ): Promise<ExecutorStatus> {
+    const { cursor, offset } = pagination ?? { cursor: 0, offset: 20 };
+    const { level, successRate, satisfaction } = desc;
+
+    const executors = await this.executorService.Executors(cursor!, offset!);
+    console.log(desc);
+    const filterExecutors = executors.filter((executor) => {
+      const descObj = JSON.parse(executor.desc) as IExecutorDesc;
+      console.log("descObj");
+      console.log(descObj);
+      // may by 0
+      const levelEqual =
+        typeof level === "undefined" ? true : descObj.level === level;
+      const successRateEqual =
+        typeof successRate === "undefined"
+          ? true
+          : descObj.successRate === successRate;
+
+      const satisfactionEqual =
+        typeof satisfaction === "undefined"
+          ? true
+          : descObj.satisfaction === satisfaction;
+
+      return levelEqual && successRateEqual && satisfactionEqual;
+    });
+
+    return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, filterExecutors);
+  }
+
   @Transaction()
   @Mutation(() => ExecutorStatus)
   async CreateExecutor(
@@ -128,9 +163,42 @@ export default class ExecutorResolver {
     }
   }
 
+  // 更新UserDesc字段
   @Transaction()
   @Mutation(() => ExecutorStatus, { nullable: true })
-  async UpdateExecutor(
+  async UpdateExecutorDesc(
+    @Arg("uid") uid: string,
+    @Arg("userDesc") desc: ExecutorDescUpdateInput,
+    @TransactionRepository(Executor)
+    ExecutorTransRepo: Repository<Executor>
+  ): Promise<ExecutorStatus> {
+    try {
+      const isExistingExecutor = await this.ExecutorRepository.findOne(uid);
+      if (!isExistingExecutor) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
+      }
+      const updatedDesc = {
+        ...JSON.parse(isExistingExecutor?.desc ?? "{}"),
+        ...desc,
+      };
+
+      const res = await ExecutorTransRepo.update(uid, {
+        desc: JSON.stringify(updatedDesc),
+      });
+
+      const updatedItem = await this.ExecutorRepository.findOne({
+        uid,
+      });
+
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updatedItem]);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
+  }
+
+  @Transaction()
+  @Mutation(() => ExecutorStatus, { nullable: true })
+  async UpdateExecutorBasicInfo(
     @Arg("modifiedExecutorInfo") Executor: ExecutorUpdateInput,
     @TransactionRepository(Executor)
     ExecutorTransRepo: Repository<Executor>
@@ -204,18 +272,18 @@ export default class ExecutorResolver {
 
   @FieldResolver(() => Int)
   async spAgeField(
-    @Root() Executor: Executor,
+    @Root() executor: Executor,
     @Arg("param", { nullable: true }) param?: number
   ): Promise<number> {
     // ... do sth addtional here
-    return Executor.age;
+    return executor.age;
   }
 
   @FieldResolver(() => ExecutorDesc)
   async ExecutorDescField(
-    @Root() Executor: Executor
+    @Root() executor: Executor
   ): Promise<ExecutorDesc | null> {
-    const { desc } = Executor;
+    const { desc } = executor;
     try {
       return JSON.parse(desc);
     } catch (err) {
@@ -225,7 +293,7 @@ export default class ExecutorResolver {
 
   @Query(() => Date)
   async InjectDataFromService() {
-    const registerDate = await this.ExecutorService.ContainerRegisterTime();
+    const registerDate = await this.executorService.ContainerRegisterTime();
     return registerDate;
   }
 }

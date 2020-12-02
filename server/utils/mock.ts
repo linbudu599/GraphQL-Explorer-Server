@@ -19,6 +19,8 @@ import Substance from "../entity/Substance";
 
 import { log } from "./helper";
 
+const IS_DEV = process.env.NODE_ENV === "development";
+
 const createWorkExperience = (
   workExp: Partial<WorkExperience>
 ): WorkExperience => plainToClass(WorkExperience, workExp);
@@ -208,19 +210,13 @@ export const dbConnect = async (): Promise<any> => {
     const connection = await TypeORM.createConnection({
       type: "sqlite",
       name: "default",
-      // use different databse
       database: "./info.db",
-      // disabled in prod
-      synchronize: true,
-      dropSchema: true,
+      synchronize: IS_DEV,
+      dropSchema: IS_DEV,
       logging: "all",
       maxQueryExecutionTime: 1000,
       logger: "advanced-console",
-      entities: [
-        process.env.NODE_ENV === "development"
-          ? "server/entity/*.ts"
-          : "server-dist/entity/*.js",
-      ],
+      entities: [IS_DEV ? "server/entity/*.ts" : "server-dist/entity/*.js"],
       cache: {
         duration: 3000,
       },

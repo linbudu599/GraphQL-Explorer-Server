@@ -15,7 +15,7 @@ import { LevelQueryResult, DifficultyLevel } from "../graphql/Public";
 export default class ExecutorResolver {
   constructor(
     @InjectRepository(Task) private readonly taskRepository: Repository<Task>,
-    private readonly ExecutorService: ExecutorService
+    private readonly executorService: ExecutorService
   ) {}
 
   // TODO: remove to Public.resolver.ts
@@ -28,7 +28,7 @@ export default class ExecutorResolver {
   ): Promise<(Executor | Task)[]> {
     const { cursor, offset } = pagination ?? { cursor: 0, offset: 20 };
 
-    const Executors = await this.ExecutorService.Executors(cursor!, offset!);
+    const executors = await this.executorService.Executors(cursor!, offset!);
     // TODO: Task Service
     const tasks = await this.taskRepository.find({
       skip: cursor,
@@ -37,12 +37,12 @@ export default class ExecutorResolver {
     });
 
     if (typeof difficulty === "undefined") {
-      return [...Executors, ...tasks];
+      return [...executors, ...tasks];
     }
 
-    const filterExecutors = Executors.filter(
-      (Executor) =>
-        (JSON.parse(Executor.desc) as IExecutorDesc).level === difficulty
+    const filterExecutors = executors.filter(
+      (executor) =>
+        (JSON.parse(executor.desc) as IExecutorDesc).level === difficulty
     );
 
     const filterTasks = tasks.filter((task) => task.taskLevel === difficulty);

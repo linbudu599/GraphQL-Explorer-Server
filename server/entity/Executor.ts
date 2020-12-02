@@ -33,7 +33,7 @@ export class ExecutorDesc extends BaseEntity implements IExecutorDesc {
 }
 
 const Executor_DESC_DEFAULT = plainToClass(ExecutorDesc, {
-  level: DifficultyLevel.OLD_DOMINATOR,
+  level: DifficultyLevel.ROOKIE,
   successRate: 0,
   satisfaction: 0,
 });

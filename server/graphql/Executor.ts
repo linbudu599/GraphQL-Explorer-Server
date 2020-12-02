@@ -36,7 +36,7 @@ registerEnumType(JOB, {
 });
 
 @InterfaceType()
-export class IExecutorDesc {
+export abstract class IExecutorDesc {
   @Field((type) => DifficultyLevel, { nullable: false })
   level!: DifficultyLevel;
 
@@ -45,6 +45,50 @@ export class IExecutorDesc {
 
   @Field((type) => Int, { nullable: true })
   satisfaction!: number;
+}
+
+@InputType({ description: "Args On Update Executor Desc" })
+export class ExecutorDescUpdateInput implements Partial<IExecutorDesc> {
+  @Field((type) => DifficultyLevel, { nullable: true })
+  @IsOptional()
+  @IsEnum(DifficultyLevel)
+  level?: DifficultyLevel;
+
+  @Field((type) => Int, { nullable: true })
+  @IsOptional()
+  @Max(10)
+  @Min(0)
+  @IsNumber()
+  successRate?: number;
+
+  @Field((type) => Int, { nullable: true })
+  @IsOptional()
+  @Max(10)
+  @Min(0)
+  @IsNumber()
+  satisfaction?: number;
+}
+
+@ArgsType()
+export class ExecutorDescQuery implements Partial<IExecutorDesc> {
+  @Field((type) => DifficultyLevel, { nullable: true })
+  @IsOptional()
+  @IsEnum(DifficultyLevel)
+  level?: DifficultyLevel;
+
+  @Field((type) => Int, { nullable: true })
+  @IsOptional()
+  @Max(10)
+  @Min(0)
+  @IsNumber()
+  successRate?: number;
+
+  @Field((type) => Int, { nullable: true })
+  @IsOptional()
+  @Max(10)
+  @Min(0)
+  @IsNumber()
+  satisfaction?: number;
 }
 
 @InterfaceType()
@@ -85,14 +129,14 @@ export abstract class IExecutor {
 export class ExecutorQueryArgs {
   @Field({ nullable: true })
   @IsOptional()
-  @Length(1, 20)
+  @Length(0, 20)
   @IsString()
   name?: string;
 
   @Field((type) => Int, { nullable: true })
   @IsOptional()
   @Max(100)
-  @Min(18)
+  @Min(10)
   @IsNumber()
   age?: number;
 
@@ -105,20 +149,35 @@ export class ExecutorQueryArgs {
   @IsOptional()
   @IsEnum(JOB)
   job?: JOB;
+
+  @Field((type) => DifficultyLevel, { nullable: false })
+  @IsOptional()
+  @IsEnum(DifficultyLevel)
+  level?: DifficultyLevel;
+
+  @Field((type) => Int, { nullable: true })
+  @IsOptional()
+  @Max(10)
+  @Min(0)
+  @IsNumber()
+  successRate?: number;
+
+  @Field((type) => Int, { nullable: true })
+  @IsOptional()
+  @Max(10)
+  @Min(0)
+  @IsNumber()
+  satisfaction?: number;
 }
 
-@InputType({ description: " Executor InputObject/Args" })
-export class ExecutorCreateInput implements Partial<IExecutor> {
-  @Field({ nullable: false })
-  @Length(1, 20)
-  @IsString()
-  name!: string;
-
+@InterfaceType({
+  autoRegisterImplementations: false,
+})
+export class ExecutorMutationInput {
   @Field((type) => Int, { nullable: true })
   @IsOptional()
   @Max(80)
   @Min(0)
-  @IsPositive()
   @IsNumber()
   age?: number;
 
@@ -133,8 +192,23 @@ export class ExecutorCreateInput implements Partial<IExecutor> {
   job?: JOB;
 }
 
+@InputType({
+  description: "Args On Executor Create",
+})
+export class ExecutorCreateInput extends ExecutorMutationInput {
+  @Field({ nullable: false })
+  @Length(1, 20)
+  @IsString()
+  name!: string;
+}
+
 @InputType({ description: "Args On Executor Update" })
-export class ExecutorUpdateInput extends ExecutorCreateInput {
+export class ExecutorUpdateInput extends ExecutorMutationInput {
+  @Field({ nullable: true })
+  @Length(1, 20)
+  @IsString()
+  name!: string;
+
   @Field({ nullable: false })
   @IsString()
   uid!: string;

@@ -72,17 +72,23 @@ type Executor implements IExecutor {
 }
 
 """
-Executor InputObject/Args
+Args On Executor Create
 """
 input ExecutorCreateInput {
-  age: Int
-  isFool: Boolean
-  job: Job
   name: String!
 }
 
 type ExecutorDesc implements IExecutorDesc {
   level: DifficultyLevel!
+  satisfaction: Int
+  successRate: Int
+}
+
+"""
+Args On Update Executor Desc
+"""
+input ExecutorDescUpdateInput {
+  level: DifficultyLevel
   satisfaction: Int
   successRate: Int
 }
@@ -100,10 +106,7 @@ type ExecutorStatus implements BaseStatus {
 Args On Executor Update
 """
 input ExecutorUpdateInput {
-  age: Int
-  isFool: Boolean
-  job: Job
-  name: String!
+  name: String
   uid: String!
 }
 
@@ -182,7 +185,13 @@ type Mutation {
   pubSubMutation(message: String): Boolean!
   pubSubMutationToDynamicTopic(message: String, topic: String!): Boolean!
   ToggleTaskStatus(taskId: Float!): TaskStatus!
-  UpdateExecutor(modifiedExecutorInfo: ExecutorUpdateInput!): ExecutorStatus
+  UpdateExecutorBasicInfo(
+    modifiedExecutorInfo: ExecutorUpdateInput!
+  ): ExecutorStatus
+  UpdateExecutorDesc(
+    uid: String!
+    userDesc: ExecutorDescUpdateInput!
+  ): ExecutorStatus
   UpdateTaskInfo(taskUpdateParam: TaskUpdateInput!): TaskStatus!
 }
 
@@ -206,7 +215,16 @@ type Query {
     age: Int
     isFool: Boolean
     job: String
+    level: DifficultyLevel!
     name: String
+    satisfaction: Int
+    successRate: Int
+  ): ExecutorStatus!
+  FindExecutorByDesc(
+    level: DifficultyLevel
+    pagination: PaginationOptions
+    satisfaction: Int
+    successRate: Int
   ): ExecutorStatus!
   FindExecutorById(uid: String!): ExecutorStatus!
   FindTaskByID(taskId: Float!): TaskStatus!

@@ -19,4 +19,12 @@ mutation ExecutorMutation {
       desc
     }
   }
+
+  UpdateExecutorDesc(uid: "1", userDesc: { level: OLD_DOMINATOR }) {
+    success
+    message
+    data {
+      desc
+    }
+  }
 }
