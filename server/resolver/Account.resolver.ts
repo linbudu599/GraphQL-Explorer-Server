@@ -1,25 +1,32 @@
-import { Resolver, Query, Arg } from "type-graphql";
-import {
-  LoginOrRegisterStatus,
-  LoginOrRegisterStatusHandler,
-} from "../graphql/Common";
+import { Resolver, Query, Arg, Mutation } from "type-graphql";
+import { Repository, Transaction, TransactionRepository } from "typeorm";
+import { InjectRepository } from "typeorm-typedi-extensions";
 
 import { dispatchToken, validateToken } from "../utils/jwt";
 import { RESPONSE_INDICATOR } from "../utils/constants";
 
-// TODO: Register & Refresher Resolver
+import {
+  LoginOrRegisterStatus,
+  LoginOrRegisterStatusHandler,
+} from "../graphql/Common";
+import { AccountRegisterInput, AccountLoginInput } from "../graphql/Account";
+
+import Account from "../entity/Account";
+
+// TODO: 密码加密存储 权限分级 注销（token） StatusHandler更丰富
 @Resolver((of) => LoginOrRegisterStatus)
 export default class AccountResolver {
-  // TODO: account entity system setup
-  constructor(params) {}
+  constructor(
+    @InjectRepository(Account)
+    private readonly accountRepository: Repository<Account>
+  ) {}
 
   @Query(() => LoginOrRegisterStatus)
-  // TODO: login type args
   async AccountLogin(
-    @Arg("account") account: string,
-    @Arg("password") password: string
+    @Arg("name") name: string,
+    @Arg("pwd") password: string
   ): Promise<LoginOrRegisterStatus> {
-    const token = dispatchToken(account);
+    const token = dispatchToken(name);
     // TODO: account entity system setup
     return new LoginOrRegisterStatusHandler(
       true,
@@ -47,6 +54,41 @@ export default class AccountResolver {
         token,
         -1
       );
+    }
+  }
+
+  @Transaction()
+  @Mutation(() => LoginOrRegisterStatus, { nullable: false })
+  async AccountRegistry(
+    @Arg("account") account: AccountRegisterInput,
+    @TransactionRepository(Account)
+    accountTransRepo: Repository<Account>
+  ) {
+    console.log("===");
+    console.log(account);
+
+    try {
+      const isExistingAccount = await this.accountRepository.findOne({
+        accountName: account.accountName,
+      });
+      if (isExistingAccount) {
+        return new LoginOrRegisterStatusHandler(
+          false,
+          RESPONSE_INDICATOR.EXISTED
+        );
+      }
+
+      const createRes = await accountTransRepo.save(account);
+
+      const token = dispatchToken(account.accountName, account.loginType);
+
+      return new LoginOrRegisterStatusHandler(
+        true,
+        RESPONSE_INDICATOR.SUCCESS,
+        token
+      );
+    } catch (error) {
+      return new LoginOrRegisterStatusHandler(false, JSON.stringify(error), "");
     }
   }
 }

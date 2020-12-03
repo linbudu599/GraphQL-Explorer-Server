@@ -1,9 +1,9 @@
 import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
-import Executor from "../entity/Executor";
-
 import { Service, Inject } from "typedi";
+
+import Executor from "../entity/Executor";
 
 export interface IExecutorService {
   // Query

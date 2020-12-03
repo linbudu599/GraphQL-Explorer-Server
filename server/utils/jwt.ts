@@ -1,13 +1,17 @@
 import jwt from "jsonwebtoken";
+import { ACCOUNT_TYPE } from "../graphql/Account";
 import { TOKEN_EXPIRED_IN } from "./constants";
 
 // TODO: tokenType & loginType -> enum definition
 // TODO: control expired date
-export const dispatchToken = (username: string, tokenType?: string) =>
+export const dispatchToken = (
+  username: string,
+  loginType: ACCOUNT_TYPE = ACCOUNT_TYPE.VISITOR
+) =>
   jwt.sign(
     {
       username,
-      tokenType,
+      loginType,
     },
     process.env.SECRET_KEY ?? "dev_secret_key",
     {

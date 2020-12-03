@@ -15,11 +15,11 @@ import {
   IsPositive,
 } from "class-validator";
 
-import { IExecutor } from "./Executor";
-import { DifficultyLevel } from "./Public";
-
 import Executor from "../entity/Executor";
 import Substance from "../entity/Substance";
+
+import { IExecutor } from "./Executor";
+import { DifficultyLevel } from "./Public";
 
 export enum TaskSource {
   GOV,

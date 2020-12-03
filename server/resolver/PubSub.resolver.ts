@@ -1,8 +1,4 @@
 import { PubSubEngine } from "graphql-subscriptions";
-import Notification, {
-  NotificationPayload,
-  SUBSCRIPTION_MSG,
-} from "../graphql/PubSub";
 
 import {
   Resolver,
@@ -15,6 +11,11 @@ import {
   Root,
   ResolverFilterData,
 } from "type-graphql";
+
+import Notification, {
+  NotificationPayload,
+  SUBSCRIPTION_MSG,
+} from "../graphql/PubSub";
 
 // Mutation -> Trigger Subscription -> Push to Client
 

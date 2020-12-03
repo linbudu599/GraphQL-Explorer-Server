@@ -13,12 +13,12 @@ import {
   RelationId,
 } from "typeorm";
 
-import { LogExtension } from "../extensions/LogExtension";
+import { IExecutor, JOB, IExecutorDesc } from "../graphql/Executor";
+import { DifficultyLevel } from "../graphql/Public";
 
 import Task from "./Task";
 
-import { IExecutor, JOB, IExecutorDesc } from "../graphql/Executor";
-import { DifficultyLevel } from "../graphql/Public";
+import { LogExtension } from "../extensions/LogExtension";
 
 @ObjectType({ implements: IExecutorDesc })
 export class ExecutorDesc extends BaseEntity implements IExecutorDesc {
@@ -56,12 +56,6 @@ export default class Executor extends BaseEntity implements IExecutor {
   @Column({ default: false, nullable: false })
   isFool!: boolean;
 
-  @CreateDateColumn()
-  registryDate!: Date;
-
-  @UpdateDateColumn()
-  lastUpdateDate!: Date;
-
   @OneToMany(() => Task, (task) => task.assignee)
   @TypeormLoader((type) => Executor, (Executor: Executor) => Executor.taskIds)
   tasks?: Task[];
@@ -76,4 +70,10 @@ export default class Executor extends BaseEntity implements IExecutor {
   @Extensions({ complexity: 1 })
   @LogExtension({ message: "我直接好家伙" })
   spAgeField?: number;
+
+  @CreateDateColumn()
+  registryDate!: Date;
+
+  @UpdateDateColumn()
+  lastUpdateDate!: Date;
 }

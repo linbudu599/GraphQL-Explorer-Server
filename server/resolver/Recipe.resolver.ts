@@ -1,6 +1,6 @@
 import { Service } from "typedi";
 import { Resolver, Query, Arg } from "type-graphql";
-import { sampleCooks, sampleRecipes, sampleSaltFishes } from "../utils/mock";
+
 import {
   RecipeUnionResult,
   Difficulty,
@@ -8,8 +8,11 @@ import {
   Recipe,
   SaltFish,
 } from "../graphql/Recipe";
+
 import RecipeService from "../service/Recipe.service";
+
 import { log } from "../utils/helper";
+import { sampleCooks, sampleRecipes, sampleSaltFishes } from "../utils/mock";
 
 @Service()
 @Resolver()

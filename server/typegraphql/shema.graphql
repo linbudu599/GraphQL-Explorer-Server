@@ -4,6 +4,28 @@
 # -----------------------------------------------
 
 """
+Register Input Type
+"""
+input AccountRegisterInput {
+  accountName: String!
+  accountPwd: String!
+  loginType: AccountType
+}
+
+"""
+Account Type Enum
+"""
+enum AccountType {
+  ADMIN
+  COMMON
+  DOMINATOR
+  ENTERPRISE
+  GOV
+  ORG
+  VISITOR
+}
+
+"""
 Basic Status Wrapper
 """
 interface BaseStatus {
@@ -75,6 +97,9 @@ type Executor implements IExecutor {
 Args On Executor Create
 """
 input ExecutorCreateInput {
+  age: Int
+  isFool: Boolean
+  job: Job
   name: String!
 }
 
@@ -106,6 +131,9 @@ type ExecutorStatus implements BaseStatus {
 Args On Executor Update
 """
 input ExecutorUpdateInput {
+  age: Int
+  isFool: Boolean
+  job: Job
   name: String
   uid: String!
 }
@@ -158,7 +186,7 @@ interface ITask {
 }
 
 """
-Job Enum Type
+Job Type Enum
 """
 enum Job {
   BE
@@ -178,6 +206,7 @@ type LoginOrRegisterStatus implements BaseStatus {
 }
 
 type Mutation {
+  AccountRegistry(account: AccountRegisterInput!): LoginOrRegisterStatus!
   AssignTask(taskId: String!, uid: String!): TaskStatus!
   CreateExecutor(newExecutorInfo: ExecutorCreateInput!): ExecutorStatus!
   CreateNewTask(taskCreateParam: TaskCreateInput!): Task!
@@ -209,7 +238,7 @@ input PaginationOptions {
 }
 
 type Query {
-  AccountLogin(account: String!, password: String!): LoginOrRegisterStatus!
+  AccountLogin(name: String!, pwd: String!): LoginOrRegisterStatus!
   CheckIsTokenValid(token: String!): LoginOrRegisterStatus!
   ContainerRegisterTime: Timestamp!
   currentDate: Timestamp!

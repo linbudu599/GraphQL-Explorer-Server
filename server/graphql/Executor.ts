@@ -30,7 +30,7 @@ export enum JOB {
 
 registerEnumType(JOB, {
   name: "Job",
-  description: "Job Enum Type",
+  description: "Job Type Enum",
 });
 
 @InterfaceType()
@@ -168,10 +168,15 @@ export class ExecutorQueryArgs {
   satisfaction?: number;
 }
 
-@InterfaceType({
-  autoRegisterImplementations: false,
+@InputType({
+  description: "Args On Executor Create",
 })
-export class ExecutorMutationInput {
+export class ExecutorCreateInput {
+  @Field({ nullable: false })
+  @Length(1, 20)
+  @IsString()
+  name!: string;
+
   @Field((type) => Int, { nullable: true })
   @IsOptional()
   @Max(80)
@@ -190,18 +195,8 @@ export class ExecutorMutationInput {
   job?: JOB;
 }
 
-@InputType({
-  description: "Args On Executor Create",
-})
-export class ExecutorCreateInput extends ExecutorMutationInput {
-  @Field({ nullable: false })
-  @Length(1, 20)
-  @IsString()
-  name!: string;
-}
-
 @InputType({ description: "Args On Executor Update" })
-export class ExecutorUpdateInput extends ExecutorMutationInput {
+export class ExecutorUpdateInput {
   @Field({ nullable: true })
   @Length(1, 20)
   @IsString()
@@ -210,4 +205,21 @@ export class ExecutorUpdateInput extends ExecutorMutationInput {
   @Field({ nullable: false })
   @IsString()
   uid!: string;
+
+  @Field((type) => Int, { nullable: true })
+  @IsOptional()
+  @Max(80)
+  @Min(0)
+  @IsNumber()
+  age?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  isFool?: boolean;
+
+  @Field((type) => JOB, { nullable: true })
+  @IsOptional()
+  @IsEnum(JOB)
+  job?: JOB;
 }
