@@ -1,6 +1,9 @@
 import { Service, Inject } from "typedi";
 import { Recipe } from "../graphql/Recipe";
-import { IRecipeService } from "../typding";
+
+export interface IRecipeService {
+  getAllRecipes(): Promise<Recipe[]>;
+}
 
 // make it global and be used across all the containers
 @Service({ global: true })

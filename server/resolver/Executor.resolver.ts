@@ -18,6 +18,7 @@ import Executor, { ExecutorDesc } from "../entity/Executor";
 import Task from "../entity/Task";
 
 import ExecutorService from "../service/Executor.service";
+import PublicService from "../service/Public.service";
 
 import {
   ExecutorCreateInput,
@@ -44,14 +45,15 @@ import { IContext } from "../typding";
 export default class ExecutorResolver {
   constructor(
     @InjectRepository(Executor)
-    private readonly ExecutorRepository: Repository<Executor>,
-    private readonly executorService: ExecutorService
+    private readonly executorRepository: Repository<Executor>,
+    private readonly executorService: ExecutorService,
+    private readonly publicService: PublicService
   ) {}
 
   // 先给个最低权限
   @Authorized(ACCOUNT_AUTH.UN_LOGIN)
   @Query(() => ExecutorStatus)
-  @UseMiddleware(ExtraFieldLogMiddlewareGenerator("CHECK ALL ExecutorS"))
+  @UseMiddleware(ExtraFieldLogMiddlewareGenerator("Check All ExecutorS"))
   async Executors(
     @Ctx() ctx: IContext,
     @InjectCurrentUser() user: IContext["currentUser"],
@@ -76,26 +78,26 @@ export default class ExecutorResolver {
   }
 
   @Query(() => ExecutorStatus)
-  async FindExecutorById(@Arg("uid") uid: string): Promise<ExecutorStatus> {
-    const Executor = await this.ExecutorRepository.findOne(
+  async QueryExecutorById(@Arg("uid") uid: string): Promise<ExecutorStatus> {
+    const executor = await this.executorRepository.findOne(
       { uid },
       {
         relations: ["tasks"],
       }
     );
-    if (!Executor) {
+    if (!executor) {
       return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
     }
-    return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [Executor]);
+    return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [executor]);
   }
 
   @Query(() => ExecutorStatus)
   @CustomArgsValidation(ExecutorQueryArgs)
-  async FindExecutorByConditions(
+  async QueryExecutorByConditions(
     @Args({ validate: false }) conditions: ExecutorQueryArgs
   ): Promise<ExecutorStatus> {
     try {
-      const res = await this.ExecutorRepository.find({ ...conditions });
+      const res = await this.executorRepository.find({ ...conditions });
       const isEmpty = res.length === 0;
       return new StatusHandler(
         !isEmpty,
@@ -108,7 +110,7 @@ export default class ExecutorResolver {
   }
 
   @Query(() => ExecutorStatus)
-  async FindExecutorByDesc(
+  async QueryExecutorByDesc(
     @Args() desc: ExecutorDescQuery,
     @Arg("pagination", { nullable: true })
     pagination: PaginationOptions
@@ -120,11 +122,9 @@ export default class ExecutorResolver {
     console.log(desc);
     const filterExecutors = executors.filter((executor) => {
       const descObj = JSON.parse(executor.desc) as IExecutorDesc;
-      console.log("descObj");
-      console.log(descObj);
-      // may by 0
       const levelEqual =
         typeof level === "undefined" ? true : descObj.level === level;
+
       const successRateEqual =
         typeof successRate === "undefined"
           ? true
@@ -146,34 +146,34 @@ export default class ExecutorResolver {
   async CreateExecutor(
     @Arg("newExecutorInfo") Executor: ExecutorCreateInput,
     @TransactionRepository(Executor)
-    ExecutorTransRepo: Repository<Executor>
+    executorTransRepo: Repository<Executor>
   ): Promise<ExecutorStatus> {
     try {
-      const isExistingExecutor = await this.ExecutorRepository.findOne({
+      const isExistingExecutor = await this.executorRepository.findOne({
         name: Executor.name,
       });
       if (isExistingExecutor) {
         return new StatusHandler(false, RESPONSE_INDICATOR.EXISTED, []);
       }
 
-      const res = await ExecutorTransRepo.save(Executor);
+      const res = await executorTransRepo.save(Executor);
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
     }
   }
 
-  // 更新UserDesc字段
+  // 更新ExecutorDesc字段
   @Transaction()
   @Mutation(() => ExecutorStatus, { nullable: true })
   async UpdateExecutorDesc(
     @Arg("uid") uid: string,
     @Arg("userDesc") desc: ExecutorDescUpdateInput,
     @TransactionRepository(Executor)
-    ExecutorTransRepo: Repository<Executor>
+    executorTransRepo: Repository<Executor>
   ): Promise<ExecutorStatus> {
     try {
-      const isExistingExecutor = await this.ExecutorRepository.findOne(uid);
+      const isExistingExecutor = await this.executorRepository.findOne(uid);
       if (!isExistingExecutor) {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
@@ -182,11 +182,11 @@ export default class ExecutorResolver {
         ...desc,
       };
 
-      const res = await ExecutorTransRepo.update(uid, {
+      const res = await executorTransRepo.update(uid, {
         desc: JSON.stringify(updatedDesc),
       });
 
-      const updatedItem = await this.ExecutorRepository.findOne({
+      const updatedItem = await this.executorRepository.findOne({
         uid,
       });
 
@@ -201,21 +201,21 @@ export default class ExecutorResolver {
   async UpdateExecutorBasicInfo(
     @Arg("modifiedExecutorInfo") Executor: ExecutorUpdateInput,
     @TransactionRepository(Executor)
-    ExecutorTransRepo: Repository<Executor>
+    executorTransRepo: Repository<Executor>
   ): Promise<ExecutorStatus> {
     try {
-      const isExistingExecutor = await this.ExecutorRepository.findOne({
+      const isExistingExecutor = await this.executorRepository.findOne({
         uid: Executor.uid,
       });
       if (!isExistingExecutor) {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
 
-      const res = await ExecutorTransRepo.update(
+      const res = await executorTransRepo.update(
         { uid: Executor.uid },
         Executor
       );
-      const updatedItem = await this.ExecutorRepository.findOne({
+      const updatedItem = await this.executorRepository.findOne({
         uid: Executor.uid,
       });
 
@@ -230,12 +230,12 @@ export default class ExecutorResolver {
   async DeleteExecutor(
     @Arg("uid") uid: string,
     @TransactionRepository(Executor)
-    ExecutorTransRepo: Repository<Executor>,
+    executorTransRepo: Repository<Executor>,
     @TransactionRepository(Task)
     taskTransRepo: Repository<Task>
   ): Promise<ExecutorStatus> {
     try {
-      const isExistingExecutor = await ExecutorTransRepo.findOne(uid);
+      const isExistingExecutor = await executorTransRepo.findOne(uid);
       if (!isExistingExecutor) {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
@@ -249,7 +249,7 @@ export default class ExecutorResolver {
       });
 
       if (!hasAssignedTask) {
-        await ExecutorTransRepo.delete(uid);
+        await executorTransRepo.delete(uid);
       } else {
         await taskTransRepo.update(
           {
@@ -263,7 +263,7 @@ export default class ExecutorResolver {
         );
       }
 
-      await ExecutorTransRepo.delete({ uid });
+      await executorTransRepo.delete({ uid });
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, []);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
@@ -291,9 +291,9 @@ export default class ExecutorResolver {
     }
   }
 
-  @Query(() => Date)
-  async InjectDataFromService() {
-    const registerDate = await this.executorService.ContainerRegisterTime();
-    return registerDate;
-  }
+  // @Query(() => Date)
+  // async ContainerRegisterTime() {
+  //   const registerDate = await this.publicService.ContainerRegisterTime();
+  //   return registerDate;
+  // }
 }

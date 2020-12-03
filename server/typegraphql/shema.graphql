@@ -45,9 +45,9 @@ enum Difficulty {
 }
 
 """
-User / Task Difficulty Level
+Executor Skill / Task Difficulty Level
 """
-enum DifficultyLevek {
+enum DifficultyLevel {
   BEGINNER
   LEGEND
   MASTER
@@ -57,35 +57,60 @@ enum DifficultyLevek {
   SKILLED
 }
 
-interface ISubstance {
-  asylumed: Boolean!
-  lastActiveDate: Timestamp!
-  relatedTask: Task
-  substanceAppearDate: Timestamp!
-  substanceDesc: String!
-  substanceId: ID!
-  substanceIssues: String!
-  substanceLevel: DifficultyLevek!
-  substanceName: String!
-}
-
-interface ITask {
-  assignee: User
+type Executor implements IExecutor {
+  age: Float!
+  desc: String
+  ExecutorDescField: ExecutorDesc!
+  isFool: Boolean!
+  job: Job!
   lastUpdateDate: Timestamp!
-  publishDate: Timestamp!
-  taskAccmplished: Boolean!
-  taskContent: String!
-  taskId: ID!
-  taskLevel: DifficultyLevek!
-  taskRate: Float!
-  taskReward: Float!
-  taskSource: TaskSource!
-  taskSubstance: Substance
-  taskTarget: TaskTarget!
-  taskTitle: String!
+  name: String!
+  registryDate: Timestamp!
+  spAgeField(param: Float): Int!
+  tasks: [Task!]
+  uid: ID!
 }
 
-interface IUser {
+"""
+Args On Executor Create
+"""
+input ExecutorCreateInput {
+  name: String!
+}
+
+type ExecutorDesc implements IExecutorDesc {
+  level: DifficultyLevel!
+  satisfaction: Int
+  successRate: Int
+}
+
+"""
+Args On Update Executor Desc
+"""
+input ExecutorDescUpdateInput {
+  level: DifficultyLevel
+  satisfaction: Int
+  successRate: Int
+}
+
+"""
+Executor Response Status Indicator
+"""
+type ExecutorStatus implements BaseStatus {
+  data: [Executor!]
+  message: String!
+  success: Boolean!
+}
+
+"""
+Args On Executor Update
+"""
+input ExecutorUpdateInput {
+  name: String
+  uid: String!
+}
+
+interface IExecutor {
   age: Float!
   desc: String
   isFool: Boolean!
@@ -98,10 +123,38 @@ interface IUser {
   uid: ID!
 }
 
-interface IUserDesc {
-  level: DifficultyLevek!
+interface IExecutorDesc {
+  level: DifficultyLevel!
   satisfaction: Int
   successRate: Int
+}
+
+interface ISubstance {
+  asylumed: Boolean!
+  lastActiveDate: Timestamp!
+  relatedTask: Task
+  substanceAppearDate: Timestamp!
+  substanceDesc: String!
+  substanceId: ID!
+  substanceIssues: String!
+  substanceLevel: DifficultyLevel!
+  substanceName: String!
+}
+
+interface ITask {
+  assignee: Executor
+  lastUpdateDate: Timestamp!
+  publishDate: Timestamp!
+  taskAccmplished: Boolean!
+  taskContent: String!
+  taskId: ID!
+  taskLevel: DifficultyLevel!
+  taskRate: Float!
+  taskReward: Float!
+  taskSource: TaskSource!
+  taskSubstance: Substance
+  taskTarget: TaskTarget!
+  taskTitle: String!
 }
 
 """
@@ -112,7 +165,7 @@ enum Job {
   FE
 }
 
-union LevelQueryResult = Task | User
+union LevelQueryResult = Executor | Task
 
 """
 Login / Register Status Indicator
@@ -126,16 +179,22 @@ type LoginOrRegisterStatus implements BaseStatus {
 
 type Mutation {
   AssignTask(taskId: String!, uid: String!): TaskStatus!
+  CreateExecutor(newExecutorInfo: ExecutorCreateInput!): ExecutorStatus!
   CreateNewTask(taskCreateParam: TaskCreateInput!): Task!
-  CreateUser(newUserInfo: UserCreateInput!): UserStatus!
+  DeleteExecutor(uid: String!): ExecutorStatus!
   DeleteTask(taskId: Float!): Task!
-  DeleteUser(uid: String!): TaskStatus!
   publisherMutation(message: String): Boolean!
   pubSubMutation(message: String): Boolean!
   pubSubMutationToDynamicTopic(message: String, topic: String!): Boolean!
   ToggleTaskStatus(taskId: Float!): TaskStatus!
+  UpdateExecutorBasicInfo(
+    modifiedExecutorInfo: ExecutorUpdateInput!
+  ): ExecutorStatus
+  UpdateExecutorDesc(
+    uid: String!
+    userDesc: ExecutorDescUpdateInput!
+  ): ExecutorStatus
   UpdateTaskInfo(taskUpdateParam: TaskUpdateInput!): TaskStatus!
-  UpdateUser(modifiedUserInfo: UserUpdateInput!): UserStatus
 }
 
 type Notification {
@@ -152,28 +211,37 @@ input PaginationOptions {
 type Query {
   AccountLogin(account: String!, password: String!): LoginOrRegisterStatus!
   CheckIsTokenValid(token: String!): LoginOrRegisterStatus!
+  ContainerRegisterTime: Timestamp!
   currentDate: Timestamp!
-  FindTaskByID(taskId: Float!): TaskStatus!
-  FindUserByConditions(
+  Executors(pagination: PaginationOptions): ExecutorStatus!
+  QueryAllSubstances(pagination: PaginationOptions): SubstanceStatus!
+  QueryByDifficultyLevel(
+    difficulty: DifficultyLevel
+    pagination: PaginationOptions
+  ): [LevelQueryResult!]!
+  QueryExecutorByConditions(
     age: Int
     isFool: Boolean
     job: String
+    level: DifficultyLevel!
     name: String
-  ): UserStatus!
-  FindUserById(uid: String!): UserStatus!
-  InjectDataFromService: UserStatus!
-  QueryAllSubstances(pagination: PaginationOptions): SubstanceStatus!
-  QueryByDifficultyLevel(
-    difficulty: DifficultyLevek
+    satisfaction: Int
+    successRate: Int
+  ): ExecutorStatus!
+  QueryExecutorByDesc(
+    level: DifficultyLevel
     pagination: PaginationOptions
-  ): [LevelQueryResult!]!
+    satisfaction: Int
+    successRate: Int
+  ): ExecutorStatus!
+  QueryExecutorById(uid: String!): ExecutorStatus!
+  QueryExecutorTasks(uid: Float!): TaskStatus!
   QueryRecipesByDifficulty(difficulty: Difficulty): [Recipe!]!
   QueryRecipesByIngredients(ingredients: [String!]): [Recipe!]!
-  QueryTaskAssignee(taskId: Float!): UserStatus!
-  QueryUserTasks(uid: Float!): TaskStatus!
-  Search(cookName: String!): [SearchResult!]!
+  QueryRecipeUnions(cookName: String!): [RecipeUnionResult!]!
+  QueryTaskAssignee(taskId: Float!): ExecutorStatus!
+  QueryTaskByID(taskId: Float!): TaskStatus!
   Tasks(pagination: PaginationOptions): TaskStatus!
-  Users(pagination: PaginationOptions): UserStatus!
 }
 
 type Recipe {
@@ -184,14 +252,14 @@ type Recipe {
   title: String!
 }
 
+union RecipeUnionResult = Cook | Recipe | SaltFish
+
 """
 useless object type in union type:)
 """
 type SaltFish {
   EngelCoefficient: Int!
 }
-
-union SearchResult = Cook | Recipe | SaltFish
 
 type Subscription {
   normalSubscription: Notification!
@@ -207,7 +275,7 @@ type Substance implements ISubstance {
   substanceDesc: String!
   substanceId: ID!
   substanceIssues: String!
-  substanceLevel: DifficultyLevek!
+  substanceLevel: DifficultyLevel!
   substanceName: String!
 }
 
@@ -221,13 +289,13 @@ type SubstanceStatus implements BaseStatus {
 }
 
 type Task implements ITask {
-  assignee: User
+  assignee: Executor
   lastUpdateDate: Timestamp!
   publishDate: Timestamp!
   taskAccmplished: Boolean!
   taskContent: String!
   taskId: ID!
-  taskLevel: DifficultyLevek!
+  taskLevel: DifficultyLevel!
   taskRate: Float!
   taskReward: Float!
   taskSource: TaskSource!
@@ -293,56 +361,6 @@ input TaskUpdateInput {
 The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
 """
 scalar Timestamp
-
-type User implements IUser {
-  age: Float!
-  desc: String
-  isFool: Boolean!
-  job: Job!
-  lastUpdateDate: Timestamp!
-  name: String!
-  registryDate: Timestamp!
-  spAgeField(param: Float): Int!
-  tasks: [Task!]
-  uid: ID!
-  UserDescField: UserDesc!
-}
-
-"""
-User InputObject/Args
-"""
-input UserCreateInput {
-  age: Int
-  isFool: Boolean
-  job: Job
-  name: String!
-}
-
-type UserDesc implements IUserDesc {
-  level: DifficultyLevek!
-  satisfaction: Int
-  successRate: Int
-}
-
-"""
-User Response Status Indicator
-"""
-type UserStatus implements BaseStatus {
-  data: [User!]
-  message: String!
-  success: Boolean!
-}
-
-"""
-Args On User Update
-"""
-input UserUpdateInput {
-  age: Int
-  isFool: Boolean
-  job: Job
-  name: String!
-  uid: String!
-}
 
 type WorkExperience {
   company: Company!

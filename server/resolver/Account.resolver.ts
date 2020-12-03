@@ -1,22 +1,10 @@
-import {
-  Resolver,
-  Query,
-  Arg,
-  Args,
-  Mutation,
-  Authorized,
-  UseMiddleware,
-  Ctx,
-  FieldResolver,
-  Root,
-  ResolverInterface,
-} from "type-graphql";
+import { Resolver, Query, Arg } from "type-graphql";
 import {
   LoginOrRegisterStatus,
   LoginOrRegisterStatusHandler,
 } from "../graphql/Common";
 
-import { dispatchToken, weekLaterTimeStamp, validateToken } from "../utils/jwt";
+import { dispatchToken, validateToken } from "../utils/jwt";
 import { RESPONSE_INDICATOR } from "../utils/constants";
 
 // TODO: Register & Refresher Resolver

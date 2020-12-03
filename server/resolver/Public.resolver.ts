@@ -6,19 +6,20 @@ import Executor from "../entity/Executor";
 import Task from "../entity/Task";
 
 import ExecutorService from "../service/Executor.service";
+import PublicService from "../service/Public.service";
 
 import { IExecutorDesc } from "../graphql/Executor";
-import { PaginationOptions } from "../graphql/Common";
+import { PaginationOptions, PrimitiveStatus } from "../graphql/Common";
 import { LevelQueryResult, DifficultyLevel } from "../graphql/Public";
 
-@Resolver((of) => Executor)
-export default class ExecutorResolver {
+@Resolver((of) => PrimitiveStatus)
+export default class PublicResolver {
   constructor(
     @InjectRepository(Task) private readonly taskRepository: Repository<Task>,
-    private readonly executorService: ExecutorService
+    private readonly executorService: ExecutorService,
+    private readonly publicService: PublicService
   ) {}
 
-  // TODO: remove to Public.resolver.ts
   @Query(() => [LevelQueryResult])
   async QueryByDifficultyLevel(
     @Arg("difficulty", (type) => DifficultyLevel, { nullable: true })
@@ -48,5 +49,11 @@ export default class ExecutorResolver {
     const filterTasks = tasks.filter((task) => task.taskLevel === difficulty);
 
     return [...filterExecutors, ...filterTasks];
+  }
+
+  @Query(() => Date)
+  async ContainerRegisterTime() {
+    const registerDate = await this.publicService.ContainerRegisterTime();
+    return registerDate;
   }
 }

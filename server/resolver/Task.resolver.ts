@@ -41,7 +41,7 @@ export default class TaskResolver {
   }
 
   @Query(() => TaskStatus)
-  async FindTaskByID(@Arg("taskId") taskId: number): Promise<TaskStatus> {
+  async QueryTaskByID(@Arg("taskId") taskId: number): Promise<TaskStatus> {
     try {
       const res = await this.taskRepository.findOne({
         where: {
@@ -79,7 +79,7 @@ export default class TaskResolver {
   }
 
   @Query(() => TaskStatus)
-  async QueryUserTasks(@Arg("uid") uid: number) {
+  async QueryExecutorTasks(@Arg("uid") uid: number) {
     try {
       const res = await this.taskRepository.find({
         where: {

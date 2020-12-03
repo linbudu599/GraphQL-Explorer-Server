@@ -1,25 +1,31 @@
 import "reflect-metadata";
 import Koa from "koa";
-
-import initialize from "./server";
-import { log } from "./utils/helper";
+import http from "http";
 
 import cors from "./middleware/cors";
+import { log } from "./utils/helper";
+
+import initialize from "./server";
 
 async function bootstrap() {
   const app = new Koa();
   app.use(cors);
-
   const server = await initialize();
+
+  const httpServer = app.listen(4000, () => {
+    log(`[Apollo Server] Server ready at http://localhost:4000/graphql`);
+  });
+
   server.applyMiddleware({ app });
 
-  app.listen(4000, () =>
-    log(
-      `[Apollo Server] Server ready at http://localhost:${4000}${
-        server.graphqlPath
-      }`
-    )
-  );
+  server.installSubscriptionHandlers(httpServer);
+  // app.listen(4000, () =>
+  //   log(
+  //     `[Apollo Server] Server ready at http://localhost:${4000}${
+  //       server.graphqlPath
+  //     }`
+  //   )
+  // );
 }
 
 bootstrap();

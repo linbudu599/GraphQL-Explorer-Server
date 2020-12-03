@@ -4,7 +4,11 @@ import { InjectRepository } from "typeorm-typedi-extensions";
 import Executor from "../entity/Executor";
 
 import { Service, Inject } from "typedi";
-import { IExecutorService } from "../typding";
+
+export interface IExecutorService {
+  // Query
+  Executors(cursor: number, offset: number): Promise<Executor[]>;
+}
 
 @Service()
 export default class ExecutorService implements IExecutorService {
@@ -22,9 +26,5 @@ export default class ExecutorService implements IExecutorService {
     });
 
     return ExecutorsWithTasks;
-  }
-
-  async ContainerRegisterTime() {
-    return this.dateInfo;
   }
 }

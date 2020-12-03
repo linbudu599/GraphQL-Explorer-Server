@@ -1,4 +1,4 @@
-import { IsNumber, Max, Min } from "class-validator";
+import { IsNumber, IsOptional, Max, Min } from "class-validator";
 import { Field, ObjectType, InputType, Int, InterfaceType } from "type-graphql";
 
 import Executor from "../entity/Executor";
@@ -83,14 +83,16 @@ export class StatusHandler {
 @InputType()
 export class PaginationOptions {
   @Field(() => Int, { nullable: true })
-  @Max(10)
+  @Max(100)
   @Min(0)
+  @IsOptional()
   @IsNumber()
   cursor?: number;
 
   @Field(() => Int, { nullable: true })
-  @Max(100)
+  @Max(200)
   @Min(0)
+  @IsOptional()
   @IsNumber()
   offset?: number;
 }

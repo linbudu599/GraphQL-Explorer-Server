@@ -1,9 +1,20 @@
-import { Field, ID, InterfaceType } from "type-graphql";
+import { Field, ID, InterfaceType, registerEnumType } from "type-graphql";
 
 import Task from "../entity/Task";
 
 import { DifficultyLevel } from "./Public";
 import { ITask } from "./Task";
+
+enum CthulhuType {
+  OUTER_GODS,
+  ELDER_GODS,
+  OLD_DOMINATOR,
+}
+
+registerEnumType(CthulhuType, {
+  name: "CthulhuType",
+  description: "Known Cthulhu Type",
+});
 
 @InterfaceType()
 export abstract class ISubstance {

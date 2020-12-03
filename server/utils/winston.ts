@@ -11,6 +11,7 @@ import {
 const LOG_DIR = path.resolve(__dirname, "../logs");
 
 const INFO_LOG = "info-msg.log";
+const DATA_LOG = "data-msg.log";
 const WARN_LOG = "warn-msg.log";
 const ERROR_LOG = "error-msg.log";
 
@@ -62,6 +63,11 @@ const loggerCreator = () => {
         dirname: LOG_DIR,
         filename: INFO_LOG,
         level: "info",
+      }),
+      new transports.File({
+        dirname: LOG_DIR,
+        filename: DATA_LOG,
+        level: "data",
       }),
       new transports.File({
         dirname: LOG_DIR,

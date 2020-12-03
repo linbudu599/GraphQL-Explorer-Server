@@ -6,7 +6,6 @@ import {
   ID,
   registerEnumType,
   InterfaceType,
-  ObjectType,
 } from "type-graphql";
 import {
   Length,
@@ -17,7 +16,6 @@ import {
   Max,
   Min,
   IsEnum,
-  IsPositive,
 } from "class-validator";
 
 import Task from "../entity/Task";

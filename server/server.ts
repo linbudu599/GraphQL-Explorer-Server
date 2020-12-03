@@ -30,6 +30,7 @@ import TaskResolver from "./resolver/Task.resolver";
 import PubSubResolver from "./resolver/PubSub.resolver";
 import AccountResolver from "./resolver/Account.resolver";
 import SubstanceResolver from "./resolver/Substance.resolver";
+import PublicResolver from "./resolver/Public.resolver";
 
 import { log } from "./utils/helper";
 import { genarateRandomID } from "./utils/auth";
@@ -81,6 +82,7 @@ export default async (): Promise<ApolloServer> => {
       PubSubResolver,
       AccountResolver,
       SubstanceResolver,
+      PublicResolver,
     ],
     // container: Container,
     // scoped-container，每次从context中拿到本次注册容器
@@ -89,7 +91,7 @@ export default async (): Promise<ApolloServer> => {
     dateScalarMode: "timestamp",
     authChecker: dev ? () => true : authChecker,
     authMode: "error",
-    emitSchemaFile: path.resolve(__dirname, "../typegraphql/shema.graphql"),
+    emitSchemaFile: path.resolve(__dirname, "./typegraphql/shema.graphql"),
     validate: true,
     globalMiddlewares: dev
       ? basicMiddlewares
@@ -100,9 +102,9 @@ export default async (): Promise<ApolloServer> => {
 
   const server = new ApolloServer({
     schema,
-    // subscriptions: {
-    //   path: "/pubsub",
-    // },
+    subscriptions: {
+      onConnect: () => log("[Subscription] Connected to websocket"),
+    },
     context: async ({ ctx }: { ctx: Context }) => {
       log("=== TOKEN ===");
       // TODO: validate token by koa-jwt

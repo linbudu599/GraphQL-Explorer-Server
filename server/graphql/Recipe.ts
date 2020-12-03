@@ -93,7 +93,7 @@ export class SaltFish {
   EngelCoefficient!: number;
 }
 
-export const SearchResult = createUnionType({
-  name: "SearchResult",
+export const RecipeUnionResult = createUnionType({
+  name: "RecipeUnionResult",
   types: () => [Recipe, Cook, SaltFish] as const,
 });

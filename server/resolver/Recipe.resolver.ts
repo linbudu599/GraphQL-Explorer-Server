@@ -2,7 +2,7 @@ import { Service } from "typedi";
 import { Resolver, Query, Arg } from "type-graphql";
 import { sampleCooks, sampleRecipes, sampleSaltFishes } from "../utils/mock";
 import {
-  SearchResult,
+  RecipeUnionResult,
   Difficulty,
   Cook,
   Recipe,
@@ -23,10 +23,10 @@ export default class RecipeResolver {
     log("RecipeService Created!");
   }
 
-  @Query(() => [SearchResult])
-  async Search(
+  @Query(() => [RecipeUnionResult])
+  async QueryRecipeUnions(
     @Arg("cookName") cookName: string
-  ): Promise<typeof SearchResult[]> {
+  ): Promise<typeof RecipeUnionResult[]> {
     const recipes = this.recipesData.filter((recipe) =>
       recipe.cook.name.match(cookName)
     );

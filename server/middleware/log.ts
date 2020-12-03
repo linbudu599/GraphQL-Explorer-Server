@@ -27,7 +27,7 @@ export default class LogAccessMiddleware
 
       // this.logger.log(
       //   LOG_TYPE.INFO,
-      //   `Logging Access: UID ${context.currentUser.uid} -> ${info.parentType.name}.${info.fieldName}`
+      //   `Logging Access: UID ${context.currentUser.accountId} -> ${info.parentType.name}.${info.fieldName}`
       // );
 
       // log('=== [LogAccessMiddleware End] ===');
