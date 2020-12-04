@@ -4,6 +4,15 @@
 # -----------------------------------------------
 
 """
+Login Input Type
+"""
+input AccountLoginInput {
+  accountName: String!
+  accountPwd: String!
+  loginType: AccountType!
+}
+
+"""
 Register Input Type
 """
 input AccountRegisterInput {
@@ -217,6 +226,7 @@ type Mutation {
   CreateNewTask(taskCreateParam: TaskCreateInput!): Task!
   DeleteExecutor(uid: String!): ExecutorStatus!
   DeleteTask(taskId: Float!): Task!
+  ModifyPassword(accountName: String!): LoginOrRegisterStatus!
   publisherMutation(message: String): Boolean!
   pubSubMutation(message: String): Boolean!
   pubSubMutationToDynamicTopic(message: String, topic: String!): Boolean!
@@ -243,7 +253,7 @@ input PaginationOptions {
 }
 
 type Query {
-  AccountLogin(name: String!, pwd: String!): LoginOrRegisterStatus!
+  AccountLogin(account: AccountLoginInput!): LoginOrRegisterStatus!
   CheckIsTokenValid(token: String!): LoginOrRegisterStatus!
   ContainerRegisterTime: Timestamp!
   currentDate: Timestamp!

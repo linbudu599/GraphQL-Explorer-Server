@@ -10,7 +10,7 @@ import {
   LoginOrRegisterStatus,
   LoginOrRegisterStatusHandler,
 } from "../graphql/Common";
-import { AccountRegisterInput } from "../graphql/Account";
+import { AccountRegisterInput, AccountLoginInput } from "../graphql/Account";
 
 import Account from "../entity/Account";
 
@@ -25,10 +25,9 @@ export default class AccountResolver {
   // TODO: check login type
   @Query(() => LoginOrRegisterStatus)
   async AccountLogin(
-    @Arg("name") name: string,
-    @Arg("pwd") password: string
+    @Arg("account") { accountName, accountPwd, loginType }: AccountLoginInput
   ): Promise<LoginOrRegisterStatus> {
-    const account = await this.accountRepository.findOne({ accountName: name });
+    const account = await this.accountRepository.findOne({ accountName });
 
     if (!account) {
       return new LoginOrRegisterStatusHandler(
@@ -38,8 +37,8 @@ export default class AccountResolver {
       );
     }
 
-    const { accountPwd: savedPwd } = account;
-    const pass = compare(password, savedPwd);
+    const { accountPwd: savedPwd, accountType: savedType } = account;
+    const pass = compare(accountPwd, savedPwd);
 
     if (!pass) {
       return new LoginOrRegisterStatusHandler(
@@ -49,9 +48,16 @@ export default class AccountResolver {
       );
     }
 
-    const token = dispatchToken(name);
+    if (savedType !== loginType) {
+      return new LoginOrRegisterStatusHandler(
+        false,
+        RESPONSE_INDICATOR.INVALID_LOGIN_TYPE,
+        ""
+      );
+    }
 
-    // TODO: refresh token
+    const token = dispatchToken(accountName, loginType);
+
     return new LoginOrRegisterStatusHandler(
       true,
       RESPONSE_INDICATOR.SUCCESS,
@@ -64,6 +70,7 @@ export default class AccountResolver {
     @Arg("token") token: string
   ): Promise<LoginOrRegisterStatus> {
     const { valid, info } = validateToken(token);
+
     if (valid) {
       return new LoginOrRegisterStatusHandler(
         true,
@@ -87,7 +94,7 @@ export default class AccountResolver {
     @Arg("account") account: AccountRegisterInput,
     @TransactionRepository(Account)
     accountTransRepo: Repository<Account>
-  ) {
+  ): Promise<LoginOrRegisterStatus> {
     try {
       const isExistingAccount = await this.accountRepository.findOne({
         accountName: account.accountName,
@@ -108,6 +115,43 @@ export default class AccountResolver {
         true,
         RESPONSE_INDICATOR.SUCCESS,
         token
+      );
+    } catch (error) {
+      return new LoginOrRegisterStatusHandler(false, JSON.stringify(error), "");
+    }
+  }
+
+  @Transaction()
+  @Mutation(() => LoginOrRegisterStatus, { nullable: false })
+  async ModifyPassword(
+    @Arg("accountName") accountName: string,
+    @Arg("accountName") newPassword: string,
+
+    @TransactionRepository(Account)
+    accountTransRepo: Repository<Account>
+  ): Promise<LoginOrRegisterStatus> {
+    try {
+      const isExistingAccount = await this.accountRepository.findOne({
+        accountName,
+      });
+      if (isExistingAccount) {
+        return new LoginOrRegisterStatusHandler(
+          false,
+          RESPONSE_INDICATOR.NOT_FOUND
+        );
+      }
+
+      await accountTransRepo.update(
+        { accountName },
+        {
+          accountPwd: newPassword,
+        }
+      );
+
+      return new LoginOrRegisterStatusHandler(
+        true,
+        RESPONSE_INDICATOR.SUCCESS,
+        ""
       );
     } catch (error) {
       return new LoginOrRegisterStatusHandler(false, JSON.stringify(error), "");

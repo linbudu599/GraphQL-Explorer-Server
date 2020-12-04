@@ -205,7 +205,7 @@ export const mockExecutor = (len: number) => {
 };
 
 export const dbConnect = async (): Promise<any> => {
-  log("=== [TypeORM] TypeORM Connecting ===");
+  log("[TypeORM] TypeORM Connecting");
   try {
     const connection = await TypeORM.createConnection({
       type: "sqlite",
@@ -221,7 +221,7 @@ export const dbConnect = async (): Promise<any> => {
         duration: 3000,
       },
     });
-    log("=== [TypeORM] Database Connection Established ===");
+    log("[TypeORM] Database Connection Established");
 
     const mockTaskGroup = mockTask(5);
     const mockExecutorGroup = mockExecutor(5);
@@ -244,7 +244,7 @@ export const dbConnect = async (): Promise<any> => {
     mockTaskGroup[0].taskSubstance = sub;
     await connection.manager.save(mockTaskGroup[0]);
 
-    log("=== [TypeORM] Initial Mock Data Inserted ===\n");
+    log("[TypeORM] Initial Mock Data Inserted\n");
   } catch (error) {
     log(error, "red");
   }

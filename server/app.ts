@@ -8,6 +8,7 @@ import initialize from "./server";
 
 async function bootstrap() {
   const app = new Koa();
+
   app.use(cors);
 
   const server = await initialize();
@@ -19,13 +20,7 @@ async function bootstrap() {
   server.applyMiddleware({ app });
 
   server.installSubscriptionHandlers(httpServer);
-  // app.listen(4000, () =>
-  //   log(
-  //     `[Apollo Server] Server ready at http://localhost:${4000}${
-  //       server.graphqlPath
-  //     }`
-  //   )
-  // );
 }
 
+log(`=== [GraphQL Explorer] Bootstrapping ===`);
 bootstrap();

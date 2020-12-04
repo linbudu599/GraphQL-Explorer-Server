@@ -62,3 +62,23 @@ export class AccountRegisterInput {
   @IsEnum(ACCOUNT_TYPE)
   loginType?: ACCOUNT_TYPE;
 }
+
+@InputType({ description: "Login Input Type" })
+export class AccountLoginInput {
+  @Field({ nullable: false })
+  @IsNotEmpty()
+  @Length(2, 15)
+  @IsString()
+  accountName!: string;
+
+  @Field({ nullable: false })
+  @IsNotEmpty()
+  @Length(6, 20)
+  @IsString()
+  accountPwd!: string;
+
+  @Field((type) => ACCOUNT_TYPE, { nullable: false })
+  @IsNotEmpty()
+  @IsEnum(ACCOUNT_TYPE)
+  loginType!: ACCOUNT_TYPE;
+}

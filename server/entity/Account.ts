@@ -26,10 +26,6 @@ export default class Account extends BaseEntity implements IAccount {
   @Column({ nullable: false, default: ACCOUNT_TYPE.VISITOR })
   accountType!: ACCOUNT_TYPE;
 
-  // TODO: Many2One Relation
-  //   @Column({ nullable: true })
-  //   guarantor?: Account;
-
   @CreateDateColumn()
   registryDate!: Date;
 
