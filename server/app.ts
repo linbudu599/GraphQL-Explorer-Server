@@ -1,6 +1,5 @@
 import "reflect-metadata";
 import Koa from "koa";
-import http from "http";
 
 import cors from "./middleware/cors";
 import { log } from "./utils/helper";
@@ -10,6 +9,7 @@ import initialize from "./server";
 async function bootstrap() {
   const app = new Koa();
   app.use(cors);
+
   const server = await initialize();
 
   const httpServer = app.listen(4000, () => {

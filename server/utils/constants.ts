@@ -22,6 +22,7 @@ export enum RESPONSE_INDICATOR {
   INVALID_LOGIN_TYPE = "Invalid Login Type",
   UNAUTHORIZED = "Unauthorized",
   TOKEN_EXPIRED = "Token Expired",
+  INCORRECT_PWD = "Invalid Password",
   PERMISSION_DENIED = "Permission Denied",
   QUERY_NOT_ALLOWED = "Query Not Allowed",
   MUTATION_NOT_ALLOWED = "Mutation Not Allowed",
@@ -47,3 +48,5 @@ export const PLAY_GROUND_SETTINGS = {
   "tracing.hideTracingResponse": false,
   "queryPlan.hideQueryPlanResponse": false,
 };
+
+export const SALT = 10;

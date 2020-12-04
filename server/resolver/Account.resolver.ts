@@ -4,12 +4,13 @@ import { InjectRepository } from "typeorm-typedi-extensions";
 
 import { dispatchToken, validateToken } from "../utils/jwt";
 import { RESPONSE_INDICATOR } from "../utils/constants";
+import { encode, compare } from "../utils/bcrypt";
 
 import {
   LoginOrRegisterStatus,
   LoginOrRegisterStatusHandler,
 } from "../graphql/Common";
-import { AccountRegisterInput, AccountLoginInput } from "../graphql/Account";
+import { AccountRegisterInput } from "../graphql/Account";
 
 import Account from "../entity/Account";
 
@@ -21,13 +22,36 @@ export default class AccountResolver {
     private readonly accountRepository: Repository<Account>
   ) {}
 
+  // TODO: check login type
   @Query(() => LoginOrRegisterStatus)
   async AccountLogin(
     @Arg("name") name: string,
     @Arg("pwd") password: string
   ): Promise<LoginOrRegisterStatus> {
+    const account = await this.accountRepository.findOne({ accountName: name });
+
+    if (!account) {
+      return new LoginOrRegisterStatusHandler(
+        false,
+        RESPONSE_INDICATOR.NOT_FOUND,
+        ""
+      );
+    }
+
+    const { accountPwd: savedPwd } = account;
+    const pass = compare(password, savedPwd);
+
+    if (!pass) {
+      return new LoginOrRegisterStatusHandler(
+        false,
+        RESPONSE_INDICATOR.INCORRECT_PWD,
+        ""
+      );
+    }
+
     const token = dispatchToken(name);
-    // TODO: account entity system setup
+
+    // TODO: refresh token
     return new LoginOrRegisterStatusHandler(
       true,
       RESPONSE_INDICATOR.SUCCESS,
@@ -64,9 +88,6 @@ export default class AccountResolver {
     @TransactionRepository(Account)
     accountTransRepo: Repository<Account>
   ) {
-    console.log("===");
-    console.log(account);
-
     try {
       const isExistingAccount = await this.accountRepository.findOne({
         accountName: account.accountName,
@@ -78,7 +99,8 @@ export default class AccountResolver {
         );
       }
 
-      const createRes = await accountTransRepo.save(account);
+      account.accountPwd = encode(account.accountPwd);
+      await accountTransRepo.save(account);
 
       const token = dispatchToken(account.accountName, account.loginType);
 

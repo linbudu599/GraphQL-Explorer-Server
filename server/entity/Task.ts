@@ -58,13 +58,16 @@ export default class Task extends BaseEntity implements ITask {
   @JoinColumn()
   taskSubstance!: Substance;
 
+  @RelationId((task: Task) => task.taskSubstance)
+  taskSubstanceId?: string;
+
   @ManyToOne(() => Executor, (executor) => executor.tasks, { nullable: true })
   @JoinColumn({ name: "assigneeUID" })
   @TypeormLoader((type) => Executor, (task: Task) => task.assigneeUID)
   assignee?: Executor;
 
   @RelationId((task: Task) => task.assignee)
-  assigneeUID?: number;
+  assigneeUID?: string;
 
   @CreateDateColumn()
   publishDate!: Date;

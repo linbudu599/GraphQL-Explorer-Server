@@ -25,6 +25,9 @@ export abstract class ISubstance {
   substanceName!: string;
 
   @Field({ nullable: false })
+  substanceAlive!: boolean;
+
+  @Field({ nullable: false })
   substanceDesc!: string;
 
   @Field({ nullable: false })

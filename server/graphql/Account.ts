@@ -62,6 +62,3 @@ export class AccountRegisterInput {
   @IsEnum(ACCOUNT_TYPE)
   loginType?: ACCOUNT_TYPE;
 }
-
-@InputType({ description: " Input Type" })
-export class AccountLoginInput {}

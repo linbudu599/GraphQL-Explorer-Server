@@ -25,14 +25,6 @@ enum AccountType {
   VISITOR
 }
 
-"""
-Basic Status Wrapper
-"""
-interface BaseStatus {
-  message: String!
-  success: Boolean!
-}
-
 type Company {
   description: String!
   name: String!
@@ -85,9 +77,10 @@ type Executor implements IExecutor {
   ExecutorDescField: ExecutorDesc!
   isFool: Boolean!
   job: Job!
+  joinDate: Timestamp!
   lastUpdateDate: Timestamp!
   name: String!
-  registryDate: Timestamp!
+  region: Region!
   spAgeField(param: Float): Int!
   tasks: [Task!]
   uid: ID!
@@ -101,6 +94,7 @@ input ExecutorCreateInput {
   isFool: Boolean
   job: Job
   name: String!
+  region: Float
 }
 
 type ExecutorDesc implements IExecutorDesc {
@@ -121,7 +115,7 @@ input ExecutorDescUpdateInput {
 """
 Executor Response Status Indicator
 """
-type ExecutorStatus implements BaseStatus {
+type ExecutorStatus implements IBaseStatus {
   data: [Executor!]
   message: String!
   success: Boolean!
@@ -135,7 +129,16 @@ input ExecutorUpdateInput {
   isFool: Boolean
   job: Job
   name: String
+  region: Float
   uid: String!
+}
+
+"""
+Basic Status Wrapper
+"""
+interface IBaseStatus {
+  message: String!
+  success: Boolean!
 }
 
 interface IExecutor {
@@ -143,9 +146,10 @@ interface IExecutor {
   desc: String
   isFool: Boolean!
   job: Job!
+  joinDate: Timestamp!
   lastUpdateDate: Timestamp!
   name: String!
-  registryDate: Timestamp!
+  region: Region!
   spAgeField: Int
   tasks: [Task!]
   uid: ID!
@@ -161,6 +165,7 @@ interface ISubstance {
   asylumed: Boolean!
   lastActiveDate: Timestamp!
   relatedTask: Task
+  substanceAlive: Boolean!
   substanceAppearDate: Timestamp!
   substanceDesc: String!
   substanceId: ID!
@@ -198,7 +203,7 @@ union LevelQueryResult = Executor | Task
 """
 Login / Register Status Indicator
 """
-type LoginOrRegisterStatus implements BaseStatus {
+type LoginOrRegisterStatus implements IBaseStatus {
   expiredDate: Int
   message: String!
   success: Boolean!
@@ -254,6 +259,7 @@ type Query {
     job: String
     level: DifficultyLevel!
     name: String
+    region: Float
     satisfaction: Int
     successRate: Int
   ): ExecutorStatus!
@@ -284,6 +290,18 @@ type Recipe {
 union RecipeUnionResult = Cook | Recipe | SaltFish
 
 """
+Executor Region Enum
+"""
+enum Region {
+  ABANDONED
+  CENTRAL
+  NORTH
+  OTHER
+  PACIFIC_OCEAN
+  SOUTH
+}
+
+"""
 useless object type in union type:)
 """
 type SaltFish {
@@ -300,6 +318,7 @@ type Substance implements ISubstance {
   asylumed: Boolean!
   lastActiveDate: Timestamp!
   relatedTask: Task
+  substanceAlive: Boolean!
   substanceAppearDate: Timestamp!
   substanceDesc: String!
   substanceId: ID!
@@ -311,7 +330,7 @@ type Substance implements ISubstance {
 """
 Substance Response Status Indicator
 """
-type SubstanceStatus implements BaseStatus {
+type SubstanceStatus implements IBaseStatus {
   data: [Substance!]
   message: String!
   success: Boolean!
@@ -356,7 +375,7 @@ enum TaskSource {
 """
 Task Response Status Indicator
 """
-type TaskStatus implements BaseStatus {
+type TaskStatus implements IBaseStatus {
   data: [Task!]
   message: String!
   success: Boolean!

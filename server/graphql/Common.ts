@@ -6,7 +6,7 @@ import Task from "../entity/Task";
 import Substance from "../entity/Substance";
 
 @InterfaceType({ description: "Basic Status Wrapper" })
-export class BaseStatus {
+export class IBaseStatus {
   @Field({ nullable: false })
   success!: boolean;
 
@@ -15,50 +15,50 @@ export class BaseStatus {
 }
 
 @ObjectType({
-  implements: BaseStatus,
+  implements: IBaseStatus,
   description: "Primitive Response Status Indicator",
 })
-export class PrimitiveStatus extends BaseStatus {
+export class PrimitiveStatus extends IBaseStatus {
   @Field(() => String, { nullable: true })
   data?: any;
 }
 
 @ObjectType({
-  implements: BaseStatus,
+  implements: IBaseStatus,
   description: "Substance Response Status Indicator",
 })
-export class SubstanceStatus extends BaseStatus {
+export class SubstanceStatus extends IBaseStatus {
   @Field(() => [Substance]!, { nullable: true })
   data?: Substance[];
 }
 
 @ObjectType({
-  implements: BaseStatus,
+  implements: IBaseStatus,
   description: "Executor Response Status Indicator",
 })
-export class ExecutorStatus extends BaseStatus {
+export class ExecutorStatus extends IBaseStatus {
   @Field(() => [Executor]!, { nullable: true })
   data?: Executor[];
 }
 
 @ObjectType({
-  implements: BaseStatus,
+  implements: IBaseStatus,
   description: "Task Response Status Indicator",
 })
-export class TaskStatus extends BaseStatus {
+export class TaskStatus extends IBaseStatus {
   @Field(() => [Task]!, { nullable: true })
   data?: Task[];
 }
 
 @ObjectType({
-  implements: BaseStatus,
+  implements: IBaseStatus,
   description: "Login / Register Status Indicator",
 })
-export class LoginOrRegisterStatus extends BaseStatus {
+export class LoginOrRegisterStatus extends IBaseStatus {
   @Field({ nullable: true })
   token?: string;
 
-  // 下发token过期时间
+  // 下发token过期时间?
   @Field(() => Int, { nullable: true })
   expiredDate?: number;
 }

@@ -49,11 +49,15 @@ import ErrorLoggerMiddleware from "./middleware/error";
 
 // Extensions powered by TypeGraphQL
 import { ExtensionsMetadataRetriever } from "./extensions/GetMetadata";
+// Extension pn Apollo(GraphQL-Extensions Package)
+import { CustomExtension } from "./extensions/apollo";
 
 // Apollo Data Source
 import SpaceXDataSource from "./datasource/SpaceX";
 
 import { IContext } from "./typding";
+
+import { GraphQLResponse } from "graphql-extensions";
 
 Container.set({ id: "INIT_INJECT_DATA", factory: () => new Date() });
 TypeORM.useContainer(Container);
@@ -128,6 +132,7 @@ export default async (): Promise<ApolloServer> => {
       container.set("context", context);
       return context;
     },
+    extensions: [() => new CustomExtension()],
     // 放在context里就可以自己用了
     dataSources: () => ({
       SpaceXAPI: new SpaceXDataSource(),
@@ -182,7 +187,11 @@ export default async (): Promise<ApolloServer> => {
             Container.reset(reqContext.context.currentUser!.accountId);
             const instancesIds = ((Container as any)
               .instances as ContainerInstance[]).map((instance) => instance.id);
-            console.log("instances left in memory:", instancesIds);
+            // console.log("instances left in memory:", instancesIds);
+            reqContext.response!.extensions = {
+              ...reqContext.response!.extensions,
+              FROM_PLUGIN_WILL_SEND_RESPONSE: "FROM_PLUGIN_WILL_SEND_RESPONSE",
+            };
           },
         }),
       },
@@ -203,7 +212,17 @@ export default async (): Promise<ApolloServer> => {
     // tracing: true,
     // engine: true,
     // formatError: () => {},
-    // formatResponse: () => {},
+    formatResponse: (
+      response: GraphQLResponse | null,
+      requestContext: GraphQLRequestContext<object>
+    ) => {
+      response!.extensions = {
+        ...response!.extensions,
+        FROM_RESPONSE_FORMATTER: "FROM_RESPONSE_FORMATTER",
+      };
+
+      return response as GraphQLResponse;
+    },
     playground: {
       settings: PLAY_GROUND_SETTINGS,
     },

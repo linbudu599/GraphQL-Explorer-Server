@@ -28,6 +28,20 @@ export enum JOB {
   BE = "Backend Engineer",
 }
 
+export enum REGION {
+  CENTRAL,
+  ABANDONED,
+  SOUTH,
+  NORTH,
+  PACIFIC_OCEAN,
+  OTHER,
+}
+
+registerEnumType(REGION, {
+  name: "Region",
+  description: "Executor Region Enum",
+});
+
 registerEnumType(JOB, {
   name: "Job",
   description: "Job Type Enum",
@@ -112,11 +126,14 @@ export abstract class IExecutor {
   @Field((type) => [Task]!, { nullable: true })
   tasks?: Task[];
 
+  @Field((type) => REGION, { nullable: false })
+  region!: REGION;
+
   @Field((type) => Int, { nullable: true })
   spAgeField?: number;
 
   @Field((type) => Date)
-  registryDate!: Date;
+  joinDate!: Date;
 
   @Field((type) => Date)
   lastUpdateDate!: Date;
@@ -147,6 +164,11 @@ export class ExecutorQueryArgs {
   @IsOptional()
   @IsEnum(JOB)
   job?: JOB;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsEnum(REGION)
+  region?: REGION;
 
   @Field((type) => DifficultyLevel, { nullable: false })
   @IsOptional()
@@ -193,6 +215,11 @@ export class ExecutorCreateInput {
   @IsOptional()
   @IsEnum(JOB)
   job?: JOB;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsEnum(REGION)
+  region?: REGION;
 }
 
 @InputType({ description: "Args On Executor Update" })
@@ -222,4 +249,9 @@ export class ExecutorUpdateInput {
   @IsOptional()
   @IsEnum(JOB)
   job?: JOB;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsEnum(REGION)
+  region?: REGION;
 }

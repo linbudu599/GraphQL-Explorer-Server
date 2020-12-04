@@ -22,7 +22,7 @@ setInterval(() => {
     .set("accept", "json")
     .end((err, res) => {
       counter++;
-      console.log(res.body.data.Users);
+      console.log(JSON.stringify(res.body.data.Executors));
       console.log(`${process.argv[2]}: ${counter}`);
     });
-}, 300);
+}, 500);

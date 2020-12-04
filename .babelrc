@@ -10,7 +10,6 @@
       {
         "regenerator": true
       }
-    ],
-    ["transform-async-to-promises"]
+    ]
   ]
 }

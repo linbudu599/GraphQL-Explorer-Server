@@ -13,7 +13,7 @@ import {
   RelationId,
 } from "typeorm";
 
-import { IExecutor, JOB, IExecutorDesc } from "../graphql/Executor";
+import { IExecutor, JOB, IExecutorDesc, REGION } from "../graphql/Executor";
 import { DifficultyLevel } from "../graphql/Public";
 
 import Task from "./Task";
@@ -64,7 +64,10 @@ export default class Executor extends BaseEntity implements IExecutor {
   desc!: string;
 
   @RelationId((Executor: Executor) => Executor.tasks)
-  taskIds?: number[];
+  taskIds?: string[];
+
+  @Column({ default: REGION.OTHER, nullable: false })
+  region!: REGION;
 
   @Extensions({ info: "Executor.name Field" })
   @Extensions({ complexity: 1 })
@@ -72,7 +75,7 @@ export default class Executor extends BaseEntity implements IExecutor {
   spAgeField?: number;
 
   @CreateDateColumn()
-  registryDate!: Date;
+  joinDate!: Date;
 
   @UpdateDateColumn()
   lastUpdateDate!: Date;
