@@ -5,6 +5,8 @@ import {
   registerEnumType,
   InterfaceType,
   InputType,
+  ObjectType,
+  ClassType,
 } from "type-graphql";
 
 export enum ACCOUNT_TYPE {
@@ -43,8 +45,11 @@ export abstract class IAccount {
   lastUpdateDate!: Date;
 }
 
-@InputType({ description: "Register Input Type" })
-export class AccountRegisterInput {
+// isAbstract: will not register type in schema emitted
+// only InputType need to extend by mixin
+@ObjectType({ isAbstract: true })
+@InputType({ isAbstract: true })
+export class AccountInput {
   @Field({ nullable: false })
   @IsNotEmpty()
   @Length(2, 15)
@@ -56,29 +61,40 @@ export class AccountRegisterInput {
   @Length(6, 20)
   @IsString()
   accountPwd!: string;
-
-  @Field((type) => ACCOUNT_TYPE, { nullable: true })
-  @IsNotEmpty()
-  @IsEnum(ACCOUNT_TYPE)
-  loginType?: ACCOUNT_TYPE;
 }
+
+export const RegisterInputMixin = <TClassType extends ClassType>(
+  BaseClass: TClassType
+) => {
+  @ObjectType({ isAbstract: true })
+  @InputType({ isAbstract: true })
+  class RegisterInput extends BaseClass {
+    @Field((type) => ACCOUNT_TYPE, { nullable: true })
+    @IsNotEmpty()
+    @IsEnum(ACCOUNT_TYPE)
+    loginType?: ACCOUNT_TYPE;
+  }
+
+  return RegisterInput;
+};
+
+export const LoginInputMixin = <TClassType extends ClassType>(
+  BaseClass: TClassType
+) => {
+  @ObjectType({ isAbstract: true })
+  @InputType({ isAbstract: true })
+  class RegisterInput extends BaseClass {
+    @Field((type) => ACCOUNT_TYPE, { nullable: false })
+    @IsNotEmpty()
+    @IsEnum(ACCOUNT_TYPE)
+    loginType!: ACCOUNT_TYPE;
+  }
+
+  return RegisterInput;
+};
+
+@InputType({ description: "Register Input Type" })
+export class AccountRegistryInput extends RegisterInputMixin(AccountInput) {}
 
 @InputType({ description: "Login Input Type" })
-export class AccountLoginInput {
-  @Field({ nullable: false })
-  @IsNotEmpty()
-  @Length(2, 15)
-  @IsString()
-  accountName!: string;
-
-  @Field({ nullable: false })
-  @IsNotEmpty()
-  @Length(6, 20)
-  @IsString()
-  accountPwd!: string;
-
-  @Field((type) => ACCOUNT_TYPE, { nullable: false })
-  @IsNotEmpty()
-  @IsEnum(ACCOUNT_TYPE)
-  loginType!: ACCOUNT_TYPE;
-}
+export class AccountLoginInput extends LoginInputMixin(AccountInput) {}

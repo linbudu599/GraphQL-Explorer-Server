@@ -10,11 +10,10 @@ import {
   LoginOrRegisterStatus,
   LoginOrRegisterStatusHandler,
 } from "../graphql/Common";
-import { AccountRegisterInput, AccountLoginInput } from "../graphql/Account";
+import { AccountRegistryInput, AccountLoginInput } from "../graphql/Account";
 
 import Account from "../entity/Account";
 
-// TODO: 密码加密存储 权限分级 注销（token） StatusHandler更丰富
 @Resolver((of) => LoginOrRegisterStatus)
 export default class AccountResolver {
   constructor(
@@ -22,7 +21,6 @@ export default class AccountResolver {
     private readonly accountRepository: Repository<Account>
   ) {}
 
-  // TODO: check login type
   @Query(() => LoginOrRegisterStatus)
   async AccountLogin(
     @Arg("account") { accountName, accountPwd, loginType }: AccountLoginInput
@@ -91,7 +89,7 @@ export default class AccountResolver {
   @Transaction()
   @Mutation(() => LoginOrRegisterStatus, { nullable: false })
   async AccountRegistry(
-    @Arg("account") account: AccountRegisterInput,
+    @Arg("account") account: AccountRegistryInput,
     @TransactionRepository(Account)
     accountTransRepo: Repository<Account>
   ): Promise<LoginOrRegisterStatus> {

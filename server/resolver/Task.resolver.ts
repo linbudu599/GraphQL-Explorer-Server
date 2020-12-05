@@ -122,7 +122,7 @@ export default class TaskResolver {
   }
 
   @Transaction()
-  @Mutation(() => Task)
+  @Mutation(() => TaskStatus)
   async DeleteTask(
     @Arg("taskId") taskId: number,
     @TransactionRepository(Task) taskTransRepo: Repository<Task>
@@ -147,7 +147,7 @@ export default class TaskResolver {
   }
 
   @Transaction()
-  @Mutation(() => Task)
+  @Mutation(() => TaskStatus)
   async CreateNewTask(
     @Arg("taskCreateParam") param: TaskCreateInput,
     @TransactionRepository(Task)

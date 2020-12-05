@@ -15,7 +15,7 @@ input AccountLoginInput {
 """
 Register Input Type
 """
-input AccountRegisterInput {
+input AccountRegistryInput {
   accountName: String!
   accountPwd: String!
   loginType: AccountType
@@ -220,12 +220,12 @@ type LoginOrRegisterStatus implements IBaseStatus {
 }
 
 type Mutation {
-  AccountRegistry(account: AccountRegisterInput!): LoginOrRegisterStatus!
+  AccountRegistry(account: AccountRegistryInput!): LoginOrRegisterStatus!
   AssignTask(taskId: String!, uid: String!): TaskStatus!
   CreateExecutor(newExecutorInfo: ExecutorCreateInput!): ExecutorStatus!
-  CreateNewTask(taskCreateParam: TaskCreateInput!): Task!
+  CreateNewTask(taskCreateParam: TaskCreateInput!): TaskStatus!
   DeleteExecutor(uid: String!): ExecutorStatus!
-  DeleteTask(taskId: Float!): Task!
+  DeleteTask(taskId: Float!): TaskStatus!
   ModifyPassword(accountName: String!): LoginOrRegisterStatus!
   publisherMutation(message: String): Boolean!
   pubSubMutation(message: String): Boolean!
@@ -367,7 +367,10 @@ Task InputObject
 """
 input TaskCreateInput {
   taskContent: String
+  taskLevel: Float
   taskReward: Float
+  taskSource: Float
+  taskTarget: Float
   taskTitle: String!
 }
 
@@ -410,8 +413,11 @@ Args On Task Update
 input TaskUpdateInput {
   taskContent: String
   taskId: String!
+  taskLevel: Float
   taskRate: Float
   taskReward: Float
+  taskSource: Float
+  taskTarget: Float
   taskTitle: String
 }
 

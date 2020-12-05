@@ -6,6 +6,8 @@ import {
   ID,
   registerEnumType,
   InterfaceType,
+  ObjectType,
+  ClassType,
 } from "type-graphql";
 import {
   Length,
@@ -16,6 +18,7 @@ import {
   Max,
   Min,
   IsEnum,
+  IsNotEmpty,
 } from "class-validator";
 
 import Task from "../entity/Task";
@@ -140,7 +143,6 @@ export abstract class IExecutor {
 }
 
 @ArgsType()
-// extends ExecutorCreateInput will result in error GraphQL Schema
 export class ExecutorQueryArgs {
   @Field({ nullable: true })
   @IsOptional()
@@ -190,68 +192,72 @@ export class ExecutorQueryArgs {
   satisfaction?: number;
 }
 
+@ObjectType({ isAbstract: true })
+@InputType({ isAbstract: true })
+export class ExecutorInput {
+  @Field((type) => Int, { nullable: true })
+  @IsOptional()
+  @Max(80)
+  @Min(1)
+  @IsNumber()
+  age?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  isFool?: boolean;
+
+  @Field((type) => JOB, { nullable: true })
+  @IsOptional()
+  @IsEnum(JOB)
+  job?: JOB;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsEnum(REGION)
+  region?: REGION;
+}
+
+export const CreateInputMixin = <TClassType extends ClassType>(
+  BaseClass: TClassType
+) => {
+  @ObjectType({ isAbstract: true })
+  @InputType({ isAbstract: true })
+  class CreateInput extends BaseClass {
+    @Field({ nullable: false })
+    @Length(1, 20)
+    @IsNotEmpty()
+    @IsString()
+    name!: string;
+  }
+
+  return CreateInput;
+};
+
+export const UpdateInputMixin = <TClassType extends ClassType>(
+  BaseClass: TClassType
+) => {
+  @ObjectType({ isAbstract: true })
+  @InputType({ isAbstract: true })
+  class UpdateInput extends BaseClass {
+    @Field({ nullable: false })
+    @IsString()
+    uid!: string;
+
+    @Field({ nullable: true })
+    @Length(1, 20)
+    @IsNotEmpty()
+    @IsString()
+    name?: string;
+  }
+
+  return UpdateInput;
+};
+
 @InputType({
   description: "Args On Executor Create",
 })
-export class ExecutorCreateInput {
-  @Field({ nullable: false })
-  @Length(1, 20)
-  @IsString()
-  name!: string;
-
-  @Field((type) => Int, { nullable: true })
-  @IsOptional()
-  @Max(80)
-  @Min(0)
-  @IsNumber()
-  age?: number;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsBoolean()
-  isFool?: boolean;
-
-  @Field((type) => JOB, { nullable: true })
-  @IsOptional()
-  @IsEnum(JOB)
-  job?: JOB;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsEnum(REGION)
-  region?: REGION;
-}
+export class ExecutorCreateInput extends CreateInputMixin(ExecutorInput) {}
 
 @InputType({ description: "Args On Executor Update" })
-export class ExecutorUpdateInput {
-  @Field({ nullable: true })
-  @Length(1, 20)
-  @IsString()
-  name!: string;
-
-  @Field({ nullable: false })
-  @IsString()
-  uid!: string;
-
-  @Field((type) => Int, { nullable: true })
-  @IsOptional()
-  @Max(80)
-  @Min(0)
-  @IsNumber()
-  age?: number;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsBoolean()
-  isFool?: boolean;
-
-  @Field((type) => JOB, { nullable: true })
-  @IsOptional()
-  @IsEnum(JOB)
-  job?: JOB;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsEnum(REGION)
-  region?: REGION;
-}
+export class ExecutorUpdateInput extends UpdateInputMixin(ExecutorInput) {}

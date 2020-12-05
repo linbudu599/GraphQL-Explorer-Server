@@ -4,6 +4,8 @@ import {
   ID,
   registerEnumType,
   InterfaceType,
+  ClassType,
+  ObjectType,
 } from "type-graphql";
 import {
   Length,
@@ -13,6 +15,7 @@ import {
   Max,
   Min,
   IsPositive,
+  IsEnum,
 } from "class-validator";
 
 import Executor from "../entity/Executor";
@@ -91,13 +94,9 @@ export abstract class ITask {
   lastUpdateDate!: Date;
 }
 
-@InputType({ description: "Task InputObject" })
-export class TaskCreateInput implements Partial<ITask> {
-  @Field()
-  @Length(5, 10)
-  @IsString()
-  taskTitle!: string;
-
+@ObjectType({ isAbstract: true })
+@InputType({ isAbstract: true })
+export class TaskInput implements Partial<ITask> {
   @Field({ nullable: true })
   @Length(2, 20)
   @IsString()
@@ -111,38 +110,67 @@ export class TaskCreateInput implements Partial<ITask> {
   @IsPositive()
   @IsOptional()
   taskReward?: number;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsEnum(TaskSource)
+  taskSource?: TaskSource;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsEnum(DifficultyLevel)
+  taskLevel?: DifficultyLevel;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsEnum(TaskTarget)
+  taskTarget?: TaskTarget;
 }
+
+export const PublishTaskMixin = <TClassType extends ClassType>(
+  BaseClass: TClassType
+) => {
+  @ObjectType({ isAbstract: true })
+  @InputType({ isAbstract: true })
+  class PublishInput extends BaseClass {
+    @Field({ nullable: false })
+    @Length(5, 10)
+    @IsString()
+    taskTitle!: string;
+  }
+
+  return PublishInput;
+};
+
+export const UpdateTaskMixin = <TClassType extends ClassType>(
+  BaseClass: TClassType
+) => {
+  @ObjectType({ isAbstract: true })
+  @InputType({ isAbstract: true })
+  class UpdateInput extends BaseClass {
+    @Field({ nullable: false })
+    @IsString()
+    taskId!: string;
+
+    @Field({ nullable: true })
+    @Length(5, 10)
+    @IsString()
+    taskTitle?: string;
+
+    @Field({ nullable: true })
+    @Max(10)
+    @Min(0)
+    @IsNumber()
+    @IsPositive()
+    @IsOptional()
+    taskRate?: number;
+  }
+
+  return UpdateInput;
+};
+
+@InputType({ description: "Task InputObject" })
+export class TaskCreateInput extends PublishTaskMixin(TaskInput) {}
 
 @InputType({ description: "Args On Task Update" })
-export class TaskUpdateInput {
-  @Field()
-  @IsString()
-  taskId!: string;
-
-  @Field({ nullable: true })
-  @Length(5, 10)
-  @IsString()
-  taskTitle?: string;
-
-  @Field({ nullable: true })
-  @Length(2, 20)
-  @IsString()
-  @IsOptional()
-  taskContent?: string;
-
-  @Field({ nullable: true })
-  @Max(1000)
-  @Min(0)
-  @IsNumber()
-  @IsPositive()
-  @IsOptional()
-  taskReward?: number;
-
-  @Field({ nullable: true })
-  @Max(10)
-  @Min(0)
-  @IsNumber()
-  @IsPositive()
-  @IsOptional()
-  taskRate?: number;
-}
+export class TaskUpdateInput extends UpdateTaskMixin(TaskInput) {}
