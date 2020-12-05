@@ -20,7 +20,7 @@
     "serve:docs": "npm run gen:docs && serve -s docs",
     "commit": "git add -A && git-cz",
     "typecheck": "tsc --noEmit",
-    "build:vercel": "tsc --declaration false",
+    "build:vercel": "tsc --build vercel-tsconfig.json",
     "prod:vercel": "vc -prod",
     "prettier": "prettier --write ./**/*.ts ./**/*.js ./**/*.json ./**/*.graphql"
   },

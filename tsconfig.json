@@ -1,6 +1,6 @@
 {
   // use in server code only for now
-  "include": ["./server/**/*.ts", "./api/**/*.ts"],
+  "include": ["./server/**/*.ts"],
   "compilerOptions": {
     // required by TypeGraphQL
     "lib": ["esnext.asynciterable", "ES2018"],

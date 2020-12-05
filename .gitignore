@@ -38,6 +38,7 @@ dist
 
 /client-dist
 /server-dist
+/api-dist
 
 /server/generated
 
