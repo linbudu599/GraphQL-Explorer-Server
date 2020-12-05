@@ -82,7 +82,7 @@ enum DifficultyLevel {
 
 type Executor implements IExecutor {
   age: Float!
-  desc: String
+  desc: String!
   ExecutorDescField: ExecutorDesc!
   isFool: Boolean!
   job: Job!
@@ -103,7 +103,7 @@ input ExecutorCreateInput {
   isFool: Boolean
   job: Job
   name: String!
-  region: Float
+  region: Region
 }
 
 type ExecutorDesc implements IExecutorDesc {
@@ -138,7 +138,7 @@ input ExecutorUpdateInput {
   isFool: Boolean
   job: Job
   name: String
-  region: Float
+  region: Region
   uid: String!
 }
 

@@ -1,49 +1,81 @@
+fragment ExecutorFields on Executor {
+  uid
+  name
+  age
+  job
+  isFool
+  desc
+  region
+  spAgeField
+  ExecutorDescField {
+    level
+    successRate
+    satisfaction
+  }
+  tasks {
+    taskId
+    taskTitle
+    assignee {
+      uid
+    }
+    taskContent
+    taskSource
+    taskLevel
+    taskAccmplished
+    taskReward
+    taskRate
+    taskTarget
+    taskSubstance {
+      substanceId
+      substanceName
+      substanceDesc
+      substanceAlive
+      substanceLevel
+      substanceIssues
+      asylumed
+      substanceAppearDate
+      relatedTask {
+        taskId
+      }
+      lastActiveDate
+    }
+    publishDate
+    lastUpdateDate
+  }
+  joinDate
+  lastUpdateDate
+}
+
 query ExecutorQuery {
   Executors {
+    success
+    message
     data {
-      uid
-      name
-      age
-      job
-      isFool
-      tasks {
-        taskId
-        taskTitle
-        taskContent
-        taskSource
-        taskLevel
-        taskAccmplished
-        taskReward
-        taskRate
-        taskTarget
-        taskSubstance {
-          substanceId
-          substanceName
-          substanceDesc
-          substanceIssues
-          substanceLevel
-          asylumed
-          substanceAppearDate
-          lastActiveDate
-        }
-        publishDate
-        lastUpdateDate
-      }
-      registryDate
-      lastUpdateDate
-      ExecutorDescField {
-        level
-        successRate
-        satisfaction
-      }
+      ...ExecutorFields
     }
   }
+
   FindExecutorByConditions(name: "林不渡-0") {
+    success
+    message
     data {
-      name
-      ExecutorDescField {
-        level
-      }
+      ...ExecutorFields
+    }
+  }
+
+  FindExecutorByConditions(name: "不存在的用户") {
+    success
+    message
+    data {
+      ...ExecutorFields
+    }
+  }
+
+  QueryExecutorByDesc(level: ROOKIE) {
+    success
+    message
+    data {
+      ...ExecutorFields
     }
   }
 }

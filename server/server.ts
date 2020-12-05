@@ -3,7 +3,7 @@ import { Context } from "koa";
 import path from "path";
 import { getOperationAST } from "graphql";
 import dotenv from "dotenv";
-import { Container, ContainerInstance } from "typedi";
+import { Container } from "typedi";
 import * as TypeORM from "typeorm";
 import { buildSchema, ResolverData } from "type-graphql";
 import { ApolloServer } from "apollo-server-koa";
@@ -23,6 +23,7 @@ import { genarateRandomID } from "./utils/auth";
 import { authChecker } from "./utils/authChecker";
 import { PLAY_GROUND_SETTINGS } from "./utils/constants";
 import { setRecipeInContainer, dbConnect } from "./utils/mock";
+import { validateToken } from "./utils/jwt";
 
 // Middlewares applied on TypeGraphQL
 import ResolveTime from "./middleware/time";
@@ -98,17 +99,15 @@ export default async (): Promise<ApolloServer> => {
       onConnect: () => log("[Subscription] Connected to websocket"),
     },
     context: async ({ ctx }: { ctx: Context }) => {
-      // log("=== TOKEN ===");
-      // const token = ctx.request.headers["token"];
+      // TODO: get account type from token
+      const token: string | null = ctx.request?.headers?.token ?? null;
 
       const { id, type } = genarateRandomID();
       // 每次请求使用一个随机ID注册容器
       const container = Container.of(id);
 
       const context = {
-        // req,
         env: process.env.NODE_ENV,
-        // token: ctx.headers.authorization,
         currentUser: {
           accountId: id,
           roles: type,

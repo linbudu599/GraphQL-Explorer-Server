@@ -1,4 +1,4 @@
-import { Extensions, ObjectType } from "type-graphql";
+import { Extensions, Field, Int, ObjectType } from "type-graphql";
 import { TypeormLoader } from "type-graphql-dataloader";
 import { plainToClass } from "class-transformer";
 
@@ -61,6 +61,9 @@ export default class Executor extends BaseEntity implements IExecutor {
   tasks?: Task[];
 
   @Column({ default: JSON.stringify(Executor_DESC_DEFAULT) })
+  // @Extension needs to be used with @Field
+  @Extensions({ info: "Executor.desc Field" })
+  @Field()
   desc!: string;
 
   @RelationId((Executor: Executor) => Executor.tasks)
@@ -69,9 +72,9 @@ export default class Executor extends BaseEntity implements IExecutor {
   @Column({ default: REGION.OTHER, nullable: false })
   region!: REGION;
 
-  @Extensions({ info: "Executor.name Field" })
   @Extensions({ complexity: 1 })
   @LogExtension({ message: "我直接好家伙" })
+  @Field((type) => Int)
   spAgeField?: number;
 
   @CreateDateColumn()

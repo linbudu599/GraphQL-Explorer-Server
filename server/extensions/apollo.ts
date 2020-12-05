@@ -1,5 +1,10 @@
 import { GraphQLExtension, GraphQLResponse } from "graphql-extensions";
 
+/**
+ * @deprecated use Apollo Plugin instead
+ * @class CustomExtension
+ * @implements {GraphQLExtension<IContext>}
+ */
 export class CustomExtension<IContext> implements GraphQLExtension<IContext> {
   constructor(public readonly args?: string) {}
 

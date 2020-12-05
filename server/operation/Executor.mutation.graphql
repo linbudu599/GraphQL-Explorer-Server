@@ -1,22 +1,58 @@
+fragment ExecutorFields on Executor {
+  uid
+  name
+  age
+  job
+  isFool
+  desc
+  region
+  spAgeField
+  ExecutorDescField {
+    level
+    successRate
+    satisfaction
+  }
+  joinDate
+  lastUpdateDate
+}
+
 mutation ExecutorMutation {
-  CreateExecutor(newExecutorInfo: { name: "xxx" }) {
+  CreateExecutor(
+    newExecutorInfo: {
+      name: "Harold"
+      age: 21
+      isFool: true
+      job: FE
+      region: PACIFIC_OCEAN
+    }
+  ) {
     success
+    message
     data {
-      desc
+      ...ExecutorFields
     }
   }
 
-  UpdateExecutor(modifiedExecutorInfo: { uid: "1", name: "xxxxx" }) {
+  UpdateExecutorBasicInfo(
+    modifiedExecutorInfo: {
+      uid: "1"
+      name: "MODIFIED_NAME"
+      age: 38
+      region: CENTRAL
+    }
+  ) {
     success
+    message
     data {
-      name
+      ...ExecutorFields
     }
   }
 
   DeleteExecutor(uid: "1") {
     success
+    message
     data {
-      desc
+      ...ExecutorFields
     }
   }
 
@@ -24,7 +60,7 @@ mutation ExecutorMutation {
     success
     message
     data {
-      desc
+      ...ExecutorFields
     }
   }
 }

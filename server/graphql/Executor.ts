@@ -212,7 +212,7 @@ export class ExecutorInput {
   @IsEnum(JOB)
   job?: JOB;
 
-  @Field({ nullable: true })
+  @Field((type) => REGION, { nullable: true })
   @IsOptional()
   @IsEnum(REGION)
   region?: REGION;
