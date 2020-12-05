@@ -19,6 +19,9 @@
     "gen:docs": "rimraf -rf ./docs && graphdoc --force",
     "serve:docs": "npm run gen:docs && serve -s docs",
     "commit": "git add -A && git-cz",
+    "typecheck": "tsc --noEmit",
+    "build:vercel": "tsc --declaration false",
+    "prod:vercel": "vc -prod",
     "prettier": "prettier --write ./**/*.ts ./**/*.js ./**/*.json ./**/*.graphql"
   },
   "repository": {
@@ -58,6 +61,7 @@
     "@apollo/react-hooks": "^4.0.0",
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
+    "@saeris/apollo-server-vercel": "^0.4.0",
     "apollo-cache-inmemory": "^1.6.6",
     "apollo-client": "^2.6.10",
     "apollo-datasource-rest": "^0.9.5",

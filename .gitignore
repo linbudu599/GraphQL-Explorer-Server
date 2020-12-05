@@ -42,3 +42,5 @@ dist
 /server/generated
 
 /docs
+
+.vercel

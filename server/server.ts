@@ -5,8 +5,9 @@ import { getOperationAST } from "graphql";
 import dotenv from "dotenv";
 import { Container } from "typedi";
 import * as TypeORM from "typeorm";
-import { buildSchema, ResolverData } from "type-graphql";
+import { buildSchemaSync, ResolverData } from "type-graphql";
 import { ApolloServer } from "apollo-server-koa";
+
 import { GraphQLRequestContext } from "apollo-server-plugin-base";
 import { ApolloServerLoaderPlugin } from "type-graphql-dataloader";
 
@@ -23,7 +24,6 @@ import { genarateRandomID } from "./utils/auth";
 import { authChecker } from "./utils/authChecker";
 import { PLAY_GROUND_SETTINGS } from "./utils/constants";
 import { setRecipeInContainer, dbConnect } from "./utils/mock";
-import { validateToken } from "./utils/jwt";
 
 // Middlewares applied on TypeGraphQL
 import ResolveTime from "./middleware/time";
@@ -63,34 +63,34 @@ const basicMiddlewares = [
   LogAccessMiddleware,
 ];
 
+setRecipeInContainer();
+
+const schema = buildSchemaSync({
+  // TODO: get by generation
+  resolvers: [
+    ExecutorResolver,
+    RecipeResolver,
+    TaskResolver,
+    PubSubResolver,
+    AccountResolver,
+    SubstanceResolver,
+    PublicResolver,
+  ],
+  // container: Container,
+  // scoped-container，每次从context中拿到本次注册容器
+  container: ({ context }: ResolverData<IContext>) => context.container,
+  // TypeGraphQL built-in Scalar Date
+  dateScalarMode: "timestamp",
+  authChecker: dev ? () => true : authChecker,
+  authMode: "error",
+  emitSchemaFile: path.resolve(__dirname, "./typegraphql/shema.graphql"),
+  validate: true,
+  globalMiddlewares: dev
+    ? basicMiddlewares
+    : [...basicMiddlewares, ErrorLoggerMiddleware],
+});
+
 export default async (): Promise<ApolloServer> => {
-  setRecipeInContainer();
-
-  const schema = await buildSchema({
-    // TODO: get by generation
-    resolvers: [
-      ExecutorResolver,
-      RecipeResolver,
-      TaskResolver,
-      PubSubResolver,
-      AccountResolver,
-      SubstanceResolver,
-      PublicResolver,
-    ],
-    // container: Container,
-    // scoped-container，每次从context中拿到本次注册容器
-    container: ({ context }: ResolverData<IContext>) => context.container,
-    // TypeGraphQL built-in Scalar Date
-    dateScalarMode: "timestamp",
-    authChecker: dev ? () => true : authChecker,
-    authMode: "error",
-    emitSchemaFile: path.resolve(__dirname, "./typegraphql/shema.graphql"),
-    validate: true,
-    globalMiddlewares: dev
-      ? basicMiddlewares
-      : [...basicMiddlewares, ErrorLoggerMiddleware],
-  });
-
   await dbConnect();
 
   const server = new ApolloServer({
