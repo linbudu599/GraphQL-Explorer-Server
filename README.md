@@ -32,7 +32,7 @@ This is a demo which contains GraphQL and framework based on it(or work with it 
 - [x] [Client by Netlify](https://linbudu-graphql-explorer.netlify.app/)
 - [x] [Docs by Surge](http://graphql-explorer-docs.surge.sh/)
 - [x] [Voyager by Surge](http://graphql-explorer-voyager.surge.sh/) **(Require Local Server To Be Active)**
-- [x] [Simple Example on Vercel Fucntions](https://graphql-faas.vercel.app/api), see also [Query Example](./api/graphql/query.graphql)
+- [x] [Simple Example on Vercel Fucntions](https://graphql-faas.vercel.app/api/graphql), see also [Query Example](./api/graphql/query.graphql)
 - [ ] [Server-ALI-Cloud]
 - [ ] [Server-Heroku]
 - [ ] [Apollo-Server-Lambda]

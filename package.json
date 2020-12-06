@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "npm-run-all --parallel dev:server dev:client",
     "build": "npm-run-all --parallel build:server build:client",
-    "clean": "node ./scripts/clean.js --server --client",
+    "clean": "node ./scripts/clean.js --server --client  --vercel",
     "dev:client": "cross-env NODE_ENV=development parcel ./client/public/index.html --out-dir ./client/dist --port 5999",
     "test:client": "cross-env NODE_ENV=test jest --forceExit",
     "build:client": "cross-env NODE_ENV=production parcel build ./client/public/index.html --out-dir ./client-dist",
@@ -20,7 +20,7 @@
     "serve:docs": "npm run gen:docs && serve -s docs",
     "commit": "git add -A && git-cz",
     "typecheck": "tsc --noEmit",
-    "build:vercel": "tsc --build vercel-tsconfig.json",
+    "build:vercel": "cross-env NODE_ENV=production && node ./scripts/clean.js --vercel && tsc --build vercel-tsconfig.json",
     "prod:vercel": "vc -prod",
     "prettier": "prettier --write ./**/*.ts ./**/*.js ./**/*.json ./**/*.graphql"
   },

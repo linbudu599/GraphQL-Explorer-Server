@@ -2,7 +2,7 @@
   "include": ["./api/**/*.ts"],
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "declaration": true,
+    "declaration": false,
     "declarationMap": false,
     "baseUrl": "./",
     "outDir": "./api-dist"
