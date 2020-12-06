@@ -9,7 +9,9 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-import { ACCOUNT_TYPE, IAccount } from "../graphql/Account";
+import { IAccount } from "../graphql/Account";
+
+import { ACCOUNT_TYPE } from "../utils/constants";
 
 @ObjectType({ implements: IAccount })
 @Entity()

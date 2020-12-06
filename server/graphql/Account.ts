@@ -9,15 +9,7 @@ import {
   ClassType,
 } from "type-graphql";
 
-export enum ACCOUNT_TYPE {
-  VISITOR,
-  COMMON,
-  ORG,
-  ENTERPRISE,
-  GOV,
-  ADMIN,
-  DOMINATOR,
-}
+import { ACCOUNT_TYPE } from "../utils/constants";
 
 registerEnumType(ACCOUNT_TYPE, {
   name: "AccountType",

@@ -33,6 +33,7 @@ This is a demo which contains GraphQL and framework based on it(or work with it 
 - [x] [Docs by Surge](http://graphql-explorer-docs.surge.sh/)
 - [x] [Voyager by Surge](http://graphql-explorer-voyager.surge.sh/) **(Require Local Server To Be Active)**
 - [x] [Simple Example on Vercel Fucntions](https://graphql-faas.vercel.app/api/graphql), see also [Query Example](./api/graphql/query.graphql)
+- [x] [Example on Vercel Fucntions, with MySQL](https://graphql-faas.linbudu599.vercel.app/api/migrate)
 - [ ] [Server-ALI-Cloud]
 - [ ] [Server-Heroku]
 - [ ] [Apollo-Server-Lambda]
@@ -70,6 +71,8 @@ npm run dev:server
 - `serve:docs`: generate & serve documentation site by [serve](https://github.com/vercel/serve)
 - `commit`: commit code by [custom commitlint config](.cz-config.js)
 - `prettier`: prettier all `.ts` / `.json` / `.graphql` ext file
+- `typecheck`: check TypeScript type definitions
+- `build:vercel`: build script on `Vercel Functions` build
 
 ## Document
 

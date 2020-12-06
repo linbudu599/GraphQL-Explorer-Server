@@ -1,29 +1,38 @@
 // @ts-nocheck
 import { Resolver, Query } from "type-graphql";
-import { Repository, getConnection } from "typeorm";
-import { InjectRepository } from "typeorm-typedi-extensions";
+import * as TypeORM from "typeorm";
+import { Connection } from "typeorm";
 
 import SubstanceEntity from "./entity";
 import Substance from "./module";
 
 @Resolver((of) => Substance)
 export default class SubstanceResolver {
-  // constructor(
-  //   @InjectRepository(SubstanceEntity)
-  //   private readonly substanceRepository: Repository<SubstanceEntity>
-  // ) {}
+  connection: Connection;
 
   @Query(() => [Substance])
   async QueryAllSubstances() {
     try {
-      // const res = await this.substanceRepository.find();
-      // return res;
-      const connection = await getConnection();
-      const res = await connection.manager.find(SubstanceEntity);
-      return res;
+      if (this.connection) {
+      } else {
+        this.connection = await TypeORM.createConnection({
+          type: "mysql",
+          name: "default",
+          host: process.env.DB_HOST,
+          port: Number(process.env.DB_PORT),
+          username: "root",
+          password: process.env.DB_PWD,
+          database: process.env.DB_TABLE,
+          logging: "all",
+          logger: "advanced-console",
+          entities: [SubstanceEntity],
+        });
+      }
+
+      return this.connection.manager.find(SubstanceEntity);
     } catch (error) {
-      // return [];
       console.error(error);
+      return [];
     }
   }
 }

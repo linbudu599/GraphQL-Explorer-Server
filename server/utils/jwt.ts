@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
-import { ACCOUNT_TYPE } from "../graphql/Account";
-import { TOKEN_EXPIRED_IN } from "./constants";
+import { TOKEN_EXPIRED_IN, ACCOUNT_TYPE } from "./constants";
 
 export const dispatchToken = (
   username: string,

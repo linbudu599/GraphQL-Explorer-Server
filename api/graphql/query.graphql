@@ -1,0 +1,50 @@
+fragment CompanyFields on Company {
+  name
+  scale
+  description
+  registerDate
+}
+fragment ExperienceFields on WorkExperience {
+  isFired
+  workYears
+  company {
+    ...CompanyFields
+  }
+}
+
+fragment CookFields on Cook {
+  name
+  yearsOfExperience
+  experience {
+    ...ExperienceFields
+  }
+}
+
+fragment RecipeFields on Recipe {
+  title
+  description
+  ingredients
+  preparationDifficulty
+  cook {
+    ...CookFields
+  }
+}
+
+fragment SaltFishFields on SaltFish {
+  EngelCoefficient
+}
+
+query {
+  QueryRecipeUnions {
+    __typename
+    ... on Recipe {
+      ...RecipeFields
+    }
+    ... on Cook {
+      ...CookFields
+    }
+    ... on SaltFish {
+      ...SaltFishFields
+    }
+  }
+}

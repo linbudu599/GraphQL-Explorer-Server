@@ -29,7 +29,17 @@ export enum RESPONSE_INDICATOR {
   HIGHER_AUTH_REQUIRED = "Higher Auth Required",
 }
 
-export const MAX_ALLOWED_COMPLEXITY = 50;
+export enum ACCOUNT_TYPE {
+  VISITOR,
+  COMMON,
+  ORG,
+  ENTERPRISE,
+  GOV,
+  ADMIN,
+  DOMINATOR,
+}
+
+export const MAX_ALLOWED_COMPLEXITY = 10;
 
 // https://github.com/vercel/ms
 export const TOKEN_EXPIRED_IN = "7d";

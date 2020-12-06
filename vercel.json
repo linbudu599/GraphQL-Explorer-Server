@@ -7,6 +7,10 @@
     "api/graphql/index.ts": {
       "maxDuration": 10,
       "memory": 1024
+    },
+    "api/migrate/index.ts": {
+      "maxDuration": 10,
+      "memory": 1024
     }
   }
 }
