@@ -16,7 +16,7 @@ registerEnumType(CthulhuType, {
   description: "Known Cthulhu Type",
 });
 
-@InterfaceType()
+@InterfaceType({ description: "Substance Interface Type" })
 export abstract class ISubstance {
   @Field((type) => ID, { nullable: false })
   substanceId!: string;

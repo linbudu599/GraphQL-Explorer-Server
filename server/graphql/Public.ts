@@ -15,7 +15,7 @@ export enum DifficultyLevel {
 
 registerEnumType(DifficultyLevel, {
   name: "DifficultyLevel",
-  description: "Executor Skill / Task Difficulty Level",
+  description: "Executor Skill & Task Difficulty Level Enum",
 });
 
 export const LevelQueryResult = createUnionType({

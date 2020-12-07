@@ -58,7 +58,6 @@ export class LoginOrRegisterStatus extends IBaseStatus {
   @Field({ nullable: true })
   token?: string;
 
-  // 下发token过期时间?
   @Field(() => Int, { nullable: true })
   expiredDate?: number;
 }
@@ -80,7 +79,7 @@ export class StatusHandler {
   ) {}
 }
 
-@InputType()
+@InputType({ description: "Pagination Options Input" })
 export class PaginationOptions {
   @Field(() => Int, { nullable: true })
   @Max(100)

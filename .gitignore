@@ -22,6 +22,8 @@ node_modules/
 .env.test
 .env.prod
 
+/dev.ts
+
 .cache
 
 dist

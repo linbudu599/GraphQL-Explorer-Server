@@ -47,10 +47,10 @@ registerEnumType(REGION, {
 
 registerEnumType(JOB, {
   name: "Job",
-  description: "Job Type Enum",
+  description: "Executor Job Enum",
 });
 
-@InterfaceType()
+@InterfaceType({ description: "Executor Interface Type" })
 export abstract class IExecutorDesc {
   @Field((type) => DifficultyLevel, { nullable: false })
   level!: DifficultyLevel;
@@ -62,7 +62,7 @@ export abstract class IExecutorDesc {
   satisfaction!: number;
 }
 
-@InputType({ description: "Args On Update Executor Desc" })
+@InputType({ description: "Update Executor Desc Input" })
 export class ExecutorDescUpdateInput implements Partial<IExecutorDesc> {
   @Field((type) => DifficultyLevel, { nullable: true })
   @IsOptional()
@@ -106,7 +106,7 @@ export class ExecutorDescQuery implements Partial<IExecutorDesc> {
   satisfaction?: number;
 }
 
-@InterfaceType()
+@InterfaceType({ description: "Update Executor Basic Info Input" })
 export abstract class IExecutor {
   @Field((type) => ID, { nullable: false })
   uid!: string;
@@ -255,9 +255,9 @@ export const UpdateInputMixin = <TClassType extends ClassType>(
 };
 
 @InputType({
-  description: "Args On Executor Create",
+  description: "Executor Create Input",
 })
 export class ExecutorCreateInput extends CreateInputMixin(ExecutorInput) {}
 
-@InputType({ description: "Args On Executor Update" })
+@InputType({ description: "Executor Update Input" })
 export class ExecutorUpdateInput extends UpdateInputMixin(ExecutorInput) {}

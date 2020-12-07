@@ -12,7 +12,7 @@
 ![GitHub package.json dependency version (subfolder of monorepo)](https://img.shields.io/github/package-json/dependency-version/linbudu599/GraphQL-Explorer/react)
 ![GitHub package.json dependency version (subfolder of monorepo)](https://img.shields.io/github/package-json/dependency-version/linbudu599/GraphQL-Explorer/parcel-bundler)
 
-This is a demo which contains GraphQL and framework based on it(or work with it perfectly), including these for now:
+This is a **demo** which contains `GraphQL` and framework based on it(or work with it perfectly), including these for now:
 
 - [x] GraphQL
 - [x] TypeGraphQL
@@ -26,10 +26,10 @@ This is a demo which contains GraphQL and framework based on it(or work with it 
   - Class-Validator
   - Class-Transformer
 
-## Client & Server Deploy
+## 🏗️ &nbsp; Client & Server Deploy
 
-- [x] [Client by Vercel](https://linbudu-graphql-explorer.vercel.app/)
-- [x] [Client by Netlify](https://linbudu-graphql-explorer.netlify.app/)
+- [x] [**PAGE_UNDER_DEVELOPING**] [Client by Vercel](https://linbudu-graphql-explorer.vercel.app/)
+- [x] [**PAGE_UNDER_DEVELOPING**] [Client by Netlify](https://linbudu-graphql-explorer.netlify.app/)
 - [x] [Docs by Surge](http://graphql-explorer-docs.surge.sh/)
 - [x] [Voyager by Surge](http://graphql-explorer-voyager.surge.sh/) **(Require Local Server To Be Active)**
 - [x] [Simple Example on Vercel Fucntions](https://graphql-faas.vercel.app/api/graphql), see also [Query Example](./api/graphql/query.graphql)
@@ -39,11 +39,11 @@ This is a demo which contains GraphQL and framework based on it(or work with it 
 - [ ] [Apollo-Server-Lambda]
 - [x] [Apollo-Engine(private)](https://studio.apollographql.com/graph/My-Graph-innqj/explorer?schemaTag=current)
 
-## Progress
+## 🛠️&nbsp; Progress
 
 **IN_PROGRESS**
 
-## Explore
+## 🚀&nbsp; Explore
 
 ```bash
 npm install
@@ -53,7 +53,7 @@ npm run dev:client
 npm run dev:server
 ```
 
-## Available Scripts
+## 🛵&nbsp; Available Scripts
 
 - `dev`: `dev:client` + `dev:server`
 - `dev:client`: develop client application by [Parcel](https://github.com/parcel-bundler/parcel)
@@ -74,7 +74,7 @@ npm run dev:server
 - `typecheck`: check TypeScript type definitions
 - `build:vercel`: build script on `Vercel Functions` build
 
-## Document
+## 📔&nbsp; Document
 
 see offcial docs for more information.
 

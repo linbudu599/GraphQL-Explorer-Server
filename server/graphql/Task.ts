@@ -52,7 +52,7 @@ registerEnumType(TaskTarget, {
   description: "Task Against",
 });
 
-@InterfaceType()
+@InterfaceType({ description: "Task Interface Type" })
 export abstract class ITask {
   @Field((type) => ID, { nullable: false })
   taskId!: string;
@@ -169,8 +169,8 @@ export const UpdateTaskMixin = <TClassType extends ClassType>(
   return UpdateInput;
 };
 
-@InputType({ description: "Task InputObject" })
+@InputType({ description: "Task Create Input" })
 export class TaskCreateInput extends PublishTaskMixin(TaskInput) {}
 
-@InputType({ description: "Args On Task Update" })
+@InputType({ description: "Task Update Input" })
 export class TaskUpdateInput extends UpdateTaskMixin(TaskInput) {}

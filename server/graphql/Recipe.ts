@@ -30,7 +30,9 @@ registerEnumType(CompanyScale, {
   description: "Company Scale",
 });
 
-@ObjectType()
+@ObjectType({
+  description: "Recipe >>> Cook >>> WorkExperience >> Company",
+})
 export class Company {
   @Field()
   name!: string;
@@ -45,7 +47,7 @@ export class Company {
   description!: string;
 }
 
-@ObjectType()
+@ObjectType({ description: "Recipe >>> Cook >>> WorkExperience" })
 export class WorkExperience {
   @Field((type) => Company)
   company!: Company;
@@ -57,7 +59,7 @@ export class WorkExperience {
   workYears!: number;
 }
 
-@ObjectType()
+@ObjectType({ description: "Recipe >>> Cook" })
 export class Cook {
   @Field()
   name!: string;
@@ -69,7 +71,7 @@ export class Cook {
   experience!: WorkExperience;
 }
 
-@ObjectType()
+@ObjectType({ description: "Recipe Type" })
 export class Recipe {
   @Field()
   title!: string;
@@ -87,7 +89,9 @@ export class Recipe {
   cook!: Cook;
 }
 
-@ObjectType({ description: "useless object type in union type:)" })
+@ObjectType({
+  description: "useless object type in union type, just for funny:)",
+})
 export class SaltFish {
   @Field((type) => Int)
   EngelCoefficient!: number;

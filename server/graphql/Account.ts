@@ -16,7 +16,7 @@ registerEnumType(ACCOUNT_TYPE, {
   description: "Account Type Enum",
 });
 
-@InterfaceType()
+@InterfaceType({ description: "Account Interface Type" })
 export abstract class IAccount {
   @Field((type) => ID, { nullable: false })
   accountId!: string;
