@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  job1:
+  client-job:
     strategy:
       fail-fast: false
       matrix:
