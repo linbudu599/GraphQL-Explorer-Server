@@ -34,6 +34,9 @@ enum AccountType {
   VISITOR
 }
 
+"""
+Recipe >>> Cook >>> WorkExperience >> Company
+"""
 type Company {
   description: String!
   name: String!
@@ -50,6 +53,9 @@ enum CompanyScale {
   Small
 }
 
+"""
+Recipe >>> Cook
+"""
 type Cook {
   experience: WorkExperience!
   name: String!
@@ -68,7 +74,7 @@ enum Difficulty {
 }
 
 """
-Executor Skill / Task Difficulty Level
+Executor Skill & Task Difficulty Level Enum
 """
 enum DifficultyLevel {
   BEGINNER
@@ -96,7 +102,7 @@ type Executor implements IExecutor {
 }
 
 """
-Args On Executor Create
+Executor Create Input
 """
 input ExecutorCreateInput {
   age: Int
@@ -113,7 +119,7 @@ type ExecutorDesc implements IExecutorDesc {
 }
 
 """
-Args On Update Executor Desc
+Update Executor Desc Input
 """
 input ExecutorDescUpdateInput {
   level: DifficultyLevel
@@ -131,7 +137,7 @@ type ExecutorStatus implements IBaseStatus {
 }
 
 """
-Args On Executor Update
+Executor Update Input
 """
 input ExecutorUpdateInput {
   age: Int
@@ -150,6 +156,9 @@ interface IBaseStatus {
   success: Boolean!
 }
 
+"""
+Update Executor Basic Info Input
+"""
 interface IExecutor {
   age: Float!
   desc: String
@@ -164,12 +173,18 @@ interface IExecutor {
   uid: ID!
 }
 
+"""
+Executor Interface Type
+"""
 interface IExecutorDesc {
   level: DifficultyLevel!
   satisfaction: Int
   successRate: Int
 }
 
+"""
+Substance Interface Type
+"""
 interface ISubstance {
   asylumed: Boolean!
   lastActiveDate: Timestamp!
@@ -183,6 +198,9 @@ interface ISubstance {
   substanceName: String!
 }
 
+"""
+Task Interface Type
+"""
 interface ITask {
   assignee: Executor
   lastUpdateDate: Timestamp!
@@ -200,7 +218,7 @@ interface ITask {
 }
 
 """
-Job Type Enum
+Executor Job Enum
 """
 enum Job {
   BE
@@ -247,6 +265,9 @@ type Notification {
   message: String
 }
 
+"""
+Pagination Options Input
+"""
 input PaginationOptions {
   cursor: Int
   offset: Int
@@ -289,6 +310,9 @@ type Query {
   Tasks(pagination: PaginationOptions): TaskStatus!
 }
 
+"""
+Recipe Type
+"""
 type Recipe {
   cook: Cook
   description: String
@@ -312,7 +336,7 @@ enum Region {
 }
 
 """
-useless object type in union type:)
+useless object type in union type, just for funny:)
 """
 type SaltFish {
   EngelCoefficient: Int!
@@ -363,7 +387,7 @@ type Task implements ITask {
 }
 
 """
-Task InputObject
+Task Create Input
 """
 input TaskCreateInput {
   taskContent: String
@@ -408,7 +432,7 @@ enum TaskTarget {
 }
 
 """
-Args On Task Update
+Task Update Input
 """
 input TaskUpdateInput {
   taskContent: String
@@ -426,6 +450,9 @@ The javascript `Date` as integer. Type represents date and time as number of mil
 """
 scalar Timestamp
 
+"""
+Recipe >>> Cook >>> WorkExperience
+"""
 type WorkExperience {
   company: Company!
   isFired: Boolean!

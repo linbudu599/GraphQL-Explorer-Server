@@ -19,8 +19,6 @@ import Substance from "../entity/Substance";
 
 import { log } from "./helper";
 
-const IS_DEV = process.env.NODE_ENV === "development";
-
 const createWorkExperience = (
   workExp: Partial<WorkExperience>
 ): WorkExperience => plainToClass(WorkExperience, workExp);
@@ -207,20 +205,7 @@ export const mockExecutor = (len: number) => {
 export const dbConnect = async (): Promise<any> => {
   log("[TypeORM] TypeORM Connecting");
   try {
-    const connection = await TypeORM.createConnection({
-      type: "sqlite",
-      name: "default",
-      database: "./info.db",
-      synchronize: IS_DEV,
-      dropSchema: IS_DEV,
-      logging: "all",
-      maxQueryExecutionTime: 1000,
-      logger: "advanced-console",
-      entities: [IS_DEV ? "server/entity/*.ts" : "server-dist/entity/*.js"],
-      cache: {
-        duration: 3000,
-      },
-    });
+    const connection = await TypeORM.createConnection();
     log("[TypeORM] Database Connection Established");
 
     const mockTaskGroup = mockTask(5);
