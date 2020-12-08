@@ -1,0 +1,10 @@
+{
+  "infiniteLoopProtection": true,
+  "hardReloadOnChange": true,
+  "view": "terminal",
+  "disableLogging": false,
+  "startScript": "dev:server",
+  "container": {
+    "node": "14"
+  }
+}

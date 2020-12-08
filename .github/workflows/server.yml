@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  job1:
+  server-job:
     strategy:
       matrix:
         node-version: [12.x]
@@ -23,6 +23,8 @@ jobs:
         run: |
           npm install
           npm install pm2 -g
+      - name: Unit Test
+        run: npm run test:server
       - name: Serve By PM2
         run: npm run pm2
       - name: Delete PM2 Process

@@ -4,7 +4,8 @@ client-dist
 coverage
 docs
 plan
-
+.circleci
 .travis.yml
 .cache
-/client/dist
+codecov.yml
+

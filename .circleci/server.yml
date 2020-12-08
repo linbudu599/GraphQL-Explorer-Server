@@ -1,0 +1,25 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@3.0.0
+
+workflows:
+  matrix-tests:
+    jobs:
+      name: "Server Setup"
+      - node/test:
+          version: 13.11.0
+      steps:
+        - checkout
+        - run:
+            name: Install Deps
+            command: |
+              npm install
+        - run:
+            name: Server Build
+            command: |
+              npm run build:server
+        - run:
+            name: Server Startup
+            command: |
+              npm run pm2
