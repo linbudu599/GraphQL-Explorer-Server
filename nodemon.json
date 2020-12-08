@@ -9,10 +9,12 @@
     "client/src",
     "client/.cache",
     "server/logs",
+    "server/generated",
+    "server/entity/factories",
+    "server/entity/seeds",
     "/**/*.json",
     "/**/*.graphql",
-    "/**/*.gql",
-    "server/generated"
+    "/**/*.gql"
   ],
   "verbose": true,
   "execMap": {

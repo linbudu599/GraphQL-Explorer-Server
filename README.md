@@ -73,6 +73,8 @@ npm run dev:server
 - `prettier`: prettier all `.ts` / `.json` / `.graphql` ext file
 - `typecheck`: check TypeScript type definitions
 - `build:vercel`: build script on `Vercel Functions` build
+- `seed:config`: check `typeorm-seeding` config
+- `seed:run`: start seeding data in `/server/entity/seeds`
 
 ## 📔&nbsp; Document
 
