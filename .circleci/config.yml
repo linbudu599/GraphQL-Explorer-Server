@@ -6,9 +6,7 @@ orbs:
 workflows:
   matrix-tests:
     jobs:
-      name: "Server Setup"
-      - node/test:
-          version: 13.11.0
+      name: Server Setup
       steps:
         - checkout
         - run:

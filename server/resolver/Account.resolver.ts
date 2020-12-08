@@ -1,3 +1,4 @@
+import { validate } from "class-validator";
 import { Resolver, Query, Arg, Mutation } from "type-graphql";
 import { Repository, Transaction, TransactionRepository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
@@ -67,14 +68,14 @@ export default class AccountResolver {
   async CheckIsTokenValid(
     @Arg("token") token: string
   ): Promise<LoginOrRegisterStatus> {
-    const { valid, info } = validateToken(token);
+    const validateRes = validateToken(token);
 
-    if (valid) {
+    if (validateRes.valid) {
       return new LoginOrRegisterStatusHandler(
         true,
         RESPONSE_INDICATOR.SUCCESS,
         token,
-        info!.exp
+        validateRes.info.exp
       );
     } else {
       return new LoginOrRegisterStatusHandler(
