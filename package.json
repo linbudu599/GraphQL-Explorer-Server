@@ -81,7 +81,7 @@
     "dataloader": "^2.0.0",
     "dotenv": "^8.2.0",
     "graphql": "^15.3.0",
-    "graphql-scalars": "^1.5.0",
+    "graphql-scalars": "^1.6.1",
     "graphql-tag": "^2.11.0",
     "graphql-voyager": "^1.0.0-rc.31",
     "graphqldoc": "^2.5.2",
