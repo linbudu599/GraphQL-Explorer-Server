@@ -114,7 +114,7 @@
     "@babel/runtime": "^7.11.2",
     "@graphql-codegen/cli": "^1.19.2",
     "@graphql-codegen/fragment-matcher": "^2.0.0",
-    "@graphql-codegen/introspection": "^1.18.0",
+    "@graphql-codegen/introspection": "^1.18.1",
     "@graphql-codegen/time": "^2.0.1",
     "@graphql-codegen/typescript": "^1.17.11",
     "@graphql-codegen/typescript-operations": "^1.17.10",
