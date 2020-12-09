@@ -9,9 +9,9 @@
     "client/src",
     "client/.cache",
     "server/logs",
-    "server/generated",
-    "server/entity/factories",
-    "server/entity/seeds",
+    "server/generated/",
+    "server/entity/factories/",
+    "server/entity/seeds/",
     "/**/*.json",
     "/**/*.graphql",
     "/**/*.gql"

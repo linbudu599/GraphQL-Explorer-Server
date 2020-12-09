@@ -1,4 +1,5 @@
 const net = require("net");
+const chalk = require("chalk");
 
 async function isPortInService(port) {
   return new Promise((resolve, reject) => {
@@ -19,4 +20,16 @@ async function isPortInService(port) {
   });
 }
 
+function logData(msg) {
+  console.log(chalk.green(msg));
+}
+
+function infoData(msg) {
+  console.log(chalk.cyan(msg));
+}
+
 exports.isPortInService = isPortInService;
+
+exports.logData = logData;
+
+exports.infoData = infoData;

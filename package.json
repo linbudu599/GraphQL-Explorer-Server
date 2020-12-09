@@ -18,6 +18,7 @@
     "voyager": "serve -s voyager",
     "gen:code": "graphql-codegen --config codegen.yml",
     "gen:docs": "rimraf -rf ./docs && graphdoc --force",
+    "gen": " node ./scripts/gen/main.js --docs --code",
     "serve:docs": "npm run gen:docs && serve -s docs",
     "commit": "git add -A && git-cz",
     "typecheck": "tsc --noEmit",
