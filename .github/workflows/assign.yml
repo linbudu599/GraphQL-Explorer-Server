@@ -1,12 +1,15 @@
 name: Assign To Myself
 
-on: [pull_request_target]
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   assign:
     runs-on: ubuntu-latest
-
-steps:
+    steps:
       - name: Assign User
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
