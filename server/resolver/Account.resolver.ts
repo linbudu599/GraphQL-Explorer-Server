@@ -1,4 +1,3 @@
-import { validate } from "class-validator";
 import { Resolver, Query, Arg, Mutation } from "type-graphql";
 import { Repository, Transaction, TransactionRepository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
@@ -22,49 +21,59 @@ export default class AccountResolver {
     private readonly accountRepository: Repository<Account>
   ) {}
 
-  @Query(() => LoginOrRegisterStatus)
+  @Query(() => LoginOrRegisterStatus, {
+    nullable: false,
+    description: "账号登录",
+  })
   async AccountLogin(
     @Arg("account") { accountName, accountPwd, loginType }: AccountLoginInput
   ): Promise<LoginOrRegisterStatus> {
-    const account = await this.accountRepository.findOne({ accountName });
+    try {
+      const account = await this.accountRepository.findOne({ accountName });
 
-    if (!account) {
+      if (!account) {
+        return new LoginOrRegisterStatusHandler(
+          false,
+          RESPONSE_INDICATOR.NOT_FOUND,
+          ""
+        );
+      }
+
+      const { accountPwd: savedPwd, accountType: savedType } = account;
+      const pass = compare(accountPwd, savedPwd);
+
+      if (!pass) {
+        return new LoginOrRegisterStatusHandler(
+          false,
+          RESPONSE_INDICATOR.INCORRECT_PWD,
+          ""
+        );
+      }
+
+      if (savedType !== loginType) {
+        return new LoginOrRegisterStatusHandler(
+          false,
+          RESPONSE_INDICATOR.INVALID_LOGIN_TYPE,
+          ""
+        );
+      }
+
+      const token = dispatchToken(accountName, loginType);
+
       return new LoginOrRegisterStatusHandler(
-        false,
-        RESPONSE_INDICATOR.NOT_FOUND,
-        ""
+        true,
+        RESPONSE_INDICATOR.SUCCESS,
+        token
       );
+    } catch (error) {
+      return new LoginOrRegisterStatusHandler(false, JSON.stringify(error), "");
     }
-
-    const { accountPwd: savedPwd, accountType: savedType } = account;
-    const pass = compare(accountPwd, savedPwd);
-
-    if (!pass) {
-      return new LoginOrRegisterStatusHandler(
-        false,
-        RESPONSE_INDICATOR.INCORRECT_PWD,
-        ""
-      );
-    }
-
-    if (savedType !== loginType) {
-      return new LoginOrRegisterStatusHandler(
-        false,
-        RESPONSE_INDICATOR.INVALID_LOGIN_TYPE,
-        ""
-      );
-    }
-
-    const token = dispatchToken(accountName, loginType);
-
-    return new LoginOrRegisterStatusHandler(
-      true,
-      RESPONSE_INDICATOR.SUCCESS,
-      token
-    );
   }
 
-  @Query(() => LoginOrRegisterStatus)
+  @Query(() => LoginOrRegisterStatus, {
+    nullable: false,
+    description: "检验token是否合法",
+  })
   async CheckIsTokenValid(
     @Arg("token") token: string
   ): Promise<LoginOrRegisterStatus> {
@@ -88,7 +97,10 @@ export default class AccountResolver {
   }
 
   @Transaction()
-  @Mutation(() => LoginOrRegisterStatus, { nullable: false })
+  @Mutation(() => LoginOrRegisterStatus, {
+    nullable: false,
+    description: "新用户注册",
+  })
   async AccountRegistry(
     @Arg("account") account: AccountRegistryInput,
     @TransactionRepository(Account)
@@ -121,7 +133,10 @@ export default class AccountResolver {
   }
 
   @Transaction()
-  @Mutation(() => LoginOrRegisterStatus, { nullable: false })
+  @Mutation(() => LoginOrRegisterStatus, {
+    nullable: false,
+    description: "修改密码",
+  })
   async ModifyPassword(
     @Arg("accountName") accountName: string,
     @Arg("accountName") newPassword: string,
@@ -155,5 +170,31 @@ export default class AccountResolver {
     } catch (error) {
       return new LoginOrRegisterStatusHandler(false, JSON.stringify(error), "");
     }
+  }
+
+  @Transaction()
+  @Mutation(() => LoginOrRegisterStatus, {
+    nullable: false,
+    description: "用户永久注销",
+  })
+  async AccountDestory() {
+    return new LoginOrRegisterStatusHandler(
+      true,
+      RESPONSE_INDICATOR.UNDER_DEVELOPING,
+      ""
+    );
+  }
+
+  @Transaction()
+  @Mutation(() => LoginOrRegisterStatus, {
+    nullable: false,
+    description: "提升或下降用户权限等级",
+  })
+  async AccountLevelMutate() {
+    return new LoginOrRegisterStatusHandler(
+      true,
+      RESPONSE_INDICATOR.UNDER_DEVELOPING,
+      ""
+    );
   }
 }

@@ -23,10 +23,13 @@ export default class RecipeResolver {
 
   constructor(private readonly recipeService: RecipeService) {
     // created for each request (scoped)
-    log("RecipeService Created!");
+    log("=== recipeService Created! ===");
   }
 
-  @Query(() => [RecipeUnionResult])
+  @Query(() => [RecipeUnionResult], {
+    nullable: false,
+    description: "返回所有菜谱 厨师 和咸鱼",
+  })
   async QueryRecipeUnions(
     @Arg("cookName") cookName: string
   ): Promise<typeof RecipeUnionResult[]> {
@@ -39,7 +42,7 @@ export default class RecipeResolver {
     return [...recipes, ...cooks, ...this.saltFishes];
   }
 
-  @Query(() => [Recipe])
+  @Query(() => [Recipe], { nullable: false, description: "基于难度查找菜谱" })
   async QueryRecipesByDifficulty(
     @Arg("difficulty", (type) => Difficulty, { nullable: true })
     difficulty?: Difficulty
@@ -55,7 +58,7 @@ export default class RecipeResolver {
     return res;
   }
 
-  @Query(() => [Recipe])
+  @Query(() => [Recipe], { nullable: false, description: "基于作料查找菜谱" })
   async QueryRecipesByIngredients(
     @Arg("ingredients", () => [String], { nullable: true })
     ingredients: string[]

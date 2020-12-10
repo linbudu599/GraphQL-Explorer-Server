@@ -20,7 +20,10 @@ export default class PublicResolver {
     private readonly publicService: PublicService
   ) {}
 
-  @Query(() => [LevelQueryResult])
+  @Query(() => [LevelQueryResult], {
+    nullable: false,
+    description: "基于级别获取所有执行者与任务",
+  })
   async QueryByDifficultyLevel(
     @Arg("difficulty", (type) => DifficultyLevel, { nullable: true })
     difficulty: DifficultyLevel,
@@ -51,7 +54,7 @@ export default class PublicResolver {
     return [...filterExecutors, ...filterTasks];
   }
 
-  @Query(() => Date)
+  @Query(() => Date, { nullable: false, description: "容器注册时间" })
   async ContainerRegisterTime() {
     const registerDate = await this.publicService.ContainerRegisterTime();
     return registerDate;
