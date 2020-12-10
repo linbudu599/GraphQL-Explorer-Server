@@ -3,6 +3,15 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+type Account implements IAccount {
+  accountId: ID!
+  accountName: String!
+  accountPwd: String!
+  accountType: AccountType!
+  lastUpdateDate: Timestamp!
+  registryDate: Timestamp!
+}
+
 """
 Login Input Type
 """
@@ -19,6 +28,15 @@ input AccountRegistryInput {
   accountName: String!
   accountPwd: String!
   loginType: AccountType
+}
+
+"""
+Primitive Response Status Indicator
+"""
+type AccountStatus implements IBaseStatus {
+  data: [Account!]
+  message: String!
+  success: Boolean!
 }
 
 """
@@ -89,6 +107,10 @@ enum DifficultyLevel {
 type Executor implements IExecutor {
   age: Float!
   desc: String!
+
+  """
+  获取对象类型的执行者描述
+  """
   ExecutorDescField: ExecutorDesc!
   isFool: Boolean!
   job: Job!
@@ -146,6 +168,18 @@ input ExecutorUpdateInput {
   name: String
   region: Region
   uid: String!
+}
+
+"""
+Account Interface Type
+"""
+interface IAccount {
+  accountId: ID!
+  accountName: String!
+  accountPwd: String!
+  accountType: AccountType!
+  lastUpdateDate: Timestamp!
+  registryDate: Timestamp!
 }
 
 """
@@ -238,24 +272,120 @@ type LoginOrRegisterStatus implements IBaseStatus {
 }
 
 type Mutation {
+  """
+  用户永久注销
+  """
+  AccountDestory: LoginOrRegisterStatus!
+
+  """
+  提升或下降用户权限等级
+  """
+  AccountLevelMutate: LoginOrRegisterStatus!
+
+  """
+  新用户注册
+  """
   AccountRegistry(account: AccountRegistryInput!): LoginOrRegisterStatus!
+
+  """
+  指派任务
+  """
   AssignTask(taskId: String!, uid: String!): TaskStatus!
+
+  """
+  添加执行者
+  """
   CreateExecutor(newExecutorInfo: ExecutorCreateInput!): ExecutorStatus!
+
+  """
+  创建任务同时关联到实体
+  """
   CreateNewTask(taskCreateParam: TaskCreateInput!): TaskStatus!
+
+  """
+  新增实体，同时新增任务
+  """
+  CreateSubstanceAndTask: SubstanceStatus!
+
+  """
+  仅新增实体
+  """
+  CreateSubstanceOnly: SubstanceStatus!
+
+  """
+  删除执行者
+  """
   DeleteExecutor(uid: String!): ExecutorStatus!
+
+  """
+  删除任务
+  """
   DeleteTask(taskId: Float!): TaskStatus!
-  ModifyPassword(accountName: String!): LoginOrRegisterStatus!
+
+  """
+  冻结
+  """
+  FreezeTask: TaskStatus!
+
+  """
+  修改密码
+  """
+  ModifyPassword(
+    accountName: String!
+    newPassword: String!
+  ): LoginOrRegisterStatus!
+
+  """
+  变更实体基本信息
+  """
+  MutateSubstanceInfo: SubstanceStatus!
+
+  """
+  变更实体威胁级别
+  """
+  MutateSubstanceLevel: SubstanceStatus!
+
+  """
+  变更任务级别
+  """
+  MutateTaskLevel: TaskStatus!
   publisherMutation(message: String): Boolean!
   pubSubMutation(message: String): Boolean!
   pubSubMutationToDynamicTopic(message: String, topic: String!): Boolean!
+
+  """
+  变更实体存活状态
+  """
+  ToggleSubstanceAlive: SubstanceStatus!
+
+  """
+  变更实体收容状态
+  """
+  ToggleSubstanceAsylume: SubstanceStatus!
+
+  """
+  变更任务状态
+  """
   ToggleTaskStatus(taskId: Float!): TaskStatus!
+
+  """
+  更新执行者基本信息
+  """
   UpdateExecutorBasicInfo(
     modifiedExecutorInfo: ExecutorUpdateInput!
-  ): ExecutorStatus
+  ): ExecutorStatus!
+
+  """
+  更新执行者描述
+  """
   UpdateExecutorDesc(
     uid: String!
     userDesc: ExecutorDescUpdateInput!
-  ): ExecutorStatus
+  ): ExecutorStatus!
+
+  """
+  变更任务基本信息
+  """
   UpdateTaskInfo(taskUpdateParam: TaskUpdateInput!): TaskStatus!
 }
 
@@ -274,16 +404,53 @@ input PaginationOptions {
 }
 
 type Query {
+  """
+  账号登录
+  """
   AccountLogin(account: AccountLoginInput!): LoginOrRegisterStatus!
+
+  """
+  检验token是否合法
+  """
   CheckIsTokenValid(token: String!): LoginOrRegisterStatus!
+
+  """
+  容器注册时间
+  """
   ContainerRegisterTime: Timestamp!
   currentDate: Timestamp!
+
+  """
+  获取所有执行者
+  """
   Executors(pagination: PaginationOptions): ExecutorStatus!
+
+  """
+  查询所有用户
+  """
+  QueryAllAccounts: AccountStatus!
+
+  """
+  查找所有实体信息
+  """
   QueryAllSubstances(pagination: PaginationOptions): SubstanceStatus!
+
+  """
+  获取所有任务
+  """
+  QueryAllTasks(pagination: PaginationOptions): TaskStatus!
+
+  """
+  基于级别获取所有执行者与任务
+  """
   QueryByDifficultyLevel(
     difficulty: DifficultyLevel
     pagination: PaginationOptions
   ): [LevelQueryResult!]!
+
+  """
+  根据基本条件查找执行者
+  """
   QueryExecutorByConditions(
     age: Int
     isFool: Boolean
@@ -294,20 +461,61 @@ type Query {
     satisfaction: Int
     successRate: Int
   ): ExecutorStatus!
+
+  """
+  根据描述（等级、成功率、评分）查找执行者
+  """
   QueryExecutorByDesc(
     level: DifficultyLevel
     pagination: PaginationOptions
     satisfaction: Int
     successRate: Int
   ): ExecutorStatus!
+
+  """
+  查找特定执行者
+  """
   QueryExecutorById(uid: String!): ExecutorStatus!
+
+  """
+  查询执行者当前被分配的任务
+  """
   QueryExecutorTasks(uid: Float!): TaskStatus!
+
+  """
+  基于难度查找菜谱
+  """
   QueryRecipesByDifficulty(difficulty: Difficulty): [Recipe!]!
+
+  """
+  基于作料查找菜谱
+  """
   QueryRecipesByIngredients(ingredients: [String!]): [Recipe!]!
-  QueryRecipeUnions(cookName: String!): [RecipeUnionResult!]!
-  QueryTaskAssignee(taskId: Float!): ExecutorStatus!
+
+  """
+  返回所有菜谱 厨师 和 咸鱼!
+  """
+  QueryRecipeUnions: [RecipeUnionResult!]!
+
+  """
+  基于条件查找实体
+  """
+  QuerySubstanceByConditions: SubstanceStatus!
+
+  """
+  基于ID查找实体
+  """
+  QuerySubstanceById: SubstanceStatus!
+
+  """
+  基于威胁级别查找实体
+  """
+  QuerySubstanceByLevel: SubstanceStatus!
+
+  """
+  基于ID获取任务
+  """
   QueryTaskByID(taskId: Float!): TaskStatus!
-  Tasks(pagination: PaginationOptions): TaskStatus!
 }
 
 """

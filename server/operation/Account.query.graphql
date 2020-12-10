@@ -1,0 +1,36 @@
+fragment AccountFields on Account {
+  accountId
+  accountPwd
+  accountType
+  registryDate
+  lastUpdateDate
+}
+
+query AccountQuery {
+  QueryAllAccounts {
+    success
+    message
+    data {
+      ...AccountFields
+    }
+  }
+
+  AccountLogin(
+    account: {
+      accountName: "xxxxxx"
+      accountPwd: "xxxxxxxxxx"
+      loginType: VISITOR
+    }
+  ) {
+    success
+    message
+    token
+    expiredDate
+  }
+
+  CheckIsTokenValid(token: "xxxx") {
+    success
+    message
+    expiredDate
+  }
+}

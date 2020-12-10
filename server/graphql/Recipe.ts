@@ -4,6 +4,7 @@ import {
   Int,
   registerEnumType,
   createUnionType,
+  Directive,
 } from "type-graphql";
 
 export enum Difficulty {
@@ -30,8 +31,11 @@ registerEnumType(CompanyScale, {
   description: "Company Scale",
 });
 
+@Directive("@cacheControl(maxAge: 1000)")
 @ObjectType({
   description: "Recipe >>> Cook >>> WorkExperience >> Company",
+  // skip auth & middleware stack & ...
+  simpleResolvers: true,
 })
 export class Company {
   @Field()
@@ -46,7 +50,7 @@ export class Company {
   @Field()
   description!: string;
 }
-
+@Directive("@cacheControl(maxAge: 1000)")
 @ObjectType({ description: "Recipe >>> Cook >>> WorkExperience" })
 export class WorkExperience {
   @Field((type) => Company)
@@ -59,6 +63,7 @@ export class WorkExperience {
   workYears!: number;
 }
 
+@Directive("@cacheControl(maxAge: 1000)")
 @ObjectType({ description: "Recipe >>> Cook" })
 export class Cook {
   @Field()
@@ -71,6 +76,7 @@ export class Cook {
   experience!: WorkExperience;
 }
 
+@Directive("@cacheControl(maxAge: 1000)")
 @ObjectType({ description: "Recipe Type" })
 export class Recipe {
   @Field()
@@ -89,6 +95,7 @@ export class Recipe {
   cook!: Cook;
 }
 
+@Directive("@cacheControl(maxAge: 1000)")
 @ObjectType({
   description: "useless object type in union type, just for funny:)",
 })

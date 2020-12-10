@@ -41,7 +41,7 @@ export enum ACCOUNT_TYPE {
   DOMINATOR,
 }
 
-export const MAX_ALLOWED_COMPLEXITY = 10;
+export const MAX_ALLOWED_COMPLEXITY = 30;
 
 // https://github.com/vercel/ms
 export const TOKEN_EXPIRED_IN = "7d";
