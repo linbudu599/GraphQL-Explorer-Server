@@ -18,7 +18,6 @@ import Executor, { ExecutorDesc } from "../entity/Executor";
 import Task from "../entity/Task";
 
 import ExecutorService from "../service/Executor.service";
-import PublicService from "../service/Public.service";
 
 import {
   ExecutorCreateInput,
@@ -34,7 +33,7 @@ import {
   ExecutorStatus,
 } from "../graphql/Common";
 
-import { ACCOUNT_AUTH, RESPONSE_INDICATOR } from "../utils/constants";
+import { RESPONSE_INDICATOR } from "../utils/constants";
 import { InjectCurrentUser, CustomArgsValidation } from "../decorators";
 
 import { ExtraFieldLogMiddlewareGenerator } from "../middleware/log";

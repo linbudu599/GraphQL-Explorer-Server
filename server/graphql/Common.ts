@@ -4,6 +4,7 @@ import { Field, ObjectType, InputType, Int, InterfaceType } from "type-graphql";
 import Executor from "../entity/Executor";
 import Task from "../entity/Task";
 import Substance from "../entity/Substance";
+import Account from "../entity/Account";
 
 @InterfaceType({ description: "Basic Status Wrapper" })
 export class IBaseStatus {
@@ -12,6 +13,15 @@ export class IBaseStatus {
 
   @Field({ nullable: false })
   message!: string;
+}
+
+@ObjectType({
+  implements: IBaseStatus,
+  description: "Primitive Response Status Indicator",
+})
+export class AccountStatus extends IBaseStatus {
+  @Field(() => [Account], { nullable: true })
+  data?: Account[];
 }
 
 @ObjectType({

@@ -1,0 +1,21 @@
+mutation AccountMutation {
+  AccountRegistry(
+    account: {
+      accountName: "xxxxxx"
+      accountPwd: "xxxxxxxxxx"
+      loginType: VISITOR
+    }
+  ) {
+    success
+    message
+    token
+    expiredDate
+  }
+
+  ModifyPassword(accountName: "xxxxxx", newPassword: "xxsdefqaf") {
+    success
+    message
+    token
+    expiredDate
+  }
+}

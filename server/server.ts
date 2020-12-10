@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import "apollo-cache-control";
 import { Context } from "koa";
 import path from "path";
 import { getOperationAST } from "graphql";
@@ -143,7 +144,6 @@ export default async (): Promise<ApolloServer> => {
       };
     },
     introspection: dev,
-    // tracing: true,
     // engine: true,
     // formatError: () => {},
     formatResponse: (

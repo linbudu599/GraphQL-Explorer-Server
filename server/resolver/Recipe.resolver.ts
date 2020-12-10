@@ -1,5 +1,5 @@
 import { Service } from "typedi";
-import { Resolver, Query, Arg } from "type-graphql";
+import { Resolver, Query, Arg, UseMiddleware } from "type-graphql";
 
 import {
   RecipeUnionResult,
@@ -11,13 +11,16 @@ import {
 
 import RecipeService from "../service/Recipe.service";
 
+import CacheControl, { RecipeCacheHint } from "../middleware/cacheControl";
+import CacheMiddleware from "../middleware/cache";
+
 import { log } from "../utils/helper";
 import { sampleCooks, sampleRecipes, sampleSaltFishes } from "../utils/mock";
 
 @Service()
 @Resolver()
 export default class RecipeResolver {
-  private recipesData: Recipe[] = sampleRecipes;
+  private recipes: Recipe[] = sampleRecipes;
   private cooks: Cook[] = sampleCooks;
   private saltFishes: SaltFish[] = sampleSaltFishes;
 
@@ -28,18 +31,16 @@ export default class RecipeResolver {
 
   @Query(() => [RecipeUnionResult], {
     nullable: false,
-    description: "返回所有菜谱 厨师 和咸鱼",
+    description: "返回所有菜谱 厨师 和 咸鱼!",
   })
-  async QueryRecipeUnions(
-    @Arg("cookName") cookName: string
-  ): Promise<typeof RecipeUnionResult[]> {
-    const recipes = this.recipesData.filter((recipe) =>
-      recipe.cook.name.match(cookName)
-    );
-
-    const cooks = this.cooks.filter((cook) => cook.name.match(cookName));
-
-    return [...recipes, ...cooks, ...this.saltFishes];
+  @UseMiddleware(CacheMiddleware)
+  @CacheControl(RecipeCacheHint)
+  async QueryRecipeUnions(): Promise<typeof RecipeUnionResult[]> {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve([...this.recipes, ...this.cooks, ...this.saltFishes]);
+      }, 500);
+    });
   }
 
   @Query(() => [Recipe], { nullable: false, description: "基于难度查找菜谱" })

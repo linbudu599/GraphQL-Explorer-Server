@@ -7,19 +7,35 @@ import { RESPONSE_INDICATOR } from "../utils/constants";
 import { encode, compare } from "../utils/bcrypt";
 
 import {
+  AccountStatus,
   LoginOrRegisterStatus,
   LoginOrRegisterStatusHandler,
+  StatusHandler,
 } from "../graphql/Common";
 import { AccountRegistryInput, AccountLoginInput } from "../graphql/Account";
 
 import Account from "../entity/Account";
 
-@Resolver((of) => LoginOrRegisterStatus)
+@Resolver((of) => Account)
 export default class AccountResolver {
   constructor(
     @InjectRepository(Account)
     private readonly accountRepository: Repository<Account>
   ) {}
+
+  // Private
+  @Query(() => AccountStatus, {
+    nullable: false,
+    description: "查询所有用户",
+  })
+  async QueryAllAccounts(): Promise<AccountStatus> {
+    try {
+      const accounts = await this.accountRepository.find();
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, accounts);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
+  }
 
   @Query(() => LoginOrRegisterStatus, {
     nullable: false,
@@ -139,8 +155,7 @@ export default class AccountResolver {
   })
   async ModifyPassword(
     @Arg("accountName") accountName: string,
-    @Arg("accountName") newPassword: string,
-
+    @Arg("newPassword") newPassword: string,
     @TransactionRepository(Account)
     accountTransRepo: Repository<Account>
   ): Promise<LoginOrRegisterStatus> {
@@ -148,7 +163,8 @@ export default class AccountResolver {
       const isExistingAccount = await this.accountRepository.findOne({
         accountName,
       });
-      if (isExistingAccount) {
+
+      if (!isExistingAccount) {
         return new LoginOrRegisterStatusHandler(
           false,
           RESPONSE_INDICATOR.NOT_FOUND
@@ -162,10 +178,12 @@ export default class AccountResolver {
         }
       );
 
+      const token = dispatchToken(accountName, isExistingAccount.accountType);
+
       return new LoginOrRegisterStatusHandler(
         true,
         RESPONSE_INDICATOR.SUCCESS,
-        ""
+        token
       );
     } catch (error) {
       return new LoginOrRegisterStatusHandler(false, JSON.stringify(error), "");
