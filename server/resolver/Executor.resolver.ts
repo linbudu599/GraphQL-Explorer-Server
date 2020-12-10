@@ -46,13 +46,13 @@ export default class ExecutorResolver {
   constructor(
     @InjectRepository(Executor)
     private readonly executorRepository: Repository<Executor>,
-    private readonly executorService: ExecutorService,
-    private readonly publicService: PublicService
+    private readonly executorService: ExecutorService
   ) {}
 
-  // 先给个最低权限
-  @Authorized(ACCOUNT_AUTH.UN_LOGIN)
-  @Query(() => ExecutorStatus)
+  @Query(() => ExecutorStatus, {
+    nullable: false,
+    description: "获取所有执行者",
+  })
   @UseMiddleware(ExtraFieldLogMiddlewareGenerator("Check All ExecutorS"))
   async Executors(
     @Ctx() ctx: IContext,
@@ -77,7 +77,10 @@ export default class ExecutorResolver {
     }
   }
 
-  @Query(() => ExecutorStatus)
+  @Query(() => ExecutorStatus, {
+    nullable: false,
+    description: "查找特定执行者",
+  })
   async QueryExecutorById(@Arg("uid") uid: string): Promise<ExecutorStatus> {
     const executor = await this.executorRepository.findOne(
       { uid },
@@ -91,7 +94,10 @@ export default class ExecutorResolver {
     return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [executor]);
   }
 
-  @Query(() => ExecutorStatus)
+  @Query(() => ExecutorStatus, {
+    nullable: false,
+    description: "根据基本条件查找执行者",
+  })
   @CustomArgsValidation(ExecutorQueryArgs)
   async QueryExecutorByConditions(
     @Args({ validate: false }) conditions: ExecutorQueryArgs
@@ -109,7 +115,10 @@ export default class ExecutorResolver {
     }
   }
 
-  @Query(() => ExecutorStatus)
+  @Query(() => ExecutorStatus, {
+    nullable: false,
+    description: "根据描述（等级、成功率、评分）查找执行者",
+  })
   async QueryExecutorByDesc(
     @Args() desc: ExecutorDescQuery,
     @Arg("pagination", { nullable: true })
@@ -119,7 +128,6 @@ export default class ExecutorResolver {
     const { level, successRate, satisfaction } = desc;
 
     const executors = await this.executorService.Executors(cursor!, offset!);
-    console.log(desc);
     const filterExecutors = executors.filter((executor) => {
       const descObj = JSON.parse(executor.desc) as IExecutorDesc;
       const levelEqual =
@@ -142,7 +150,10 @@ export default class ExecutorResolver {
   }
 
   @Transaction()
-  @Mutation(() => ExecutorStatus)
+  @Mutation(() => ExecutorStatus, {
+    nullable: false,
+    description: "添加执行者",
+  })
   async CreateExecutor(
     @Arg("newExecutorInfo") Executor: ExecutorCreateInput,
     @TransactionRepository(Executor)
@@ -163,9 +174,11 @@ export default class ExecutorResolver {
     }
   }
 
-  // 更新ExecutorDesc字段
   @Transaction()
-  @Mutation(() => ExecutorStatus, { nullable: true })
+  @Mutation(() => ExecutorStatus, {
+    nullable: false,
+    description: "更新执行者描述",
+  })
   async UpdateExecutorDesc(
     @Arg("uid") uid: string,
     @Arg("userDesc") desc: ExecutorDescUpdateInput,
@@ -197,7 +210,10 @@ export default class ExecutorResolver {
   }
 
   @Transaction()
-  @Mutation(() => ExecutorStatus, { nullable: true })
+  @Mutation(() => ExecutorStatus, {
+    nullable: false,
+    description: "更新执行者基本信息",
+  })
   async UpdateExecutorBasicInfo(
     @Arg("modifiedExecutorInfo") Executor: ExecutorUpdateInput,
     @TransactionRepository(Executor)
@@ -226,7 +242,10 @@ export default class ExecutorResolver {
   }
 
   @Transaction()
-  @Mutation(() => ExecutorStatus)
+  @Mutation(() => ExecutorStatus, {
+    nullable: false,
+    description: "删除执行者",
+  })
   async DeleteExecutor(
     @Arg("uid") uid: string,
     @TransactionRepository(Executor)
@@ -270,16 +289,19 @@ export default class ExecutorResolver {
     }
   }
 
-  @FieldResolver(() => Int)
+  @FieldResolver(() => Int, { nullable: false, description: "字段级解析器" })
   async spAgeField(
     @Root() executor: Executor,
     @Arg("param", { nullable: true }) param?: number
   ): Promise<number> {
     // ... do sth addtional here
-    return executor.age;
+    return executor.age ?? 990;
   }
 
-  @FieldResolver(() => ExecutorDesc)
+  @FieldResolver(() => ExecutorDesc, {
+    nullable: false,
+    description: "获取对象类型的执行者描述",
+  })
   async ExecutorDescField(
     @Root() executor: Executor
   ): Promise<ExecutorDesc | null> {
@@ -290,10 +312,4 @@ export default class ExecutorResolver {
       return null;
     }
   }
-
-  // @Query(() => Date)
-  // async ContainerRegisterTime() {
-  //   const registerDate = await this.publicService.ContainerRegisterTime();
-  //   return registerDate;
-  // }
 }

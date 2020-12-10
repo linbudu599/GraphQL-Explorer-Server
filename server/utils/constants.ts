@@ -14,6 +14,7 @@ export enum ACCOUNT_AUTH {
   ADMIN = 1,
 }
 
+// TODO: 需要更详尽的错误码+信息提示
 export enum RESPONSE_INDICATOR {
   NOT_FOUND = "Resource Not Found",
   EXISTED = "Resource Existed",
@@ -27,6 +28,7 @@ export enum RESPONSE_INDICATOR {
   QUERY_NOT_ALLOWED = "Query Not Allowed",
   MUTATION_NOT_ALLOWED = "Mutation Not Allowed",
   HIGHER_AUTH_REQUIRED = "Higher Auth Required",
+  UNDER_DEVELOPING = "Interface Under Developing",
 }
 
 export enum ACCOUNT_TYPE {

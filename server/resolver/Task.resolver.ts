@@ -9,12 +9,12 @@ import {
   PaginationOptions,
   StatusHandler,
   TaskStatus,
-  ExecutorStatus,
 } from "../graphql/Common";
 import { TaskCreateInput, TaskUpdateInput } from "../graphql/Task";
 
 import { RESPONSE_INDICATOR } from "../utils/constants";
 
+// TODO: 可选是否联查执行者、关联实体信息
 @Resolver((of) => Task)
 export default class TaskResolver {
   constructor(
@@ -23,8 +23,8 @@ export default class TaskResolver {
     @InjectRepository(Task) private readonly taskRepository: Repository<Task>
   ) {}
 
-  @Query(() => TaskStatus)
-  async Tasks(
+  @Query(() => TaskStatus, { nullable: false, description: "获取所有任务" })
+  async QueryAllTasks(
     @Arg("pagination", { nullable: true })
     pagination: PaginationOptions
   ): Promise<TaskStatus> {
@@ -41,7 +41,7 @@ export default class TaskResolver {
     }
   }
 
-  @Query(() => TaskStatus)
+  @Query(() => TaskStatus, { nullable: false, description: "基于ID获取任务" })
   async QueryTaskByID(@Arg("taskId") taskId: number): Promise<TaskStatus> {
     try {
       const res = await this.taskRepository.findOne({
@@ -57,29 +57,10 @@ export default class TaskResolver {
     }
   }
 
-  @Query(() => ExecutorStatus)
-  async QueryTaskAssignee(
-    @Arg("taskId") taskId: number
-  ): Promise<ExecutorStatus> {
-    try {
-      const res = await this.taskRepository.findOne({
-        where: {
-          taskId,
-        },
-        relations: ["assignee"],
-      });
-
-      return new StatusHandler(
-        true,
-        RESPONSE_INDICATOR.SUCCESS,
-        res ? [res.assignee] : []
-      );
-    } catch (error) {
-      return new StatusHandler(false, JSON.stringify(error), []);
-    }
-  }
-
-  @Query(() => TaskStatus)
+  @Query(() => TaskStatus, {
+    nullable: false,
+    description: "查询执行者当前被分配的任务",
+  })
   async QueryExecutorTasks(@Arg("uid") uid: number) {
     try {
       const res = await this.taskRepository.find({
@@ -96,7 +77,7 @@ export default class TaskResolver {
   }
 
   @Transaction()
-  @Mutation(() => TaskStatus)
+  @Mutation(() => TaskStatus, { nullable: false, description: "变更任务状态" })
   async ToggleTaskStatus(
     @Arg("taskId") taskId: number,
     @TransactionRepository(Task) taskTransRepo: Repository<Task>
@@ -122,7 +103,7 @@ export default class TaskResolver {
   }
 
   @Transaction()
-  @Mutation(() => TaskStatus)
+  @Mutation(() => TaskStatus, { nullable: false, description: "删除任务" })
   async DeleteTask(
     @Arg("taskId") taskId: number,
     @TransactionRepository(Task) taskTransRepo: Repository<Task>
@@ -146,8 +127,12 @@ export default class TaskResolver {
     }
   }
 
+  // TODO: 强制要求在创建时就关联到实体
   @Transaction()
-  @Mutation(() => TaskStatus)
+  @Mutation(() => TaskStatus, {
+    nullable: false,
+    description: "创建任务同时关联到实体",
+  })
   async CreateNewTask(
     @Arg("taskCreateParam") param: TaskCreateInput,
     @TransactionRepository(Task)
@@ -162,7 +147,10 @@ export default class TaskResolver {
   }
 
   @Transaction()
-  @Mutation(() => TaskStatus)
+  @Mutation(() => TaskStatus, {
+    nullable: false,
+    description: "变更任务基本信息",
+  })
   async UpdateTaskInfo(
     @Arg("taskUpdateParam") param: TaskUpdateInput,
     @TransactionRepository(Task)
@@ -177,7 +165,7 @@ export default class TaskResolver {
   }
 
   @Transaction()
-  @Mutation(() => TaskStatus)
+  @Mutation(() => TaskStatus, { nullable: false, description: "指派任务" })
   async AssignTask(
     @Arg("taskId") taskId: string,
     @Arg("uid") uid: string,
@@ -208,5 +196,23 @@ export default class TaskResolver {
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
     }
+  }
+
+  @Transaction()
+  @Mutation(() => TaskStatus, {
+    nullable: false,
+    description: "变更任务级别",
+  })
+  async MutateTaskLevel(): Promise<TaskStatus> {
+    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+  }
+
+  @Transaction()
+  @Mutation(() => TaskStatus, {
+    nullable: false,
+    description: "冻结",
+  })
+  async FreezeTask(): Promise<TaskStatus> {
+    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
   }
 }
