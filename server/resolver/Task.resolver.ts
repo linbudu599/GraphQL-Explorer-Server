@@ -10,11 +10,15 @@ import {
   StatusHandler,
   TaskStatus,
 } from "../graphql/Common";
-import { TaskCreateInput, TaskUpdateInput } from "../graphql/Task";
+import {
+  TaskCreateInput,
+  TaskUpdateInput,
+  TaskRelationsInput,
+} from "../graphql/Task";
 
 import { RESPONSE_INDICATOR } from "../utils/constants";
+import { getTaskRelations } from "../utils/helper";
 
-// TODO: 可选是否联查执行者、关联实体信息
 @Resolver((of) => Task)
 export default class TaskResolver {
   constructor(
@@ -26,14 +30,17 @@ export default class TaskResolver {
   @Query(() => TaskStatus, { nullable: false, description: "获取所有任务" })
   async QueryAllTasks(
     @Arg("pagination", { nullable: true })
-    pagination: PaginationOptions
+    pagination: PaginationOptions,
+    @Arg("relations", { nullable: true }) relationOptions: TaskRelationsInput
   ): Promise<TaskStatus> {
     try {
       const { cursor, offset } = pagination ?? { cursor: 0, offset: 20 };
+      const relations = getTaskRelations(relationOptions);
+
       const res = await this.taskRepository.find({
         skip: cursor,
         take: offset,
-        relations: ["assignee", "taskSubstance"],
+        relations,
       });
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, res);
     } catch (error) {
@@ -42,13 +49,18 @@ export default class TaskResolver {
   }
 
   @Query(() => TaskStatus, { nullable: false, description: "基于ID获取任务" })
-  async QueryTaskByID(@Arg("taskId") taskId: number): Promise<TaskStatus> {
+  async QueryTaskByID(
+    @Arg("taskId") taskId: number,
+    @Arg("relations", { nullable: true }) relationOptions: TaskRelationsInput
+  ): Promise<TaskStatus> {
     try {
+      const relations = getTaskRelations(relationOptions);
+
       const res = await this.taskRepository.findOne({
         where: {
           taskId,
         },
-        relations: ["assignee"],
+        relations,
       });
 
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res] ?? []);
@@ -61,14 +73,20 @@ export default class TaskResolver {
     nullable: false,
     description: "查询执行者当前被分配的任务",
   })
-  async QueryExecutorTasks(@Arg("uid") uid: number) {
+  async QueryExecutorTasks(
+    @Arg("uid") uid: number,
+    @Arg("relations", { nullable: true }) relationOptions: TaskRelationsInput
+  ) {
     try {
+      const relations = getTaskRelations(relationOptions);
+
       const res = await this.taskRepository.find({
         where: {
           assignee: {
             uid,
           },
         },
+        relations,
       });
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, res);
     } catch (error) {

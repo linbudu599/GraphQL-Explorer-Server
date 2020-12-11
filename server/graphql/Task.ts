@@ -174,3 +174,13 @@ export class TaskCreateInput extends PublishTaskMixin(TaskInput) {}
 
 @InputType({ description: "Task Update Input" })
 export class TaskUpdateInput extends UpdateTaskMixin(TaskInput) {}
+
+// 以函数的形式来返回 实现更灵活的控制 比如某些时候默认join上指派者等
+@InputType({ description: "Task Relations Input" })
+export class TaskRelationsInput {
+  @Field({ nullable: true })
+  joinAssignee: boolean = false;
+
+  @Field({ nullable: true })
+  joinSubstance: boolean = false;
+}

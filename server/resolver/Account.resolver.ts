@@ -3,7 +3,7 @@ import { Repository, Transaction, TransactionRepository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import { dispatchToken, validateToken } from "../utils/jwt";
-import { RESPONSE_INDICATOR } from "../utils/constants";
+import { ACCOUNT_TYPE, RESPONSE_INDICATOR } from "../utils/constants";
 import { encode, compare } from "../utils/bcrypt";
 
 import {
@@ -11,10 +11,12 @@ import {
   LoginOrRegisterStatus,
   LoginOrRegisterStatusHandler,
   StatusHandler,
+  AccountUnionResult,
 } from "../graphql/Common";
 import { AccountRegistryInput, AccountLoginInput } from "../graphql/Account";
 
 import Account from "../entity/Account";
+import { plainToClass } from "class-transformer";
 
 @Resolver((of) => Account)
 export default class AccountResolver {
@@ -23,7 +25,7 @@ export default class AccountResolver {
     private readonly accountRepository: Repository<Account>
   ) {}
 
-  // Private
+  // TODO: Private
   @Query(() => AccountStatus, {
     nullable: false,
     description: "查询所有用户",
@@ -195,24 +197,88 @@ export default class AccountResolver {
     nullable: false,
     description: "用户永久注销",
   })
-  async AccountDestory() {
-    return new LoginOrRegisterStatusHandler(
-      true,
-      RESPONSE_INDICATOR.UNDER_DEVELOPING,
-      ""
-    );
+  async AccountDestory(
+    @Arg("accountName") accountName: string,
+    @Arg("accountPwd") accountPwd: string,
+    @TransactionRepository(Account)
+    accountTransRepo: Repository<Account>
+  ) {
+    try {
+      const isExistingAccount = await this.accountRepository.findOne({
+        accountName,
+      });
+
+      if (!isExistingAccount) {
+        return new LoginOrRegisterStatusHandler(
+          false,
+          RESPONSE_INDICATOR.NOT_FOUND
+        );
+      }
+      const {
+        accountPwd: savedPwd,
+        accountType: savedType,
+      } = isExistingAccount;
+      const pass = compare(accountPwd, savedPwd);
+
+      if (!pass) {
+        return new LoginOrRegisterStatusHandler(
+          false,
+          RESPONSE_INDICATOR.INCORRECT_PWD,
+          ""
+        );
+      }
+
+      const deleteRes = await accountTransRepo.delete({ accountName });
+
+      return new LoginOrRegisterStatusHandler(
+        true,
+        RESPONSE_INDICATOR.SUCCESS,
+        ""
+      );
+    } catch (error) {
+      return new LoginOrRegisterStatusHandler(false, JSON.stringify(error), "");
+    }
   }
 
   @Transaction()
-  @Mutation(() => LoginOrRegisterStatus, {
+  @Mutation(() => AccountUnionResult, {
     nullable: false,
     description: "提升或下降用户权限等级",
   })
-  async AccountLevelMutate() {
-    return new LoginOrRegisterStatusHandler(
-      true,
-      RESPONSE_INDICATOR.UNDER_DEVELOPING,
-      ""
-    );
+  async AccountLevelMutate(
+    @Arg("accountId") accountId: string,
+    @Arg("level", () => ACCOUNT_TYPE) level: ACCOUNT_TYPE,
+    @TransactionRepository(Account)
+    accountTransRepo: Repository<Account>
+  ): Promise<AccountStatus | LoginOrRegisterStatus> {
+    try {
+      const isExistingAccount = await this.accountRepository.findOne(accountId);
+
+      if (!isExistingAccount) {
+        return plainToClass(LoginOrRegisterStatus, {
+          success: false,
+          message: RESPONSE_INDICATOR.NOT_FOUND,
+        });
+      }
+
+      await accountTransRepo.update(accountId, {
+        accountType: level,
+      });
+
+      const updated = (await this.accountRepository.findOne(
+        accountId
+      )) as Account;
+
+      return plainToClass(AccountStatus, {
+        success: true,
+        message: RESPONSE_INDICATOR.SUCCESS,
+        data: [updated],
+      });
+    } catch (error) {
+      return plainToClass(LoginOrRegisterStatus, {
+        success: false,
+        message: JSON.stringify(error),
+      });
+    }
   }
 }

@@ -1,3 +1,18 @@
+fragment LoginOrRegistryFields on LoginOrRegisterStatus {
+  success
+  message
+  token
+  expiredDate
+}
+fragment AccountFields on Account {
+  accountId
+  accountName
+  accountPwd
+  accountType
+  registryDate
+  lastUpdateDate
+}
+
 mutation AccountMutation {
   AccountRegistry(
     account: {
@@ -6,16 +21,29 @@ mutation AccountMutation {
       loginType: VISITOR
     }
   ) {
-    success
-    message
-    token
-    expiredDate
+    ...LoginOrRegistryFields
   }
 
   ModifyPassword(accountName: "xxxxxx", newPassword: "xxsdefqaf") {
-    success
-    message
-    token
-    expiredDate
+    ...LoginOrRegistryFields
+  }
+
+  AccountDestory(accountName: "xxxxxx12", accountPwd: "xxxxxxxxxx") {
+    ...LoginOrRegistryFields
+  }
+
+  AccountLevelMutate(accountId: "1", level: ENTERPRISE) {
+    __typename
+    ... on LoginOrRegisterStatus {
+      ...LoginOrRegistryFields
+    }
+
+    ... on AccountStatus {
+      success
+      message
+      data {
+        ...AccountFields
+      }
+    }
   }
 }
