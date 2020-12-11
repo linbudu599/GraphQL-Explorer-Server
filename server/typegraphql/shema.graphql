@@ -52,6 +52,8 @@ enum AccountType {
   VISITOR
 }
 
+union AccountUnionResult = AccountStatus | LoginOrRegisterStatus
+
 """
 Recipe >>> Cook >>> WorkExperience >> Company
 """
@@ -275,12 +277,18 @@ type Mutation {
   """
   用户永久注销
   """
-  AccountDestory: LoginOrRegisterStatus!
+  AccountDestory(
+    accountName: String!
+    accountPwd: String!
+  ): LoginOrRegisterStatus!
 
   """
   提升或下降用户权限等级
   """
-  AccountLevelMutate: LoginOrRegisterStatus!
+  AccountLevelMutate(
+    accountId: String!
+    level: AccountType!
+  ): AccountUnionResult!
 
   """
   新用户注册
@@ -438,7 +446,10 @@ type Query {
   """
   获取所有任务
   """
-  QueryAllTasks(pagination: PaginationOptions): TaskStatus!
+  QueryAllTasks(
+    pagination: PaginationOptions
+    relations: TaskRelationsInput
+  ): TaskStatus!
 
   """
   基于级别获取所有执行者与任务
@@ -480,7 +491,7 @@ type Query {
   """
   查询执行者当前被分配的任务
   """
-  QueryExecutorTasks(uid: Float!): TaskStatus!
+  QueryExecutorTasks(relations: TaskRelationsInput, uid: Float!): TaskStatus!
 
   """
   基于难度查找菜谱
@@ -515,7 +526,7 @@ type Query {
   """
   基于ID获取任务
   """
-  QueryTaskByID(taskId: Float!): TaskStatus!
+  QueryTaskByID(relations: TaskRelationsInput, taskId: Float!): TaskStatus!
 }
 
 """
@@ -604,6 +615,14 @@ input TaskCreateInput {
   taskSource: Float
   taskTarget: Float
   taskTitle: String!
+}
+
+"""
+Task Relations Input
+"""
+input TaskRelationsInput {
+  joinAssignee: Boolean = false
+  joinSubstance: Boolean = false
 }
 
 """

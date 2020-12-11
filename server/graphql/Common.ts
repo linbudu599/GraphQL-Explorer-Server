@@ -1,5 +1,12 @@
 import { IsNumber, IsOptional, Max, Min } from "class-validator";
-import { Field, ObjectType, InputType, Int, InterfaceType } from "type-graphql";
+import {
+  Field,
+  ObjectType,
+  InputType,
+  Int,
+  InterfaceType,
+  createUnionType,
+} from "type-graphql";
 
 import Executor from "../entity/Executor";
 import Task from "../entity/Task";
@@ -105,3 +112,8 @@ export class PaginationOptions {
   @IsNumber()
   offset?: number;
 }
+
+export const AccountUnionResult = createUnionType({
+  name: "AccountUnionResult",
+  types: () => [LoginOrRegisterStatus, AccountStatus] as const,
+});
