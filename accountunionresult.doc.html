@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="./styles/graphdoc.css" />
-    <title>SaltFish</title>
+    <title>AccountUnionResult</title>
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700" rel="stylesheet"><link type="text/css" rel="stylesheet" href="./assets/code.css" /><link type="text/css" rel="stylesheet" href="./assets/require-by.css" />
 </head>
 <body class="slds-scrollable--y">
@@ -170,7 +170,7 @@
 <div class="slds-grid slds-grid--vertical slds-navigation-list--vertical">
     <h4 class="slds-text-title--caps slds-p-around--medium">Unions</h4>
     <ul>
-        <li  title="AccountUnionResult">
+        <li class="slds-is-active" title="AccountUnionResult">
             <a href="accountunionresult.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 AccountUnionResult
             </a>
@@ -240,7 +240,7 @@
                 Recipe
             </a>
         </li>
-        <li class="slds-is-active" title="SaltFish">
+        <li  title="SaltFish">
             <a href="saltfish.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 SaltFish
             </a>
@@ -390,10 +390,9 @@
         </div>
     </div>
     <div class="container">
-        <p class="slds-text-title--caps slds-text-color--weak">OBJECT</p>
-        <h1 class="slds-text-heading--large">SaltFish</h1>
-        <div class="slds-text-body--regular"><p>useless object type in union type, just for funny:)</p>
-</div>
+        <p class="slds-text-title--caps slds-text-color--weak">UNION</p>
+        <h1 class="slds-text-heading--large">AccountUnionResult</h1>
+        <div class="slds-text-body--regular"></div>
     </div>
 </section>
 <section>
@@ -404,7 +403,7 @@
             </a>
             GraphQL Schema definition
         </h2>
-        <code class="highlight"><ul class="code" style="padding-left:28px"><li><span class="keyword operator ts">type</span> <span class="identifier">SaltFish</span> {</li><li></li><li><span class="tab"><span class="meta">EngelCoefficient</span>: <a class="support type" href="int.doc.html">Int</a>! </span></li><li>}</li></ul></code>
+        <code class="highlight"><ul class="code" style="padding-left:28px"><li><span class="keyword operator ts">union</span> <span class="identifier">AccountUnionResult</span> = <a class="support type" href="loginorregisterstatus.doc.html">LoginOrRegisterStatus</a> | <a class="support type" href="accountstatus.doc.html">AccountStatus</a></li></ul></code>
     </div>
 </section>
 <section>
@@ -415,7 +414,7 @@
             </a>
             Require by
         </h2>
-        <ul class="require-by"><li><a href="recipeunionresult.doc.html" title="RecipeUnionResult - ">RecipeUnionResult<em>null</em></a><li></ul>
+        <ul class="require-by"><li><a href="mutation.doc.html" title="Mutation - ">Mutation<em>null</em></a><li></ul>
     </div>
 </section>
 <footer>
