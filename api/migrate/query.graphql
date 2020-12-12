@@ -1,0 +1,11 @@
+fragment substance on Substance {
+  substanceId
+  substanceName
+  substanceAlive
+}
+
+query {
+  QueryAllSubstances {
+    ...substance
+  }
+}

@@ -20,28 +20,35 @@ This is a **demo** which contains `GraphQL` and framework based on it(or work wi
 - [x] Apollo-Server
 - [x] DataLoader
 - [x] TypeORM + SQLite3
+- [ ] Prisma Migration
 - [ ] Redis + IORedis
 - [x] Winston
 - [x] TypeStack Product
   - Class-Validator
   - Class-Transformer
 
-## 🏗️ &nbsp; Client & Server Deploy
+## 🏗️ &nbsp; Client & Server Deployment
+
+### Client
 
 - [x] [**PAGE_UNDER_DEVELOPING**] [Client by Vercel](https://linbudu-graphql-explorer.vercel.app/)
 - [x] [**PAGE_UNDER_DEVELOPING**] [Client by Netlify](https://linbudu-graphql-explorer.netlify.app/)
+
+### Server
+
 - [x] [Docs by Surge](http://graphql-explorer-docs.surge.sh/)
 - [x] [Voyager by Surge](http://graphql-explorer-voyager.surge.sh/) **(Require Local Server To Be Active)**
-- [x] [Simple Example on Vercel Fucntions](https://graphql-faas.vercel.app/api/graphql), see also [Query Example](./api/graphql/query.graphql)
+- [x] [Simple Example on Vercel Fucntions](https://graphql-faas.vercel.app/api/graphql), see [Query Example](./api/graphql/query.graphql)
 - [x] [Example on Vercel Fucntions, with MySQL](https://graphql-faas.linbudu599.vercel.app/api/migrate)
 - [ ] [Server-ALI-Cloud]
 - [ ] [Server-Heroku]
-- [ ] [Apollo-Server-Lambda]
-- [x] [Apollo-Engine(private)](https://studio.apollographql.com/graph/My-Graph-innqj/explorer?schemaTag=current)
+- [x] [Apollo-Engine(**private**)](https://studio.apollographql.com/graph/My-Graph-innqj/explorer?schemaTag=current)
 
 ## 🛠️&nbsp; Progress
 
 **IN_PROGRESS**
+
+see [ROADMAP](https://github.com/linbudu599/GraphQL-Explorer/issues/1) for more details.
 
 ## 🚀&nbsp; Explore
 
@@ -56,24 +63,47 @@ npm run dev:server
 ## 🛵&nbsp; Available Scripts
 
 - `dev`: `dev:client` + `dev:server`
+- `build`: `build:client` + `build:server`
+- `clean`: remove `/client-dist` & `/server-dist` & `api-dist` directory
+
 - `dev:client`: develop client application by [Parcel](https://github.com/parcel-bundler/parcel)
-- `dev:server`: develop server by [nodemon](https://github.com/remy/nodemon)
-- `test:client`: run test cases in client by [jest](https://github.com/facebook/jest)
 - `build:client`: build client application by [Parcel](https://github.com/parcel-bundler/parcel)
-- `clean`: remove `/client-dist` & `/server-dist` directory
+- `test:client`: run test cases in client by [Jest](https://github.com/facebook/jest)
+
+- `dev:server`: develop server by [nodemon](https://github.com/remy/nodemon)
+
 - `start:server`: run in prod by [nodemon](https://github.com/remy/nodemon)
+
 - `build:server`: compile server code by [tsc](https://github.com/microsoft/TypeScript)
+
+- `test:server`: run test cases in server by [Jest](https://github.com/facebook/jest)
+
 - `pm2`: run in prod by [PM2](https://github.com/Unitech/pm2)
+
 - `stress-test`: run pressure test to server, see [stress-fork.js](./st-fork.js) & [stress-main.js](./st-main.js)
-- `voyager`: represent GraphQL API as an interactive graph by [GraphQL-Voyager](https://github.com/APIs-guru/graphql-voyager), **require server to be active**.
+
+- `voyager`: represent GraphQL API as an interactive graph by [GraphQL-Voyager](https://github.com/APIs-guru/graphql-voyager), **require local server to be active**.
+
 - `gen:code`: generate type definitions from GraphQL schema by [graphql-code-generator](https://github.com/dotansimha/graphql-code-generator)
+
 - `gen:docs`: generate documentation site from GraphQL schema by [graphdoc](https://github.com/2fd/graphdoc)
+
+- `gen`: generate docs & code, as `gen:code` & `gen:docs` require local server alive, this command will use NodeJS `child_process` mod to handle server setup.
+
+  not avaliable in windows cause `bash` command used.
+
 - `serve:docs`: generate & serve documentation site by [serve](https://github.com/vercel/serve)
+
 - `commit`: commit code by [custom commitlint config](.cz-config.js)
+
 - `prettier`: prettier all `.ts` / `.json` / `.graphql` ext file
+
 - `typecheck`: check TypeScript type definitions
-- `build:vercel`: build script on `Vercel Functions` build
-- `seed:config`: check `typeorm-seeding` config
+
+- `build:vercel`: build script on [Vercel Functions](https://vercel.com/)
+
+- `seed:config`: check [typeorm-seeding](https://github.com/w3tecch/typeorm-seeding) config
+
 - `seed:run`: start seeding data in `/server/entity/seeds`
 
 ## 📔&nbsp; Document
