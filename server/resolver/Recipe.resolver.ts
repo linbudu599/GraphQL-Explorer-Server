@@ -1,10 +1,9 @@
 import { Service } from "typedi";
-import { Resolver, Query, Arg, UseMiddleware } from "type-graphql";
+import { Resolver, Query, Arg, UseMiddleware, Int } from "type-graphql";
 
 import {
   RecipeUnionResult,
   Difficulty,
-  Cook,
   Recipe,
   SaltFish,
 } from "../graphql/Recipe";
@@ -15,15 +14,10 @@ import CacheControl, { RecipeCacheHint } from "../middleware/cacheControl";
 import CacheMiddleware from "../middleware/cache";
 
 import { log } from "../utils/helper";
-import { sampleCooks, sampleRecipes, sampleSaltFishes } from "../utils/mock";
 
 @Service()
 @Resolver()
 export default class RecipeResolver {
-  private recipes: Recipe[] = sampleRecipes;
-  private cooks: Cook[] = sampleCooks;
-  private saltFishes: SaltFish[] = sampleSaltFishes;
-
   constructor(private readonly recipeService: RecipeService) {
     // created for each request (scoped)
     log("=== recipeService Created! ===");
@@ -36,11 +30,11 @@ export default class RecipeResolver {
   @UseMiddleware(CacheMiddleware)
   @CacheControl(RecipeCacheHint)
   async QueryRecipeUnions(): Promise<typeof RecipeUnionResult[]> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve([...this.recipes, ...this.cooks, ...this.saltFishes]);
-      }, 500);
-    });
+    const recipes = await this.recipeService.getAllRecipes();
+    const cooks = await this.recipeService.getAllCooks();
+    const saltFishes = await this.recipeService.getAllSaltFishes();
+
+    return [...recipes, ...cooks, ...saltFishes];
   }
 
   @Query(() => [Recipe], { nullable: false, description: "基于难度查找菜谱" })
@@ -48,15 +42,7 @@ export default class RecipeResolver {
     @Arg("difficulty", (type) => Difficulty, { nullable: true })
     difficulty?: Difficulty
   ): Promise<Recipe[]> {
-    if (!difficulty) {
-      return await this.recipeService.getAllRecipes();
-    }
-
-    const res = (await this.recipeService.getAllRecipes()).filter(
-      (recipe) => recipe.preparationDifficulty === difficulty
-    );
-
-    return res;
+    return this.recipeService.getRecipesByDifficulty(difficulty);
   }
 
   @Query(() => [Recipe], { nullable: false, description: "基于作料查找菜谱" })
@@ -64,20 +50,17 @@ export default class RecipeResolver {
     @Arg("ingredients", () => [String], { nullable: true })
     ingredients: string[]
   ): Promise<Recipe[]> {
-    const recipesList = await this.recipeService.getAllRecipes();
-    switch (ingredients?.length) {
-      case 0 || undefined:
-        return recipesList;
-      case 1:
-        return recipesList.filter((recipe) =>
-          recipe.ingredients.includes(ingredients[0])
-        );
-      default:
-        return recipesList.filter((recipe) => {
-          return ingredients.every((level) =>
-            recipe.ingredients.includes(level)
-          );
-        });
-    }
+    return this.recipeService.getRecipesByIngredients(ingredients);
+  }
+
+  @Query(() => [SaltFish], {
+    nullable: false,
+    description: "根据恩格尔系数查找咸鱼",
+  })
+  async QuerySaltFishByCoefficient(
+    @Arg("coefficient", () => Int, { nullable: false })
+    coefficient: number
+  ): Promise<SaltFish[]> {
+    return this.recipeService.getSaltFishesByCoefficient(coefficient);
   }
 }

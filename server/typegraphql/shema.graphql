@@ -509,6 +509,11 @@ type Query {
   QueryRecipeUnions: [RecipeUnionResult!]!
 
   """
+  根据恩格尔系数查找咸鱼
+  """
+  QuerySaltFishByCoefficient(coefficient: Int!): [SaltFish!]!
+
+  """
   基于条件查找实体
   """
   QuerySubstanceByConditions: SubstanceStatus!

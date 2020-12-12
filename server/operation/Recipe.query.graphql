@@ -55,4 +55,7 @@ query RecipeQuery {
   QueryRecipesByIngredients(ingredients: "one") {
     ...RecipeFields
   }
+  QuerySaltFishByCoefficient(coefficient: 80) {
+    EngelCoefficient
+  }
 }

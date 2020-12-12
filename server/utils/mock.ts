@@ -131,6 +131,11 @@ export const setRecipeInContainer = (): void => {
     transient: true,
     factory: () => sampleRecipes.slice(),
   });
+  Container.set({
+    id: "COOKS_DATA",
+    transient: true,
+    factory: () => sampleCooks.slice(),
+  });
 };
 
 const createSubstance = (substance: Partial<Substance>): Substance =>
