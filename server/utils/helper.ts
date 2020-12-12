@@ -49,18 +49,3 @@ export const getLoggerExtensions = (info: GraphQLResolveInfo) => {
     ...fieldLoggerExtensions,
   };
 };
-
-interface ITaskRelationOptions {
-  joinAssignee?: boolean;
-  joinSubstance?: boolean;
-}
-
-export const getTaskRelations = ({
-  joinAssignee = false,
-  joinSubstance = false,
-}: ITaskRelationOptions): string[] => {
-  const relations: string[] = [];
-  joinAssignee ? relations.push("assignee") : void 0;
-  joinSubstance ? relations.push("taskSubstance") : void 0;
-  return relations;
-};

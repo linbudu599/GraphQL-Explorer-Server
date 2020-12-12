@@ -23,15 +23,18 @@ export default class SubstanceResolver {
   })
   async QueryAllSubstances(
     @Arg("pagination", { nullable: true })
-    pagination: PaginationOptions
+    pagination: PaginationOptions,
+    @Arg("joinTask", { nullable: true })
+    joinTask: boolean = false
   ): Promise<SubstanceStatus> {
     try {
       const { cursor, offset } = pagination ?? { cursor: 0, offset: 20 };
+      const relations = joinTask ? ["relatedTask"] : [];
 
       const res = await this.substanceRepository.find({
         skip: cursor,
         take: offset,
-        relations: ["relatedTask"],
+        relations,
       });
 
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, res);
@@ -44,7 +47,10 @@ export default class SubstanceResolver {
     nullable: false,
     description: "基于ID查找实体",
   })
-  async QuerySubstanceById(): Promise<SubstanceStatus> {
+  async QuerySubstanceById(
+    @Arg("joinTask", { nullable: true })
+    joinTask: boolean = false
+  ): Promise<SubstanceStatus> {
     return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
   }
 

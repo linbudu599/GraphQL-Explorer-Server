@@ -14,17 +14,20 @@ import {
   TaskCreateInput,
   TaskUpdateInput,
   TaskRelationsInput,
+  getTaskRelations,
 } from "../graphql/Task";
 
+import TaskService from "../service/Task.service";
+
 import { RESPONSE_INDICATOR } from "../utils/constants";
-import { getTaskRelations } from "../utils/helper";
 
 @Resolver((of) => Task)
 export default class TaskResolver {
   constructor(
     @InjectRepository(Executor)
     private readonly executorRepository: Repository<Executor>,
-    @InjectRepository(Task) private readonly taskRepository: Repository<Task>
+    @InjectRepository(Task) private readonly taskRepository: Repository<Task>,
+    private readonly taskService: TaskService
   ) {}
 
   @Query(() => TaskStatus, { nullable: false, description: "获取所有任务" })
@@ -34,14 +37,15 @@ export default class TaskResolver {
     @Arg("relations", { nullable: true }) relationOptions: TaskRelationsInput
   ): Promise<TaskStatus> {
     try {
-      const { cursor, offset } = pagination ?? { cursor: 0, offset: 20 };
+      const queryPagination = (pagination ?? {
+        cursor: 0,
+        offset: 20,
+      }) as Required<PaginationOptions>;
+
       const relations = getTaskRelations(relationOptions);
 
-      const res = await this.taskRepository.find({
-        skip: cursor,
-        take: offset,
-        relations,
-      });
+      const res = this.taskService.getAllTasks(queryPagination, relations);
+
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, res);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);

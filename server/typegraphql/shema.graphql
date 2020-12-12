@@ -441,7 +441,10 @@ type Query {
   """
   查找所有实体信息
   """
-  QueryAllSubstances(pagination: PaginationOptions): SubstanceStatus!
+  QueryAllSubstances(
+    joinTask: Boolean
+    pagination: PaginationOptions
+  ): SubstanceStatus!
 
   """
   获取所有任务
@@ -521,7 +524,7 @@ type Query {
   """
   基于ID查找实体
   """
-  QuerySubstanceById: SubstanceStatus!
+  QuerySubstanceById(joinTask: Boolean): SubstanceStatus!
 
   """
   基于威胁级别查找实体

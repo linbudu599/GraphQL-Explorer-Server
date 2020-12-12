@@ -176,6 +176,34 @@ export class TaskCreateInput extends PublishTaskMixin(TaskInput) {}
 export class TaskUpdateInput extends UpdateTaskMixin(TaskInput) {}
 
 // 以函数的形式来返回 实现更灵活的控制 比如某些时候默认join上指派者等
+
+// interface ITaskJoinOptions {
+//   shouldJoinAssignee?: boolean;
+//   shouldJoinSubstance?: boolean;
+// }
+
+// class ITaskRelation {
+//   joinAssignee!: boolean;
+//   joinSubstance!: boolean;
+// }
+
+// // 函数有点麻烦啊...
+// export const createTaskRelationsInput = ({
+//   shouldJoinAssignee,
+//   shouldJoinSubstance,
+// }: ITaskJoinOptions): typeof ITaskRelation => {
+//   @InputType({ description: "Task Relations Input" })
+//   class TaskRelationsInputMixin extends ITaskRelation {
+//     @Field({ nullable: true })
+//     joinAssignee: boolean = shouldJoinAssignee ?? false;
+
+//     @Field({ nullable: true })
+//     joinSubstance: boolean = shouldJoinSubstance ?? false;
+//   }
+
+//   return TaskRelationsInputMixin;
+// };
+
 @InputType({ description: "Task Relations Input" })
 export class TaskRelationsInput {
   @Field({ nullable: true })
@@ -184,3 +212,19 @@ export class TaskRelationsInput {
   @Field({ nullable: true })
   joinSubstance: boolean = false;
 }
+
+interface ITaskRelationOptions {
+  joinAssignee?: boolean;
+  joinSubstance?: boolean;
+}
+export type TaskRelation = "assignee" | "taskSubstance";
+
+export const getTaskRelations = ({
+  joinAssignee = false,
+  joinSubstance = false,
+}: ITaskRelationOptions): TaskRelation[] => {
+  const relations: TaskRelation[] = [];
+  joinAssignee ? relations.push("assignee") : void 0;
+  joinSubstance ? relations.push("taskSubstance") : void 0;
+  return relations;
+};

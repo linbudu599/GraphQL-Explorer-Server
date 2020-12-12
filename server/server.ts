@@ -59,7 +59,7 @@ log(`[Env] Loading ${dev ? "[DEV]" : "[PROD]"} File`);
 
 const basicMiddlewares = [
   ResolveTime,
-  InterceptorOnSCP1128,
+  // InterceptorOnSCP1128,
   ExtensionsMetadataRetriever,
   LogAccessMiddleware,
 ];
