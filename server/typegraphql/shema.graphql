@@ -242,6 +242,7 @@ interface ITask {
   lastUpdateDate: Timestamp!
   publishDate: Timestamp!
   taskAccmplished: Boolean!
+  taskAvaliable: Boolean!
   taskContent: String!
   taskId: ID!
   taskLevel: DifficultyLevel!
@@ -328,12 +329,12 @@ type Mutation {
   """
   删除任务
   """
-  DeleteTask(taskId: Float!): TaskStatus!
+  DeleteTask(taskId: String!): TaskStatus!
 
   """
-  冻结
+  冻结任务 无法恢复
   """
-  FreezeTask: TaskStatus!
+  FreezeTask(taskId: String!): TaskStatus!
 
   """
   修改密码
@@ -356,7 +357,7 @@ type Mutation {
   """
   变更任务级别
   """
-  MutateTaskLevel: TaskStatus!
+  MutateTaskLevel(level: DifficultyLevel!, taskId: String!): TaskStatus!
   publisherMutation(message: String): Boolean!
   pubSubMutation(message: String): Boolean!
   pubSubMutationToDynamicTopic(message: String, topic: String!): Boolean!
@@ -374,7 +375,7 @@ type Mutation {
   """
   变更任务状态
   """
-  ToggleTaskStatus(taskId: Float!): TaskStatus!
+  ToggleTaskStatus(taskId: String!): TaskStatus!
 
   """
   更新执行者基本信息
@@ -429,14 +430,14 @@ type Query {
   currentDate: Timestamp!
 
   """
-  获取所有执行者
-  """
-  Executors(pagination: PaginationOptions): ExecutorStatus!
-
-  """
   查询所有用户
   """
   QueryAllAccounts: AccountStatus!
+
+  """
+  获取所有执行者
+  """
+  QueryAllExecutors(pagination: PaginationOptions): ExecutorStatus!
 
   """
   查找所有实体信息
@@ -494,7 +495,7 @@ type Query {
   """
   查询执行者当前被分配的任务
   """
-  QueryExecutorTasks(relations: TaskRelationsInput, uid: Float!): TaskStatus!
+  QueryExecutorTasks(relations: TaskRelationsInput, uid: String!): TaskStatus!
 
   """
   基于难度查找菜谱
@@ -534,7 +535,7 @@ type Query {
   """
   基于ID获取任务
   """
-  QueryTaskByID(relations: TaskRelationsInput, taskId: Float!): TaskStatus!
+  QueryTaskByID(relations: TaskRelationsInput, taskId: String!): TaskStatus!
 }
 
 """
@@ -602,6 +603,7 @@ type Task implements ITask {
   lastUpdateDate: Timestamp!
   publishDate: Timestamp!
   taskAccmplished: Boolean!
+  taskAvaliable: Boolean!
   taskContent: String!
   taskId: ID!
   taskLevel: DifficultyLevel!
@@ -617,6 +619,7 @@ type Task implements ITask {
 Task Create Input
 """
 input TaskCreateInput {
+  substanceId: String!
   taskContent: String
   taskLevel: Float
   taskReward: Float
