@@ -35,6 +35,9 @@ export default class Task extends BaseEntity implements ITask {
   @Column({ nullable: false, default: false })
   taskAccmplished!: Boolean;
 
+  @Column({ nullable: false, default: true })
+  taskAvaliable!: Boolean;
+
   @Column({ nullable: false, default: TaskSource.OTHER })
   taskSource!: TaskSource;
 
@@ -47,8 +50,8 @@ export default class Task extends BaseEntity implements ITask {
   @Column({ nullable: false, default: TaskTarget.OTHER })
   taskTarget!: TaskTarget;
 
-  @Column({ nullable: true })
-  taskRate?: number;
+  @Column({ nullable: true, default: 0 })
+  taskRate!: number;
 
   // 就假设一个任务只会有一个实体出现好了...
   @OneToOne(() => Substance, (substance) => substance.relatedTask, {

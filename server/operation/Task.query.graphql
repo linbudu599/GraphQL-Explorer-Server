@@ -1,0 +1,45 @@
+fragment TaskFields on Task {
+  taskId
+  taskTitle
+  assignee {
+    uid
+  }
+  taskContent
+  taskSource
+  taskLevel
+  taskAccmplished
+  taskAvaliable
+  taskReward
+  taskRate
+  taskTarget
+  taskSubstance {
+    substanceId
+  }
+  publishDate
+  lastUpdateDate
+}
+
+fragment TaskStatusFields on TaskStatus {
+  success
+  message
+  data {
+    ...TaskFields
+  }
+}
+
+query TaskQuery {
+  QueryAllTasks(relations: { joinAssignee: true, joinSubstance: true }) {
+    ...TaskStatusFields
+  }
+
+  QueryTaskByID(
+    taskId: "1"
+    relations: { joinAssignee: true, joinSubstance: true }
+  ) {
+    ...TaskStatusFields
+  }
+
+  QueryExecutorTasks(uid: "6", relations: { joinAssignee: true }) {
+    ...TaskStatusFields
+  }
+}

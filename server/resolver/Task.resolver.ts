@@ -4,6 +4,7 @@ import { InjectRepository } from "typeorm-typedi-extensions";
 
 import Executor from "../entity/Executor";
 import Task from "../entity/Task";
+import Substance from "../entity/Substance";
 
 import {
   PaginationOptions,
@@ -16,6 +17,7 @@ import {
   TaskRelationsInput,
   getTaskRelations,
 } from "../graphql/Task";
+import { DifficultyLevel } from "../graphql/Public";
 
 import TaskService from "../service/Task.service";
 
@@ -27,6 +29,8 @@ export default class TaskResolver {
     @InjectRepository(Executor)
     private readonly executorRepository: Repository<Executor>,
     @InjectRepository(Task) private readonly taskRepository: Repository<Task>,
+    @InjectRepository(Substance)
+    private readonly substanceRepository: Repository<Substance>,
     private readonly taskService: TaskService
   ) {}
 
@@ -54,7 +58,7 @@ export default class TaskResolver {
 
   @Query(() => TaskStatus, { nullable: false, description: "基于ID获取任务" })
   async QueryTaskByID(
-    @Arg("taskId") taskId: number,
+    @Arg("taskId") taskId: string,
     @Arg("relations", { nullable: true }) relationOptions: TaskRelationsInput
   ): Promise<TaskStatus> {
     try {
@@ -78,7 +82,7 @@ export default class TaskResolver {
     description: "查询执行者当前被分配的任务",
   })
   async QueryExecutorTasks(
-    @Arg("uid") uid: number,
+    @Arg("uid") uid: string,
     @Arg("relations", { nullable: true }) relationOptions: TaskRelationsInput
   ) {
     try {
@@ -101,7 +105,7 @@ export default class TaskResolver {
   @Transaction()
   @Mutation(() => TaskStatus, { nullable: false, description: "变更任务状态" })
   async ToggleTaskStatus(
-    @Arg("taskId") taskId: number,
+    @Arg("taskId") taskId: string,
     @TransactionRepository(Task) taskTransRepo: Repository<Task>
   ): Promise<TaskStatus> {
     try {
@@ -127,15 +131,11 @@ export default class TaskResolver {
   @Transaction()
   @Mutation(() => TaskStatus, { nullable: false, description: "删除任务" })
   async DeleteTask(
-    @Arg("taskId") taskId: number,
+    @Arg("taskId") taskId: string,
     @TransactionRepository(Task) taskTransRepo: Repository<Task>
   ): Promise<TaskStatus> {
     try {
-      const res = await taskTransRepo.findOne({
-        where: {
-          taskId,
-        },
-      });
+      const res = await taskTransRepo.findOne(taskId);
 
       if (!res) {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
@@ -149,7 +149,6 @@ export default class TaskResolver {
     }
   }
 
-  // TODO: 强制要求在创建时就关联到实体
   @Transaction()
   @Mutation(() => TaskStatus, {
     nullable: false,
@@ -161,6 +160,20 @@ export default class TaskResolver {
     taskTransRepo: Repository<Task>
   ): Promise<TaskStatus> {
     try {
+      const { substanceId } = param;
+      const substance = await this.substanceRepository.findOne(substanceId);
+      if (!substance) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
+      }
+
+      const { taskTitle } = param;
+      const isTitleUsed = await this.taskRepository.findOne({ taskTitle });
+      if (isTitleUsed) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.EXISTED, []);
+      }
+
+      param.taskSubstance = substance;
+
       const res = await taskTransRepo.save(param);
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
     } catch (error) {
@@ -179,8 +192,17 @@ export default class TaskResolver {
     taskTransRepo: Repository<Task>
   ): Promise<TaskStatus> {
     try {
-      const res = await taskTransRepo.update(param.taskId, param);
-      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
+      const taskExists = await this.taskRepository.findOne(param.taskId);
+      if (!taskExists) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
+      }
+
+      await taskTransRepo.update(param.taskId, param);
+
+      const updatedTask = await this.taskRepository.findOne({
+        taskId: param.taskId,
+      });
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updatedTask]);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
     }
@@ -199,6 +221,7 @@ export default class TaskResolver {
       if (!assignee) {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
+
       const task = await this.taskRepository.findOne(
         {
           taskId,
@@ -225,16 +248,49 @@ export default class TaskResolver {
     nullable: false,
     description: "变更任务级别",
   })
-  async MutateTaskLevel(): Promise<TaskStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+  async MutateTaskLevel(
+    @Arg("taskId") taskId: string,
+    @Arg("level", (type) => DifficultyLevel) level: DifficultyLevel,
+    @TransactionRepository(Task)
+    taskTransRepo: Repository<Task>
+  ): Promise<TaskStatus> {
+    try {
+      const res = await this.taskRepository.findOne(taskId);
+      if (!res) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
+      }
+
+      await taskTransRepo.update({ taskId }, { taskLevel: level });
+
+      const updatedTask = await this.taskRepository.findOne({ taskId });
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updatedTask]);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 
   @Transaction()
   @Mutation(() => TaskStatus, {
     nullable: false,
-    description: "冻结",
+    description: "冻结任务 无法恢复",
   })
-  async FreezeTask(): Promise<TaskStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+  async FreezeTask(
+    @Arg("taskId") taskId: string,
+    @TransactionRepository(Task)
+    taskTransRepo: Repository<Task>
+  ): Promise<TaskStatus> {
+    try {
+      const res = await this.taskRepository.findOne(taskId);
+      if (!res) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
+      }
+
+      await taskTransRepo.update({ taskId }, { taskAvaliable: false });
+
+      const updatedTask = await this.taskRepository.findOne({ taskId });
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updatedTask]);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 }

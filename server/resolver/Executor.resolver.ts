@@ -53,7 +53,7 @@ export default class ExecutorResolver {
     description: "获取所有执行者",
   })
   @UseMiddleware(ExtraFieldLogMiddlewareGenerator("Check All ExecutorS"))
-  async Executors(
+  async QueryAllExecutors(
     @Ctx() ctx: IContext,
     @InjectCurrentUser() user: IContext["currentUser"],
     @Arg("pagination", { nullable: true })

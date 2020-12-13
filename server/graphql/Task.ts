@@ -76,10 +76,13 @@ export abstract class ITask {
   taskAccmplished!: Boolean;
 
   @Field()
+  taskAvaliable!: Boolean;
+
+  @Field()
   taskReward!: number;
 
   @Field()
-  taskRate?: number;
+  taskRate!: number;
 
   @Field(() => TaskTarget, { nullable: false })
   taskTarget!: TaskTarget;
@@ -98,7 +101,7 @@ export abstract class ITask {
 @InputType({ isAbstract: true })
 export class TaskInput implements Partial<ITask> {
   @Field({ nullable: true })
-  @Length(2, 20)
+  @Length(2, 100)
   @IsString()
   @IsOptional()
   taskContent?: string;
@@ -134,9 +137,13 @@ export const PublishTaskMixin = <TClassType extends ClassType>(
   @InputType({ isAbstract: true })
   class PublishInput extends BaseClass {
     @Field({ nullable: false })
-    @Length(5, 10)
+    @Length(5, 20)
     @IsString()
     taskTitle!: string;
+
+    @Field({ nullable: false })
+    @IsString()
+    substanceId!: string;
   }
 
   return PublishInput;
