@@ -30,6 +30,3 @@ jobs:
       name: "Serve By PM2"
       script: npm run pm2
 
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
