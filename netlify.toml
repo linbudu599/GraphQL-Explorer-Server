@@ -1,4 +1,4 @@
 [build]
   base = "/"
-  publish = "/client-dist"
-  command = "npm run build:client"
+  publish = "/docs"
+  command = "npm run gen"

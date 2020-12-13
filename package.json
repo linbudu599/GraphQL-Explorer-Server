@@ -1,19 +1,15 @@
 {
-  "name": "GraphQL-Explorer",
+  "name": "GraphQL-Explorer-Server",
   "version": "1.0.0",
   "description": "API & Ability Usage of GraphQL.",
   "scripts": {
-    "dev": "npm-run-all --parallel dev:server dev:client",
-    "build": "npm-run-all --parallel build:server build:client",
-    "clean": "node ./scripts/clean.js --server --client  --vercel",
-    "dev:client": "cross-env NODE_ENV=development parcel ./client/public/index.html --out-dir ./client/dist --port 5999",
-    "test:client": "cross-env NODE_ENV=test jest --forceExit",
-    "test:server": "cross-env NODE_ENV=test jest --config jest.config.server.ts --forceExit",
-    "build:client": "cross-env NODE_ENV=production parcel build ./client/public/index.html --out-dir ./client-dist",
-    "dev:server": "cross-env NODE_ENV=development nodemon ./server/app.ts",
-    "build:server": "node ./scripts/clean.js --server && tsc",
-    "start:server": "cross-env NODE_ENV=production npm run build:server && nodemon ./server-dist/app.js",
-    "pm2": "npm run build:server && pm2 start ecosystem.config.js",
+    "dev": "cross-env NODE_ENV=development nodemon ./server/app.ts",
+    "build": "node ./scripts/clean.js --server && tsc",
+    "build:vercel": "cross-env NODE_ENV=production && node ./scripts/clean.js --vercel && tsc --build vercel-tsconfig.json",
+    "clean": "node ./scripts/clean.js --server --vercel",
+    "test": "cross-env NODE_ENV=test jest --forceExit",
+    "start": "cross-env NODE_ENV=production npm run build && nodemon ./dist/app.js",
+    "pm2": "npm run build && pm2 start ecosystem.config.js",
     "stress-test": "node ./scripts/st-main.js --time 1000 * 60",
     "voyager": "serve -s voyager",
     "gen:code": "graphql-codegen --config codegen.yml",
@@ -22,7 +18,6 @@
     "serve:docs": "npm run gen:docs && serve -s docs",
     "commit": "git add -A && git-cz",
     "typecheck": "tsc --noEmit",
-    "build:vercel": "cross-env NODE_ENV=production && node ./scripts/clean.js --vercel && tsc --build vercel-tsconfig.json",
     "prod:vercel": "vc -prod",
     "prettier": "prettier --write ./**/*.ts ./**/*.js ./**/*.json ./**/*.graphql",
     "seed:config": "cross-env NODE_ENV=development ts-node ./node_modules/typeorm-seeding/dist/cli.js config",
@@ -30,7 +25,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/linbudu599/GraphQL-Explorer.git"
+    "url": "git+https://github.com/linbudu599/GraphQL-Explorer-Server.git"
   },
   "keywords": [
     "GraphQL",
@@ -57,9 +52,9 @@
   "author": "linbudu599",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/linbudu599/GraphQL-Explorer/issues"
+    "url": "https://github.com/linbudu599/GraphQL-Explorer-Server/issues"
   },
-  "homepage": "https://github.com/linbudu599/GraphQL-Explorer#readme",
+  "homepage": "https://github.com/linbudu599/GraphQL-Explorer-Server#readme",
   "dependencies": {
     "@2fd/graphdoc": "^2.4.0",
     "@apollo/react-hooks": "^4.0.0",

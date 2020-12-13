@@ -147,7 +147,7 @@ export const mockSubstance = (len: number) => {
   for (let i = 0; i < len; i++) {
     mockSubstanceInfo.push(
       createSubstance({
-        substanceName: `Substance-${i}`,
+        substanceName: `Substance-${i}-${Math.floor(Math.random() * 1000)}`,
         substanceDesc: `Substance Desc ${i}`,
         substanceLevel: i <= 6 ? i : i % 6,
       })
@@ -165,7 +165,7 @@ export const mockTask = (len: number) => {
   for (let i = 0; i < len; i++) {
     mockTaskInfo.push(
       createTask({
-        taskTitle: `task-${i}`,
+        taskTitle: `task-${i}-${Math.floor(Math.random() * 1000)}`,
         taskContent: `task-${i} content`,
         taskReward: Math.floor(Math.random() * 5000),
         taskRate: Math.floor(Math.random() * 10),
@@ -190,7 +190,7 @@ export const mockExecutor = (len: number) => {
   for (let i = 0; i < len; i++) {
     mockExecutorInfo.push(
       createExecutor({
-        name: `林不渡-${i}`,
+        name: `林不渡-${i}-${Math.floor(Math.random() * 1000)}`,
         age: Math.floor(Math.random() * 30),
         isFool: i % 2 === 0,
         desc: JSON.stringify(
@@ -222,12 +222,12 @@ export const dbConnect = async (): Promise<any> => {
     await connection.manager.save(mockSubstanceGroup);
 
     const executor = new Executor();
-    executor.name = "林不渡-Lv1";
+    executor.name = `林不渡-${Math.floor(Math.random() * 1000)}`;
     executor.tasks = (mockTaskGroup as Task[]).slice(0, 2);
     await connection.manager.save(executor);
 
     const sub = new Substance();
-    sub.substanceName = "SCP-1128 深海巨妖";
+    sub.substanceName = `SCP-1128 深海巨妖-${Math.floor(Math.random() * 1000)}`;
     sub.substanceDesc = "离谱";
     sub.substanceLevel = DifficultyLevel.OLD_DOMINATOR;
 

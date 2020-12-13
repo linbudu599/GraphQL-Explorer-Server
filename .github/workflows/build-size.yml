@@ -17,5 +17,5 @@ jobs:
     - uses: preactjs/compressed-size-action@v2
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
-        pattern: "./server-dist/**/*.js"
-        build-script: "build:server"
+        pattern: "./dist/**/*.js"
+        build-script: "build"

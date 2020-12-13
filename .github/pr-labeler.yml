@@ -13,3 +13,4 @@ refractor: refractor/*
 revert: revert/*
 del: ['remove/*', 'del/*', "deprecated/*"]
 fixed-branch: fixed-branch-name
+migrate: migrate

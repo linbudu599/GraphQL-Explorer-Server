@@ -1,8 +1,8 @@
 module.exports = {
   apps: [
     {
-      name: "GraphQL-Explorer-Backend",
-      script: "server-dist/app.js",
+      name: "GraphQL-Explorer-Server",
+      script: "dist/app.js",
       env: {
         NODE_ENV: "production",
       },

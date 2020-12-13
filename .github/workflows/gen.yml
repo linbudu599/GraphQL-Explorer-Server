@@ -1,4 +1,4 @@
-name: GraphQL-Explorer-Server
+name: GraphQL-Explorer-Server-Generation
 
 on:
   push:
@@ -10,8 +10,8 @@ jobs:
   server-job:
     strategy:
       matrix:
-        node-version: [12.x]
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        node-version: [12.x, 14.x]
+        os: [ubuntu-latest, macOS-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -23,10 +23,5 @@ jobs:
       - name: Install Dependencies
         run: |
           npm install
-          npm install pm2 -g
-      - name: Unit Test
-        run: npm run test
-      - name: Serve By PM2
-        run: npm run pm2
-      - name: Delete PM2 Process
-        run: pm2 delete all
+      - name: Docs & Code Generation
+        run: npm run gen

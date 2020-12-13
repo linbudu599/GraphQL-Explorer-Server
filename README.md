@@ -1,4 +1,4 @@
-# GraphQL-Explorer
+# GraphQL-Explorer-Server
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/9b1032ca-eb12-4cfd-bfad-52da4b8b5451/deploy-status)](https://app.netlify.com/sites/linbudu-graphql-explorer/deploys)
 ![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/linbudu599/GraphQL-Explorer/GraphQL-Explorer-Client/master?label=GitHub%20Actions%20Client)
@@ -9,14 +9,11 @@
 ![GitHub package.json dependency version (subfolder of monorepo)](https://img.shields.io/github/package-json/dependency-version/linbudu599/GraphQL-Explorer/graphql)
 ![GitHub package.json dependency version (subfolder of monorepo)](https://img.shields.io/github/package-json/dependency-version/linbudu599/GraphQL-Explorer/type-graphql)
 ![GitHub package.json dependency version (subfolder of monorepo)](https://img.shields.io/github/package-json/dependency-version/linbudu599/GraphQL-Explorer/apollo-server)
-![GitHub package.json dependency version (subfolder of monorepo)](https://img.shields.io/github/package-json/dependency-version/linbudu599/GraphQL-Explorer/react)
-![GitHub package.json dependency version (subfolder of monorepo)](https://img.shields.io/github/package-json/dependency-version/linbudu599/GraphQL-Explorer/parcel-bundler)
 
 This is a **demo** which contains `GraphQL` and framework based on it(or work with it perfectly), including these for now:
 
 - [x] GraphQL
 - [x] TypeGraphQL
-- [x] Apollo-Client & React & Parcel
 - [x] Apollo-Server
 - [x] DataLoader
 - [x] TypeORM + SQLite3
@@ -27,14 +24,7 @@ This is a **demo** which contains `GraphQL` and framework based on it(or work wi
   - Class-Validator
   - Class-Transformer
 
-## 🏗️ &nbsp; Client & Server Deployment
-
-### Client
-
-- [x] [**PAGE_UNDER_DEVELOPING**] [Client by Vercel](https://linbudu-graphql-explorer.vercel.app/)
-- [x] [**PAGE_UNDER_DEVELOPING**] [Client by Netlify](https://linbudu-graphql-explorer.netlify.app/)
-
-### Server
+## 🏗️ &nbsp; Server & Docs Deployment
 
 - [x] [Docs by Surge](http://graphql-explorer-docs.surge.sh/)
 - [x] [Voyager by Surge](http://graphql-explorer-voyager.surge.sh/) **(Require Local Server To Be Active)**
