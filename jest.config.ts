@@ -3,7 +3,10 @@ export default {
   bail: 5,
   clearMocks: true,
   collectCoverage: true,
-  collectCoverageFrom: ["./client/src/components/*.tsx"],
+  collectCoverageFrom: ["./server/utils/jwt.ts"],
+  setupFilesAfterEnv: [],
+  setupFiles: [],
+  testMatch: ["**/?(*.)+(spec|test).[tj]s?(x)"],
   // only collect coverage reports in client for now
   coverageDirectory: "coverage",
   coverageProvider: "v8",
@@ -12,8 +15,6 @@ export default {
   notify: true,
   preset: "ts-jest",
   runner: "jest-runner",
-  setupFiles: ["./jest.setup.ts"],
-  setupFilesAfterEnv: ["jest-enzyme", "<rootDir>jest.setup.ts"],
   testEnvironment: "jest-environment-jsdom",
   testEnvironmentOptions: {
     enzymeAdapter: "react16",
@@ -27,7 +28,6 @@ export default {
     "^@/pages/(.*)$": "<rootDir>/src/pages/$1",
   },
   // TODO: config by env variables dynamically
-  testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[tj]s?(x)"],
   testPathIgnorePatterns: ["/node_modules/", "/e2e/"],
   testRunner: "jasmine2",
   timers: "real",

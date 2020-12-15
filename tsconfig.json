@@ -22,7 +22,7 @@
     "noUnusedLocals": false,
     "inlineSourceMap": false,
     "baseUrl": "./",
-    "outDir": "./server-dist",
+    "outDir": "./dist",
     "noUnusedParameters": false,
     "noImplicitReturns": false,
     "moduleResolution": "node",

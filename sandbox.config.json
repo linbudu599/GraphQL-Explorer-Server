@@ -3,7 +3,7 @@
   "hardReloadOnChange": true,
   "view": "terminal",
   "disableLogging": false,
-  "startScript": "dev:server",
+  "startScript": "dev",
   "container": {
     "node": "14"
   }

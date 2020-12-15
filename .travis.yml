@@ -21,16 +21,12 @@ stages:
 jobs:
   include:
     - stage: Test
-      name: "Client Test"
-      script: npm run test:client
+      name: "Server Test"
+      script: npm run test
     - stage: Build
-      name: "Client & Server Build"
-      script: npm run build:client
-      script: npm run build:server
+      name: "Server Build"
+      script: npm run build
     - stage: Serve
       name: "Serve By PM2"
       script: npm run pm2
 
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash)

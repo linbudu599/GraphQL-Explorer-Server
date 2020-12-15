@@ -17,7 +17,7 @@ module.exports = {
   logging: "all",
   maxQueryExecutionTime: 1000,
   logger: "advanced-console",
-  entities: [IS_DEV ? "server/entity/*.ts" : "server-dist/entity/*.js"],
+  entities: [IS_DEV ? "server/entity/*.ts" : "dist/entity/*.js"],
   factories: ["server/entity/factories/*.ts"],
   seeds: ["server/entity/seeds/*.ts"],
   cache: {
