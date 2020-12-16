@@ -14,4 +14,10 @@ const server = new ApolloVercelServer({
   introspection: true,
 });
 
-export default server.createHandler();
+export default server.createHandler({
+  cors: {
+    origin: "*",
+    methods: "*",
+    allowedHeaders: "*",
+  },
+});
