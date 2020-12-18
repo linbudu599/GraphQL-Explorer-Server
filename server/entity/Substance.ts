@@ -8,9 +8,11 @@ import {
   UpdateDateColumn,
   OneToOne,
   RelationId,
+  JoinColumn,
 } from "typeorm";
 
 import Task from "./Task";
+import Record from "./Record";
 
 import { DifficultyLevel } from "../graphql/Public";
 import { ISubstance } from "../graphql/Substance";
@@ -48,6 +50,16 @@ export default class Substance extends BaseEntity implements ISubstance {
 
   @RelationId((substance: Substance) => substance.relatedTask)
   relatedTaskId?: string;
+
+  @OneToOne((type) => Record, (record) => record.recordTask, {
+    nullable: true,
+    cascade: true,
+  })
+  @JoinColumn()
+  relatedRecord!: Record;
+
+  @RelationId((substance: Substance) => substance.relatedRecord)
+  relatedRecordId?: string;
 
   @CreateDateColumn({ comment: "实体首次出现时间" })
   substanceAppearDate!: Date;

@@ -20,6 +20,7 @@ import {
 
 import Executor from "../entity/Executor";
 import Substance from "../entity/Substance";
+import Record from "../entity/Record";
 
 import { IExecutor } from "./Executor";
 import { DifficultyLevel } from "./Public";
@@ -42,6 +43,14 @@ export enum TaskTarget {
   OTHER,
 }
 
+export enum TaskPriority {
+  LOW,
+  MIDDLE,
+  HIGH,
+  EMERGENCY,
+  DOMINATOR,
+}
+
 registerEnumType(TaskSource, {
   name: "TaskSource",
   description: "Task Source",
@@ -52,6 +61,11 @@ registerEnumType(TaskTarget, {
   description: "Task Against",
 });
 
+registerEnumType(TaskPriority, {
+  name: "TaskPriority",
+  description: "Task Priority",
+});
+
 @InterfaceType({ description: "Task Interface Type" })
 export abstract class ITask {
   @Field((type) => ID, { nullable: false })
@@ -60,11 +74,20 @@ export abstract class ITask {
   @Field()
   taskTitle!: string;
 
+  @Field({ nullable: false })
+  requireCleaner!: boolean;
+
+  @Field({ nullable: false })
+  requirePsychologicalIntervention!: boolean;
+
   @Field(() => Executor, { nullable: true })
-  assignee?: IExecutor;
+  assignee!: IExecutor;
 
   @Field()
   taskContent!: string;
+
+  @Field()
+  allowAbort!: boolean;
 
   @Field(() => TaskSource, { nullable: false })
   taskSource!: TaskSource;
@@ -89,6 +112,9 @@ export abstract class ITask {
 
   @Field(() => Substance, { nullable: true })
   taskSubstance!: Substance;
+
+  @Field(() => Record, { nullable: true })
+  relatedRecord!: Record;
 
   @Field()
   publishDate!: Date;

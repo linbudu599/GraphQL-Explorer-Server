@@ -11,12 +11,15 @@ import {
   UpdateDateColumn,
   OneToMany,
   RelationId,
+  JoinColumn,
+  OneToOne,
 } from "typeorm";
 
 import { IExecutor, JOB, IExecutorDesc, REGION } from "../graphql/Executor";
 import { DifficultyLevel } from "../graphql/Public";
 
 import Task from "./Task";
+import Record from "./Record";
 
 import { LogExtension } from "../extensions/LogExtension";
 
@@ -76,6 +79,16 @@ export default class Executor extends BaseEntity implements IExecutor {
   @LogExtension({ message: "我直接好家伙" })
   @Field((type) => Int)
   spAgeField?: number;
+
+  @OneToOne((type) => Record, (record) => record.recordExecutor, {
+    nullable: true,
+    cascade: true,
+  })
+  @JoinColumn()
+  relatedRecord!: Record;
+
+  @RelationId((executor: Executor) => executor.relatedRecord)
+  relatedRecordId?: string;
 
   @CreateDateColumn()
   joinDate!: Date;

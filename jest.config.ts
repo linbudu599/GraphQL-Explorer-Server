@@ -3,11 +3,10 @@ export default {
   bail: 5,
   clearMocks: true,
   collectCoverage: true,
-  collectCoverageFrom: ["./server/utils/jwt.ts"],
+  collectCoverageFrom: ["./server/utils/*.ts"],
   setupFilesAfterEnv: [],
   setupFiles: [],
   testMatch: ["**/?(*.)+(spec|test).[tj]s?(x)"],
-  // only collect coverage reports in client for now
   coverageDirectory: "coverage",
   coverageProvider: "v8",
   coverageReporters: ["json", "text", "lcov", "clover"],

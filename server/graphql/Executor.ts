@@ -22,6 +22,7 @@ import {
 } from "class-validator";
 
 import Task from "../entity/Task";
+import Record from "../entity/Record";
 
 import { DifficultyLevel } from "./Public";
 
@@ -134,6 +135,9 @@ export abstract class IExecutor {
 
   @Field((type) => Int, { nullable: true })
   spAgeField?: number;
+
+  @Field(() => Record, { nullable: true })
+  relatedRecord!: Record;
 
   @Field((type) => Date)
   joinDate!: Date;

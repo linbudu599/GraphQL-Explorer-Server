@@ -9,6 +9,8 @@ import {
   ClassType,
 } from "type-graphql";
 
+import Record from "../entity/Record";
+
 import { ACCOUNT_TYPE } from "../utils/constants";
 
 registerEnumType(ACCOUNT_TYPE, {
@@ -25,10 +27,16 @@ export abstract class IAccount {
   accountName!: string;
 
   @Field({ nullable: false })
+  accountAvaliable!: boolean;
+
+  @Field({ nullable: false })
   accountPwd!: string;
 
   @Field((type) => ACCOUNT_TYPE, { nullable: false })
   accountType!: ACCOUNT_TYPE;
+
+  @Field(() => Record, { nullable: true })
+  relatedRecord!: Record;
 
   @Field((type) => Date)
   registryDate!: Date;

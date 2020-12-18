@@ -19,6 +19,7 @@ import PubSubResolver from "./resolver/PubSub.resolver";
 import AccountResolver from "./resolver/Account.resolver";
 import SubstanceResolver from "./resolver/Substance.resolver";
 import PublicResolver from "./resolver/Public.resolver";
+import RecordResolver from "./resolver/Record.resolver";
 
 import { log } from "./utils/helper";
 import { genarateRandomID } from "./utils/auth";
@@ -54,6 +55,7 @@ Container.set({ id: "INIT_INJECT_DATA", factory: () => new Date() });
 TypeORM.useContainer(Container);
 
 const dev = process.env.NODE_ENV === "development";
+
 dotenv.config({ path: dev ? ".env.dev" : ".env.prod" });
 log(`[Env] Loading ${dev ? "[DEV]" : "[PROD]"} File`);
 
@@ -76,6 +78,7 @@ const schema = buildSchemaSync({
     AccountResolver,
     SubstanceResolver,
     PublicResolver,
+    RecordResolver,
   ],
   // container: Container,
   // scoped-container，每次从context中拿到本次注册容器
@@ -86,9 +89,10 @@ const schema = buildSchemaSync({
   authMode: "error",
   emitSchemaFile: path.resolve(__dirname, "./typegraphql/shema.graphql"),
   validate: true,
-  globalMiddlewares: dev
-    ? basicMiddlewares
-    : [...basicMiddlewares, ErrorLoggerMiddleware],
+  // globalMiddlewares: dev
+  //   ? basicMiddlewares
+  //   : [...basicMiddlewares, ErrorLoggerMiddleware],
+  globalMiddlewares: [ErrorLoggerMiddleware],
 });
 
 export default async (): Promise<ApolloServer> => {
@@ -143,7 +147,8 @@ export default async (): Promise<ApolloServer> => {
         operation: op?.operation,
       };
     },
-    introspection: dev,
+    // 2333 关掉不能在生产环境用playground了hhh 但是能正常查询
+    introspection: true,
     // engine: true,
     // formatError: () => {},
     formatResponse: (

@@ -1,6 +1,7 @@
 import { Field, ID, InterfaceType, registerEnumType } from "type-graphql";
 
 import Task from "../entity/Task";
+import Record from "../entity/Record";
 
 import { DifficultyLevel } from "./Public";
 import { ITask } from "./Task";
@@ -41,6 +42,9 @@ export abstract class ISubstance {
 
   @Field(() => Task, { nullable: true })
   relatedTask?: ITask;
+
+  @Field(() => Record, { nullable: true })
+  relatedRecord!: Record;
 
   @Field({ nullable: false })
   substanceAppearDate!: Date;
