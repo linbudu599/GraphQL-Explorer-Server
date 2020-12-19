@@ -244,20 +244,26 @@ export class TaskRelationsInput {
 
   @Field({ nullable: true })
   joinSubstance: boolean = false;
+
+  @Field({ nullable: true })
+  joinRecord: boolean = false;
 }
 
 interface ITaskRelationOptions {
   joinAssignee?: boolean;
   joinSubstance?: boolean;
+  joinRecord?: boolean;
 }
-export type TaskRelation = "assignee" | "taskSubstance";
+export type TaskRelation = "assignee" | "taskSubstance" | "relatedRecord";
 
 export const getTaskRelations = ({
   joinAssignee = false,
   joinSubstance = false,
+  joinRecord = false,
 }: ITaskRelationOptions): TaskRelation[] => {
   const relations: TaskRelation[] = [];
   joinAssignee ? relations.push("assignee") : void 0;
   joinSubstance ? relations.push("taskSubstance") : void 0;
+  joinRecord ? relations.push("relatedRecord") : void 0;
   return relations;
 };

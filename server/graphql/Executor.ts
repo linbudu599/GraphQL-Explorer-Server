@@ -265,3 +265,28 @@ export class ExecutorCreateInput extends CreateInputMixin(ExecutorInput) {}
 
 @InputType({ description: "Executor Update Input" })
 export class ExecutorUpdateInput extends UpdateInputMixin(ExecutorInput) {}
+
+@InputType({ description: "Executor Relations Input" })
+export class ExecutorRelationsInput {
+  @Field({ nullable: true })
+  joinTasks: boolean = false;
+
+  @Field({ nullable: true })
+  joinRecord: boolean = false;
+}
+
+interface IExecutorRelationOptions {
+  joinTasks?: boolean;
+  joinRecord?: boolean;
+}
+export type ExecutorRelation = "relatedRecord" | "tasks";
+
+export const getExecutorRelations = ({
+  joinTasks = false,
+  joinRecord = false,
+}: IExecutorRelationOptions): ExecutorRelation[] => {
+  const relations: ExecutorRelation[] = [];
+  joinTasks ? relations.push("tasks") : void 0;
+  joinRecord ? relations.push("relatedRecord") : void 0;
+  return relations;
+};

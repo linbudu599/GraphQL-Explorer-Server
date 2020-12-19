@@ -12,6 +12,7 @@ import Executor from "../entity/Executor";
 import Task from "../entity/Task";
 import Substance from "../entity/Substance";
 import Account from "../entity/Account";
+import Record from "../entity/Record";
 
 @InterfaceType({ description: "Basic Status Wrapper" })
 export class IBaseStatus {
@@ -20,6 +21,26 @@ export class IBaseStatus {
 
   @Field({ nullable: false })
   message!: string;
+}
+
+@ObjectType({
+  implements: IBaseStatus,
+  description: "Record Response Status Indicator",
+})
+export class RecordStatus extends IBaseStatus {
+  // @Field(() => Account, { nullable: true })
+  // relatedAccount!: Account;
+
+  // @Field(() => Executor, { nullable: true })
+  // relatedExecutor!: Executor;
+
+  // @Field(() => Task, { nullable: true })
+  // relatedTask!: Task;
+
+  // @Field(() => Substance, { nullable: true })
+  // relatedSubstance!: Substance;
+  @Field(() => [Record], { nullable: true })
+  data?: Record[];
 }
 
 @ObjectType({

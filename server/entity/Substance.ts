@@ -20,6 +20,7 @@ import { ISubstance } from "../graphql/Substance";
 @ObjectType({ implements: ISubstance })
 @Entity()
 export default class Substance extends BaseEntity implements ISubstance {
+  // 实体基本信息
   @PrimaryGeneratedColumn()
   substanceId!: string;
 
@@ -45,12 +46,14 @@ export default class Substance extends BaseEntity implements ISubstance {
   @Column({ nullable: false, default: false, comment: "是否已收收容" })
   asylumed!: boolean;
 
+  // 实体关联任务
   @OneToOne(() => Task, (task) => task.taskSubstance)
   relatedTask!: Task;
 
   @RelationId((substance: Substance) => substance.relatedTask)
   relatedTaskId?: string;
 
+  // 实体关联记录
   @OneToOne((type) => Record, (record) => record.recordTask, {
     nullable: true,
     cascade: true,

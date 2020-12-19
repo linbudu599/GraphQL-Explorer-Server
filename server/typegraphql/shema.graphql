@@ -233,6 +233,7 @@ interface IRecord {
   recordAccount: Account
   recordExecutor: Executor
   recordId: ID!
+  recordSubstance: Substance
   recordTask: Task
 }
 
@@ -461,6 +462,7 @@ type Query {
   获取所有执行者
   """
   QueryAllExecutors(pagination: PaginationOptions): ExecutorStatus!
+  QueryAllRecords(relations: RecordRelationsInput): RecordStatus!
 
   """
   查找所有实体信息
@@ -559,7 +561,6 @@ type Query {
   基于ID获取任务
   """
   QueryTaskByID(relations: TaskRelationsInput, taskId: String!): TaskStatus!
-  RecordResolverTmp: Int!
 }
 
 """
@@ -581,7 +582,27 @@ type Record implements IRecord {
   recordAccount: Account
   recordExecutor: Executor
   recordId: ID!
+  recordSubstance: Substance
   recordTask: Task
+}
+
+"""
+Record Relations Input
+"""
+input RecordRelationsInput {
+  joinAccount: Boolean = false
+  joinExecutor: Boolean = false
+  joinSubstance: Boolean = false
+  joinTask: Boolean = false
+}
+
+"""
+Record Response Status Indicator
+"""
+type RecordStatus implements IBaseStatus {
+  data: [Record!]
+  message: String!
+  success: Boolean!
 }
 
 """
@@ -671,6 +692,7 @@ Task Relations Input
 """
 input TaskRelationsInput {
   joinAssignee: Boolean = false
+  joinRecord: Boolean = false
   joinSubstance: Boolean = false
 }
 

@@ -1,4 +1,10 @@
-import { Field, ID, InterfaceType, registerEnumType } from "type-graphql";
+import {
+  Field,
+  ID,
+  InputType,
+  InterfaceType,
+  registerEnumType,
+} from "type-graphql";
 
 import Task from "../entity/Task";
 import Record from "../entity/Record";
@@ -52,3 +58,28 @@ export abstract class ISubstance {
   @Field({ nullable: false })
   lastActiveDate!: Date;
 }
+
+@InputType({ description: "Substance Relations Input" })
+export class SubstanceRelationsInput {
+  @Field({ nullable: true })
+  relatedTask: boolean = false;
+
+  @Field({ nullable: true })
+  joinRecord: boolean = false;
+}
+
+interface ISubstanceRelationOptions {
+  relatedTask?: boolean;
+  joinRecord?: boolean;
+}
+export type SubstanceRelation = "relatedRecord" | "relatedTask";
+
+export const getSubstanceRelations = ({
+  relatedTask = false,
+  joinRecord = false,
+}: ISubstanceRelationOptions): SubstanceRelation[] => {
+  const relations: SubstanceRelation[] = [];
+  relatedTask ? relations.push("relatedTask") : void 0;
+  joinRecord ? relations.push("relatedRecord") : void 0;
+  return relations;
+};

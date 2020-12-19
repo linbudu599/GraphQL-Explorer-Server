@@ -25,6 +25,7 @@ import { ACCOUNT_TYPE } from "../utils/constants";
 @ObjectType({ implements: IAccount })
 @Entity()
 export default class Account extends BaseEntity implements IAccount {
+  // 账号基本信息
   @PrimaryGeneratedColumn()
   accountId!: string;
 
@@ -44,6 +45,7 @@ export default class Account extends BaseEntity implements IAccount {
   })
   accountType!: ACCOUNT_TYPE;
 
+  // 账号关联记录
   @OneToOne((type) => Record, (record) => record.recordTask, {
     nullable: true,
     cascade: true,

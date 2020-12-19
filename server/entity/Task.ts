@@ -22,7 +22,6 @@ import { DifficultyLevel } from "../graphql/Public";
 import { ITask, TaskSource, TaskTarget, TaskPriority } from "../graphql/Task";
 
 /**
- * 新增字段
  * 关联任务
  * 任务回报 -> 任务积分点 + 任务赏金
  */
@@ -30,6 +29,7 @@ import { ITask, TaskSource, TaskTarget, TaskPriority } from "../graphql/Task";
 @ObjectType({ implements: ITask })
 @Entity()
 export default class Task extends BaseEntity implements ITask {
+  // 基本信息
   @PrimaryGeneratedColumn()
   taskId!: string;
 
@@ -81,6 +81,7 @@ export default class Task extends BaseEntity implements ITask {
   @Column({ nullable: true, default: 0, comment: "任务完成度评分" })
   taskRate!: number;
 
+  // 任务关联实体
   // 就假设一个任务只会有一个实体出现好了...
   @OneToOne((type) => Substance, (substance) => substance.relatedTask, {
     nullable: true,
@@ -92,6 +93,7 @@ export default class Task extends BaseEntity implements ITask {
   @RelationId((task: Task) => task.taskSubstance)
   taskSubstanceId?: string;
 
+  // 任务关联指派
   @ManyToOne(() => Executor, (executor) => executor.tasks, { nullable: true })
   @JoinColumn({ name: "assigneeUID" })
   @TypeormLoader((type) => Executor, (task: Task) => task.assigneeUID)
@@ -100,6 +102,7 @@ export default class Task extends BaseEntity implements ITask {
   @RelationId((task: Task) => task.assignee)
   assigneeUID?: string;
 
+  // 任务关联记录
   @OneToOne((type) => Record, (record) => record.recordTask, {
     nullable: true,
     cascade: true,

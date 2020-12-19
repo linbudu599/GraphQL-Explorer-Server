@@ -98,3 +98,22 @@ export class AccountRegistryInput extends RegisterInputMixin(AccountInput) {}
 
 @InputType({ description: "Login Input Type" })
 export class AccountLoginInput extends LoginInputMixin(AccountInput) {}
+
+@InputType({ description: "Account Relations Input" })
+export class AccountRelationsInput {
+  @Field({ nullable: true })
+  joinRecord: boolean = false;
+}
+
+interface IAccountRelationOptions {
+  joinRecord?: boolean;
+}
+export type AccountRelation = "relatedRecord";
+
+export const getAccountRelations = ({
+  joinRecord = false,
+}: IAccountRelationOptions): AccountRelation[] => {
+  const relations: AccountRelation[] = [];
+  joinRecord ? relations.push("relatedRecord") : void 0;
+  return relations;
+};

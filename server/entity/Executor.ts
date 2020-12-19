@@ -44,6 +44,7 @@ const Executor_DESC_DEFAULT = plainToClass(ExecutorDesc, {
 @ObjectType({ implements: IExecutor })
 @Entity()
 export default class Executor extends BaseEntity implements IExecutor {
+  // 执行者基本信息
   @PrimaryGeneratedColumn()
   uid!: string;
 
@@ -59,18 +60,11 @@ export default class Executor extends BaseEntity implements IExecutor {
   @Column({ default: false, nullable: false })
   isFool!: boolean;
 
-  @OneToMany(() => Task, (task) => task.assignee)
-  @TypeormLoader((type) => Executor, (Executor: Executor) => Executor.taskIds)
-  tasks?: Task[];
-
   @Column({ default: JSON.stringify(Executor_DESC_DEFAULT) })
   // @Extension needs to be used with @Field
   @Extensions({ info: "Executor.desc Field" })
   @Field()
   desc!: string;
-
-  @RelationId((Executor: Executor) => Executor.tasks)
-  taskIds?: string[];
 
   @Column({ default: REGION.OTHER, nullable: false })
   region!: REGION;
@@ -80,6 +74,15 @@ export default class Executor extends BaseEntity implements IExecutor {
   @Field((type) => Int)
   spAgeField?: number;
 
+  // 任务
+  @OneToMany(() => Task, (task) => task.assignee)
+  @TypeormLoader((type) => Executor, (Executor: Executor) => Executor.taskIds)
+  tasks?: Task[];
+
+  @RelationId((Executor: Executor) => Executor.tasks)
+  taskIds?: string[];
+
+  // 关联记录
   @OneToOne((type) => Record, (record) => record.recordExecutor, {
     nullable: true,
     cascade: true,
