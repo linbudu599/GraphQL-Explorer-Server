@@ -188,9 +188,15 @@ export const mockExecutor = (len: number) => {
   const mockExecutorInfo: Partial<Executor>[] = [];
 
   for (let i = 0; i < len; i++) {
+    console.log("");
+    console.log("");
+    console.log(`====${i}====`);
+    console.log("");
+    console.log("");
     mockExecutorInfo.push(
       createExecutor({
-        name: `林不渡-${i}-${Math.floor(Math.random() * 1000)}`,
+        // name: `林不渡-${i}-${Math.floor(Math.random() * 1000)}`,
+        name: `林不渡-${i}}`,
         age: Math.floor(Math.random() * 30),
         isFool: i % 2 === 0,
         desc: JSON.stringify(
@@ -217,9 +223,7 @@ export const dbConnect = async (): Promise<any> => {
     const mockExecutorGroup = mockExecutor(5);
     const mockSubstanceGroup = mockSubstance(5);
 
-    await connection.manager.save(mockTaskGroup);
     await connection.manager.save(mockExecutorGroup);
-    await connection.manager.save(mockSubstanceGroup);
 
     const executor = new Executor();
     executor.name = `林不渡-${Math.floor(Math.random() * 1000)}`;
@@ -233,6 +237,9 @@ export const dbConnect = async (): Promise<any> => {
 
     mockTaskGroup[0].taskSubstance = sub;
     await connection.manager.save(mockTaskGroup[0]);
+
+    await connection.manager.save(mockTaskGroup);
+    await connection.manager.save(mockSubstanceGroup);
 
     log("[TypeORM] Initial Mock Data Inserted\n");
   } catch (error) {

@@ -89,10 +89,9 @@ const schema = buildSchemaSync({
   authMode: "error",
   emitSchemaFile: path.resolve(__dirname, "./typegraphql/shema.graphql"),
   validate: true,
-  // globalMiddlewares: dev
-  //   ? basicMiddlewares
-  //   : [...basicMiddlewares, ErrorLoggerMiddleware],
-  globalMiddlewares: [ErrorLoggerMiddleware],
+  globalMiddlewares: dev
+    ? basicMiddlewares
+    : [...basicMiddlewares, ErrorLoggerMiddleware],
 });
 
 export default async (): Promise<ApolloServer> => {
