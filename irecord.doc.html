@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="./styles/graphdoc.css" />
-    <title>Subscription</title>
+    <title>IRecord</title>
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700" rel="stylesheet"><link type="text/css" rel="stylesheet" href="./assets/code.css" /><link type="text/css" rel="stylesheet" href="./assets/require-by.css" />
 </head>
 <body class="slds-scrollable--y">
@@ -35,7 +35,7 @@
                 Mutation
             </a>
         </li>
-        <li class="slds-is-active" title="Subscription">
+        <li  title="Subscription">
             <a href="subscription.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 Subscription
             </a>
@@ -155,7 +155,7 @@
                 IExecutorDesc
             </a>
         </li>
-        <li  title="IRecord">
+        <li class="slds-is-active" title="IRecord">
             <a href="irecord.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 IRecord
             </a>
@@ -410,9 +410,10 @@
         </div>
     </div>
     <div class="container">
-        <p class="slds-text-title--caps slds-text-color--weak">OBJECT</p>
-        <h1 class="slds-text-heading--large">Subscription</h1>
-        <div class="slds-text-body--regular"></div>
+        <p class="slds-text-title--caps slds-text-color--weak">INTERFACE</p>
+        <h1 class="slds-text-heading--large">IRecord</h1>
+        <div class="slds-text-body--regular"><p>Record Interface Type</p>
+</div>
     </div>
 </section>
 <section>
@@ -423,7 +424,7 @@
             </a>
             GraphQL Schema definition
         </h2>
-        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">Subscription</span> {</li><li></li><li><span class="tab"><span class="meta">normalSubscription</span>: <a class="support type" href="notification.doc.html">Notification</a>! </span></li><li></li><li><span class="tab"><span class="meta">subscriptionWithFilter</span>: <a class="support type" href="notification.doc.html">Notification</a>! </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>topic</strong>: [<strong>Not documented</strong>]</span></span></li><li><span class="tab"><span class="meta">subscriptionWithFilterToDynamicTopic</span>(</span></li><li><span class="tab"><span class="tab"><span class="meta">topic</span>: <a class="support type" href="string.doc.html">String</a>!</span></span></li><li><span class="tab">): <a class="support type" href="notification.doc.html">Notification</a>! </span></li><li>}</li></ul></code>
+        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">interface</span> <span class="identifier">IRecord</span> {</li><li></li><li><span class="tab"><span class="meta">recordId</span>: <a class="support type" href="id.doc.html">ID</a>! </span></li><li></li><li><span class="tab"><span class="meta">recordTask</span>: <a class="support type" href="task.doc.html">Task</a> </span></li><li></li><li><span class="tab"><span class="meta">recordAccount</span>: <a class="support type" href="account.doc.html">Account</a> </span></li><li></li><li><span class="tab"><span class="meta">recordExecutor</span>: <a class="support type" href="executor.doc.html">Executor</a> </span></li><li></li><li><span class="tab"><span class="meta">recordSubstance</span>: <a class="support type" href="substance.doc.html">Substance</a> </span></li><li></li><li><span class="tab"><span class="meta">createDate</span>: <a class="support type" href="timestamp.doc.html">Timestamp</a>! </span></li><li></li><li><span class="tab"><span class="meta">lastUpdateDate</span>: <a class="support type" href="timestamp.doc.html">Timestamp</a>! </span></li><li>}</li></ul></code>
     </div>
 </section>
 <section>
@@ -434,7 +435,7 @@
             </a>
             Require by
         </h2>
-        <div class="require-by anyone">This element is not required by anyone</div>
+        <ul class="require-by"><li><a href="record.doc.html" title="Record - ">Record<em>null</em></a><li></ul>
     </div>
 </section>
 <footer>

@@ -155,6 +155,11 @@
                 IExecutorDesc
             </a>
         </li>
+        <li  title="IRecord">
+            <a href="irecord.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                IRecord
+            </a>
+        </li>
         <li  title="ISubstance">
             <a href="isubstance.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 ISubstance
@@ -238,6 +243,16 @@
         <li  title="Recipe">
             <a href="recipe.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 Recipe
+            </a>
+        </li>
+        <li  title="Record">
+            <a href="record.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Record
+            </a>
+        </li>
+        <li  title="RecordStatus">
+            <a href="recordstatus.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                RecordStatus
             </a>
         </li>
         <li  title="SaltFish">
@@ -335,6 +350,11 @@
                 PaginationOptions
             </a>
         </li>
+        <li  title="RecordRelationsInput">
+            <a href="recordrelationsinput.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                RecordRelationsInput
+            </a>
+        </li>
         <li  title="TaskCreateInput">
             <a href="taskcreateinput.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 TaskCreateInput
@@ -404,7 +424,7 @@
             </a>
             GraphQL Schema definition
         </h2>
-        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">interface</span> <span class="identifier">ITask</span> {</li><li></li><li><span class="tab"><span class="meta">taskId</span>: <a class="support type" href="id.doc.html">ID</a>! </span></li><li></li><li><span class="tab"><span class="meta">taskTitle</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">assignee</span>: <a class="support type" href="executor.doc.html">Executor</a> </span></li><li></li><li><span class="tab"><span class="meta">taskContent</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">taskSource</span>: <a class="support type" href="tasksource.doc.html">TaskSource</a>! </span></li><li></li><li><span class="tab"><span class="meta">taskLevel</span>: <a class="support type" href="difficultylevel.doc.html">DifficultyLevel</a>! </span></li><li></li><li><span class="tab"><span class="meta">taskAccmplished</span>: <a class="support type" href="boolean.doc.html">Boolean</a>! </span></li><li></li><li><span class="tab"><span class="meta">taskAvaliable</span>: <a class="support type" href="boolean.doc.html">Boolean</a>! </span></li><li></li><li><span class="tab"><span class="meta">taskReward</span>: <a class="support type" href="float.doc.html">Float</a>! </span></li><li></li><li><span class="tab"><span class="meta">taskRate</span>: <a class="support type" href="float.doc.html">Float</a>! </span></li><li></li><li><span class="tab"><span class="meta">taskTarget</span>: <a class="support type" href="tasktarget.doc.html">TaskTarget</a>! </span></li><li></li><li><span class="tab"><span class="meta">taskSubstance</span>: <a class="support type" href="substance.doc.html">Substance</a> </span></li><li></li><li><span class="tab"><span class="meta">publishDate</span>: <a class="support type" href="timestamp.doc.html">Timestamp</a>! </span></li><li></li><li><span class="tab"><span class="meta">lastUpdateDate</span>: <a class="support type" href="timestamp.doc.html">Timestamp</a>! </span></li><li>}</li></ul></code>
+        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">interface</span> <span class="identifier">ITask</span> {</li><li></li><li><span class="tab"><span class="meta">taskId</span>: <a class="support type" href="id.doc.html">ID</a>! </span></li><li></li><li><span class="tab"><span class="meta">taskTitle</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">requireCleaner</span>: <a class="support type" href="boolean.doc.html">Boolean</a>! </span></li><li></li><li><span class="tab"><span class="meta">requirePsychologicalIntervention</span>: <a class="support type" href="boolean.doc.html">Boolean</a>! </span></li><li></li><li><span class="tab"><span class="meta">assignee</span>: <a class="support type" href="executor.doc.html">Executor</a> </span></li><li></li><li><span class="tab"><span class="meta">taskContent</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">allowAbort</span>: <a class="support type" href="boolean.doc.html">Boolean</a>! </span></li><li></li><li><span class="tab"><span class="meta">taskSource</span>: <a class="support type" href="tasksource.doc.html">TaskSource</a>! </span></li><li></li><li><span class="tab"><span class="meta">taskLevel</span>: <a class="support type" href="difficultylevel.doc.html">DifficultyLevel</a>! </span></li><li></li><li><span class="tab"><span class="meta">taskAccmplished</span>: <a class="support type" href="boolean.doc.html">Boolean</a>! </span></li><li></li><li><span class="tab"><span class="meta">taskAvaliable</span>: <a class="support type" href="boolean.doc.html">Boolean</a>! </span></li><li></li><li><span class="tab"><span class="meta">taskReward</span>: <a class="support type" href="float.doc.html">Float</a>! </span></li><li></li><li><span class="tab"><span class="meta">taskRate</span>: <a class="support type" href="float.doc.html">Float</a>! </span></li><li></li><li><span class="tab"><span class="meta">taskTarget</span>: <a class="support type" href="tasktarget.doc.html">TaskTarget</a>! </span></li><li></li><li><span class="tab"><span class="meta">taskSubstance</span>: <a class="support type" href="substance.doc.html">Substance</a> </span></li><li></li><li><span class="tab"><span class="meta">relatedRecord</span>: <a class="support type" href="record.doc.html">Record</a> </span></li><li></li><li><span class="tab"><span class="meta">publishDate</span>: <a class="support type" href="timestamp.doc.html">Timestamp</a>! </span></li><li></li><li><span class="tab"><span class="meta">lastUpdateDate</span>: <a class="support type" href="timestamp.doc.html">Timestamp</a>! </span></li><li>}</li></ul></code>
     </div>
 </section>
 <section>

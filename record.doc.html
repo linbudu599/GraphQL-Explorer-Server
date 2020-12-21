@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="./styles/graphdoc.css" />
-    <title>Subscription</title>
+    <title>Record</title>
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700" rel="stylesheet"><link type="text/css" rel="stylesheet" href="./assets/code.css" /><link type="text/css" rel="stylesheet" href="./assets/require-by.css" />
 </head>
 <body class="slds-scrollable--y">
@@ -35,7 +35,7 @@
                 Mutation
             </a>
         </li>
-        <li class="slds-is-active" title="Subscription">
+        <li  title="Subscription">
             <a href="subscription.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 Subscription
             </a>
@@ -245,7 +245,7 @@
                 Recipe
             </a>
         </li>
-        <li  title="Record">
+        <li class="slds-is-active" title="Record">
             <a href="record.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 Record
             </a>
@@ -411,7 +411,7 @@
     </div>
     <div class="container">
         <p class="slds-text-title--caps slds-text-color--weak">OBJECT</p>
-        <h1 class="slds-text-heading--large">Subscription</h1>
+        <h1 class="slds-text-heading--large">Record</h1>
         <div class="slds-text-body--regular"></div>
     </div>
 </section>
@@ -423,7 +423,7 @@
             </a>
             GraphQL Schema definition
         </h2>
-        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">Subscription</span> {</li><li></li><li><span class="tab"><span class="meta">normalSubscription</span>: <a class="support type" href="notification.doc.html">Notification</a>! </span></li><li></li><li><span class="tab"><span class="meta">subscriptionWithFilter</span>: <a class="support type" href="notification.doc.html">Notification</a>! </span></li><li></li><li><span class="tab"><span class="comment line"># Arguments</span></span></li><li><span class="tab"><span class="comment line">#   <strong>topic</strong>: [<strong>Not documented</strong>]</span></span></li><li><span class="tab"><span class="meta">subscriptionWithFilterToDynamicTopic</span>(</span></li><li><span class="tab"><span class="tab"><span class="meta">topic</span>: <a class="support type" href="string.doc.html">String</a>!</span></span></li><li><span class="tab">): <a class="support type" href="notification.doc.html">Notification</a>! </span></li><li>}</li></ul></code>
+        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">Record</span> <span class="keyword operator ts">implements</span> <a class="support type" href="irecord.doc.html">IRecord</a> {</li><li></li><li><span class="tab"><span class="meta">recordId</span>: <a class="support type" href="id.doc.html">ID</a>! </span></li><li></li><li><span class="tab"><span class="meta">recordTask</span>: <a class="support type" href="task.doc.html">Task</a> </span></li><li></li><li><span class="tab"><span class="meta">recordAccount</span>: <a class="support type" href="account.doc.html">Account</a> </span></li><li></li><li><span class="tab"><span class="meta">recordExecutor</span>: <a class="support type" href="executor.doc.html">Executor</a> </span></li><li></li><li><span class="tab"><span class="meta">recordSubstance</span>: <a class="support type" href="substance.doc.html">Substance</a> </span></li><li></li><li><span class="tab"><span class="meta">createDate</span>: <a class="support type" href="timestamp.doc.html">Timestamp</a>! </span></li><li></li><li><span class="tab"><span class="meta">lastUpdateDate</span>: <a class="support type" href="timestamp.doc.html">Timestamp</a>! </span></li><li>}</li></ul></code>
     </div>
 </section>
 <section>
@@ -434,7 +434,7 @@
             </a>
             Require by
         </h2>
-        <div class="require-by anyone">This element is not required by anyone</div>
+        <ul class="require-by"><li><a href="account.doc.html" title="Account - ">Account<em>null</em></a><li><li><a href="executor.doc.html" title="Executor - ">Executor<em>null</em></a><li><li><a href="iaccount.doc.html" title="IAccount - Account Interface Type">IAccount<em>Account Interface Type</em></a><li><li><a href="iexecutor.doc.html" title="IExecutor - Update Executor Basic Info Input">IExecutor<em>Update Executor Basic Info Input</em></a><li><li><a href="isubstance.doc.html" title="ISubstance - Substance Interface Type">ISubstance<em>Substance Interface Type</em></a><li><li><a href="itask.doc.html" title="ITask - Task Interface Type">ITask<em>Task Interface Type</em></a><li><li><a href="recordstatus.doc.html" title="RecordStatus - Record Response Status Indicator">RecordStatus<em>Record Response Status Indicator</em></a><li><li><a href="substance.doc.html" title="Substance - ">Substance<em>null</em></a><li><li><a href="task.doc.html" title="Task - ">Task<em>null</em></a><li></ul>
     </div>
 </section>
 <footer>

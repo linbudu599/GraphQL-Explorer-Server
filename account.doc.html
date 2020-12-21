@@ -155,6 +155,11 @@
                 IExecutorDesc
             </a>
         </li>
+        <li  title="IRecord">
+            <a href="irecord.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                IRecord
+            </a>
+        </li>
         <li  title="ISubstance">
             <a href="isubstance.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 ISubstance
@@ -238,6 +243,16 @@
         <li  title="Recipe">
             <a href="recipe.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 Recipe
+            </a>
+        </li>
+        <li  title="Record">
+            <a href="record.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                Record
+            </a>
+        </li>
+        <li  title="RecordStatus">
+            <a href="recordstatus.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                RecordStatus
             </a>
         </li>
         <li  title="SaltFish">
@@ -335,6 +350,11 @@
                 PaginationOptions
             </a>
         </li>
+        <li  title="RecordRelationsInput">
+            <a href="recordrelationsinput.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                RecordRelationsInput
+            </a>
+        </li>
         <li  title="TaskCreateInput">
             <a href="taskcreateinput.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 TaskCreateInput
@@ -403,7 +423,7 @@
             </a>
             GraphQL Schema definition
         </h2>
-        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">Account</span> <span class="keyword operator ts">implements</span> <a class="support type" href="iaccount.doc.html">IAccount</a> {</li><li></li><li><span class="tab"><span class="meta">accountId</span>: <a class="support type" href="id.doc.html">ID</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountName</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountPwd</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountType</span>: <a class="support type" href="accounttype.doc.html">AccountType</a>! </span></li><li></li><li><span class="tab"><span class="meta">registryDate</span>: <a class="support type" href="timestamp.doc.html">Timestamp</a>! </span></li><li></li><li><span class="tab"><span class="meta">lastUpdateDate</span>: <a class="support type" href="timestamp.doc.html">Timestamp</a>! </span></li><li>}</li></ul></code>
+        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">Account</span> <span class="keyword operator ts">implements</span> <a class="support type" href="iaccount.doc.html">IAccount</a> {</li><li></li><li><span class="tab"><span class="meta">accountId</span>: <a class="support type" href="id.doc.html">ID</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountName</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountAvaliable</span>: <a class="support type" href="boolean.doc.html">Boolean</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountPwd</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountType</span>: <a class="support type" href="accounttype.doc.html">AccountType</a>! </span></li><li></li><li><span class="tab"><span class="meta">relatedRecord</span>: <a class="support type" href="record.doc.html">Record</a> </span></li><li></li><li><span class="tab"><span class="meta">registryDate</span>: <a class="support type" href="timestamp.doc.html">Timestamp</a>! </span></li><li></li><li><span class="tab"><span class="meta">lastUpdateDate</span>: <a class="support type" href="timestamp.doc.html">Timestamp</a>! </span></li><li>}</li></ul></code>
     </div>
 </section>
 <section>
@@ -414,7 +434,7 @@
             </a>
             Require by
         </h2>
-        <ul class="require-by"><li><a href="accountstatus.doc.html" title="AccountStatus - Primitive Response Status Indicator">AccountStatus<em>Primitive Response Status Indicator</em></a><li></ul>
+        <ul class="require-by"><li><a href="accountstatus.doc.html" title="AccountStatus - Primitive Response Status Indicator">AccountStatus<em>Primitive Response Status Indicator</em></a><li><li><a href="irecord.doc.html" title="IRecord - Record Interface Type">IRecord<em>Record Interface Type</em></a><li><li><a href="record.doc.html" title="Record - ">Record<em>null</em></a><li></ul>
     </div>
 </section>
 <footer>
