@@ -1,5 +1,5 @@
 import { Resolver, Query, Arg, Mutation } from "type-graphql";
-import { Repository, Transaction, TransactionRepository } from "typeorm";
+import { Repository, Transaction } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import Substance from "../entity/Substance";
@@ -70,7 +70,6 @@ export default class SubstanceResolver {
     return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
   }
 
-  @Transaction()
   @Mutation(() => SubstanceStatus, {
     nullable: false,
     description: "变更实体收容状态",
@@ -79,7 +78,6 @@ export default class SubstanceResolver {
     return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
   }
 
-  @Transaction()
   @Mutation(() => SubstanceStatus, {
     nullable: false,
     description: "变更实体存活状态",
@@ -97,7 +95,6 @@ export default class SubstanceResolver {
     return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
   }
 
-  @Transaction()
   @Mutation(() => SubstanceStatus, {
     nullable: false,
     description: "仅新增实体",
@@ -106,7 +103,6 @@ export default class SubstanceResolver {
     return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
   }
 
-  @Transaction()
   @Mutation(() => SubstanceStatus, {
     nullable: false,
     description: "变更实体基本信息",
@@ -115,7 +111,6 @@ export default class SubstanceResolver {
     return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
   }
 
-  @Transaction()
   @Mutation(() => SubstanceStatus, {
     nullable: false,
     description: "变更实体威胁级别",

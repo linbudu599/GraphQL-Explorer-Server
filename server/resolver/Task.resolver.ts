@@ -102,23 +102,19 @@ export default class TaskResolver {
     }
   }
 
-  @Transaction()
   @Mutation(() => TaskStatus, { nullable: false, description: "变更任务状态" })
-  async ToggleTaskStatus(
-    @Arg("taskId") taskId: string,
-    @TransactionRepository(Task) taskTransRepo: Repository<Task>
-  ): Promise<TaskStatus> {
+  async ToggleTaskStatus(@Arg("taskId") taskId: string): Promise<TaskStatus> {
     try {
-      const origin = await taskTransRepo.findOne({ where: { taskId } });
+      const origin = await this.taskRepository.findOne({ where: { taskId } });
 
       if (!origin)
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
 
-      const updateRes = await taskTransRepo.update(taskId, {
+      const updateRes = await this.taskRepository.update(taskId, {
         taskAccmplished: !origin.taskAccmplished,
       });
 
-      const updatedItem = await taskTransRepo.findOne({
+      const updatedItem = await this.taskRepository.findOne({
         where: { taskId },
       });
 
@@ -128,20 +124,16 @@ export default class TaskResolver {
     }
   }
 
-  @Transaction()
   @Mutation(() => TaskStatus, { nullable: false, description: "删除任务" })
-  async DeleteTask(
-    @Arg("taskId") taskId: string,
-    @TransactionRepository(Task) taskTransRepo: Repository<Task>
-  ): Promise<TaskStatus> {
+  async DeleteTask(@Arg("taskId") taskId: string): Promise<TaskStatus> {
     try {
-      const res = await taskTransRepo.findOne(taskId);
+      const res = await this.taskRepository.findOne(taskId);
 
       if (!res) {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
 
-      await taskTransRepo.delete(taskId);
+      await this.taskRepository.delete(taskId);
 
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, []);
     } catch (error) {
@@ -181,15 +173,12 @@ export default class TaskResolver {
     }
   }
 
-  @Transaction()
   @Mutation(() => TaskStatus, {
     nullable: false,
     description: "变更任务基本信息",
   })
   async UpdateTaskInfo(
-    @Arg("taskUpdateParam") param: TaskUpdateInput,
-    @TransactionRepository(Task)
-    taskTransRepo: Repository<Task>
+    @Arg("taskUpdateParam") param: TaskUpdateInput
   ): Promise<TaskStatus> {
     try {
       const taskExists = await this.taskRepository.findOne(param.taskId);
@@ -197,7 +186,7 @@ export default class TaskResolver {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
 
-      await taskTransRepo.update(param.taskId, param);
+      await this.taskRepository.update(param.taskId, param);
 
       const updatedTask = await this.taskRepository.findOne({
         taskId: param.taskId,
@@ -243,16 +232,13 @@ export default class TaskResolver {
     }
   }
 
-  @Transaction()
   @Mutation(() => TaskStatus, {
     nullable: false,
     description: "变更任务级别",
   })
   async MutateTaskLevel(
     @Arg("taskId") taskId: string,
-    @Arg("level", (type) => DifficultyLevel) level: DifficultyLevel,
-    @TransactionRepository(Task)
-    taskTransRepo: Repository<Task>
+    @Arg("level", (type) => DifficultyLevel) level: DifficultyLevel
   ): Promise<TaskStatus> {
     try {
       const res = await this.taskRepository.findOne(taskId);
@@ -260,7 +246,7 @@ export default class TaskResolver {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
 
-      await taskTransRepo.update({ taskId }, { taskLevel: level });
+      await this.taskRepository.update({ taskId }, { taskLevel: level });
 
       const updatedTask = await this.taskRepository.findOne({ taskId });
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updatedTask]);
@@ -269,23 +255,18 @@ export default class TaskResolver {
     }
   }
 
-  @Transaction()
   @Mutation(() => TaskStatus, {
     nullable: false,
     description: "冻结任务 无法恢复",
   })
-  async FreezeTask(
-    @Arg("taskId") taskId: string,
-    @TransactionRepository(Task)
-    taskTransRepo: Repository<Task>
-  ): Promise<TaskStatus> {
+  async FreezeTask(@Arg("taskId") taskId: string): Promise<TaskStatus> {
     try {
       const res = await this.taskRepository.findOne(taskId);
       if (!res) {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
 
-      await taskTransRepo.update({ taskId }, { taskAvaliable: false });
+      await this.taskRepository.update({ taskId }, { taskAvaliable: false });
 
       const updatedTask = await this.taskRepository.findOne({ taskId });
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updatedTask]);

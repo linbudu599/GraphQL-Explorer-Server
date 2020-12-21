@@ -1,7 +1,9 @@
 # GraphQL-Explorer-Server
 
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/linbudu599/GraphQL-Explorer-Server/GraphQL-Explorer-Server)
-![GitHub](https://img.shields.io/github/license/linbudu599/GraphQL-Explorer?color=deepgreen)
+![Codecov](https://img.shields.io/codecov/c/github/linbudu599/GraphQL-Explorer-Server)
+![GitHub last commit](https://img.shields.io/github/last-commit/linbudu599/GraphQL-Explorer-Server)
+![David](https://img.shields.io/david/dev/linbudu599/GraphQL-Explorer-Server?label=dependencies)
 
 ![GitHub package.json dependency version (subfolder of monorepo)](https://img.shields.io/github/package-json/dependency-version/linbudu599/GraphQL-Explorer/graphql)
 ![GitHub package.json dependency version (subfolder of monorepo)](https://img.shields.io/github/package-json/dependency-version/linbudu599/GraphQL-Explorer/type-graphql)
