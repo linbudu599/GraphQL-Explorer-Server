@@ -366,6 +366,7 @@ type Mutation {
   ModifyPassword(
     accountName: String!
     newPassword: String!
+    prevPassword: String!
   ): LoginOrRegisterStatus!
 
   """

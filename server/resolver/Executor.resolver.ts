@@ -148,15 +148,12 @@ export default class ExecutorResolver {
     return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, filterExecutors);
   }
 
-  @Transaction()
   @Mutation(() => ExecutorStatus, {
     nullable: false,
     description: "添加执行者",
   })
   async CreateExecutor(
-    @Arg("newExecutorInfo") Executor: ExecutorCreateInput,
-    @TransactionRepository(Executor)
-    executorTransRepo: Repository<Executor>
+    @Arg("newExecutorInfo") Executor: ExecutorCreateInput
   ): Promise<ExecutorStatus> {
     try {
       const isExistingExecutor = await this.executorRepository.findOne({
@@ -166,23 +163,20 @@ export default class ExecutorResolver {
         return new StatusHandler(false, RESPONSE_INDICATOR.EXISTED, []);
       }
 
-      const res = await executorTransRepo.save(Executor);
+      const res = await this.executorRepository.save(Executor);
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
     }
   }
 
-  @Transaction()
   @Mutation(() => ExecutorStatus, {
     nullable: false,
     description: "更新执行者描述",
   })
   async UpdateExecutorDesc(
     @Arg("uid") uid: string,
-    @Arg("userDesc") desc: ExecutorDescUpdateInput,
-    @TransactionRepository(Executor)
-    executorTransRepo: Repository<Executor>
+    @Arg("userDesc") desc: ExecutorDescUpdateInput
   ): Promise<ExecutorStatus> {
     try {
       const isExistingExecutor = await this.executorRepository.findOne(uid);
@@ -194,7 +188,7 @@ export default class ExecutorResolver {
         ...desc,
       };
 
-      const res = await executorTransRepo.update(uid, {
+      const res = await this.executorRepository.update(uid, {
         desc: JSON.stringify(updatedDesc),
       });
 
@@ -208,30 +202,27 @@ export default class ExecutorResolver {
     }
   }
 
-  @Transaction()
   @Mutation(() => ExecutorStatus, {
     nullable: false,
     description: "更新执行者基本信息",
   })
   async UpdateExecutorBasicInfo(
-    @Arg("modifiedExecutorInfo") Executor: ExecutorUpdateInput,
-    @TransactionRepository(Executor)
-    executorTransRepo: Repository<Executor>
+    @Arg("modifiedExecutorInfo") executor: ExecutorUpdateInput
   ): Promise<ExecutorStatus> {
     try {
       const isExistingExecutor = await this.executorRepository.findOne({
-        uid: Executor.uid,
+        uid: executor.uid,
       });
       if (!isExistingExecutor) {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
 
-      const res = await executorTransRepo.update(
-        { uid: Executor.uid },
+      const res = await this.executorRepository.update(
+        { uid: executor.uid },
         Executor
       );
       const updatedItem = await this.executorRepository.findOne({
-        uid: Executor.uid,
+        uid: executor.uid,
       });
 
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updatedItem]);

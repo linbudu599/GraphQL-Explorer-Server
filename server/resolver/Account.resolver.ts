@@ -1,6 +1,8 @@
-import { Resolver, Query, Arg, Mutation } from "type-graphql";
-import { Repository, Transaction, TransactionRepository } from "typeorm";
+import { Resolver, Query, Arg, Mutation, UseMiddleware } from "type-graphql";
+import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
+
+import { ExtraFieldLogMiddlewareGenerator } from "../middleware/log";
 
 import { dispatchToken, validateToken } from "../utils/jwt";
 import { ACCOUNT_TYPE, RESPONSE_INDICATOR } from "../utils/constants";
@@ -25,11 +27,12 @@ export default class AccountResolver {
     private readonly accountRepository: Repository<Account>
   ) {}
 
-  // TODO: Private
+  // TODO: Private + Super User Autn Required
   @Query(() => AccountStatus, {
     nullable: false,
     description: "查询所有用户",
   })
+  @UseMiddleware(ExtraFieldLogMiddlewareGenerator("Check All Accounts"))
   async QueryAllAccounts(): Promise<AccountStatus> {
     try {
       const accounts = await this.accountRepository.find();
@@ -114,20 +117,18 @@ export default class AccountResolver {
     }
   }
 
-  @Transaction()
   @Mutation(() => LoginOrRegisterStatus, {
     nullable: false,
     description: "新用户注册",
   })
   async AccountRegistry(
-    @Arg("account") account: AccountRegistryInput,
-    @TransactionRepository(Account)
-    accountTransRepo: Repository<Account>
+    @Arg("account") account: AccountRegistryInput
   ): Promise<LoginOrRegisterStatus> {
     try {
       const isExistingAccount = await this.accountRepository.findOne({
         accountName: account.accountName,
       });
+
       if (isExistingAccount) {
         return new LoginOrRegisterStatusHandler(
           false,
@@ -136,7 +137,7 @@ export default class AccountResolver {
       }
 
       account.accountPwd = encode(account.accountPwd);
-      await accountTransRepo.save(account);
+      await this.accountRepository.save(account);
 
       const token = dispatchToken(account.accountName, account.loginType);
 
@@ -150,16 +151,14 @@ export default class AccountResolver {
     }
   }
 
-  @Transaction()
   @Mutation(() => LoginOrRegisterStatus, {
     nullable: false,
     description: "修改密码",
   })
   async ModifyPassword(
     @Arg("accountName") accountName: string,
-    @Arg("newPassword") newPassword: string,
-    @TransactionRepository(Account)
-    accountTransRepo: Repository<Account>
+    @Arg("prevPassword") prevPassword: string,
+    @Arg("newPassword") newPassword: string
   ): Promise<LoginOrRegisterStatus> {
     try {
       const isExistingAccount = await this.accountRepository.findOne({
@@ -173,10 +172,17 @@ export default class AccountResolver {
         );
       }
 
-      await accountTransRepo.update(
+      if (!compare(prevPassword, isExistingAccount.accountPwd)) {
+        return new LoginOrRegisterStatusHandler(
+          false,
+          RESPONSE_INDICATOR.INCORRECT_PWD
+        );
+      }
+
+      await this.accountRepository.update(
         { accountName },
         {
-          accountPwd: newPassword,
+          accountPwd: encode(newPassword),
         }
       );
 
@@ -192,16 +198,13 @@ export default class AccountResolver {
     }
   }
 
-  @Transaction()
   @Mutation(() => LoginOrRegisterStatus, {
     nullable: false,
     description: "用户永久注销",
   })
   async AccountDestory(
     @Arg("accountName") accountName: string,
-    @Arg("accountPwd") accountPwd: string,
-    @TransactionRepository(Account)
-    accountTransRepo: Repository<Account>
+    @Arg("accountPwd") accountPwd: string
   ) {
     try {
       const isExistingAccount = await this.accountRepository.findOne({
@@ -228,7 +231,7 @@ export default class AccountResolver {
         );
       }
 
-      const deleteRes = await accountTransRepo.delete({ accountName });
+      const deleteRes = await this.accountRepository.delete({ accountName });
 
       return new LoginOrRegisterStatusHandler(
         true,
@@ -240,16 +243,13 @@ export default class AccountResolver {
     }
   }
 
-  @Transaction()
   @Mutation(() => AccountUnionResult, {
     nullable: false,
     description: "提升或下降用户权限等级",
   })
   async AccountLevelMutate(
     @Arg("accountId") accountId: string,
-    @Arg("level", () => ACCOUNT_TYPE) level: ACCOUNT_TYPE,
-    @TransactionRepository(Account)
-    accountTransRepo: Repository<Account>
+    @Arg("level", () => ACCOUNT_TYPE) level: ACCOUNT_TYPE
   ): Promise<AccountStatus | LoginOrRegisterStatus> {
     try {
       const isExistingAccount = await this.accountRepository.findOne(accountId);
@@ -261,7 +261,7 @@ export default class AccountResolver {
         });
       }
 
-      await accountTransRepo.update(accountId, {
+      await this.accountRepository.update(accountId, {
         accountType: level,
       });
 

@@ -3,7 +3,7 @@ export default {
   bail: 5,
   clearMocks: true,
   collectCoverage: true,
-  collectCoverageFrom: ["./server/utils/*.ts"],
+  collectCoverageFrom: ["./server/utils/(auth|jwt|bcrypt).ts"],
   setupFilesAfterEnv: [],
   setupFiles: [],
   testMatch: ["**/?(*.)+(spec|test).[tj]s?(x)"],
