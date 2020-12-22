@@ -94,7 +94,7 @@ export class ExecutorDescQuery implements Partial<IExecutorDesc> {
 
   @Field((type) => Int, { nullable: true })
   @IsOptional()
-  @Max(10)
+  @Max(100)
   @Min(0)
   @IsNumber()
   successRate?: number;
@@ -176,7 +176,7 @@ export class ExecutorQueryArgs {
   @IsEnum(REGION)
   region?: REGION;
 
-  @Field((type) => DifficultyLevel, { nullable: false })
+  @Field((type) => DifficultyLevel, { nullable: true })
   @IsOptional()
   @IsEnum(DifficultyLevel)
   level?: DifficultyLevel;

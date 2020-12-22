@@ -188,15 +188,10 @@ export const mockExecutor = (len: number) => {
   const mockExecutorInfo: Partial<Executor>[] = [];
 
   for (let i = 0; i < len; i++) {
-    console.log("");
-    console.log("");
-    console.log(`====${i}====`);
-    console.log("");
-    console.log("");
     mockExecutorInfo.push(
       createExecutor({
         // name: `林不渡-${i}-${Math.floor(Math.random() * 1000)}`,
-        name: `林不渡-${i}}`,
+        name: `林不渡-${i}`,
         age: Math.floor(Math.random() * 30),
         isFool: i % 2 === 0,
         desc: JSON.stringify(

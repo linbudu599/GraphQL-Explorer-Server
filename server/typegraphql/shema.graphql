@@ -155,6 +155,14 @@ input ExecutorDescUpdateInput {
 }
 
 """
+Executor Relations Input
+"""
+input ExecutorRelationsInput {
+  joinRecord: Boolean = false
+  joinTasks: Boolean = false
+}
+
+"""
 Executor Response Status Indicator
 """
 type ExecutorStatus implements IBaseStatus {
@@ -462,7 +470,10 @@ type Query {
   """
   获取所有执行者
   """
-  QueryAllExecutors(pagination: PaginationOptions): ExecutorStatus!
+  QueryAllExecutors(
+    pagination: PaginationOptions
+    relations: ExecutorRelationsInput
+  ): ExecutorStatus!
   QueryAllRecords(relations: RecordRelationsInput): RecordStatus!
 
   """
@@ -496,9 +507,10 @@ type Query {
     age: Int
     isFool: Boolean
     job: String
-    level: DifficultyLevel!
+    level: DifficultyLevel
     name: String
     region: Float
+    relations: ExecutorRelationsInput
     satisfaction: Int
     successRate: Int
   ): ExecutorStatus!
@@ -509,6 +521,7 @@ type Query {
   QueryExecutorByDesc(
     level: DifficultyLevel
     pagination: PaginationOptions
+    relations: ExecutorRelationsInput
     satisfaction: Int
     successRate: Int
   ): ExecutorStatus!
@@ -516,7 +529,10 @@ type Query {
   """
   查找特定执行者
   """
-  QueryExecutorById(uid: String!): ExecutorStatus!
+  QueryExecutorById(
+    relations: ExecutorRelationsInput
+    uid: String!
+  ): ExecutorStatus!
 
   """
   查询执行者当前被分配的任务

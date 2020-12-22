@@ -7,6 +7,8 @@ import Task from "../entity/Task";
 
 import ExecutorService from "../service/Executor.service";
 import PublicService from "../service/Public.service";
+import TaskService from "../service/Task.service";
+import SubstanceService from "../service/Substance.service";
 
 import { IExecutorDesc } from "../graphql/Executor";
 import { PaginationOptions, PrimitiveStatus } from "../graphql/Common";
@@ -17,7 +19,9 @@ export default class PublicResolver {
   constructor(
     @InjectRepository(Task) private readonly taskRepository: Repository<Task>,
     private readonly executorService: ExecutorService,
-    private readonly publicService: PublicService
+    private readonly taskService: TaskService,
+    private readonly publicService: PublicService,
+    private readonly substanceService: SubstanceService
   ) {}
 
   @Query(() => [LevelQueryResult], {
@@ -27,18 +31,25 @@ export default class PublicResolver {
   async QueryByDifficultyLevel(
     @Arg("difficulty", (type) => DifficultyLevel, { nullable: true })
     difficulty: DifficultyLevel,
+
     @Arg("pagination", { nullable: true })
     pagination: PaginationOptions
   ): Promise<(Executor | Task)[]> {
-    const { cursor, offset } = pagination ?? { cursor: 0, offset: 20 };
+    const { cursor, offset } = (pagination ?? {
+      cursor: 0,
+      offset: 20,
+    }) as Required<PaginationOptions>;
 
-    const executors = await this.executorService.Executors(cursor!, offset!);
-    // TODO: Task Service
-    const tasks = await this.taskRepository.find({
-      skip: cursor,
-      take: offset,
-      relations: ["assignee"],
-    });
+    const executors = await this.executorService.getAllExecutors(
+      cursor,
+      offset,
+      ["tasks"]
+    );
+
+    const tasks = await this.taskService.getAllTasks({ cursor, offset }, [
+      "assignee",
+      "taskSubstance",
+    ]);
 
     if (typeof difficulty === "undefined") {
       return [...executors, ...tasks];
@@ -57,6 +68,7 @@ export default class PublicResolver {
   @Query(() => Date, { nullable: false, description: "容器注册时间" })
   async ContainerRegisterTime() {
     const registerDate = await this.publicService.ContainerRegisterTime();
+
     return registerDate;
   }
 }
