@@ -553,6 +553,10 @@ type Query {
   返回所有菜谱 厨师 和 咸鱼!
   """
   QueryRecipeUnions: [RecipeUnionResult!]!
+  QueryRecordById(
+    recordId: String!
+    relations: RecordRelationsInput
+  ): RecordStatus!
 
   """
   根据恩格尔系数查找咸鱼

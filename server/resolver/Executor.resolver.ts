@@ -12,7 +12,6 @@ import {
   Int,
 } from "type-graphql";
 import { Repository, Transaction, TransactionRepository } from "typeorm";
-import { InjectRepository } from "typeorm-typedi-extensions";
 
 import Executor, { ExecutorDesc } from "../entity/Executor";
 import Task from "../entity/Task";
@@ -46,9 +45,6 @@ import { IContext } from "../typding";
 @Resolver((of) => Executor)
 export default class ExecutorResolver {
   constructor(
-    @InjectRepository(Executor)
-    private readonly executorRepository: Repository<Executor>,
-
     private readonly executorService: ExecutorService,
     private readonly taskService: TaskService
   ) {}

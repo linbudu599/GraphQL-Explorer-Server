@@ -1,6 +1,4 @@
 import { Resolver, Query, Arg } from "type-graphql";
-import { Repository } from "typeorm";
-import { InjectRepository } from "typeorm-typedi-extensions";
 
 import Executor from "../entity/Executor";
 import Task from "../entity/Task";
@@ -17,7 +15,6 @@ import { LevelQueryResult, DifficultyLevel } from "../graphql/Public";
 @Resolver((of) => PrimitiveStatus)
 export default class PublicResolver {
   constructor(
-    @InjectRepository(Task) private readonly taskRepository: Repository<Task>,
     private readonly executorService: ExecutorService,
     private readonly taskService: TaskService,
     private readonly publicService: PublicService,
