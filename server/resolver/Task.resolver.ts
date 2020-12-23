@@ -114,16 +114,11 @@ export default class TaskResolver {
       if (!origin)
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
 
-      await this.taskService.updateTask(
-        { taskId },
-        {
-          taskAccmplished: !origin.taskAccmplished,
-        }
-      );
+      const res = await this.taskService.updateTask(taskId, {
+        taskAccmplished: !origin.taskAccmplished,
+      });
 
-      const updatedItem = await this.taskService.getOneTaskById(taskId);
-
-      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updatedItem]);
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
     }
@@ -202,10 +197,9 @@ export default class TaskResolver {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
 
-      await this.taskService.updateTask({ taskId: param.taskId }, param);
+      const res = await this.taskService.updateTask(param.taskId, param);
 
-      const updatedTask = await this.taskService.getOneTaskById(param.taskId);
-      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updatedTask]);
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
     }
@@ -256,10 +250,11 @@ export default class TaskResolver {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
 
-      await this.taskService.updateTask({ taskId }, { taskLevel: level });
+      const updated = await this.taskService.updateTask(taskId, {
+        taskLevel: level,
+      });
 
-      const updatedTask = await this.taskService.getOneTaskById(taskId);
-      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updatedTask]);
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updated]);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
     }
@@ -276,10 +271,11 @@ export default class TaskResolver {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
 
-      await this.taskService.updateTask({ taskId }, { taskAvaliable: false });
+      const updated = await this.taskService.updateTask(taskId, {
+        taskAvaliable: false,
+      });
 
-      const updatedTask = await this.taskService.getOneTaskById(taskId);
-      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updatedTask]);
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updated]);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
     }

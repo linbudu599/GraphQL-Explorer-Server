@@ -1,12 +1,5 @@
 import { Resolver, Query, Arg, Mutation, UseMiddleware } from "type-graphql";
-import { Repository } from "typeorm";
-import { InjectRepository } from "typeorm-typedi-extensions";
-
-import { ExtraFieldLogMiddlewareGenerator } from "../middleware/log";
-
-import { dispatchToken, validateToken } from "../utils/jwt";
-import { ACCOUNT_TYPE, RESPONSE_INDICATOR } from "../utils/constants";
-import { encode, compare } from "../utils/bcrypt";
+import { plainToClass } from "class-transformer";
 
 import {
   AccountStatus,
@@ -18,14 +11,18 @@ import {
 import { AccountRegistryInput, AccountLoginInput } from "../graphql/Account";
 
 import Account from "../entity/Account";
-import { plainToClass } from "class-transformer";
+
+import AccountService from "../service/Account.service";
+
+import { ExtraFieldLogMiddlewareGenerator } from "../middleware/log";
+
+import { dispatchToken, validateToken } from "../utils/jwt";
+import { ACCOUNT_TYPE, RESPONSE_INDICATOR } from "../utils/constants";
+import { encode, compare } from "../utils/bcrypt";
 
 @Resolver((of) => Account)
 export default class AccountResolver {
-  constructor(
-    @InjectRepository(Account)
-    private readonly accountRepository: Repository<Account>
-  ) {}
+  constructor(private readonly accountService: AccountService) {}
 
   // TODO: Private + Super User Autn Required
   @Query(() => AccountStatus, {
@@ -35,7 +32,7 @@ export default class AccountResolver {
   @UseMiddleware(ExtraFieldLogMiddlewareGenerator("Check All Accounts"))
   async QueryAllAccounts(): Promise<AccountStatus> {
     try {
-      const accounts = await this.accountRepository.find();
+      const accounts = this.accountService.getAllAccounts();
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, accounts);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
@@ -50,7 +47,7 @@ export default class AccountResolver {
     @Arg("account") { accountName, accountPwd, loginType }: AccountLoginInput
   ): Promise<LoginOrRegisterStatus> {
     try {
-      const account = await this.accountRepository.findOne({ accountName });
+      const account = await this.accountService.getOneAccount(accountName);
 
       if (!account) {
         return new LoginOrRegisterStatusHandler(
@@ -125,9 +122,9 @@ export default class AccountResolver {
     @Arg("account") account: AccountRegistryInput
   ): Promise<LoginOrRegisterStatus> {
     try {
-      const isExistingAccount = await this.accountRepository.findOne({
-        accountName: account.accountName,
-      });
+      const isExistingAccount = await this.accountService.getOneAccount(
+        account.accountName
+      );
 
       if (isExistingAccount) {
         return new LoginOrRegisterStatusHandler(
@@ -137,7 +134,7 @@ export default class AccountResolver {
       }
 
       account.accountPwd = encode(account.accountPwd);
-      await this.accountRepository.save(account);
+      await this.accountService.createAccount(account);
 
       const token = dispatchToken(account.accountName, account.loginType);
 
@@ -161,9 +158,9 @@ export default class AccountResolver {
     @Arg("newPassword") newPassword: string
   ): Promise<LoginOrRegisterStatus> {
     try {
-      const isExistingAccount = await this.accountRepository.findOne({
-        accountName,
-      });
+      const isExistingAccount = await this.accountService.getOneAccount(
+        accountName
+      );
 
       if (!isExistingAccount) {
         return new LoginOrRegisterStatusHandler(
@@ -179,7 +176,7 @@ export default class AccountResolver {
         );
       }
 
-      await this.accountRepository.update(
+      await this.accountService.updateAccount(
         { accountName },
         {
           accountPwd: encode(newPassword),
@@ -207,9 +204,9 @@ export default class AccountResolver {
     @Arg("accountPwd") accountPwd: string
   ) {
     try {
-      const isExistingAccount = await this.accountRepository.findOne({
-        accountName,
-      });
+      const isExistingAccount = await this.accountService.getOneAccount(
+        accountName
+      );
 
       if (!isExistingAccount) {
         return new LoginOrRegisterStatusHandler(
@@ -221,6 +218,7 @@ export default class AccountResolver {
         accountPwd: savedPwd,
         accountType: savedType,
       } = isExistingAccount;
+
       const pass = compare(accountPwd, savedPwd);
 
       if (!pass) {
@@ -231,7 +229,7 @@ export default class AccountResolver {
         );
       }
 
-      const deleteRes = await this.accountRepository.delete({ accountName });
+      await this.accountService.deleteAccount(accountName);
 
       return new LoginOrRegisterStatusHandler(
         true,
@@ -252,7 +250,9 @@ export default class AccountResolver {
     @Arg("level", () => ACCOUNT_TYPE) level: ACCOUNT_TYPE
   ): Promise<AccountStatus | LoginOrRegisterStatus> {
     try {
-      const isExistingAccount = await this.accountRepository.findOne(accountId);
+      const isExistingAccount = await this.accountService.getOneAccountById(
+        accountId
+      );
 
       if (!isExistingAccount) {
         return plainToClass(LoginOrRegisterStatus, {
@@ -261,11 +261,11 @@ export default class AccountResolver {
         });
       }
 
-      await this.accountRepository.update(accountId, {
+      await this.accountService.updateAccount(accountId, {
         accountType: level,
       });
 
-      const updated = (await this.accountRepository.findOne(
+      const updated = (await this.accountService.getOneAccountById(
         accountId
       )) as Account;
 

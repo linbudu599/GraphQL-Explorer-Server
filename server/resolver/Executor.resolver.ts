@@ -213,7 +213,7 @@ export default class ExecutorResolver {
         return new StatusHandler(false, RESPONSE_INDICATOR.EXISTED, []);
       }
 
-      const res = await this.executorRepository.save(Executor);
+      const res = await this.executorService.createExecutor(executor);
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
@@ -242,13 +242,11 @@ export default class ExecutorResolver {
         ...desc,
       };
 
-      const res = await this.executorRepository.update(uid, {
+      const res = await this.executorService.updateExecutor(uid, {
         desc: JSON.stringify(updatedDesc),
       });
 
-      const updatedItem = await this.executorService.getOneExecutorById(uid);
-
-      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updatedItem]);
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
     }
@@ -259,20 +257,22 @@ export default class ExecutorResolver {
     description: "更新执行者基本信息",
   })
   async UpdateExecutorBasicInfo(
-    @Arg("modifiedExecutorInfo") { uid }: ExecutorUpdateInput
+    @Arg("modifiedExecutorInfo") executor: ExecutorUpdateInput
   ): Promise<ExecutorStatus> {
     try {
       const isExistingExecutor = await this.executorService.getOneExecutorById(
-        uid
+        executor.uid
       );
       if (!isExistingExecutor) {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
 
-      const res = await this.executorRepository.update({ uid }, Executor);
-      const updatedItem = await this.executorService.getOneExecutorById(uid);
+      const res = await this.executorService.updateExecutor(
+        executor.uid,
+        executor
+      );
 
-      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updatedItem]);
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
     }
@@ -298,17 +298,16 @@ export default class ExecutorResolver {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
 
-      const hasAssignedTask = await taskTransRepo.find({
-        where: {
-          assignee: {
-            uid,
-          },
+      const hasAssignedTask = await this.taskService.getTasksByConditions({
+        assignee: {
+          uid,
         },
       });
 
       if (!hasAssignedTask) {
-        await executorTransRepo.delete(uid);
+        await this.executorService.deleteExecutor(uid);
       } else {
+        // TODO:
         await taskTransRepo.update(
           {
             assignee: {
