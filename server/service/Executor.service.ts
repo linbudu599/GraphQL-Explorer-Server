@@ -6,9 +6,15 @@ import { Service, Inject } from "typedi";
 import Executor from "../entity/Executor";
 
 import { PaginationOptions } from "../graphql/Common";
-import { ExecutorRelation, IExecutor } from "../graphql/Executor";
+import {
+  ExecutorRelation,
+  IExecutor,
+  ExecutorCreateInput,
+  ExecutorUpdateInput,
+} from "../graphql/Executor";
 
 export interface IExecutorService {
+  // Query
   getAllExecutors(
     cursor: number,
     offset: number,
@@ -29,6 +35,16 @@ export interface IExecutorService {
     conditions: FindConditions<Executor>,
     relations: ExecutorRelation[]
   ): Promise<Executor[]>;
+
+  // Mutation
+  createExecutor(executor: ExecutorCreateInput): Promise<Executor>;
+
+  updateExecutor(
+    indicator: FindConditions<Executor> | string,
+    infoUpdate: Partial<IExecutor>
+  ): Promise<Executor>;
+
+  deleteExecutor(uid: string): Promise<void>;
 }
 
 @Service()
@@ -87,5 +103,27 @@ export default class ExecutorService implements IExecutorService {
     });
 
     return res;
+  }
+
+  async createExecutor(executor: ExecutorCreateInput): Promise<Executor> {
+    const res = await this.executorRepository.save(executor);
+    return res;
+  }
+
+  async updateExecutor(
+    indicator: string,
+    infoUpdate: Partial<IExecutor>
+  ): Promise<Executor> {
+    await this.executorRepository.update(indicator, infoUpdate);
+
+    const updatedItem = (await this.executorRepository.findOne(
+      indicator
+    )) as Executor;
+
+    return updatedItem;
+  }
+
+  async deleteExecutor(uid: string): Promise<void> {
+    await this.executorRepository.delete(uid);
   }
 }

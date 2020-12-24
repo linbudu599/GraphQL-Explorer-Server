@@ -1,36 +1,47 @@
 import { Resolver, Query, Arg } from "type-graphql";
-import { Repository } from "typeorm";
-import { InjectRepository } from "typeorm-typedi-extensions";
-
-import { RecordStatus, StatusHandler } from "../graphql/Common";
 
 import Record from "../entity/Record";
-import {
-  RecordRelationsInput,
-  RecordRelations,
-  getRecordRelations,
-} from "../graphql/Record";
+
+import { RecordStatus, StatusHandler } from "../graphql/Common";
+import { RecordRelationsInput, getRecordRelations } from "../graphql/Record";
+
+import RecordService from "../service/Record.service";
 
 import { RESPONSE_INDICATOR } from "../utils/constants";
 
 @Resolver((of) => Record)
 export default class RecordResolver {
-  constructor(
-    @InjectRepository(Record)
-    private readonly recordRepository: Repository<Record>
-  ) {}
+  constructor(private readonly recordService: RecordService) {}
 
   @Query(() => RecordStatus)
   async QueryAllRecords(
-    @Arg("relations", { nullable: true }) relationOptions: RecordRelationsInput
+    @Arg("relations", (type) => RecordRelationsInput, { nullable: true })
+    relationOptions: Partial<RecordRelationsInput> = {}
   ): Promise<RecordStatus> {
     try {
       const relations = getRecordRelations(relationOptions);
+      const records = await this.recordService.getAllRecords(relations);
 
-      const records = await this.recordRepository.find({
-        relations,
-      });
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, records);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
+  }
+
+  @Query(() => RecordStatus)
+  async QueryRecordById(
+    @Arg("recordId", { nullable: false }) recordId: string,
+    @Arg("relations", (type) => RecordRelationsInput, { nullable: true })
+    relationOptions: Partial<RecordRelationsInput> = {}
+  ): Promise<RecordStatus> {
+    try {
+      const relations = getRecordRelations(relationOptions);
+      const record = await this.recordService.getOneRecordById(
+        recordId,
+        relations
+      );
+
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [record]);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
     }

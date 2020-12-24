@@ -12,27 +12,20 @@ export interface ITaskService {
     pagination: Required<PaginationOptions>,
     relations: TaskRelation[]
   ): Promise<Task[]>;
-
   getOneTaskById(
     taskId: string,
     relations: TaskRelation[]
   ): Promise<Task | undefined>;
-
   getOneTaskByConditions(
     conditions: Partial<ITask>,
     relations: TaskRelation[]
   ): Promise<Task | undefined>;
-
   getTasksByConditions(
     conditions: FindConditions<Task>,
     relations: TaskRelation[]
   ): Promise<Task[]>;
 
-  updateTask(
-    indicator: Partial<ITask>,
-    infoUpdate: Partial<ITask>
-  ): Promise<void>;
-
+  updateTask(indicator: string, infoUpdate: Partial<ITask>): Promise<Task>;
   deleteTask(taskId: string): Promise<void>;
 }
 
@@ -96,10 +89,14 @@ export default class TaskService implements ITaskService {
   }
 
   async updateTask(
-    indicator: Partial<ITask>,
+    indicator: string,
     infoUpdate: Partial<ITask>
-  ): Promise<void> {
+  ): Promise<Task> {
     await this.taskRepository.update(indicator, infoUpdate);
+
+    const updatedItem = (await this.taskRepository.findOne(indicator)) as Task;
+
+    return updatedItem;
   }
 
   async deleteTask(taskId: string): Promise<void> {
