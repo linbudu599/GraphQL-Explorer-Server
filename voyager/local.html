@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>GraphQL Explorer Voyager(Remote Server)</title>
+    <title>GraphQL Explorer Voyager(Local Server)</title>
     <script src="https://cdn.jsdelivr.net/npm/react@16/umd/react.production.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/react-dom@16/umd/react-dom.production.min.js"></script>
 
@@ -15,7 +15,7 @@
     <div id="voyager">Loading...</div>
     <script>
       function introspectionProvider(introspectionQuery) {
-        return fetch("http://47.97.183.158:4399/graphql", {
+        return fetch("http://localhost:4000/graphql", {
           method: "post",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ query: introspectionQuery }),

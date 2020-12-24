@@ -11,7 +11,7 @@
     "start": "npm run build && cross-env NODE_ENV=production nodemon ./dist/app.js",
     "pm2": "npm run build && pm2 start ecosystem.config.js",
     "stress-test": "node ./scripts/st-main.js --time 1000 * 60",
-    "voyager": "serve -s voyager",
+    "voyager": "serve -s voyager/local.html",
     "gen:code": "graphql-codegen --config codegen.yml",
     "gen:docs": "rimraf -rf ./docs && graphdoc --force",
     "gen": " node ./scripts/gen/main.js --docs --code",
