@@ -13,7 +13,8 @@ process.send(`child ${process.argv[2]} send msg`);
 let counter = 0;
 
 setInterval(() => {
-  sa.post("http://localhost:4000/graphql")
+  // sa.post("http://localhost:4000/graphql")
+  sa.post("http://47.97.183.158:4399/graphql")
     .send({
       operationName: null,
       query,
@@ -22,7 +23,7 @@ setInterval(() => {
     .set("accept", "json")
     .end((err, res) => {
       counter++;
-      console.log(JSON.stringify(res.body.data.Executors));
+      // console.log(JSON.stringify(res.body.data));
       console.log(`${process.argv[2]}: ${counter}`);
     });
-}, 500);
+}, 100);

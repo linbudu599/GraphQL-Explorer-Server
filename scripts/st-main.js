@@ -14,8 +14,7 @@ for (let i = 0; i < cpuNums; i++) {
   child.on("message", (data) => {
     console.log(`msg from child${i}: ${data.toString()}`);
   });
-
-  setTimeout(() => {
-    child.kill();
-  }, time ?? 1000);
+  // setTimeout(() => {
+  //   child.kill();
+  // }, time ?? 1000);
 }

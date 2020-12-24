@@ -27,9 +27,10 @@ This is a **demo** which contains `GraphQL` and framework based on it(or work wi
 
 - [x] [Docs by Surge](http://graphql-explorer-docs.surge.sh/)
 - [x] [Voyager by Surge](http://graphql-explorer-voyager.surge.sh/) **(Require Local Server To Be Active)**
+- [x] [Voyager on Remote Server(UNSTABLE)](http://voyager.linbudu.top/)
 - [x] [Simple Example on Vercel Fucntions](https://graphql-faas.vercel.app/api/graphql), see [Query Example](./api/graphql/query.graphql)
 - [x] [Example on Vercel Fucntions, with MySQL](https://graphql-faas.linbudu599.vercel.app/api/migrate)
-- [ ] [Server-ALI-Cloud]
+- [x] [Server-ALI-Cloud(UNSTABLE)](http://47.97.183.158:4399/graphql)
 - [ ] [Server-Heroku]
 - [x] [Apollo-Engine(**private**)](https://studio.apollographql.com/graph/My-Graph-innqj/explorer?schemaTag=current)
 

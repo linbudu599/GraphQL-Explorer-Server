@@ -1,6 +1,5 @@
 import { Resolver, Query, Arg, Mutation } from "type-graphql";
 import { Repository, Transaction, TransactionRepository } from "typeorm";
-import { InjectRepository } from "typeorm-typedi-extensions";
 
 import Task from "../entity/Task";
 

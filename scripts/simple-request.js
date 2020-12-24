@@ -4,14 +4,27 @@ const chalk = require("chalk");
 console.log(chalk.green("=== Server Test Request Start ==="));
 
 const query = `
-    query ExecutorDescQuery {
-      Executors {
+    query {
+      QueryAllExecutors(
+        relations: {
+          joinTasks: true
+        }
+      ) {
+        success
+        message
         data {
-          region
+          name
+          tasks {
+            taskId
+            taskRate
+            taskSubstance {
+              substanceId
+            }
+          }
           ExecutorDescField {
             level
             successRate
-            satisfaction
+            successRate
           }
         }
       }
