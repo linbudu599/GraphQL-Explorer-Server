@@ -9,7 +9,6 @@ import { StatusHandler, SubstanceStatus } from "../graphql/Common";
 
 import { RESPONSE_INDICATOR } from "../utils/constants";
 
-// TODO: 可选是否联查任务信息
 @Resolver((of) => Substance)
 export default class SubstanceResolver {
   constructor(

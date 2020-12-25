@@ -86,6 +86,7 @@ export default class Task extends BaseEntity implements ITask {
   @OneToOne((type) => Substance, (substance) => substance.relatedTask, {
     nullable: true,
     cascade: true,
+    onDelete: "SET NULL",
   })
   @JoinColumn()
   taskSubstance!: Substance;
@@ -94,7 +95,10 @@ export default class Task extends BaseEntity implements ITask {
   taskSubstanceId?: string;
 
   // 任务关联指派
-  @ManyToOne(() => Executor, (executor) => executor.tasks, { nullable: true })
+  @ManyToOne(() => Executor, (executor) => executor.tasks, {
+    nullable: true,
+    onDelete: "SET NULL",
+  })
   @JoinColumn({ name: "assigneeUID" })
   @TypeormLoader((type) => Executor, (task: Task) => task.assigneeUID)
   assignee!: Executor;
@@ -103,11 +107,7 @@ export default class Task extends BaseEntity implements ITask {
   assigneeUID?: string;
 
   // 任务关联记录
-  @OneToOne((type) => Record, (record) => record.recordTask, {
-    nullable: true,
-    cascade: true,
-  })
-  @JoinColumn()
+  @OneToOne((type) => Record, (record) => record.recordTask)
   relatedRecord!: Record;
 
   @RelationId((task: Task) => task.relatedRecord)

@@ -8,7 +8,6 @@ import {
   UpdateDateColumn,
   OneToOne,
   RelationId,
-  JoinColumn,
 } from "typeorm";
 
 import Task from "./Task";
@@ -54,11 +53,7 @@ export default class Substance extends BaseEntity implements ISubstance {
   relatedTaskId?: string;
 
   // 实体关联记录
-  @OneToOne((type) => Record, (record) => record.recordTask, {
-    nullable: true,
-    cascade: true,
-  })
-  @JoinColumn()
+  @OneToOne((type) => Record, (record) => record.recordTask)
   relatedRecord!: Record;
 
   @RelationId((substance: Substance) => substance.relatedRecord)

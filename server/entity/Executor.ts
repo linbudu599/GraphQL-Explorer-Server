@@ -11,7 +11,6 @@ import {
   UpdateDateColumn,
   OneToMany,
   RelationId,
-  JoinColumn,
   OneToOne,
 } from "typeorm";
 
@@ -75,19 +74,17 @@ export default class Executor extends BaseEntity implements IExecutor {
   spAgeField?: number;
 
   // 任务
-  @OneToMany(() => Task, (task) => task.assignee)
-  @TypeormLoader((type) => Executor, (Executor: Executor) => Executor.taskIds)
+  @OneToMany(() => Task, (task) => task.assignee, {
+    onDelete: "SET NULL",
+  })
+  @TypeormLoader((type) => Executor, (executor: Executor) => executor.taskIds)
   tasks?: Task[];
 
   @RelationId((Executor: Executor) => Executor.tasks)
   taskIds?: string[];
 
   // 关联记录
-  @OneToOne((type) => Record, (record) => record.recordExecutor, {
-    nullable: true,
-    cascade: true,
-  })
-  @JoinColumn()
+  @OneToOne((type) => Record, (record) => record.recordExecutor)
   relatedRecord!: Record;
 
   @RelationId((executor: Executor) => executor.relatedRecord)

@@ -88,6 +88,14 @@ export default class AccountResolver {
     }
   }
 
+  @Query(() => AccountStatus, {
+    nullable: false,
+    description: "账号详情",
+  })
+  async CheckAccountDetail(): Promise<AccountStatus> {
+    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+  }
+
   @Query(() => LoginOrRegisterStatus, {
     nullable: false,
     description: "检验token是否合法",
@@ -112,6 +120,14 @@ export default class AccountResolver {
         -1
       );
     }
+  }
+
+  @Query(() => LoginOrRegisterStatus, {
+    nullable: false,
+    description: "验证邮件",
+  })
+  async CheckVerifyCode(): Promise<LoginOrRegisterStatus> {
+    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
   }
 
   @Mutation(() => LoginOrRegisterStatus, {
@@ -280,5 +296,37 @@ export default class AccountResolver {
         message: JSON.stringify(error),
       });
     }
+  }
+
+  @Mutation(() => LoginOrRegisterStatus, {
+    nullable: false,
+    description: "发送邮件验证码",
+  })
+  async SendEmailVerifyCode(): Promise<LoginOrRegisterStatus> {
+    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+  }
+
+  @Mutation(() => LoginOrRegisterStatus, {
+    nullable: false,
+    description: "发送短信验证码",
+  })
+  async SendPhoneVerifyCode(): Promise<LoginOrRegisterStatus> {
+    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+  }
+
+  @Mutation(() => AccountStatus, {
+    nullable: false,
+    description: "账号详情变更",
+  })
+  async MutateAccountProfile(): Promise<AccountStatus> {
+    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+  }
+
+  @Mutation(() => LoginOrRegisterStatus, {
+    nullable: false,
+    description: "冻结账号",
+  })
+  async FreezeAccount(): Promise<LoginOrRegisterStatus> {
+    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
   }
 }

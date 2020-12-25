@@ -25,7 +25,7 @@ export default class RecipeResolver {
 
   @Query(() => [RecipeUnionResult], {
     nullable: false,
-    description: "返回所有菜谱 厨师 和 咸鱼!",
+    description: "返回所有菜谱 厨师 和 咸鱼",
   })
   @UseMiddleware(CacheMiddleware)
   @CacheControl(RecipeCacheHint)

@@ -364,6 +364,11 @@ type Mutation {
   DeleteTask(taskId: String!): TaskStatus!
 
   """
+  冻结账号
+  """
+  FreezeAccount: LoginOrRegisterStatus!
+
+  """
   冻结任务 无法恢复
   """
   FreezeTask(taskId: String!): TaskStatus!
@@ -376,6 +381,21 @@ type Mutation {
     newPassword: String!
     prevPassword: String!
   ): LoginOrRegisterStatus!
+
+  """
+  账号详情变更
+  """
+  MutateAccountProfile: AccountStatus!
+
+  """
+  更新执行者存活状态/自身状态
+  """
+  MutateExecutorInfo: ExecutorStatus!
+
+  """
+  更新执行者级别
+  """
+  MutateExecutorLevel: ExecutorStatus!
 
   """
   变更实体基本信息
@@ -394,6 +414,16 @@ type Mutation {
   publisherMutation(message: String): Boolean!
   pubSubMutation(message: String): Boolean!
   pubSubMutationToDynamicTopic(message: String, topic: String!): Boolean!
+
+  """
+  发送邮件验证码
+  """
+  SendEmailVerifyCode: LoginOrRegisterStatus!
+
+  """
+  发送短信验证码
+  """
+  SendPhoneVerifyCode: LoginOrRegisterStatus!
 
   """
   变更实体存活状态
@@ -452,9 +482,19 @@ type Query {
   AccountLogin(account: AccountLoginInput!): LoginOrRegisterStatus!
 
   """
+  账号详情
+  """
+  CheckAccountDetail: AccountStatus!
+
+  """
   检验token是否合法
   """
   CheckIsTokenValid(token: String!): LoginOrRegisterStatus!
+
+  """
+  验证邮件
+  """
+  CheckVerifyCode: LoginOrRegisterStatus!
 
   """
   容器注册时间
@@ -550,7 +590,7 @@ type Query {
   QueryRecipesByIngredients(ingredients: [String!]): [Recipe!]!
 
   """
-  返回所有菜谱 厨师 和 咸鱼!
+  返回所有菜谱 厨师 和 咸鱼
   """
   QueryRecipeUnions: [RecipeUnionResult!]!
   QueryRecordById(

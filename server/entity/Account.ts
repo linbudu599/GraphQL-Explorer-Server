@@ -46,11 +46,7 @@ export default class Account extends BaseEntity implements IAccount {
   accountType!: ACCOUNT_TYPE;
 
   // 账号关联记录
-  @OneToOne((type) => Record, (record) => record.recordTask, {
-    nullable: true,
-    cascade: true,
-  })
-  @JoinColumn()
+  @OneToOne((type) => Record, (record) => record.recordAccount)
   relatedRecord!: Record;
 
   @RelationId((account: Account) => account.relatedRecord)

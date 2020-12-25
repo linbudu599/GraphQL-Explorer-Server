@@ -346,4 +346,20 @@ export default class ExecutorResolver {
       return null;
     }
   }
+
+  @Mutation(() => ExecutorStatus, {
+    nullable: false,
+    description: "更新执行者存活状态/自身状态",
+  })
+  async MutateExecutorInfo(): Promise<ExecutorStatus> {
+    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+  }
+
+  @Mutation(() => ExecutorStatus, {
+    nullable: false,
+    description: "更新执行者级别",
+  })
+  async MutateExecutorLevel(): Promise<ExecutorStatus> {
+    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+  }
 }
