@@ -18,6 +18,34 @@ registerEnumType(ACCOUNT_TYPE, {
   description: "Account Type Enum",
 });
 
+export enum AccountVIPLevel {
+  NonVIP,
+  SILVER,
+  GOLD,
+  DIAMOND,
+  DOMINATOR,
+}
+
+registerEnumType(AccountVIPLevel, {
+  name: "AccountVIPLevel",
+  description: "Account VIP Level Enum",
+});
+
+@InterfaceType({ description: "Account Profile Type" })
+export abstract class IAccountProfile {
+  @Field({ nullable: true })
+  avatar!: string;
+
+  @Field({ nullable: true })
+  selfIntro!: string;
+
+  @Field({ nullable: false })
+  VIPLevel!: AccountVIPLevel;
+
+  @Field({ nullable: false })
+  isLifeTimeVIP!: boolean;
+}
+
 @InterfaceType({ description: "Account Interface Type" })
 export abstract class IAccount {
   @Field((type) => ID, { nullable: false })

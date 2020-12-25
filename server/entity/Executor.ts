@@ -34,7 +34,7 @@ export class ExecutorDesc extends BaseEntity implements IExecutorDesc {
   satisfaction!: number;
 }
 
-const Executor_DESC_DEFAULT = plainToClass(ExecutorDesc, {
+const EXECUTOR_DESC_DEFAULT = plainToClass(ExecutorDesc, {
   level: DifficultyLevel.ROOKIE,
   successRate: 0,
   satisfaction: 0,
@@ -59,7 +59,7 @@ export default class Executor extends BaseEntity implements IExecutor {
   @Column({ default: false, nullable: false })
   isFool!: boolean;
 
-  @Column({ default: JSON.stringify(Executor_DESC_DEFAULT) })
+  @Column({ default: JSON.stringify(EXECUTOR_DESC_DEFAULT) })
   // @Extension needs to be used with @Field
   @Extensions({ info: "Executor.desc Field" })
   @Field()

@@ -323,30 +323,6 @@ export default class ExecutorResolver {
     }
   }
 
-  @FieldResolver(() => Int, { nullable: false, description: "字段级解析器" })
-  async spAgeField(
-    @Root() executor: Executor,
-    @Arg("param", { nullable: true }) param?: number
-  ): Promise<number> {
-    // ... do sth addtional here
-    return executor.age ?? 990;
-  }
-
-  @FieldResolver(() => ExecutorDesc, {
-    nullable: false,
-    description: "获取对象类型的执行者描述",
-  })
-  async ExecutorDescField(
-    @Root() executor: Executor
-  ): Promise<ExecutorDesc | null> {
-    const { desc } = executor;
-    try {
-      return JSON.parse(desc);
-    } catch (err) {
-      return null;
-    }
-  }
-
   @Mutation(() => ExecutorStatus, {
     nullable: false,
     description: "更新执行者存活状态/自身状态",
@@ -361,5 +337,23 @@ export default class ExecutorResolver {
   })
   async MutateExecutorLevel(): Promise<ExecutorStatus> {
     return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+  }
+
+  @FieldResolver(() => Int, { nullable: false, description: "字段级解析器" })
+  async spAgeField(
+    @Root() executor: Executor,
+    @Arg("param", { nullable: true }) param?: number
+  ): Promise<number> {
+    // ... do sth addtional here
+    return executor.age ?? 990;
+  }
+
+  @FieldResolver(() => ExecutorDesc, {
+    nullable: false,
+    description: "获取对象类型的执行者描述",
+  })
+  async ExecutorDescField(@Root() executor: Executor): Promise<ExecutorDesc> {
+    const { desc } = executor;
+    return JSON.parse(desc);
   }
 }

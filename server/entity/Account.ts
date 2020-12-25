@@ -1,4 +1,5 @@
 import { ObjectType } from "type-graphql";
+import { plainToClass } from "class-transformer";
 
 import {
   Entity,
@@ -7,20 +8,41 @@ import {
   BaseEntity,
   CreateDateColumn,
   UpdateDateColumn,
-  JoinColumn,
   OneToOne,
   RelationId,
 } from "typeorm";
 
-import { IAccount } from "../graphql/Account";
+import { IAccount, IAccountProfile, AccountVIPLevel } from "../graphql/Account";
 
 import Record from "./Record";
 
 import { ACCOUNT_TYPE } from "../utils/constants";
 
-/**
- * 账号发布任务历史记录
- */
+@ObjectType({ implements: IAccountProfile })
+export class AccountProfile extends BaseEntity implements IAccountProfile {
+  @Column({ nullable: true, comment: "账号头像" })
+  avatar!: string;
+
+  @Column({ nullable: true, comment: "自我介绍" })
+  selfIntro!: string;
+
+  @Column({
+    nullable: false,
+    default: AccountVIPLevel.NonVIP,
+    comment: "账号VIP等级",
+  })
+  VIPLevel!: AccountVIPLevel;
+
+  @Column({ nullable: false, default: false, comment: "自我介绍" })
+  isLifeTimeVIP!: boolean;
+}
+
+const ACCOUNT_PROFILE_DEFAULT = plainToClass(AccountProfile, {
+  avatar: "",
+  selfIntro: "",
+  VIPLevel: AccountVIPLevel.NonVIP,
+  isLifeTimeVIP: false,
+});
 
 @ObjectType({ implements: IAccount })
 @Entity()
@@ -37,6 +59,13 @@ export default class Account extends BaseEntity implements IAccount {
 
   @Column({ nullable: false, default: true, comment: "账号是否可用" })
   accountAvaliable!: boolean;
+
+  @Column({
+    nullable: false,
+    default: JSON.stringify(ACCOUNT_PROFILE_DEFAULT),
+    comment: "账号资料",
+  })
+  accountProfile!: string;
 
   @Column({
     nullable: false,

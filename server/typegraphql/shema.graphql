@@ -7,6 +7,11 @@ type Account implements IAccount {
   accountAvaliable: Boolean!
   accountId: ID!
   accountName: String!
+
+  """
+  账号资料
+  """
+  AccountProfileField: AccountProfile!
   accountPwd: String!
   accountType: AccountType!
   lastUpdateDate: Timestamp!
@@ -21,6 +26,13 @@ input AccountLoginInput {
   accountName: String!
   accountPwd: String!
   loginType: AccountType!
+}
+
+type AccountProfile implements IAccountProfile {
+  avatar: String
+  isLifeTimeVIP: Boolean!
+  selfIntro: String
+  VIPLevel: Float!
 }
 
 """
@@ -195,6 +207,16 @@ interface IAccount {
   lastUpdateDate: Timestamp!
   registryDate: Timestamp!
   relatedRecord: Record
+}
+
+"""
+Account Profile Type
+"""
+interface IAccountProfile {
+  avatar: String
+  isLifeTimeVIP: Boolean!
+  selfIntro: String
+  VIPLevel: Float!
 }
 
 """

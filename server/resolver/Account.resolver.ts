@@ -1,4 +1,12 @@
-import { Resolver, Query, Arg, Mutation, UseMiddleware } from "type-graphql";
+import {
+  Resolver,
+  Query,
+  Arg,
+  Mutation,
+  UseMiddleware,
+  Root,
+  FieldResolver,
+} from "type-graphql";
 import { plainToClass } from "class-transformer";
 
 import {
@@ -8,9 +16,13 @@ import {
   StatusHandler,
   AccountUnionResult,
 } from "../graphql/Common";
-import { AccountRegistryInput, AccountLoginInput } from "../graphql/Account";
+import {
+  AccountRegistryInput,
+  AccountLoginInput,
+  IAccountProfile,
+} from "../graphql/Account";
 
-import Account from "../entity/Account";
+import Account, { AccountProfile } from "../entity/Account";
 
 import AccountService from "../service/Account.service";
 
@@ -328,5 +340,14 @@ export default class AccountResolver {
   })
   async FreezeAccount(): Promise<LoginOrRegisterStatus> {
     return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+  }
+
+  @FieldResolver(() => AccountProfile, {
+    nullable: false,
+    description: "账号资料",
+  })
+  async AccountProfileField(@Root() account: Account): Promise<AccountProfile> {
+    const { accountProfile } = account;
+    return JSON.parse(accountProfile);
   }
 }
