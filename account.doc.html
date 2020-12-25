@@ -140,6 +140,11 @@
                 IAccount
             </a>
         </li>
+        <li  title="IAccountProfile">
+            <a href="iaccountprofile.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                IAccountProfile
+            </a>
+        </li>
         <li  title="IBaseStatus">
             <a href="ibasestatus.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 IBaseStatus
@@ -198,6 +203,11 @@
         <li class="slds-is-active" title="Account">
             <a href="account.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 Account
+            </a>
+        </li>
+        <li  title="AccountProfile">
+            <a href="accountprofile.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
+                AccountProfile
             </a>
         </li>
         <li  title="AccountStatus">
@@ -428,7 +438,7 @@
             </a>
             GraphQL Schema definition
         </h2>
-        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">Account</span> <span class="keyword operator ts">implements</span> <a class="support type" href="iaccount.doc.html">IAccount</a> {</li><li></li><li><span class="tab"><span class="meta">accountId</span>: <a class="support type" href="id.doc.html">ID</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountName</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountAvaliable</span>: <a class="support type" href="boolean.doc.html">Boolean</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountPwd</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountType</span>: <a class="support type" href="accounttype.doc.html">AccountType</a>! </span></li><li></li><li><span class="tab"><span class="meta">relatedRecord</span>: <a class="support type" href="record.doc.html">Record</a> </span></li><li></li><li><span class="tab"><span class="meta">registryDate</span>: <a class="support type" href="timestamp.doc.html">Timestamp</a>! </span></li><li></li><li><span class="tab"><span class="meta">lastUpdateDate</span>: <a class="support type" href="timestamp.doc.html">Timestamp</a>! </span></li><li>}</li></ul></code>
+        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">Account</span> <span class="keyword operator ts">implements</span> <a class="support type" href="iaccount.doc.html">IAccount</a> {</li><li></li><li><span class="tab"><span class="meta">accountId</span>: <a class="support type" href="id.doc.html">ID</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountName</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountAvaliable</span>: <a class="support type" href="boolean.doc.html">Boolean</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountPwd</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountType</span>: <a class="support type" href="accounttype.doc.html">AccountType</a>! </span></li><li></li><li><span class="tab"><span class="meta">relatedRecord</span>: <a class="support type" href="record.doc.html">Record</a> </span></li><li></li><li><span class="tab"><span class="meta">registryDate</span>: <a class="support type" href="timestamp.doc.html">Timestamp</a>! </span></li><li></li><li><span class="tab"><span class="meta">lastUpdateDate</span>: <a class="support type" href="timestamp.doc.html">Timestamp</a>! </span></li><li></li><li><span class="tab"><span class="comment line">#   账号资料</span></span></li><li><span class="tab"><span class="meta">AccountProfileField</span>: <a class="support type" href="accountprofile.doc.html">AccountProfile</a>! </span></li><li>}</li></ul></code>
     </div>
 </section>
 <section>
