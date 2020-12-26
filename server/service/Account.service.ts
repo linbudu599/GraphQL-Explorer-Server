@@ -12,9 +12,9 @@ export interface IAccountService {
   createAccount(account: AccountRegistryInput): Promise<Account>;
 
   updateAccount(
-    indicator: Partial<IAccount>,
+    indicator: string,
     infoUpdate: Partial<IAccount>
-  ): Promise<void>;
+  ): Promise<Account>;
   deleteAccount(accountName: string): Promise<void>;
 }
 
@@ -46,10 +46,16 @@ export default class AccountService implements IAccountService {
   }
 
   async updateAccount(
-    indicator: FindConditions<IAccount> | string,
+    indicator: string,
     infoUpdate: Partial<IAccount>
-  ): Promise<void> {
+  ): Promise<Account> {
     await this.accountRepository.update(indicator, infoUpdate);
+
+    const updatedItem = (await this.accountRepository.findOne(
+      indicator
+    )) as Account;
+
+    return updatedItem;
   }
 
   async deleteAccount(accountName: string): Promise<void> {

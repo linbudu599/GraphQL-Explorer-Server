@@ -28,7 +28,7 @@ export class AccountProfile extends BaseEntity implements IAccountProfile {
 
   @Column({
     nullable: false,
-    default: AccountVIPLevel.NonVIP,
+    default: AccountVIPLevel.NON_VIP,
     comment: "账号VIP等级",
   })
   VIPLevel!: AccountVIPLevel;
@@ -40,7 +40,7 @@ export class AccountProfile extends BaseEntity implements IAccountProfile {
 const ACCOUNT_PROFILE_DEFAULT = plainToClass(AccountProfile, {
   avatar: "",
   selfIntro: "",
-  VIPLevel: AccountVIPLevel.NonVIP,
+  VIPLevel: AccountVIPLevel.NON_VIP,
   isLifeTimeVIP: false,
 });
 

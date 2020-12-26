@@ -19,7 +19,7 @@ import {
 import {
   AccountRegistryInput,
   AccountLoginInput,
-  IAccountProfile,
+  AccountProfileInput,
 } from "../graphql/Account";
 
 import Account, { AccountProfile } from "../entity/Account";
@@ -60,7 +60,6 @@ export default class AccountResolver {
   ): Promise<LoginOrRegisterStatus> {
     try {
       const account = await this.accountService.getOneAccount(accountName);
-
       if (!account) {
         return new LoginOrRegisterStatusHandler(
           false,
@@ -104,8 +103,15 @@ export default class AccountResolver {
     nullable: false,
     description: "账号详情",
   })
-  async CheckAccountDetail(): Promise<AccountStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+  async CheckAccountDetail(
+    @Arg("accountName", { nullable: false }) accountName: string
+  ): Promise<AccountStatus> {
+    const account = await this.accountService.getOneAccount(accountName);
+    if (!account) {
+      return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
+    }
+
+    return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [account]);
   }
 
   @Query(() => LoginOrRegisterStatus, {
@@ -176,11 +182,13 @@ export default class AccountResolver {
     }
   }
 
+  // TODO: extract to InputType
   @Mutation(() => LoginOrRegisterStatus, {
     nullable: false,
     description: "修改密码",
   })
   async ModifyPassword(
+    @Arg("accountId") accountId: string,
     @Arg("accountName") accountName: string,
     @Arg("prevPassword") prevPassword: string,
     @Arg("newPassword") newPassword: string
@@ -204,12 +212,9 @@ export default class AccountResolver {
         );
       }
 
-      await this.accountService.updateAccount(
-        { accountName },
-        {
-          accountPwd: encode(newPassword),
-        }
-      );
+      await this.accountService.updateAccount(accountId, {
+        accountPwd: encode(newPassword),
+      });
 
       const token = dispatchToken(accountName, isExistingAccount.accountType);
 
@@ -326,20 +331,65 @@ export default class AccountResolver {
     return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
   }
 
+  // TODO: 鉴权
   @Mutation(() => AccountStatus, {
     nullable: false,
     description: "账号详情变更",
   })
-  async MutateAccountProfile(): Promise<AccountStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+  async MutateAccountProfile(
+    @Arg("accountId") accountId: string,
+    @Arg("modifiedAccountProfile") accountProfile: AccountProfileInput
+  ): Promise<AccountStatus> {
+    try {
+      const account = await this.accountService.getOneAccountById(accountId);
+      if (!account) {
+        return new LoginOrRegisterStatusHandler(
+          false,
+          RESPONSE_INDICATOR.NOT_FOUND,
+          ""
+        );
+      }
+
+      const updatedProfile = {
+        ...JSON.parse(account.accountProfile),
+        ...accountProfile,
+      };
+
+      const res = await this.accountService.updateAccount(accountId, {
+        accountProfile: JSON.stringify(updatedProfile),
+      });
+
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 
-  @Mutation(() => LoginOrRegisterStatus, {
+  @Mutation(() => AccountStatus, {
     nullable: false,
     description: "冻结账号",
   })
-  async FreezeAccount(): Promise<LoginOrRegisterStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+  async FreezeAccount(
+    @Arg("accountId") accountId: string
+  ): Promise<AccountStatus> {
+    try {
+      const account = await this.accountService.getOneAccountById(accountId);
+      if (!account) {
+        return new LoginOrRegisterStatusHandler(
+          false,
+          RESPONSE_INDICATOR.NOT_FOUND,
+          ""
+        );
+      }
+
+      const res = await this.accountService.updateAccount(accountId, {
+        accountAvaliable: false,
+      });
+
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 
   @FieldResolver(() => AccountProfile, {

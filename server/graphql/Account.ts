@@ -1,4 +1,11 @@
-import { IsEnum, IsNotEmpty, IsString, Length } from "class-validator";
+import {
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+} from "class-validator";
 import {
   Field,
   ID,
@@ -19,7 +26,7 @@ registerEnumType(ACCOUNT_TYPE, {
 });
 
 export enum AccountVIPLevel {
-  NonVIP,
+  NON_VIP,
   SILVER,
   GOLD,
   DIAMOND,
@@ -39,7 +46,7 @@ export abstract class IAccountProfile {
   @Field({ nullable: true })
   selfIntro!: string;
 
-  @Field({ nullable: false })
+  @Field((type) => AccountVIPLevel, { nullable: false })
   VIPLevel!: AccountVIPLevel;
 
   @Field({ nullable: false })
@@ -59,6 +66,9 @@ export abstract class IAccount {
 
   @Field({ nullable: false })
   accountPwd!: string;
+
+  @Field({ nullable: false })
+  accountProfile!: string;
 
   @Field((type) => ACCOUNT_TYPE, { nullable: false })
   accountType!: ACCOUNT_TYPE;
@@ -127,7 +137,7 @@ export class AccountRegistryInput extends RegisterInputMixin(AccountInput) {}
 @InputType({ description: "Login Input Type" })
 export class AccountLoginInput extends LoginInputMixin(AccountInput) {}
 
-@InputType({ description: "Account Relations Input" })
+@InputType({ description: "Account Relations Input Type" })
 export class AccountRelationsInput {
   @Field({ nullable: true })
   joinRecord: boolean = false;
@@ -145,3 +155,27 @@ export const getAccountRelations = ({
   joinRecord ? relations.push("relatedRecord") : void 0;
   return relations;
 };
+
+@InputType({ description: "Account Profile Input Type" })
+export class AccountProfileInput {
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  avatar?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  @Length(0, 100)
+  selfIntro?: string;
+
+  @IsEnum(AccountVIPLevel)
+  @IsOptional()
+  @Field((type) => AccountVIPLevel, { nullable: true })
+  VIPLevel?: AccountVIPLevel;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  isLifeTimeVIP?: boolean;
+}

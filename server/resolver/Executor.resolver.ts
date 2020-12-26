@@ -234,7 +234,7 @@ export default class ExecutorResolver {
       }
 
       const updatedDesc = {
-        ...JSON.parse(isExistingExecutor.desc ?? "{}"),
+        ...JSON.parse(isExistingExecutor.desc),
         ...desc,
       };
 

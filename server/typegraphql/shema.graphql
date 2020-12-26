@@ -7,6 +7,7 @@ type Account implements IAccount {
   accountAvaliable: Boolean!
   accountId: ID!
   accountName: String!
+  accountProfile: String!
 
   """
   账号资料
@@ -32,7 +33,17 @@ type AccountProfile implements IAccountProfile {
   avatar: String
   isLifeTimeVIP: Boolean!
   selfIntro: String
-  VIPLevel: Float!
+  VIPLevel: AccountVIPLevel!
+}
+
+"""
+Account Profile Input Type
+"""
+input AccountProfileInput {
+  avatar: String
+  isLifeTimeVIP: Boolean
+  selfIntro: String
+  VIPLevel: AccountVIPLevel
 }
 
 """
@@ -67,6 +78,17 @@ enum AccountType {
 }
 
 union AccountUnionResult = AccountStatus | LoginOrRegisterStatus
+
+"""
+Account VIP Level Enum
+"""
+enum AccountVIPLevel {
+  DIAMOND
+  DOMINATOR
+  GOLD
+  NON_VIP
+  SILVER
+}
 
 """
 Recipe >>> Cook >>> WorkExperience >> Company
@@ -202,6 +224,7 @@ interface IAccount {
   accountAvaliable: Boolean!
   accountId: ID!
   accountName: String!
+  accountProfile: String!
   accountPwd: String!
   accountType: AccountType!
   lastUpdateDate: Timestamp!
@@ -216,7 +239,7 @@ interface IAccountProfile {
   avatar: String
   isLifeTimeVIP: Boolean!
   selfIntro: String
-  VIPLevel: Float!
+  VIPLevel: AccountVIPLevel!
 }
 
 """
@@ -388,7 +411,7 @@ type Mutation {
   """
   冻结账号
   """
-  FreezeAccount: LoginOrRegisterStatus!
+  FreezeAccount(accountId: String!): AccountStatus!
 
   """
   冻结任务 无法恢复
@@ -399,6 +422,7 @@ type Mutation {
   修改密码
   """
   ModifyPassword(
+    accountId: String!
     accountName: String!
     newPassword: String!
     prevPassword: String!
@@ -407,7 +431,10 @@ type Mutation {
   """
   账号详情变更
   """
-  MutateAccountProfile: AccountStatus!
+  MutateAccountProfile(
+    accountId: String!
+    modifiedAccountProfile: AccountProfileInput!
+  ): AccountStatus!
 
   """
   更新执行者存活状态/自身状态
@@ -506,7 +533,7 @@ type Query {
   """
   账号详情
   """
-  CheckAccountDetail: AccountStatus!
+  CheckAccountDetail(accountName: String!): AccountStatus!
 
   """
   检验token是否合法
