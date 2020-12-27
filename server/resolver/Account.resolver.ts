@@ -20,6 +20,10 @@ import {
   AccountRegistryInput,
   AccountLoginInput,
   AccountProfileInput,
+  AccountPasswordModifyInput,
+  AccountRelationsInput,
+  AccountRelation,
+  getAccountRelations,
 } from "../graphql/Account";
 
 import Account, { AccountProfile } from "../entity/Account";
@@ -42,9 +46,13 @@ export default class AccountResolver {
     description: "查询所有用户",
   })
   @UseMiddleware(ExtraFieldLogMiddlewareGenerator("Check All Accounts"))
-  async QueryAllAccounts(): Promise<AccountStatus> {
+  async QueryAllAccounts(
+    @Arg("relations", (type) => AccountRelationsInput, { nullable: true })
+    relationOptions: Partial<AccountRelationsInput> = {}
+  ): Promise<AccountStatus> {
     try {
-      const accounts = this.accountService.getAllAccounts();
+      const relations: AccountRelation[] = getAccountRelations(relationOptions);
+      const accounts = await this.accountService.getAllAccounts(relations);
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, accounts);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
@@ -56,7 +64,8 @@ export default class AccountResolver {
     description: "账号登录",
   })
   async AccountLogin(
-    @Arg("account") { accountName, accountPwd, loginType }: AccountLoginInput
+    @Arg("account", (type) => AccountLoginInput)
+    { accountName, accountPwd, loginType }: AccountLoginInput
   ): Promise<LoginOrRegisterStatus> {
     try {
       const account = await this.accountService.getOneAccount(accountName);
@@ -104,9 +113,15 @@ export default class AccountResolver {
     description: "账号详情",
   })
   async CheckAccountDetail(
-    @Arg("accountName", { nullable: false }) accountName: string
+    @Arg("accountId", { nullable: false }) accountId: string,
+    @Arg("relations", (type) => AccountRelationsInput, { nullable: true })
+    relationOptions: Partial<AccountRelationsInput> = {}
   ): Promise<AccountStatus> {
-    const account = await this.accountService.getOneAccount(accountName);
+    const relations: AccountRelation[] = getAccountRelations(relationOptions);
+    const account = await this.accountService.getOneAccountById(
+      accountId,
+      relations
+    );
     if (!account) {
       return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
     }
@@ -153,7 +168,8 @@ export default class AccountResolver {
     description: "新用户注册",
   })
   async AccountRegistry(
-    @Arg("account") account: AccountRegistryInput
+    @Arg("account", (type) => AccountRegistryInput)
+    account: AccountRegistryInput
   ): Promise<LoginOrRegisterStatus> {
     try {
       const isExistingAccount = await this.accountService.getOneAccount(
@@ -182,20 +198,22 @@ export default class AccountResolver {
     }
   }
 
-  // TODO: extract to InputType
   @Mutation(() => LoginOrRegisterStatus, {
     nullable: false,
     description: "修改密码",
   })
   async ModifyPassword(
-    @Arg("accountId") accountId: string,
-    @Arg("accountName") accountName: string,
-    @Arg("prevPassword") prevPassword: string,
-    @Arg("newPassword") newPassword: string
+    @Arg("accountInfo", (type) => AccountPasswordModifyInput)
+    {
+      accountId,
+      accountName,
+      prevPassword,
+      newPassword,
+    }: AccountPasswordModifyInput
   ): Promise<LoginOrRegisterStatus> {
     try {
-      const isExistingAccount = await this.accountService.getOneAccount(
-        accountName
+      const isExistingAccount = await this.accountService.getOneAccountById(
+        accountId
       );
 
       if (!isExistingAccount) {
@@ -280,7 +298,7 @@ export default class AccountResolver {
   })
   async AccountLevelMutate(
     @Arg("accountId") accountId: string,
-    @Arg("level", () => ACCOUNT_TYPE) level: ACCOUNT_TYPE
+    @Arg("level", (type) => ACCOUNT_TYPE) level: ACCOUNT_TYPE
   ): Promise<AccountStatus | LoginOrRegisterStatus> {
     try {
       const isExistingAccount = await this.accountService.getOneAccountById(
@@ -294,13 +312,9 @@ export default class AccountResolver {
         });
       }
 
-      await this.accountService.updateAccount(accountId, {
+      const updated = await this.accountService.updateAccount(accountId, {
         accountType: level,
       });
-
-      const updated = (await this.accountService.getOneAccountById(
-        accountId
-      )) as Account;
 
       return plainToClass(AccountStatus, {
         success: true,
@@ -311,6 +325,7 @@ export default class AccountResolver {
       return plainToClass(LoginOrRegisterStatus, {
         success: false,
         message: JSON.stringify(error),
+        token: "",
       });
     }
   }
@@ -331,7 +346,6 @@ export default class AccountResolver {
     return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
   }
 
-  // TODO: 鉴权
   @Mutation(() => AccountStatus, {
     nullable: false,
     description: "账号详情变更",

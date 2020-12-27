@@ -1,20 +1,27 @@
 import { Resolver, Query, Arg, Mutation } from "type-graphql";
-import { Repository, Transaction } from "typeorm";
-import { InjectRepository } from "typeorm-typedi-extensions";
+import { Transaction } from "typeorm";
 
 import Substance from "../entity/Substance";
 
-import { PaginationOptions } from "../graphql/Common";
-import { StatusHandler, SubstanceStatus } from "../graphql/Common";
+import {
+  PaginationOptions,
+  StatusHandler,
+  SubstanceStatus,
+} from "../graphql/Common";
+
+import {
+  SubstanceRelation,
+  getSubstanceRelations,
+  SubstanceRelationsInput,
+} from "../graphql/Substance";
 
 import { RESPONSE_INDICATOR } from "../utils/constants";
 
+import SubstanceService from "../service/Substance.service";
+
 @Resolver((of) => Substance)
 export default class SubstanceResolver {
-  constructor(
-    @InjectRepository(Substance)
-    private readonly substanceRepository: Repository<Substance>
-  ) {}
+  constructor(private readonly substancesService: SubstanceService) {}
 
   @Query(() => SubstanceStatus, {
     nullable: false,
@@ -23,18 +30,24 @@ export default class SubstanceResolver {
   async QueryAllSubstances(
     @Arg("pagination", { nullable: true })
     pagination: PaginationOptions,
-    @Arg("joinTask", { nullable: true })
-    joinTask: boolean = false
+
+    @Arg("relations", (type) => SubstanceRelationsInput, { nullable: true })
+    relationOptions: Partial<SubstanceRelationsInput> = {}
   ): Promise<SubstanceStatus> {
     try {
-      const { cursor, offset } = pagination ?? { cursor: 0, offset: 20 };
-      const relations = joinTask ? ["relatedTask"] : [];
+      const queryPagination = (pagination ?? {
+        cursor: 0,
+        offset: 20,
+      }) as Required<PaginationOptions>;
 
-      const res = await this.substanceRepository.find({
-        skip: cursor,
-        take: offset,
-        relations,
-      });
+      const relations: SubstanceRelation[] = getSubstanceRelations(
+        relationOptions
+      );
+
+      const res = await this.substancesService.getAllSubstances(
+        queryPagination,
+        relations
+      );
 
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, res);
     } catch (error) {
@@ -47,10 +60,28 @@ export default class SubstanceResolver {
     description: "基于ID查找实体",
   })
   async QuerySubstanceById(
-    @Arg("joinTask", { nullable: true })
-    joinTask: boolean = false
+    @Arg("substanceId") substanceId: string,
+
+    @Arg("relations", (type) => SubstanceRelationsInput, { nullable: true })
+    relationOptions: Partial<SubstanceRelationsInput> = {}
   ): Promise<SubstanceStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+    try {
+      const relations: SubstanceRelation[] = getSubstanceRelations(
+        relationOptions
+      );
+
+      const res = await this.substancesService.getOneSubstanceById(
+        substanceId,
+        relations
+      );
+
+      if (!res) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
+      }
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 
   @Query(() => SubstanceStatus, {

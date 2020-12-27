@@ -13,6 +13,7 @@ import {
   TaskUpdateInput,
   TaskRelationsInput,
   getTaskRelations,
+  TaskRelation,
 } from "../graphql/Task";
 import { DifficultyLevel } from "../graphql/Public";
 
@@ -43,7 +44,7 @@ export default class TaskResolver {
         offset: 20,
       }) as Required<PaginationOptions>;
 
-      const relations = getTaskRelations(relationOptions);
+      const relations: TaskRelation[] = getTaskRelations(relationOptions);
       const res = this.taskService.getAllTasks(queryPagination, relations);
 
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, res);
@@ -59,7 +60,7 @@ export default class TaskResolver {
     relationOptions: Partial<TaskRelationsInput> = {}
   ): Promise<TaskStatus> {
     try {
-      const relations = getTaskRelations(relationOptions);
+      const relations: TaskRelation[] = getTaskRelations(relationOptions);
       const res = await this.taskService.getOneTaskById(taskId, relations);
 
       if (!res) {
@@ -88,7 +89,7 @@ export default class TaskResolver {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
 
-      const relations = getTaskRelations(relationOptions);
+      const relations: TaskRelation[] = getTaskRelations(relationOptions);
 
       const res = await this.taskService.getTasksByConditions(
         {

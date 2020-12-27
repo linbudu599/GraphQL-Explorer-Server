@@ -28,6 +28,7 @@ import {
   IExecutorDesc,
   ExecutorRelationsInput,
   getExecutorRelations,
+  ExecutorRelation,
 } from "../graphql/Executor";
 import {
   PaginationOptions,
@@ -69,7 +70,9 @@ export default class ExecutorResolver {
         cursor: 0,
         offset: 20,
       }) as Required<PaginationOptions>;
-      const relations = getExecutorRelations(relationOptions);
+      const relations: ExecutorRelation[] = getExecutorRelations(
+        relationOptions
+      );
 
       const ExecutorsWithTasks = await this.executorService.getAllExecutors(
         cursor,
@@ -98,7 +101,9 @@ export default class ExecutorResolver {
     relationOptions: Partial<ExecutorRelationsInput> = {}
   ): Promise<ExecutorStatus> {
     try {
-      const relations = getExecutorRelations(relationOptions);
+      const relations: ExecutorRelation[] = getExecutorRelations(
+        relationOptions
+      );
       const executor = await this.executorService.getOneExecutorById(
         uid,
         relations
@@ -125,7 +130,9 @@ export default class ExecutorResolver {
     relationOptions: Partial<ExecutorRelationsInput> = {}
   ): Promise<ExecutorStatus> {
     try {
-      const relations = getExecutorRelations(relationOptions);
+      const relations: ExecutorRelation[] = getExecutorRelations(
+        relationOptions
+      );
 
       const res = await this.executorService.getExecutorsByConditions(
         conditions,
@@ -156,7 +163,7 @@ export default class ExecutorResolver {
     @Arg("relations", (type) => ExecutorRelationsInput, { nullable: true })
     relationOptions: Partial<ExecutorRelationsInput> = {}
   ): Promise<ExecutorStatus> {
-    const relations = getExecutorRelations(relationOptions);
+    const relations: ExecutorRelation[] = getExecutorRelations(relationOptions);
     const { cursor, offset } = (pagination ?? {
       cursor: 0,
       offset: 20,

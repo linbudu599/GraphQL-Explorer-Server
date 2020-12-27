@@ -156,6 +156,33 @@ export const getAccountRelations = ({
   return relations;
 };
 
+@InputType({ description: "Account Password Modify Input Type" })
+export class AccountPasswordModifyInput {
+  @Field({ nullable: false })
+  @IsNotEmpty()
+  @Length(3, 10)
+  @IsString()
+  accountId!: string;
+
+  @Field({ nullable: false })
+  @IsNotEmpty()
+  @Length(2, 15)
+  @IsString()
+  accountName!: string;
+
+  @Field({ nullable: false })
+  @IsNotEmpty()
+  @Length(6, 20)
+  @IsString()
+  prevPassword!: string;
+
+  @Field({ nullable: false })
+  @IsNotEmpty()
+  @Length(6, 20)
+  @IsString()
+  newPassword!: string;
+}
+
 @InputType({ description: "Account Profile Input Type" })
 export class AccountProfileInput {
   @Field({ nullable: true })

@@ -29,6 +29,16 @@ input AccountLoginInput {
   loginType: AccountType!
 }
 
+"""
+Account Password Modify Input Type
+"""
+input AccountPasswordModifyInput {
+  accountId: String!
+  accountName: String!
+  newPassword: String!
+  prevPassword: String!
+}
+
 type AccountProfile implements IAccountProfile {
   avatar: String
   isLifeTimeVIP: Boolean!
@@ -53,6 +63,13 @@ input AccountRegistryInput {
   accountName: String!
   accountPwd: String!
   loginType: AccountType
+}
+
+"""
+Account Relations Input Type
+"""
+input AccountRelationsInput {
+  joinRecord: Boolean = false
 }
 
 """
@@ -422,10 +439,7 @@ type Mutation {
   修改密码
   """
   ModifyPassword(
-    accountId: String!
-    accountName: String!
-    newPassword: String!
-    prevPassword: String!
+    accountInfo: AccountPasswordModifyInput!
   ): LoginOrRegisterStatus!
 
   """
@@ -533,7 +547,10 @@ type Query {
   """
   账号详情
   """
-  CheckAccountDetail(accountName: String!): AccountStatus!
+  CheckAccountDetail(
+    accountId: String!
+    relations: AccountRelationsInput
+  ): AccountStatus!
 
   """
   检验token是否合法
@@ -554,7 +571,7 @@ type Query {
   """
   查询所有用户
   """
-  QueryAllAccounts: AccountStatus!
+  QueryAllAccounts(relations: AccountRelationsInput): AccountStatus!
 
   """
   获取所有执行者
@@ -569,8 +586,8 @@ type Query {
   查找所有实体信息
   """
   QueryAllSubstances(
-    joinTask: Boolean
     pagination: PaginationOptions
+    relations: SubstanceRelationsInput
   ): SubstanceStatus!
 
   """
@@ -660,7 +677,10 @@ type Query {
   """
   基于ID查找实体
   """
-  QuerySubstanceById(joinTask: Boolean): SubstanceStatus!
+  QuerySubstanceById(
+    relations: SubstanceRelationsInput
+    substanceId: String!
+  ): SubstanceStatus!
 
   """
   基于威胁级别查找实体
@@ -752,6 +772,14 @@ type Substance implements ISubstance {
   substanceIssues: String!
   substanceLevel: DifficultyLevel!
   substanceName: String!
+}
+
+"""
+Substance Relations Input
+"""
+input SubstanceRelationsInput {
+  joinRecord: Boolean = false
+  relatedTask: Boolean = false
 }
 
 """

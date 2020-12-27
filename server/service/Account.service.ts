@@ -1,14 +1,24 @@
 import { Service } from "typedi";
-import { FindConditions, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import Account from "../entity/Account";
-import { IAccount, AccountRegistryInput } from "../graphql/Account";
+import {
+  IAccount,
+  AccountRegistryInput,
+  AccountRelation,
+} from "../graphql/Account";
 
 export interface IAccountService {
-  getAllAccounts(): Promise<Account[]>;
-  getOneAccount(accountName: string): Promise<Account | undefined>;
-  getOneAccountById(accountId: string): Promise<Account | undefined>;
+  getAllAccounts(relations: AccountRelation[]): Promise<Account[]>;
+  getOneAccount(
+    accountName: string,
+    relations: AccountRelation[]
+  ): Promise<Account | undefined>;
+  getOneAccountById(
+    accountId: string,
+    relations: AccountRelation[]
+  ): Promise<Account | undefined>;
   createAccount(account: AccountRegistryInput): Promise<Account>;
 
   updateAccount(
@@ -25,18 +35,29 @@ export default class AccountService implements IAccountService {
     private readonly accountRepository: Repository<Account>
   ) {}
 
-  async getAllAccounts(): Promise<Account[]> {
-    const accounts = await this.accountRepository.find();
+  async getAllAccounts(relations: AccountRelation[] = []): Promise<Account[]> {
+    const accounts = await this.accountRepository.find({ relations });
     return accounts;
   }
 
-  async getOneAccount(accountName: string): Promise<Account | undefined> {
-    const account = await this.accountRepository.findOne({ accountName });
+  async getOneAccount(
+    accountName: string,
+    relations: AccountRelation[] = []
+  ): Promise<Account | undefined> {
+    const account = await this.accountRepository.findOne(
+      { accountName },
+      { relations }
+    );
     return account;
   }
 
-  async getOneAccountById(accountId: string): Promise<Account | undefined> {
-    const account = await this.accountRepository.findOne(accountId);
+  async getOneAccountById(
+    accountId: string,
+    relations: AccountRelation[] = []
+  ): Promise<Account | undefined> {
+    const account = await this.accountRepository.findOne(accountId, {
+      relations,
+    });
     return account;
   }
 
