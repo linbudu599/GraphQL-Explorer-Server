@@ -50,7 +50,7 @@ export default class Executor extends BaseEntity implements IExecutor {
   @Column({ unique: true, nullable: false })
   name!: string;
 
-  @Column({ default: 0, nullable: false })
+  @Column({ default: 10, nullable: false })
   age!: number;
 
   @Column({ default: JOB.FE })
@@ -65,7 +65,7 @@ export default class Executor extends BaseEntity implements IExecutor {
   @Field()
   desc!: string;
 
-  @Column({ default: REGION.OTHER, nullable: false })
+  @Column({ default: REGION.OTHER, nullable: false, enum: REGION })
   region!: REGION;
 
   @Extensions({ complexity: 1 })
@@ -75,13 +75,14 @@ export default class Executor extends BaseEntity implements IExecutor {
 
   // 任务
   @OneToMany(() => Task, (task) => task.assignee, {
+    cascade: true,
     onDelete: "SET NULL",
   })
   @TypeormLoader((type) => Task, (executor: Executor) => executor.taskIds)
   tasks?: Task[];
 
   @RelationId((executor: Executor) => executor.tasks)
-  taskIds?: Number[];
+  taskIds?: number[];
 
   // 关联记录 >>> 变更关联
   @OneToOne((type) => Record, (record) => record.recordExecutor)

@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
   OneToOne,
   RelationId,
+  JoinColumn,
 } from "typeorm";
 
 import Task from "./Task";
@@ -39,6 +40,7 @@ export default class Substance extends BaseEntity implements ISubstance {
     nullable: false,
     default: DifficultyLevel.ROOKIE,
     comment: "实体威胁级别",
+    enum: DifficultyLevel,
   })
   substanceLevel!: DifficultyLevel;
 
@@ -47,6 +49,7 @@ export default class Substance extends BaseEntity implements ISubstance {
 
   // 实体关联任务
   @OneToOne(() => Task, (task) => task.taskSubstance)
+  @JoinColumn({ name: "relatedTaskId" })
   relatedTask!: Task;
 
   @RelationId((substance: Substance) => substance.relatedTask)

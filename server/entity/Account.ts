@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
   OneToOne,
   RelationId,
+  Generated,
 } from "typeorm";
 
 import { IAccount, IAccountProfile, AccountVIPLevel } from "../graphql/Account";
@@ -51,6 +52,10 @@ export default class Account extends BaseEntity implements IAccount {
   @PrimaryGeneratedColumn()
   accountId!: number;
 
+  @Column()
+  @Generated("uuid")
+  accountUUID!: string;
+
   @Column({ unique: true, nullable: false, comment: "账号名称" })
   accountName!: string;
 
@@ -71,6 +76,7 @@ export default class Account extends BaseEntity implements IAccount {
     nullable: false,
     default: ACCOUNT_TYPE.VISITOR,
     comment: "账号类型",
+    enum: ACCOUNT_TYPE,
   })
   accountType!: ACCOUNT_TYPE;
 

@@ -151,7 +151,7 @@ export abstract class IExecutor {
 export class ExecutorQueryArgs {
   @Field({ nullable: true })
   @IsOptional()
-  @Length(0, 20)
+  @Length(0, 50)
   @IsString()
   name?: string;
 
@@ -164,16 +164,6 @@ export class ExecutorQueryArgs {
 
   @Field({ nullable: true })
   @IsOptional()
-  @IsBoolean()
-  isFool?: boolean;
-
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsEnum(JOB)
-  job?: JOB;
-
-  @Field({ nullable: true })
-  @IsOptional()
   @IsEnum(REGION)
   region?: REGION;
 
@@ -181,20 +171,6 @@ export class ExecutorQueryArgs {
   @IsOptional()
   @IsEnum(DifficultyLevel)
   level?: DifficultyLevel;
-
-  @Field((type) => Int, { nullable: true })
-  @IsOptional()
-  @Max(10)
-  @Min(0)
-  @IsNumber()
-  successRate?: number;
-
-  @Field((type) => Int, { nullable: true })
-  @IsOptional()
-  @Max(10)
-  @Min(0)
-  @IsNumber()
-  satisfaction?: number;
 }
 
 @ObjectType({ isAbstract: true })
@@ -275,21 +251,27 @@ export class ExecutorRelationsInput {
   joinTasks: boolean = false;
 
   @Field({ nullable: true })
+  joinSubstance: boolean = false;
+
+  @Field({ nullable: true })
   joinRecord: boolean = false;
 }
 
 interface IExecutorRelationOptions {
   joinTasks?: boolean;
+  joinSubstance?: boolean;
   joinRecord?: boolean;
 }
-export type ExecutorRelation = "relatedRecord" | "tasks";
+export type ExecutorRelation = "relatedRecord" | "tasks" | "substance";
 
 export const getExecutorRelations = ({
   joinTasks = false,
   joinRecord = false,
+  joinSubstance = false,
 }: IExecutorRelationOptions): ExecutorRelation[] => {
   const relations: ExecutorRelation[] = [];
   joinTasks ? relations.push("tasks") : void 0;
+  joinSubstance ? relations.push("substance") : void 0;
   joinRecord ? relations.push("relatedRecord") : void 0;
   return relations;
 };

@@ -46,6 +46,7 @@ export default class Task extends BaseEntity implements ITask {
     nullable: false,
     default: TaskPriority.MIDDLE,
     comment: "任务优先级",
+    enum: TaskPriority,
   })
   taskPriority!: TaskPriority;
 
@@ -61,13 +62,19 @@ export default class Task extends BaseEntity implements ITask {
   @Column({ nullable: false, default: true, comment: "任务当前是否可接取" })
   taskAvaliable!: Boolean;
 
-  @Column({ nullable: false, default: TaskSource.OTHER, comment: "任务来源" })
+  @Column({
+    nullable: false,
+    default: TaskSource.OTHER,
+    comment: "任务来源",
+    enum: TaskSource,
+  })
   taskSource!: TaskSource;
 
   @Column({
     nullable: false,
     default: DifficultyLevel.ROOKIE,
     comment: "任务级别",
+    enum: DifficultyLevel,
   })
   taskLevel!: DifficultyLevel;
 
@@ -88,7 +95,6 @@ export default class Task extends BaseEntity implements ITask {
     cascade: true,
     onDelete: "SET NULL",
   })
-  @JoinColumn()
   taskSubstance!: Substance;
 
   @RelationId((task: Task) => task.taskSubstance)
@@ -98,8 +104,8 @@ export default class Task extends BaseEntity implements ITask {
   // 在设置ManyToOne处的实体将拥有relationId与外键
   @ManyToOne(() => Executor, (executor) => executor.tasks, {
     nullable: true,
-    onDelete: "SET NULL",
   })
+  @JoinColumn() // 对于@ManyToOne是可选的，但对@OneToOne必需
   @TypeormLoader((type) => Executor, (task: Task) => task.assigneeUID)
   assignee!: Executor;
 

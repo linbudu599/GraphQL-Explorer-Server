@@ -10,6 +10,7 @@ import {
   ExecutorRelation,
   IExecutor,
   ExecutorCreateInput,
+  ExecutorQueryArgs,
   ExecutorUpdateInput,
 } from "../graphql/Executor";
 
@@ -27,12 +28,11 @@ export interface IExecutorService {
   ): Promise<Executor | undefined>;
 
   getOneExecutorByConditions(
-    conditions: Partial<IExecutor>,
-    relations: ExecutorRelation[]
+    conditions: Partial<IExecutor>
   ): Promise<Executor | undefined>;
 
   getExecutorsByConditions(
-    conditions: FindConditions<Executor>,
+    conditions: ExecutorQueryArgs,
     relations: ExecutorRelation[]
   ): Promise<Executor[]>;
 
@@ -41,7 +41,7 @@ export interface IExecutorService {
 
   updateExecutor(
     indicator: number,
-    infoUpdate: Partial<IExecutor>
+    infoUpdate: Partial<ExecutorUpdateInput>
   ): Promise<Executor>;
 
   deleteExecutor(uid: number): Promise<void>;
@@ -55,6 +55,33 @@ export default class ExecutorService implements IExecutorService {
     @Inject("INIT_INJECT_DATA") private readonly dateInfo: Date
   ) {}
 
+  private generateSelectBuilder(relations: ExecutorRelation[]) {
+    let selectQueryBuilder = this.executorRepository.createQueryBuilder(
+      "executor"
+    );
+
+    if (relations.includes("relatedRecord")) {
+      selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
+        "executor.relatedRecord",
+        "relatedRecord"
+      );
+    }
+    if (relations.includes("tasks")) {
+      selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
+        "executor.tasks",
+        "tasks"
+      );
+    }
+    if (relations.includes("substance")) {
+      selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
+        "tasks.taskSubstance",
+        "substance"
+      );
+    }
+
+    return selectQueryBuilder;
+  }
+
   async getAllExecutors(
     pagination: Required<PaginationOptions>,
 
@@ -62,11 +89,10 @@ export default class ExecutorService implements IExecutorService {
   ) {
     const { cursor, offset } = pagination;
 
-    const res = await this.executorRepository.find({
-      relations,
-      skip: cursor,
-      take: offset,
-    });
+    const res = await this.generateSelectBuilder(relations)
+      .take(offset)
+      .skip(cursor)
+      .getMany();
 
     return res;
   }
@@ -75,34 +101,37 @@ export default class ExecutorService implements IExecutorService {
     uid: number,
     relations: ExecutorRelation[] = []
   ): Promise<Executor | undefined> {
-    const res = await this.executorRepository.findOne(uid, {
-      relations,
-    });
+    const res = await this.generateSelectBuilder(relations)
+      .where("executor.uid = :uid", { uid })
+      .getOne();
 
     return res;
   }
 
   async getOneExecutorByConditions(
-    conditions: Partial<IExecutor>,
-    relations: ExecutorRelation[] = []
+    conditions: ExecutorQueryArgs
   ): Promise<Executor | undefined> {
-    const res = await this.executorRepository.findOne(conditions, {
-      relations,
-    });
+    const res = await this.executorRepository.findOne(conditions);
 
     return res;
   }
 
   async getExecutorsByConditions(
-    conditions: FindConditions<Executor>,
+    conditions: ExecutorQueryArgs,
     relations: ExecutorRelation[] = []
   ): Promise<Executor[]> {
-    const res = await this.executorRepository.find({
-      where: {
-        ...conditions,
-      },
-      relations: Array.from(new Set(relations)),
+    let initialSelectBuilder = this.generateSelectBuilder(relations);
+
+    Object.keys(conditions).forEach((key) => {
+      initialSelectBuilder = initialSelectBuilder.andWhere(
+        `executor.${key}= :${key}`,
+        {
+          [key]: conditions[key],
+        }
+      );
     });
+
+    const res = await initialSelectBuilder.getMany();
 
     return res;
   }
@@ -114,7 +143,7 @@ export default class ExecutorService implements IExecutorService {
 
   async updateExecutor(
     indicator: number,
-    infoUpdate: Partial<IExecutor>
+    infoUpdate: Partial<ExecutorUpdateInput>
   ): Promise<Executor> {
     await this.executorRepository.update(indicator, infoUpdate);
 
