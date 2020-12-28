@@ -45,7 +45,7 @@ const EXECUTOR_DESC_DEFAULT = plainToClass(ExecutorDesc, {
 export default class Executor extends BaseEntity implements IExecutor {
   // 执行者基本信息
   @PrimaryGeneratedColumn()
-  uid!: string;
+  uid!: number;
 
   @Column({ unique: true, nullable: false })
   name!: string;
@@ -77,18 +77,18 @@ export default class Executor extends BaseEntity implements IExecutor {
   @OneToMany(() => Task, (task) => task.assignee, {
     onDelete: "SET NULL",
   })
-  @TypeormLoader((type) => Executor, (executor: Executor) => executor.taskIds)
+  @TypeormLoader((type) => Task, (executor: Executor) => executor.taskIds)
   tasks?: Task[];
 
-  @RelationId((Executor: Executor) => Executor.tasks)
-  taskIds?: string[];
+  @RelationId((executor: Executor) => executor.tasks)
+  taskIds?: Number[];
 
-  // 关联记录
+  // 关联记录 >>> 变更关联
   @OneToOne((type) => Record, (record) => record.recordExecutor)
   relatedRecord!: Record;
 
   @RelationId((executor: Executor) => executor.relatedRecord)
-  relatedRecordId?: string;
+  relatedRecordId?: number[];
 
   @CreateDateColumn()
   joinDate!: Date;

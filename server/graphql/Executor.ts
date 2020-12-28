@@ -19,6 +19,7 @@ import {
   Min,
   IsEnum,
   IsNotEmpty,
+  IsPositive,
 } from "class-validator";
 
 import Task from "../entity/Task";
@@ -110,7 +111,7 @@ export class ExecutorDescQuery implements Partial<IExecutorDesc> {
 @InterfaceType({ description: "Update Executor Basic Info Input" })
 export abstract class IExecutor {
   @Field((type) => ID, { nullable: false })
-  uid!: string;
+  uid!: number;
 
   @Field({ nullable: false })
   name!: string;
@@ -245,8 +246,10 @@ export const UpdateInputMixin = <TClassType extends ClassType>(
   @InputType({ isAbstract: true })
   class UpdateInput extends BaseClass {
     @Field({ nullable: false })
-    @IsString()
-    uid!: string;
+    @IsPositive()
+    @Length(1, 10)
+    @IsNumber()
+    uid!: number;
 
     @Field({ nullable: true })
     @Length(1, 20)

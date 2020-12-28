@@ -49,7 +49,7 @@ const ACCOUNT_PROFILE_DEFAULT = plainToClass(AccountProfile, {
 export default class Account extends BaseEntity implements IAccount {
   // 账号基本信息
   @PrimaryGeneratedColumn()
-  accountId!: string;
+  accountId!: number;
 
   @Column({ unique: true, nullable: false, comment: "账号名称" })
   accountName!: string;

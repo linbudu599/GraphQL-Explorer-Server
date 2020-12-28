@@ -14,7 +14,7 @@ export interface ISubstanceService {
   ): Promise<Substance[]>;
 
   getOneSubstanceById(
-    substanceId: string,
+    substanceId: number,
     relations: SubstanceRelation[]
   ): Promise<Substance | undefined>;
 }
@@ -42,7 +42,7 @@ export default class SubstanceService implements ISubstanceService {
   }
 
   async getOneSubstanceById(
-    sId: string,
+    sId: number,
     relations: SubstanceRelation[] = []
   ): Promise<Substance | undefined> {
     const res = await this.substanceRepository.findOne(sId, {

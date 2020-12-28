@@ -33,7 +33,7 @@ input AccountLoginInput {
 Account Password Modify Input Type
 """
 input AccountPasswordModifyInput {
-  accountId: String!
+  accountId: Int!
   accountName: String!
   newPassword: String!
   prevPassword: String!
@@ -231,7 +231,7 @@ input ExecutorUpdateInput {
   job: Job
   name: String
   region: Region
-  uid: String!
+  uid: Float!
 }
 
 """
@@ -380,10 +380,7 @@ type Mutation {
   """
   提升或下降用户权限等级
   """
-  AccountLevelMutate(
-    accountId: String!
-    level: AccountType!
-  ): AccountUnionResult!
+  AccountLevelMutate(accountId: Int!, level: AccountType!): AccountUnionResult!
 
   """
   新用户注册
@@ -393,7 +390,7 @@ type Mutation {
   """
   指派任务
   """
-  AssignTask(taskId: String!, uid: String!): TaskStatus!
+  AssignTask(taskId: Float!, uid: Float!): TaskStatus!
 
   """
   添加执行者
@@ -418,22 +415,22 @@ type Mutation {
   """
   删除执行者
   """
-  DeleteExecutor(uid: String!): ExecutorStatus!
+  DeleteExecutor(uid: Int!): ExecutorStatus!
 
   """
   删除任务
   """
-  DeleteTask(taskId: String!): TaskStatus!
+  DeleteTask(taskId: Float!): TaskStatus!
 
   """
   冻结账号
   """
-  FreezeAccount(accountId: String!): AccountStatus!
+  FreezeAccount(accountId: Int!): AccountStatus!
 
   """
   冻结任务 无法恢复
   """
-  FreezeTask(taskId: String!): TaskStatus!
+  FreezeTask(taskId: Float!): TaskStatus!
 
   """
   修改密码
@@ -446,7 +443,7 @@ type Mutation {
   账号详情变更
   """
   MutateAccountProfile(
-    accountId: String!
+    accountId: Int!
     modifiedAccountProfile: AccountProfileInput!
   ): AccountStatus!
 
@@ -473,7 +470,7 @@ type Mutation {
   """
   变更任务级别
   """
-  MutateTaskLevel(level: DifficultyLevel!, taskId: String!): TaskStatus!
+  MutateTaskLevel(level: DifficultyLevel!, taskId: Float!): TaskStatus!
   publisherMutation(message: String): Boolean!
   pubSubMutation(message: String): Boolean!
   pubSubMutationToDynamicTopic(message: String, topic: String!): Boolean!
@@ -501,7 +498,7 @@ type Mutation {
   """
   变更任务状态
   """
-  ToggleTaskStatus(taskId: String!): TaskStatus!
+  ToggleTaskStatus(taskId: Float!): TaskStatus!
 
   """
   更新执行者基本信息
@@ -514,7 +511,7 @@ type Mutation {
   更新执行者描述
   """
   UpdateExecutorDesc(
-    uid: String!
+    uid: Int!
     userDesc: ExecutorDescUpdateInput!
   ): ExecutorStatus!
 
@@ -548,7 +545,7 @@ type Query {
   账号详情
   """
   CheckAccountDetail(
-    accountId: String!
+    accountId: Int!
     relations: AccountRelationsInput
   ): AccountStatus!
 
@@ -633,17 +630,17 @@ type Query {
   ): ExecutorStatus!
 
   """
-  查找特定执行者
+  查找特定执行者信息
   """
   QueryExecutorById(
     relations: ExecutorRelationsInput
-    uid: String!
+    uid: Int!
   ): ExecutorStatus!
 
   """
   查询执行者当前被分配的任务
   """
-  QueryExecutorTasks(relations: TaskRelationsInput, uid: String!): TaskStatus!
+  QueryExecutorTasks(relations: TaskRelationsInput, uid: Float!): TaskStatus!
 
   """
   基于难度查找菜谱
@@ -660,7 +657,7 @@ type Query {
   """
   QueryRecipeUnions: [RecipeUnionResult!]!
   QueryRecordById(
-    recordId: String!
+    recordId: Int!
     relations: RecordRelationsInput
   ): RecordStatus!
 
@@ -679,7 +676,7 @@ type Query {
   """
   QuerySubstanceById(
     relations: SubstanceRelationsInput
-    substanceId: String!
+    substanceId: Int!
   ): SubstanceStatus!
 
   """
@@ -690,7 +687,7 @@ type Query {
   """
   基于ID获取任务
   """
-  QueryTaskByID(relations: TaskRelationsInput, taskId: String!): TaskStatus!
+  QueryTaskByID(relations: TaskRelationsInput, taskId: Float!): TaskStatus!
 }
 
 """
@@ -816,7 +813,7 @@ type Task implements ITask {
 Task Create Input
 """
 input TaskCreateInput {
-  substanceId: String!
+  substanceId: Float!
   taskContent: String
   taskLevel: Float
   taskReward: Float
@@ -872,7 +869,7 @@ Task Update Input
 """
 input TaskUpdateInput {
   taskContent: String
-  taskId: String!
+  taskId: Int!
   taskLevel: Float
   taskRate: Float
   taskReward: Float

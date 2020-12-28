@@ -16,13 +16,13 @@ import {
 export interface IExecutorService {
   // Query
   getAllExecutors(
-    cursor: number,
-    offset: number,
+    pagination: Required<PaginationOptions>,
+
     relations: ExecutorRelation[]
   ): Promise<Executor[]>;
 
   getOneExecutorById(
-    uid: string,
+    uid: number,
     relations: ExecutorRelation[]
   ): Promise<Executor | undefined>;
 
@@ -40,11 +40,11 @@ export interface IExecutorService {
   createExecutor(executor: ExecutorCreateInput): Promise<Executor>;
 
   updateExecutor(
-    indicator: FindConditions<Executor> | string,
+    indicator: number,
     infoUpdate: Partial<IExecutor>
   ): Promise<Executor>;
 
-  deleteExecutor(uid: string): Promise<void>;
+  deleteExecutor(uid: number): Promise<void>;
 }
 
 @Service()
@@ -56,10 +56,12 @@ export default class ExecutorService implements IExecutorService {
   ) {}
 
   async getAllExecutors(
-    cursor: number,
-    offset: number,
+    pagination: Required<PaginationOptions>,
+
     relations: ExecutorRelation[] = []
   ) {
+    const { cursor, offset } = pagination;
+
     const res = await this.executorRepository.find({
       relations,
       skip: cursor,
@@ -70,7 +72,7 @@ export default class ExecutorService implements IExecutorService {
   }
 
   async getOneExecutorById(
-    uid: string,
+    uid: number,
     relations: ExecutorRelation[] = []
   ): Promise<Executor | undefined> {
     const res = await this.executorRepository.findOne(uid, {
@@ -111,7 +113,7 @@ export default class ExecutorService implements IExecutorService {
   }
 
   async updateExecutor(
-    indicator: string,
+    indicator: number,
     infoUpdate: Partial<IExecutor>
   ): Promise<Executor> {
     await this.executorRepository.update(indicator, infoUpdate);
@@ -123,7 +125,7 @@ export default class ExecutorService implements IExecutorService {
     return updatedItem;
   }
 
-  async deleteExecutor(uid: string): Promise<void> {
+  async deleteExecutor(uid: number): Promise<void> {
     await this.executorRepository.delete(uid);
   }
 }

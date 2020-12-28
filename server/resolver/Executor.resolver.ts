@@ -36,7 +36,10 @@ import {
   ExecutorStatus,
 } from "../graphql/Common";
 
-import { RESPONSE_INDICATOR } from "../utils/constants";
+import {
+  RESPONSE_INDICATOR,
+  DEFAULT_QUERY_PAGINATION,
+} from "../utils/constants";
 import { InjectCurrentUser, CustomArgsValidation } from "../decorators";
 
 import { ExtraFieldLogMiddlewareGenerator } from "../middleware/log";
@@ -66,17 +69,13 @@ export default class ExecutorResolver {
     relationOptions: Partial<ExecutorRelationsInput> = {}
   ): Promise<ExecutorStatus> {
     try {
-      const { cursor, offset } = (pagination ?? {
-        cursor: 0,
-        offset: 20,
-      }) as Required<PaginationOptions>;
+      const queryPagination = (pagination ??
+        DEFAULT_QUERY_PAGINATION) as Required<PaginationOptions>;
       const relations: ExecutorRelation[] = getExecutorRelations(
         relationOptions
       );
-
       const ExecutorsWithTasks = await this.executorService.getAllExecutors(
-        cursor,
-        offset,
+        queryPagination,
         relations
       );
 
@@ -92,10 +91,10 @@ export default class ExecutorResolver {
 
   @Query(() => ExecutorStatus, {
     nullable: false,
-    description: "查找特定执行者",
+    description: "查找特定执行者信息",
   })
   async QueryExecutorById(
-    @Arg("uid") uid: string,
+    @Arg("uid", (type) => Int) uid: number,
 
     @Arg("relations", (type) => ExecutorRelationsInput, { nullable: true })
     relationOptions: Partial<ExecutorRelationsInput> = {}
@@ -156,7 +155,8 @@ export default class ExecutorResolver {
     description: "根据描述（等级、成功率、评分）查找执行者",
   })
   async QueryExecutorByDesc(
-    @Args() desc: ExecutorDescQuery,
+    @Args((type) => ExecutorDescQuery) desc: ExecutorDescQuery,
+
     @Arg("pagination", { nullable: true })
     pagination: PaginationOptions,
 
@@ -164,16 +164,13 @@ export default class ExecutorResolver {
     relationOptions: Partial<ExecutorRelationsInput> = {}
   ): Promise<ExecutorStatus> {
     const relations: ExecutorRelation[] = getExecutorRelations(relationOptions);
-    const { cursor, offset } = (pagination ?? {
-      cursor: 0,
-      offset: 20,
-    }) as Required<PaginationOptions>;
+    const queryPagination = (pagination ??
+      DEFAULT_QUERY_PAGINATION) as Required<PaginationOptions>;
 
     const { level, successRate, satisfaction } = desc;
 
     const executors = await this.executorService.getAllExecutors(
-      cursor,
-      offset,
+      queryPagination,
       relations
     );
 
@@ -228,7 +225,7 @@ export default class ExecutorResolver {
     description: "更新执行者描述",
   })
   async UpdateExecutorDesc(
-    @Arg("uid") uid: string,
+    @Arg("uid", (type) => Int) uid: number,
     @Arg("userDesc") desc: ExecutorDescUpdateInput
   ): Promise<ExecutorStatus> {
     try {
@@ -287,9 +284,11 @@ export default class ExecutorResolver {
     description: "删除执行者",
   })
   async DeleteExecutor(
-    @Arg("uid") uid: string,
+    @Arg("uid", (type) => Int) uid: number,
+
     @TransactionRepository(Executor)
     executorTransRepo: Repository<Executor>,
+
     @TransactionRepository(Task)
     taskTransRepo: Repository<Task>
   ): Promise<ExecutorStatus> {

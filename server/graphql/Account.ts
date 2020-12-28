@@ -2,9 +2,12 @@ import {
   IsBoolean,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
+  IsPositive,
   IsString,
   Length,
+  Max,
 } from "class-validator";
 import {
   Field,
@@ -14,6 +17,7 @@ import {
   InputType,
   ObjectType,
   ClassType,
+  Int,
 } from "type-graphql";
 
 import Record from "../entity/Record";
@@ -56,7 +60,7 @@ export abstract class IAccountProfile {
 @InterfaceType({ description: "Account Interface Type" })
 export abstract class IAccount {
   @Field((type) => ID, { nullable: false })
-  accountId!: string;
+  accountId!: number;
 
   @Field({ nullable: false })
   accountName!: string;
@@ -158,11 +162,11 @@ export const getAccountRelations = ({
 
 @InputType({ description: "Account Password Modify Input Type" })
 export class AccountPasswordModifyInput {
-  @Field({ nullable: false })
-  @IsNotEmpty()
-  @Length(3, 10)
-  @IsString()
-  accountId!: string;
+  @Field((type) => Int, { nullable: false })
+  @IsPositive()
+  @Length(1, 10)
+  @IsNumber()
+  accountId!: number;
 
   @Field({ nullable: false })
   @IsNotEmpty()

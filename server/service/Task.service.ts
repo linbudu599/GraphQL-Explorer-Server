@@ -13,7 +13,7 @@ export interface ITaskService {
     relations: TaskRelation[]
   ): Promise<Task[]>;
   getOneTaskById(
-    taskId: string,
+    taskId: number,
     relations: TaskRelation[]
   ): Promise<Task | undefined>;
   getOneTaskByConditions(
@@ -25,8 +25,8 @@ export interface ITaskService {
     relations: TaskRelation[]
   ): Promise<Task[]>;
 
-  updateTask(indicator: string, infoUpdate: Partial<ITask>): Promise<Task>;
-  deleteTask(taskId: string): Promise<void>;
+  updateTask(indicator: number, infoUpdate: Partial<ITask>): Promise<Task>;
+  deleteTask(taskId: number): Promise<void>;
 }
 
 @Service()
@@ -52,7 +52,7 @@ export default class TaskService implements ITaskService {
   }
 
   async getOneTaskById(
-    taskId: string,
+    taskId: number,
     relations: TaskRelation[] = []
   ): Promise<Task | undefined> {
     const res = await this.taskRepository.findOne(taskId, {
@@ -89,7 +89,7 @@ export default class TaskService implements ITaskService {
   }
 
   async updateTask(
-    indicator: string,
+    indicator: number,
     infoUpdate: Partial<ITask>
   ): Promise<Task> {
     await this.taskRepository.update(indicator, infoUpdate);
@@ -99,7 +99,7 @@ export default class TaskService implements ITaskService {
     return updatedItem;
   }
 
-  async deleteTask(taskId: string): Promise<void> {
+  async deleteTask(taskId: number): Promise<void> {
     await this.taskRepository.delete(taskId);
   }
 }

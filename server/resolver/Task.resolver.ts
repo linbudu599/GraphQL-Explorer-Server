@@ -35,6 +35,7 @@ export default class TaskResolver {
   async QueryAllTasks(
     @Arg("pagination", { nullable: true })
     pagination: PaginationOptions,
+
     @Arg("relations", (type) => TaskRelationsInput, { nullable: true })
     relationOptions: Partial<TaskRelationsInput> = {}
   ): Promise<TaskStatus> {
@@ -55,7 +56,7 @@ export default class TaskResolver {
 
   @Query(() => TaskStatus, { nullable: false, description: "基于ID获取任务" })
   async QueryTaskByID(
-    @Arg("taskId") taskId: string,
+    @Arg("taskId") taskId: number,
     @Arg("relations", (type) => TaskRelationsInput, { nullable: true })
     relationOptions: Partial<TaskRelationsInput> = {}
   ): Promise<TaskStatus> {
@@ -78,7 +79,7 @@ export default class TaskResolver {
     description: "查询执行者当前被分配的任务",
   })
   async QueryExecutorTasks(
-    @Arg("uid") uid: string,
+    @Arg("uid") uid: number,
     @Arg("relations", (type) => TaskRelationsInput, { nullable: true })
     relationOptions: Partial<TaskRelationsInput> = {}
   ) {
@@ -107,7 +108,7 @@ export default class TaskResolver {
   }
 
   @Mutation(() => TaskStatus, { nullable: false, description: "变更任务状态" })
-  async ToggleTaskStatus(@Arg("taskId") taskId: string): Promise<TaskStatus> {
+  async ToggleTaskStatus(@Arg("taskId") taskId: number): Promise<TaskStatus> {
     try {
       const origin = await this.taskService.getOneTaskById(taskId);
 
@@ -126,7 +127,7 @@ export default class TaskResolver {
 
   // TODO: 不可删除已指派的任务
   @Mutation(() => TaskStatus, { nullable: false, description: "删除任务" })
-  async DeleteTask(@Arg("taskId") taskId: string): Promise<TaskStatus> {
+  async DeleteTask(@Arg("taskId") taskId: number): Promise<TaskStatus> {
     try {
       const res = await this.taskService.getOneTaskById(taskId);
       if (!res) {
@@ -208,8 +209,8 @@ export default class TaskResolver {
   @Transaction()
   @Mutation(() => TaskStatus, { nullable: false, description: "指派任务" })
   async AssignTask(
-    @Arg("taskId") taskId: string,
-    @Arg("uid") uid: string,
+    @Arg("taskId") taskId: number,
+    @Arg("uid") uid: number,
     @TransactionRepository(Task)
     taskTransRepo: Repository<Task>
   ): Promise<TaskStatus> {
@@ -241,7 +242,7 @@ export default class TaskResolver {
     description: "变更任务级别",
   })
   async MutateTaskLevel(
-    @Arg("taskId") taskId: string,
+    @Arg("taskId") taskId: number,
     @Arg("level", (type) => DifficultyLevel) level: DifficultyLevel
   ): Promise<TaskStatus> {
     try {
@@ -264,7 +265,7 @@ export default class TaskResolver {
     nullable: false,
     description: "冻结任务 无法恢复",
   })
-  async FreezeTask(@Arg("taskId") taskId: string): Promise<TaskStatus> {
+  async FreezeTask(@Arg("taskId") taskId: number): Promise<TaskStatus> {
     try {
       const res = await this.taskService.getOneTaskById(taskId);
       if (!res) {

@@ -21,7 +21,7 @@ import Account from "./Account";
 @Entity()
 export default class Record extends BaseEntity implements IRecord {
   @PrimaryGeneratedColumn()
-  recordId!: string;
+  recordId!: number;
 
   @OneToOne(() => Task, (task: Task) => task.relatedRecord, {
     nullable: true,

@@ -31,7 +31,7 @@ import { ITask, TaskSource, TaskTarget, TaskPriority } from "../graphql/Task";
 export default class Task extends BaseEntity implements ITask {
   // 基本信息
   @PrimaryGeneratedColumn()
-  taskId!: string;
+  taskId!: number;
 
   @Column({ unique: true, nullable: false, comment: "任务名称" })
   taskTitle!: string;
@@ -92,19 +92,19 @@ export default class Task extends BaseEntity implements ITask {
   taskSubstance!: Substance;
 
   @RelationId((task: Task) => task.taskSubstance)
-  taskSubstanceId?: string;
+  taskSubstanceId?: number;
 
   // 任务关联指派
+  // 在设置ManyToOne处的实体将拥有relationId与外键
   @ManyToOne(() => Executor, (executor) => executor.tasks, {
     nullable: true,
     onDelete: "SET NULL",
   })
-  @JoinColumn({ name: "assigneeUID" })
   @TypeormLoader((type) => Executor, (task: Task) => task.assigneeUID)
   assignee!: Executor;
 
   @RelationId((task: Task) => task.assignee)
-  assigneeUID?: string;
+  assigneeUID?: number;
 
   // 任务关联记录
   @OneToOne((type) => Record, (record) => record.recordTask)

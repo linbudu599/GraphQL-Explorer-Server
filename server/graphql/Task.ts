@@ -6,6 +6,7 @@ import {
   InterfaceType,
   ClassType,
   ObjectType,
+  Int,
 } from "type-graphql";
 import {
   Length,
@@ -69,7 +70,7 @@ registerEnumType(TaskPriority, {
 @InterfaceType({ description: "Task Interface Type" })
 export abstract class ITask {
   @Field((type) => ID, { nullable: false })
-  taskId!: string;
+  taskId!: number;
 
   @Field()
   taskTitle!: string;
@@ -168,8 +169,10 @@ export const PublishTaskMixin = <TClassType extends ClassType>(
     taskTitle!: string;
 
     @Field({ nullable: false })
-    @IsString()
-    substanceId!: string;
+    @IsPositive()
+    @Length(1, 10)
+    @IsNumber()
+    substanceId!: number;
   }
 
   return PublishInput;
@@ -181,9 +184,11 @@ export const UpdateTaskMixin = <TClassType extends ClassType>(
   @ObjectType({ isAbstract: true })
   @InputType({ isAbstract: true })
   class UpdateInput extends BaseClass {
-    @Field({ nullable: false })
-    @IsString()
-    taskId!: string;
+    @Field((type) => Int, { nullable: false })
+    @IsPositive()
+    @Length(1, 10)
+    @IsNumber()
+    taskId!: number;
 
     @Field({ nullable: true })
     @Length(5, 10)

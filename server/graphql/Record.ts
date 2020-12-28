@@ -8,7 +8,7 @@ import Substance from "../entity/Substance";
 @InterfaceType({ description: "Record Interface Type" })
 export abstract class IRecord {
   @Field((type) => ID, { nullable: false })
-  recordId!: string;
+  recordId!: number;
 
   @Field(() => Task, { nullable: true })
   recordTask!: Task;

@@ -16,13 +16,13 @@ export interface IAccountService {
     relations: AccountRelation[]
   ): Promise<Account | undefined>;
   getOneAccountById(
-    accountId: string,
+    accountId: number,
     relations: AccountRelation[]
   ): Promise<Account | undefined>;
   createAccount(account: AccountRegistryInput): Promise<Account>;
 
   updateAccount(
-    indicator: string,
+    indicator: number,
     infoUpdate: Partial<IAccount>
   ): Promise<Account>;
   deleteAccount(accountName: string): Promise<void>;
@@ -52,7 +52,7 @@ export default class AccountService implements IAccountService {
   }
 
   async getOneAccountById(
-    accountId: string,
+    accountId: number,
     relations: AccountRelation[] = []
   ): Promise<Account | undefined> {
     const account = await this.accountRepository.findOne(accountId, {
@@ -67,7 +67,7 @@ export default class AccountService implements IAccountService {
   }
 
   async updateAccount(
-    indicator: string,
+    indicator: number,
     infoUpdate: Partial<IAccount>
   ): Promise<Account> {
     await this.accountRepository.update(indicator, infoUpdate);

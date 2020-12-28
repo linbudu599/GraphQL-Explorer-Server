@@ -1,4 +1,4 @@
-import { Resolver, Query, Arg, Mutation } from "type-graphql";
+import { Resolver, Query, Arg, Mutation, Int } from "type-graphql";
 import { Transaction } from "typeorm";
 
 import Substance from "../entity/Substance";
@@ -60,7 +60,7 @@ export default class SubstanceResolver {
     description: "基于ID查找实体",
   })
   async QuerySubstanceById(
-    @Arg("substanceId") substanceId: string,
+    @Arg("substanceId", (type) => Int) substanceId: number,
 
     @Arg("relations", (type) => SubstanceRelationsInput, { nullable: true })
     relationOptions: Partial<SubstanceRelationsInput> = {}

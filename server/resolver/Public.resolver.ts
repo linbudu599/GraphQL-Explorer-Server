@@ -12,6 +12,8 @@ import { IExecutorDesc } from "../graphql/Executor";
 import { PaginationOptions, PrimitiveStatus } from "../graphql/Common";
 import { LevelQueryResult, DifficultyLevel } from "../graphql/Public";
 
+import { DEFAULT_QUERY_PAGINATION } from "../utils/constants";
+
 @Resolver((of) => PrimitiveStatus)
 export default class PublicResolver {
   constructor(
@@ -32,18 +34,15 @@ export default class PublicResolver {
     @Arg("pagination", { nullable: true })
     pagination: PaginationOptions
   ): Promise<(Executor | Task)[]> {
-    const { cursor, offset } = (pagination ?? {
-      cursor: 0,
-      offset: 20,
-    }) as Required<PaginationOptions>;
+    const queryPagination = (pagination ??
+      DEFAULT_QUERY_PAGINATION) as Required<PaginationOptions>;
 
     const executors = await this.executorService.getAllExecutors(
-      cursor,
-      offset,
+      queryPagination,
       ["tasks"]
     );
 
-    const tasks = await this.taskService.getAllTasks({ cursor, offset }, [
+    const tasks = await this.taskService.getAllTasks(queryPagination, [
       "assignee",
       "taskSubstance",
     ]);

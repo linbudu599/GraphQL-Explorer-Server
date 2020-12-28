@@ -6,6 +6,7 @@ import {
   UseMiddleware,
   Root,
   FieldResolver,
+  Int,
 } from "type-graphql";
 import { plainToClass } from "class-transformer";
 
@@ -113,7 +114,7 @@ export default class AccountResolver {
     description: "账号详情",
   })
   async CheckAccountDetail(
-    @Arg("accountId", { nullable: false }) accountId: string,
+    @Arg("accountId", (type) => Int) accountId: number,
     @Arg("relations", (type) => AccountRelationsInput, { nullable: true })
     relationOptions: Partial<AccountRelationsInput> = {}
   ): Promise<AccountStatus> {
@@ -297,7 +298,7 @@ export default class AccountResolver {
     description: "提升或下降用户权限等级",
   })
   async AccountLevelMutate(
-    @Arg("accountId") accountId: string,
+    @Arg("accountId", (type) => Int) accountId: number,
     @Arg("level", (type) => ACCOUNT_TYPE) level: ACCOUNT_TYPE
   ): Promise<AccountStatus | LoginOrRegisterStatus> {
     try {
@@ -351,7 +352,7 @@ export default class AccountResolver {
     description: "账号详情变更",
   })
   async MutateAccountProfile(
-    @Arg("accountId") accountId: string,
+    @Arg("accountId", (type) => Int) accountId: number,
     @Arg("modifiedAccountProfile") accountProfile: AccountProfileInput
   ): Promise<AccountStatus> {
     try {
@@ -384,7 +385,7 @@ export default class AccountResolver {
     description: "冻结账号",
   })
   async FreezeAccount(
-    @Arg("accountId") accountId: string
+    @Arg("accountId", (type) => Int) accountId: number
   ): Promise<AccountStatus> {
     try {
       const account = await this.accountService.getOneAccountById(accountId);

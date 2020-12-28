@@ -21,7 +21,7 @@ import { ISubstance } from "../graphql/Substance";
 export default class Substance extends BaseEntity implements ISubstance {
   // 实体基本信息
   @PrimaryGeneratedColumn()
-  substanceId!: string;
+  substanceId!: number;
 
   @Column({ unique: true, nullable: false, comment: "实体命名" })
   substanceName!: string;
