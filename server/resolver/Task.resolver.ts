@@ -21,7 +21,10 @@ import TaskService from "../service/Task.service";
 import ExecutorService from "../service/Executor.service";
 import SubstanceService from "../service/Substance.service";
 
-import { RESPONSE_INDICATOR } from "../utils/constants";
+import {
+  RESPONSE_INDICATOR,
+  DEFAULT_QUERY_PAGINATION,
+} from "../utils/constants";
 
 @Resolver((of) => Task)
 export default class TaskResolver {
@@ -40,10 +43,8 @@ export default class TaskResolver {
     relationOptions: Partial<TaskRelationsInput> = {}
   ): Promise<TaskStatus> {
     try {
-      const queryPagination = (pagination ?? {
-        cursor: 0,
-        offset: 20,
-      }) as Required<PaginationOptions>;
+      const queryPagination = (pagination ??
+        DEFAULT_QUERY_PAGINATION) as Required<PaginationOptions>;
 
       const relations: TaskRelation[] = getTaskRelations(relationOptions);
       const res = this.taskService.getAllTasks(queryPagination, relations);
@@ -57,6 +58,7 @@ export default class TaskResolver {
   @Query(() => TaskStatus, { nullable: false, description: "基于ID获取任务" })
   async QueryTaskByID(
     @Arg("taskId") taskId: number,
+
     @Arg("relations", (type) => TaskRelationsInput, { nullable: true })
     relationOptions: Partial<TaskRelationsInput> = {}
   ): Promise<TaskStatus> {
@@ -80,6 +82,7 @@ export default class TaskResolver {
   })
   async QueryExecutorTasks(
     @Arg("uid") uid: number,
+
     @Arg("relations", (type) => TaskRelationsInput, { nullable: true })
     relationOptions: Partial<TaskRelationsInput> = {}
   ) {
@@ -92,13 +95,14 @@ export default class TaskResolver {
 
       const relations: TaskRelation[] = getTaskRelations(relationOptions);
 
+      // loader自动防止了循环查询
       const res = await this.taskService.getTasksByConditions(
         {
           assignee: {
             uid,
           },
         },
-        [...relations, "assignee"]
+        relations
       );
 
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, res);
@@ -125,13 +129,20 @@ export default class TaskResolver {
     }
   }
 
-  // TODO: 不可删除已指派的任务
   @Mutation(() => TaskStatus, { nullable: false, description: "删除任务" })
   async DeleteTask(@Arg("taskId") taskId: number): Promise<TaskStatus> {
     try {
       const res = await this.taskService.getOneTaskById(taskId);
       if (!res) {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
+      }
+
+      if (res.assignee) {
+        return new StatusHandler(
+          false,
+          RESPONSE_INDICATOR.MUTATION_NOT_ALLOWED,
+          []
+        );
       }
 
       await this.taskService.deleteTask(taskId);
@@ -142,43 +153,47 @@ export default class TaskResolver {
     }
   }
 
-  // TODO: 将事务操作也移到service中
-  @Transaction()
   @Mutation(() => TaskStatus, {
     nullable: false,
     description: "创建任务同时关联到实体",
   })
   async CreateNewTask(
-    @Arg("taskCreateParam") param: TaskCreateInput,
-    @TransactionRepository(Task)
-    taskTransRepo: Repository<Task>
+    @Arg("taskCreateParam") param: TaskCreateInput
   ): Promise<TaskStatus> {
     try {
       const { substanceId } = param;
       const substance = await this.SubstanceService.getOneSubstanceById(
         substanceId
       );
+
       if (!substance) {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
       if (substance.relatedTaskId) {
-        // TODO: 专用标识：实体已关联
-        return new StatusHandler(false, RESPONSE_INDICATOR.EXISTED, []);
+        return new StatusHandler(false, RESPONSE_INDICATOR.EXISTED, [
+          substance,
+        ]);
       }
 
       const { taskTitle } = param;
+
       const isTitleUsed = await this.taskService.getOneTaskByConditions(
         {
           taskTitle,
         },
         ["taskSubstance"]
       );
+
       if (isTitleUsed) {
-        return new StatusHandler(false, RESPONSE_INDICATOR.EXISTED, []);
+        return new StatusHandler(false, RESPONSE_INDICATOR.EXISTED, [
+          isTitleUsed,
+        ]);
       }
+
       param.taskSubstance = substance;
 
-      const res = await taskTransRepo.save(param);
+      const res = await this.taskService.createTask(param);
+
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
@@ -221,6 +236,7 @@ export default class TaskResolver {
       }
 
       const task = await this.taskService.getOneTaskById(taskId, ["assignee"]);
+
       if (!task) {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }

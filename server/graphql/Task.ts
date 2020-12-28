@@ -170,7 +170,6 @@ export const PublishTaskMixin = <TClassType extends ClassType>(
 
     @Field({ nullable: false })
     @IsPositive()
-    @Length(1, 10)
     @IsNumber()
     substanceId!: number;
   }

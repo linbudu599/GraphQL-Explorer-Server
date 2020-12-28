@@ -214,11 +214,9 @@ export const dbConnect = async (): Promise<any> => {
     const connection = await TypeORM.createConnection();
     log("[TypeORM] Database Connection Established");
 
-    // const mockExecutorGroup = mockExecutor(5);
-    // await connection.manager.save(mockExecutorGroup);
-
-    const mockTaskGroup = mockTask(5);
+    const mockTaskGroup = mockTask(10);
     const mockSubstanceGroup = mockSubstance(5);
+    const mockExecutorGroup = mockExecutor(5);
 
     const executor1 = new Executor();
     executor1.name = `Executor001-With-Tasks`;
@@ -261,6 +259,7 @@ export const dbConnect = async (): Promise<any> => {
 
     await connection.manager.save(mockTaskGroup);
     await connection.manager.save(mockSubstanceGroup);
+    await connection.manager.save(mockExecutorGroup);
 
     log("[TypeORM] Initial Mock Data Inserted\n");
   } catch (error) {

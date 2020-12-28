@@ -35,11 +35,13 @@ import {
   StatusHandler,
   ExecutorStatus,
 } from "../graphql/Common";
+import { DifficultyLevel } from "../graphql/Public";
 
 import {
   RESPONSE_INDICATOR,
   DEFAULT_QUERY_PAGINATION,
 } from "../utils/constants";
+import { mergeJSONWithObj } from "../utils/helper";
 import { InjectCurrentUser, CustomArgsValidation } from "../decorators";
 
 import { ExtraFieldLogMiddlewareGenerator } from "../middleware/log";
@@ -210,7 +212,9 @@ export default class ExecutorResolver {
         }
       );
       if (isExistingExecutor) {
-        return new StatusHandler(false, RESPONSE_INDICATOR.EXISTED, []);
+        return new StatusHandler(false, RESPONSE_INDICATOR.EXISTED, [
+          isExistingExecutor,
+        ]);
       }
 
       const res = await this.executorService.createExecutor(executor);
@@ -237,13 +241,8 @@ export default class ExecutorResolver {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
 
-      const updatedDesc = {
-        ...JSON.parse(isExistingExecutor.desc),
-        ...desc,
-      };
-
       const res = await this.executorService.updateExecutor(uid, {
-        desc: JSON.stringify(updatedDesc),
+        desc: mergeJSONWithObj(isExistingExecutor.desc, desc),
       });
 
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
@@ -320,10 +319,36 @@ export default class ExecutorResolver {
             assignee: undefined,
           }
         );
+        await executorTransRepo.delete({ uid });
       }
 
-      await executorTransRepo.delete({ uid });
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, []);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
+  }
+
+  @Mutation(() => ExecutorStatus, {
+    nullable: false,
+    description: "更新执行者级别",
+  })
+  async MutateExecutorLevel(
+    @Arg("uid", (type) => Int) uid: number,
+    @Arg("level", (type) => DifficultyLevel)
+    level: DifficultyLevel
+  ): Promise<ExecutorStatus> {
+    try {
+      const isExistingExecutor = await this.executorService.getOneExecutorById(
+        uid
+      );
+      if (!isExistingExecutor) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
+      }
+
+      const updated = await this.executorService.updateExecutor(uid, {
+        desc: mergeJSONWithObj(isExistingExecutor.desc, { level }),
+      });
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updated]);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
     }
@@ -337,15 +362,10 @@ export default class ExecutorResolver {
     return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
   }
 
-  @Mutation(() => ExecutorStatus, {
+  @FieldResolver(() => Int, {
     nullable: false,
-    description: "更新执行者级别",
+    description: "字段级解析器示例",
   })
-  async MutateExecutorLevel(): Promise<ExecutorStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
-  }
-
-  @FieldResolver(() => Int, { nullable: false, description: "字段级解析器" })
   async spAgeField(
     @Root() executor: Executor,
     @Arg("param", { nullable: true }) param?: number

@@ -74,9 +74,10 @@ export default class Executor extends BaseEntity implements IExecutor {
   spAgeField?: number;
 
   // 任务
-  @OneToMany(() => Task, (task) => task.assignee, {
+  @OneToMany((type) => Task, (task) => task.assignee, {
     cascade: true,
     onDelete: "SET NULL",
+    nullable: true,
   })
   @TypeormLoader((type) => Task, (executor: Executor) => executor.taskIds)
   tasks?: Task[];

@@ -5,7 +5,12 @@ import { InjectRepository } from "typeorm-typedi-extensions";
 import Task from "../entity/Task";
 
 import { PaginationOptions } from "../graphql/Common";
-import { ITask, TaskRelation } from "../graphql/Task";
+import {
+  ITask,
+  TaskCreateInput,
+  TaskRelation,
+  TaskUpdateInput,
+} from "../graphql/Task";
 
 export interface ITaskService {
   getAllTasks(
@@ -25,7 +30,11 @@ export interface ITaskService {
     relations: TaskRelation[]
   ): Promise<Task[]>;
 
-  updateTask(indicator: number, infoUpdate: Partial<ITask>): Promise<Task>;
+  createTask(task: TaskCreateInput): Promise<Task>;
+  updateTask(
+    indicator: number,
+    infoUpdate: Partial<TaskUpdateInput>
+  ): Promise<Task>;
   deleteTask(taskId: number): Promise<void>;
 }
 
@@ -59,6 +68,8 @@ export default class TaskService implements ITaskService {
       relations,
     });
 
+    console.log(res);
+
     return res;
   }
 
@@ -77,7 +88,6 @@ export default class TaskService implements ITaskService {
     conditions: FindConditions<Task>,
     relations: TaskRelation[] = []
   ): Promise<Task[]> {
-    console.log(Array.from(new Set(relations)));
     const res = await this.taskRepository.find({
       where: {
         ...conditions,
@@ -88,9 +98,14 @@ export default class TaskService implements ITaskService {
     return res;
   }
 
+  async createTask(task: TaskCreateInput): Promise<Task> {
+    const res = await this.taskRepository.save(task);
+    return res;
+  }
+
   async updateTask(
     indicator: number,
-    infoUpdate: Partial<ITask>
+    infoUpdate: Partial<TaskUpdateInput>
   ): Promise<Task> {
     await this.taskRepository.update(indicator, infoUpdate);
 

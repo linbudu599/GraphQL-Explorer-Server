@@ -49,3 +49,9 @@ export const getLoggerExtensions = (info: GraphQLResolveInfo) => {
     ...fieldLoggerExtensions,
   };
 };
+
+export const mergeJSONWithObj = (json: string, convertion: object): string =>
+  JSON.stringify({
+    ...JSON.parse(json),
+    ...convertion,
+  });

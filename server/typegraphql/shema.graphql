@@ -456,7 +456,7 @@ type Mutation {
   """
   更新执行者级别
   """
-  MutateExecutorLevel: ExecutorStatus!
+  MutateExecutorLevel(level: DifficultyLevel!, uid: Int!): ExecutorStatus!
 
   """
   变更实体基本信息

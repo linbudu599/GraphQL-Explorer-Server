@@ -19,6 +19,7 @@ export interface IAccountService {
     accountId: number,
     relations: AccountRelation[]
   ): Promise<Account | undefined>;
+
   createAccount(account: AccountRegistryInput): Promise<Account>;
 
   updateAccount(

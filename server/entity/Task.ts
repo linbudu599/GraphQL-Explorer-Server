@@ -82,7 +82,12 @@ export default class Task extends BaseEntity implements ITask {
   @Column({ nullable: false, default: 1000, comment: "任务回报" })
   taskReward!: number;
 
-  @Column({ nullable: false, default: TaskTarget.OTHER, comment: "任务目标" })
+  @Column({
+    nullable: false,
+    default: TaskTarget.OTHER,
+    comment: "任务目标",
+    enum: TaskTarget,
+  })
   taskTarget!: TaskTarget;
 
   @Column({ nullable: true, default: 0, comment: "任务完成度评分" })
@@ -106,11 +111,11 @@ export default class Task extends BaseEntity implements ITask {
     nullable: true,
   })
   @JoinColumn() // 对于@ManyToOne是可选的，但对@OneToOne必需
-  @TypeormLoader((type) => Executor, (task: Task) => task.assigneeUID)
+  @TypeormLoader((type) => Executor, (task: Task) => task.assigneeUid)
   assignee!: Executor;
 
   @RelationId((task: Task) => task.assignee)
-  assigneeUID?: number;
+  assigneeUid?: number;
 
   // 任务关联记录
   @OneToOne((type) => Record, (record) => record.recordTask)
