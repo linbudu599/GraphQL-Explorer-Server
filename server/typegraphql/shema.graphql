@@ -394,6 +394,11 @@ type Mutation {
   AssignTask(taskId: Float!, uid: Float!): TaskStatus!
 
   """
+  将实体关联到任务
+  """
+  CombineSubstanceAndTask(substanceId: Int!, taskId: Int!): SubstanceStatus!
+
+  """
   添加执行者
   """
   CreateExecutor(newExecutorInfo: ExecutorCreateInput!): ExecutorStatus!
@@ -404,19 +409,19 @@ type Mutation {
   CreateNewTask(taskCreateParam: TaskCreateInput!): TaskStatus!
 
   """
-  新增实体，同时新增任务
+  新增实体
   """
-  CreateSubstanceAndTask: SubstanceStatus!
-
-  """
-  仅新增实体
-  """
-  CreateSubstanceOnly: SubstanceStatus!
+  CreateSubstance(substanceCreateParam: SubstanceCreateInput!): SubstanceStatus!
 
   """
   删除执行者
   """
   DeleteExecutor(uid: Int!): ExecutorStatus!
+
+  """
+  删除实体
+  """
+  DeleteSubstance(substanceId: Int!): SubstanceStatus!
 
   """
   删除任务
@@ -459,16 +464,6 @@ type Mutation {
   MutateExecutorLevel(level: DifficultyLevel!, uid: Int!): ExecutorStatus!
 
   """
-  变更实体基本信息
-  """
-  MutateSubstanceInfo: SubstanceStatus!
-
-  """
-  变更实体威胁级别
-  """
-  MutateSubstanceLevel: SubstanceStatus!
-
-  """
   变更任务级别
   """
   MutateTaskLevel(level: DifficultyLevel!, taskId: Float!): TaskStatus!
@@ -485,16 +480,6 @@ type Mutation {
   发送短信验证码
   """
   SendPhoneVerifyCode: LoginOrRegisterStatus!
-
-  """
-  变更实体存活状态
-  """
-  ToggleSubstanceAlive: SubstanceStatus!
-
-  """
-  变更实体收容状态
-  """
-  ToggleSubstanceAsylume: SubstanceStatus!
 
   """
   变更任务状态
@@ -515,6 +500,13 @@ type Mutation {
     uid: Int!
     userDesc: ExecutorDescUpdateInput!
   ): ExecutorStatus!
+
+  """
+  变更实体信息
+  """
+  UpdateSubstanceInfo(
+    substanceUpdateParam: SubstanceUpdateInput!
+  ): SubstanceStatus!
 
   """
   变更任务基本信息
@@ -640,6 +632,14 @@ type Query {
   QueryExecutorTasks(relations: TaskRelationsInput, uid: Float!): TaskStatus!
 
   """
+  基于条件查单个实体
+  """
+  QueryOneSubstanceByConditions(
+    relations: SubstanceRelationsInput
+    substanceQueryParam: SubstanceQueryInput!
+  ): SubstanceStatus!
+
+  """
   基于难度查找菜谱
   """
   QueryRecipesByDifficulty(difficulty: Difficulty): [Recipe!]!
@@ -664,11 +664,6 @@ type Query {
   QuerySaltFishByCoefficient(coefficient: Int!): [SaltFish!]!
 
   """
-  基于条件查找实体
-  """
-  QuerySubstanceByConditions: SubstanceStatus!
-
-  """
   基于ID查找实体
   """
   QuerySubstanceById(
@@ -677,9 +672,13 @@ type Query {
   ): SubstanceStatus!
 
   """
-  基于威胁级别查找实体
+  基于条件查找多个实体
   """
-  QuerySubstanceByLevel: SubstanceStatus!
+  QuerySubstancesByConditions(
+    pagination: PaginationOptions
+    relations: SubstanceRelationsInput
+    substanceQueryParam: SubstanceQueryInput!
+  ): SubstanceStatus!
 
   """
   基于ID获取任务
@@ -769,11 +768,34 @@ type Substance implements ISubstance {
 }
 
 """
+Substance Create Input
+"""
+input SubstanceCreateInput {
+  asylumed: Boolean
+  substanceAlive: Boolean
+  substanceIssues: String
+  substanceLevel: DifficultyLevel
+  substanceName: String!
+}
+
+"""
+Substance Create Input
+"""
+input SubstanceQueryInput {
+  asylumed: Boolean
+  substanceAlive: Boolean
+  substanceIssues: String
+  substanceLevel: DifficultyLevel
+  substanceName: String
+}
+
+"""
 Substance Relations Input
 """
 input SubstanceRelationsInput {
+  joinAssignee: Boolean = false
   joinRecord: Boolean = false
-  relatedTask: Boolean = false
+  joinTask: Boolean = false
 }
 
 """
@@ -783,6 +805,18 @@ type SubstanceStatus implements IBaseStatus {
   data: [Substance!]
   message: String!
   success: Boolean!
+}
+
+"""
+Substance Update Input
+"""
+input SubstanceUpdateInput {
+  asylumed: Boolean
+  substanceAlive: Boolean
+  substanceId: Int!
+  substanceIssues: String
+  substanceLevel: DifficultyLevel
+  substanceName: String
 }
 
 type Task implements ITask {

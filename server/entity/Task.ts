@@ -98,7 +98,6 @@ export default class Task extends BaseEntity implements ITask {
   @OneToOne((type) => Substance, (substance) => substance.relatedTask, {
     nullable: true,
     cascade: true,
-    onDelete: "SET NULL",
   })
   taskSubstance!: Substance;
 
@@ -109,6 +108,7 @@ export default class Task extends BaseEntity implements ITask {
   // 在设置ManyToOne处的实体将拥有relationId与外键
   @ManyToOne(() => Executor, (executor) => executor.tasks, {
     nullable: true,
+    onDelete: "SET NULL",
   })
   @JoinColumn() // 对于@ManyToOne是可选的，但对@OneToOne必需
   @TypeormLoader((type) => Executor, (task: Task) => task.assigneeUid)

@@ -1,9 +1,12 @@
 import {
+  ClassType,
   Field,
   ID,
   InputType,
   InterfaceType,
+  ObjectType,
   registerEnumType,
+  Int,
 } from "type-graphql";
 
 import Task from "../entity/Task";
@@ -59,27 +62,105 @@ export abstract class ISubstance {
   lastActiveDate!: Date;
 }
 
+// TODO: Validation
+@ObjectType({ isAbstract: true })
+@InputType({ isAbstract: true })
+export class SubstanceInput implements Partial<ISubstance> {
+  @Field({ nullable: true })
+  substanceName?: string;
+
+  @Field({ nullable: true })
+  substanceAlive?: boolean;
+
+  @Field({ nullable: true })
+  substanceIssues?: string;
+
+  @Field((type) => DifficultyLevel, { nullable: true })
+  substanceLevel?: DifficultyLevel;
+
+  @Field({ nullable: true })
+  asylumed?: boolean;
+}
+
+export const QuerySubstanceMixin = <TClassType extends ClassType>(
+  BaseClass: TClassType
+) => {
+  @ObjectType({ isAbstract: true })
+  @InputType({ isAbstract: true })
+  class QueryInput extends BaseClass {}
+
+  return QueryInput;
+};
+
+export const CreateSubstanceMixin = <TClassType extends ClassType>(
+  BaseClass: TClassType
+) => {
+  @ObjectType({ isAbstract: true })
+  @InputType({ isAbstract: true })
+  class CreateInput extends BaseClass {
+    @Field({ nullable: false })
+    substanceName!: string;
+
+    // @Field((type) => DifficultyLevel, { nullable: false })
+    // substanceLevel!: DifficultyLevel;
+  }
+
+  return CreateInput;
+};
+
+export const UpdateSubstanceMixin = <TClassType extends ClassType>(
+  BaseClass: TClassType
+) => {
+  @ObjectType({ isAbstract: true })
+  @InputType({ isAbstract: true })
+  class UpdateInput extends BaseClass {
+    @Field((type) => Int, { nullable: false })
+    substanceId!: number;
+  }
+
+  return UpdateInput;
+};
+
+@InputType({ description: "Substance Create Input" })
+export class SubstanceQueryInput extends QuerySubstanceMixin(SubstanceInput) {}
+
+@InputType({ description: "Substance Create Input" })
+export class SubstanceCreateInput extends CreateSubstanceMixin(
+  SubstanceInput
+) {}
+
+@InputType({ description: "Substance Update Input" })
+export class SubstanceUpdateInput extends UpdateSubstanceMixin(
+  SubstanceInput
+) {}
+
 @InputType({ description: "Substance Relations Input" })
 export class SubstanceRelationsInput {
   @Field({ nullable: true })
-  relatedTask: boolean = false;
+  joinTask: boolean = false;
+
+  @Field({ nullable: true })
+  joinAssignee: boolean = false;
 
   @Field({ nullable: true })
   joinRecord: boolean = false;
 }
 
 interface ISubstanceRelationOptions {
-  relatedTask?: boolean;
+  joinTask?: boolean;
+  joinAssignee?: boolean;
   joinRecord?: boolean;
 }
-export type SubstanceRelation = "relatedRecord" | "relatedTask";
+export type SubstanceRelation = "relatedRecord" | "relatedTask" | "assignee";
 
 export const getSubstanceRelations = ({
-  relatedTask = false,
+  joinTask = false,
+  joinAssignee = false,
   joinRecord = false,
 }: ISubstanceRelationOptions): SubstanceRelation[] => {
   const relations: SubstanceRelation[] = [];
-  relatedTask ? relations.push("relatedTask") : void 0;
+  joinTask ? relations.push("relatedTask") : void 0;
+  joinAssignee ? relations.push("assignee") : void 0;
   joinRecord ? relations.push("relatedRecord") : void 0;
   return relations;
 };

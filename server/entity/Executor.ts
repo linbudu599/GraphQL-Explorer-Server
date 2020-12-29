@@ -76,7 +76,6 @@ export default class Executor extends BaseEntity implements IExecutor {
   // 任务
   @OneToMany((type) => Task, (task) => task.assignee, {
     cascade: true,
-    onDelete: "SET NULL",
     nullable: true,
   })
   @TypeormLoader((type) => Task, (executor: Executor) => executor.taskIds)

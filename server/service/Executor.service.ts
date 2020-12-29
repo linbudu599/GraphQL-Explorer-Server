@@ -28,7 +28,8 @@ export interface IExecutorService {
   ): Promise<Executor | undefined>;
 
   getOneExecutorByConditions(
-    conditions: Partial<IExecutor>
+    conditions: Partial<IExecutor>,
+    relations: ExecutorRelation[]
   ): Promise<Executor | undefined>;
 
   getExecutorsByConditions(
@@ -60,6 +61,7 @@ export default class ExecutorService implements IExecutorService {
       "executor"
     );
 
+    // 直接关联
     if (relations.includes("relatedRecord")) {
       selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
         "executor.relatedRecord",
@@ -72,6 +74,8 @@ export default class ExecutorService implements IExecutorService {
         "tasks"
       );
     }
+
+    // 任务 >>> 实体
     if (relations.includes("substance")) {
       selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
         "tasks.taskSubstance",
@@ -109,9 +113,21 @@ export default class ExecutorService implements IExecutorService {
   }
 
   async getOneExecutorByConditions(
-    conditions: ExecutorQueryArgs
+    conditions: ExecutorQueryArgs,
+    relations: ExecutorRelation[] = []
   ): Promise<Executor | undefined> {
-    const res = await this.executorRepository.findOne(conditions);
+    let initialSelectBuilder = this.generateSelectBuilder(relations);
+
+    Object.keys(conditions).forEach((key) => {
+      initialSelectBuilder = initialSelectBuilder.andWhere(
+        `executor.${key}= :${key}`,
+        {
+          [key]: conditions[key],
+        }
+      );
+    });
+
+    const res = await initialSelectBuilder.getOne();
 
     return res;
   }

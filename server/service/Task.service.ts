@@ -30,7 +30,7 @@ export interface ITaskService {
     relations: TaskRelation[]
   ): Promise<Task[]>;
 
-  createTask(task: TaskCreateInput): Promise<Task>;
+  createTask(task: TaskCreateInput | Task): Promise<Task>;
   updateTask(
     indicator: number,
     infoUpdate: Partial<TaskUpdateInput>
@@ -98,7 +98,7 @@ export default class TaskService implements ITaskService {
     return res;
   }
 
-  async createTask(task: TaskCreateInput): Promise<Task> {
+  async createTask(task: TaskCreateInput | Task): Promise<Task> {
     const res = await this.taskRepository.save(task);
     return res;
   }

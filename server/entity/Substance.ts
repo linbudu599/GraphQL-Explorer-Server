@@ -48,7 +48,10 @@ export default class Substance extends BaseEntity implements ISubstance {
   asylumed!: boolean;
 
   // 实体关联任务
-  @OneToOne(() => Task, (task) => task.taskSubstance)
+  @OneToOne(() => Task, (task) => task.taskSubstance, {
+    onDelete: "SET NULL",
+    nullable: true,
+  })
   @JoinColumn({ name: "relatedTaskId" })
   relatedTask!: Task;
 

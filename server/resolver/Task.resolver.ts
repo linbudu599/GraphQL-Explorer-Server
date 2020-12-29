@@ -1,5 +1,4 @@
 import { Resolver, Query, Arg, Mutation } from "type-graphql";
-import { Repository, Transaction, TransactionRepository } from "typeorm";
 
 import Task from "../entity/Task";
 
@@ -95,7 +94,6 @@ export default class TaskResolver {
 
       const relations: TaskRelation[] = getTaskRelations(relationOptions);
 
-      // loader自动防止了循环查询
       const res = await this.taskService.getTasksByConditions(
         {
           assignee: {
@@ -221,23 +219,16 @@ export default class TaskResolver {
     }
   }
 
-  @Transaction()
   @Mutation(() => TaskStatus, { nullable: false, description: "指派任务" })
   async AssignTask(
     @Arg("taskId") taskId: number,
-    @Arg("uid") uid: number,
-    @TransactionRepository(Task)
-    taskTransRepo: Repository<Task>
+    @Arg("uid") uid: number
   ): Promise<TaskStatus> {
     try {
       const assignee = await this.executorService.getOneExecutorById(uid);
-      if (!assignee) {
-        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
-      }
-
       const task = await this.taskService.getOneTaskById(taskId, ["assignee"]);
 
-      if (!task) {
+      if (!task || !assignee) {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
 
@@ -246,7 +237,7 @@ export default class TaskResolver {
       }
       task.assignee = assignee;
 
-      const assignRes = await taskTransRepo.save(task);
+      const assignRes = await this.taskService.createTask(task);
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [assignRes]);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);

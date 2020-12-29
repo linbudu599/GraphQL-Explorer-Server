@@ -11,10 +11,8 @@ import {
   Root,
   Int,
 } from "type-graphql";
-import { Repository, Transaction, TransactionRepository } from "typeorm";
 
 import Executor, { ExecutorDesc } from "../entity/Executor";
-import Task from "../entity/Task";
 
 import ExecutorService from "../service/Executor.service";
 import TaskService from "../service/Task.service";
@@ -277,19 +275,12 @@ export default class ExecutorResolver {
     }
   }
 
-  @Transaction()
   @Mutation(() => ExecutorStatus, {
     nullable: false,
     description: "删除执行者",
   })
   async DeleteExecutor(
-    @Arg("uid", (type) => Int) uid: number,
-
-    @TransactionRepository(Executor)
-    executorTransRepo: Repository<Executor>,
-
-    @TransactionRepository(Task)
-    taskTransRepo: Repository<Task>
+    @Arg("uid", (type) => Int) uid: number
   ): Promise<ExecutorStatus> {
     try {
       const isExistingExecutor = await this.executorService.getOneExecutorById(
@@ -299,28 +290,7 @@ export default class ExecutorResolver {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
 
-      const hasAssignedTask = await this.taskService.getTasksByConditions({
-        assignee: {
-          uid,
-        },
-      });
-
-      if (!hasAssignedTask) {
-        await this.executorService.deleteExecutor(uid);
-      } else {
-        // TODO:
-        await taskTransRepo.update(
-          {
-            assignee: {
-              uid,
-            },
-          },
-          {
-            assignee: undefined,
-          }
-        );
-        await executorTransRepo.delete({ uid });
-      }
+      await this.executorService.deleteExecutor(uid);
 
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, []);
     } catch (error) {
