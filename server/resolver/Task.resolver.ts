@@ -8,6 +8,7 @@ import {
   TaskStatus,
 } from "../graphql/Common";
 import {
+  TaskQueryInput,
   TaskCreateInput,
   TaskUpdateInput,
   TaskRelationsInput,
@@ -70,6 +71,51 @@ export default class TaskResolver {
       }
 
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
+  }
+
+  @Query(() => TaskStatus, {
+    nullable: false,
+    description: "基于条件获取单个任务",
+  })
+  async QueryTaskByConditions(
+    @Arg("taskQueryParams") param: TaskQueryInput,
+
+    @Arg("relations", (type) => TaskRelationsInput, { nullable: true })
+    relationOptions: Partial<TaskRelationsInput> = {}
+  ): Promise<TaskStatus> {
+    try {
+      const relations: TaskRelation[] = getTaskRelations(relationOptions);
+
+      const res = await this.taskService.getOneTaskByConditions(
+        param,
+        relations
+      );
+
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
+  }
+
+  @Query(() => TaskStatus, {
+    nullable: false,
+    description: "基于条件获取多个任务",
+  })
+  async QueryTasksByConditions(
+    @Arg("taskQueryParams") param: TaskQueryInput,
+
+    @Arg("relations", (type) => TaskRelationsInput, { nullable: true })
+    relationOptions: Partial<TaskRelationsInput> = {}
+  ): Promise<TaskStatus> {
+    try {
+      const relations: TaskRelation[] = getTaskRelations(relationOptions);
+
+      const res = await this.taskService.getTasksByConditions(param, relations);
+
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, res);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
     }

@@ -16,10 +16,10 @@ import Record from "../entity/Record";
 
 @InterfaceType({ description: "Basic Status Wrapper" })
 export class IBaseStatus {
-  @Field({ nullable: false })
+  @Field()
   success!: boolean;
 
-  @Field({ nullable: false })
+  @Field()
   message!: string;
 }
 
@@ -28,7 +28,7 @@ export class IBaseStatus {
   description: "Record Response Status Indicator",
 })
 export class RecordStatus extends IBaseStatus {
-  @Field(() => [Record], { nullable: true })
+  @Field((type) => [Record!]!, { nullable: true })
   data?: Record[];
 }
 
@@ -37,7 +37,7 @@ export class RecordStatus extends IBaseStatus {
   description: "Primitive Response Status Indicator",
 })
 export class AccountStatus extends IBaseStatus {
-  @Field(() => [Account], { nullable: true })
+  @Field((type) => [Account!]!, { nullable: true })
   data?: Account[];
 }
 
@@ -55,7 +55,7 @@ export class PrimitiveStatus extends IBaseStatus {
   description: "Substance Response Status Indicator",
 })
 export class SubstanceStatus extends IBaseStatus {
-  @Field(() => [Substance]!, { nullable: true })
+  @Field((type) => [Substance!]!, { nullable: true })
   data?: Substance[];
 }
 
@@ -64,7 +64,7 @@ export class SubstanceStatus extends IBaseStatus {
   description: "Executor Response Status Indicator",
 })
 export class ExecutorStatus extends IBaseStatus {
-  @Field(() => [Executor]!, { nullable: true })
+  @Field((type) => [Executor!]!, { nullable: true })
   data?: Executor[];
 }
 
@@ -73,7 +73,7 @@ export class ExecutorStatus extends IBaseStatus {
   description: "Task Response Status Indicator",
 })
 export class TaskStatus extends IBaseStatus {
-  @Field(() => [Task]!, { nullable: true })
+  @Field((type) => [Task!]!, { nullable: true })
   data?: Task[];
 }
 

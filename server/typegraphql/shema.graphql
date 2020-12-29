@@ -161,6 +161,7 @@ enum DifficultyLevel {
 
 type Executor implements IExecutor {
   age: Float!
+  avaliable: Boolean!
   desc: String!
 
   """
@@ -184,6 +185,7 @@ Executor Create Input
 """
 input ExecutorCreateInput {
   age: Int
+  avaliable: Boolean
   isFool: Boolean
   job: Job
   name: String!
@@ -228,6 +230,7 @@ Executor Update Input
 """
 input ExecutorUpdateInput {
   age: Int
+  avaliable: Boolean
   isFool: Boolean
   job: Job
   name: String
@@ -273,7 +276,8 @@ Update Executor Basic Info Input
 """
 interface IExecutor {
   age: Float!
-  desc: String
+  avaliable: Boolean!
+  desc: String!
   isFool: Boolean!
   job: Job!
   joinDate: Timestamp!
@@ -341,8 +345,8 @@ interface ITask {
   taskContent: String!
   taskId: ID!
   taskLevel: DifficultyLevel!
-  taskRate: Float!
-  taskReward: Float!
+  taskRate: Int!
+  taskReward: Int!
   taskSource: TaskSource!
   taskSubstance: Substance
   taskTarget: TaskTarget!
@@ -452,16 +456,6 @@ type Mutation {
     accountId: Int!
     modifiedAccountProfile: AccountProfileInput!
   ): AccountStatus!
-
-  """
-  更新执行者存活状态/自身状态
-  """
-  MutateExecutorInfo: ExecutorStatus!
-
-  """
-  更新执行者级别
-  """
-  MutateExecutorLevel(level: DifficultyLevel!, uid: Int!): ExecutorStatus!
 
   """
   变更任务级别
@@ -601,9 +595,11 @@ type Query {
   """
   QueryExecutorByConditions(
     age: Int
-    level: DifficultyLevel
+    avaliable: Boolean
+    isFool: Boolean
+    job: Job
     name: String
-    region: Float
+    region: Region
     relations: ExecutorRelationsInput
   ): ExecutorStatus!
 
@@ -619,7 +615,7 @@ type Query {
   ): ExecutorStatus!
 
   """
-  查找特定执行者信息
+  根据ID查找特定执行者信息
   """
   QueryExecutorById(
     relations: ExecutorRelationsInput
@@ -681,9 +677,25 @@ type Query {
   ): SubstanceStatus!
 
   """
+  基于条件获取单个任务
+  """
+  QueryTaskByConditions(
+    relations: TaskRelationsInput
+    taskQueryParams: TaskQueryInput!
+  ): TaskStatus!
+
+  """
   基于ID获取任务
   """
   QueryTaskByID(relations: TaskRelationsInput, taskId: Float!): TaskStatus!
+
+  """
+  基于条件获取多个任务
+  """
+  QueryTasksByConditions(
+    relations: TaskRelationsInput
+    taskQueryParams: TaskQueryInput!
+  ): TaskStatus!
 }
 
 """
@@ -832,8 +844,8 @@ type Task implements ITask {
   taskContent: String!
   taskId: ID!
   taskLevel: DifficultyLevel!
-  taskRate: Float!
-  taskReward: Float!
+  taskRate: Int!
+  taskReward: Int!
   taskSource: TaskSource!
   taskSubstance: Substance
   taskTarget: TaskTarget!
@@ -844,13 +856,35 @@ type Task implements ITask {
 Task Create Input
 """
 input TaskCreateInput {
-  substanceId: Float!
+  allowAbort: Boolean
+  requireCleaner: Boolean
+  requirePsychologicalIntervention: Boolean
+  substanceId: ID!
+  taskAvaliable: Boolean
   taskContent: String
-  taskLevel: Float
-  taskReward: Float
-  taskSource: Float
-  taskTarget: Float
+  taskLevel: DifficultyLevel
+  taskRate: Int
+  taskReward: Int
+  taskSource: TaskSource
+  taskTarget: TaskTarget
   taskTitle: String!
+}
+
+"""
+Task Query Input
+"""
+input TaskQueryInput {
+  allowAbort: Boolean
+  requireCleaner: Boolean
+  requirePsychologicalIntervention: Boolean
+  taskAvaliable: Boolean
+  taskContent: String
+  taskLevel: DifficultyLevel
+  taskRate: Int
+  taskReward: Int
+  taskSource: TaskSource
+  taskTarget: TaskTarget
+  taskTitle: String
 }
 
 """
@@ -899,13 +933,17 @@ enum TaskTarget {
 Task Update Input
 """
 input TaskUpdateInput {
+  allowAbort: Boolean
+  requireCleaner: Boolean
+  requirePsychologicalIntervention: Boolean
+  taskAvaliable: Boolean
   taskContent: String
   taskId: Int!
-  taskLevel: Float
-  taskRate: Float
-  taskReward: Float
-  taskSource: Float
-  taskTarget: Float
+  taskLevel: DifficultyLevel
+  taskRate: Int
+  taskReward: Int
+  taskSource: TaskSource
+  taskTarget: TaskTarget
   taskTitle: String
 }
 

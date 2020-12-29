@@ -7,6 +7,7 @@ import Task from "../entity/Task";
 import { PaginationOptions } from "../graphql/Common";
 import {
   ITask,
+  TaskQueryInput,
   TaskCreateInput,
   TaskRelation,
   TaskUpdateInput,
@@ -22,7 +23,7 @@ export interface ITaskService {
     relations: TaskRelation[]
   ): Promise<Task | undefined>;
   getOneTaskByConditions(
-    conditions: Partial<ITask>,
+    conditions: TaskQueryInput,
     relations: TaskRelation[]
   ): Promise<Task | undefined>;
   getTasksByConditions(
@@ -68,13 +69,11 @@ export default class TaskService implements ITaskService {
       relations,
     });
 
-    console.log(res);
-
     return res;
   }
 
   async getOneTaskByConditions(
-    conditions: Partial<ITask>,
+    conditions: TaskQueryInput,
     relations: TaskRelation[] = []
   ): Promise<Task | undefined> {
     const res = await this.taskRepository.findOne(conditions, {
@@ -85,16 +84,15 @@ export default class TaskService implements ITaskService {
   }
 
   async getTasksByConditions(
-    conditions: FindConditions<Task>,
+    conditions: TaskQueryInput,
     relations: TaskRelation[] = []
   ): Promise<Task[]> {
     const res = await this.taskRepository.find({
       where: {
         ...conditions,
       },
-      relations: Array.from(new Set(relations)),
+      relations,
     });
-
     return res;
   }
 

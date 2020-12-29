@@ -91,7 +91,7 @@ export default class ExecutorResolver {
 
   @Query(() => ExecutorStatus, {
     nullable: false,
-    description: "查找特定执行者信息",
+    description: "根据ID查找特定执行者信息",
   })
   async QueryExecutorById(
     @Arg("uid", (type) => Int) uid: number,
@@ -296,40 +296,6 @@ export default class ExecutorResolver {
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
     }
-  }
-
-  @Mutation(() => ExecutorStatus, {
-    nullable: false,
-    description: "更新执行者级别",
-  })
-  async MutateExecutorLevel(
-    @Arg("uid", (type) => Int) uid: number,
-    @Arg("level", (type) => DifficultyLevel)
-    level: DifficultyLevel
-  ): Promise<ExecutorStatus> {
-    try {
-      const isExistingExecutor = await this.executorService.getOneExecutorById(
-        uid
-      );
-      if (!isExistingExecutor) {
-        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
-      }
-
-      const updated = await this.executorService.updateExecutor(uid, {
-        desc: mergeJSONWithObj(isExistingExecutor.desc, { level }),
-      });
-      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updated]);
-    } catch (error) {
-      return new StatusHandler(false, JSON.stringify(error), []);
-    }
-  }
-
-  @Mutation(() => ExecutorStatus, {
-    nullable: false,
-    description: "更新执行者存活状态/自身状态",
-  })
-  async MutateExecutorInfo(): Promise<ExecutorStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
   }
 
   @FieldResolver(() => Int, {

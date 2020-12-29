@@ -54,7 +54,7 @@ registerEnumType(JOB, {
 
 @InterfaceType({ description: "Executor Interface Type" })
 export abstract class IExecutorDesc {
-  @Field((type) => DifficultyLevel, { nullable: false })
+  @Field((type) => DifficultyLevel)
   level!: DifficultyLevel;
 
   @Field((type) => Int, { nullable: true })
@@ -110,34 +110,37 @@ export class ExecutorDescQuery implements Partial<IExecutorDesc> {
 
 @InterfaceType({ description: "Update Executor Basic Info Input" })
 export abstract class IExecutor {
-  @Field((type) => ID, { nullable: false })
+  @Field((type) => ID)
   uid!: number;
 
-  @Field({ nullable: false })
+  @Field()
   name!: string;
 
-  @Field({ nullable: false })
+  @Field()
   age!: number;
 
-  @Field((type) => JOB, { nullable: false })
+  @Field((type) => JOB)
   job!: JOB;
 
-  @Field({ nullable: false })
+  @Field()
   isFool!: boolean;
 
-  @Field({ nullable: true })
+  @Field()
+  avaliable!: boolean;
+
+  @Field()
   desc!: string;
 
   @Field((type) => [Task]!, { nullable: true })
   tasks?: Task[];
 
-  @Field((type) => REGION, { nullable: false })
+  @Field((type) => REGION)
   region!: REGION;
 
   @Field((type) => Int, { nullable: true })
   spAgeField?: number;
 
-  @Field(() => Record, { nullable: true })
+  @Field((type) => Record, { nullable: true })
   relatedRecord!: Record;
 
   @Field((type) => Date)
@@ -162,20 +165,35 @@ export class ExecutorQueryArgs {
   @IsNumber()
   age?: number;
 
+  @Field((type) => JOB, { nullable: true })
+  @IsOptional()
+  @IsEnum(JOB)
+  job?: JOB;
+
   @Field({ nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  isFool?: boolean;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  avaliable?: boolean;
+
+  @Field((type) => REGION, { nullable: true })
   @IsOptional()
   @IsEnum(REGION)
   region?: REGION;
-
-  @Field((type) => DifficultyLevel, { nullable: true })
-  @IsOptional()
-  @IsEnum(DifficultyLevel)
-  level?: DifficultyLevel;
 }
 
 @ObjectType({ isAbstract: true })
 @InputType({ isAbstract: true })
-export class ExecutorInput {
+export class ExecutorInput implements Partial<IExecutor> {
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  name?: string;
+
   @Field((type) => Int, { nullable: true })
   @IsOptional()
   @Max(80)
@@ -183,15 +201,20 @@ export class ExecutorInput {
   @IsNumber()
   age?: number;
 
+  @Field((type) => JOB, { nullable: true })
+  @IsOptional()
+  @IsEnum(JOB)
+  job?: JOB;
+
   @Field({ nullable: true })
   @IsOptional()
   @IsBoolean()
   isFool?: boolean;
 
-  @Field((type) => JOB, { nullable: true })
+  @Field({ nullable: true })
   @IsOptional()
-  @IsEnum(JOB)
-  job?: JOB;
+  @IsBoolean()
+  avaliable?: boolean;
 
   @Field((type) => REGION, { nullable: true })
   @IsOptional()
@@ -205,7 +228,7 @@ export const CreateInputMixin = <TClassType extends ClassType>(
   @ObjectType({ isAbstract: true })
   @InputType({ isAbstract: true })
   class CreateInput extends BaseClass {
-    @Field({ nullable: false })
+    @Field()
     @Length(1, 20)
     @IsNotEmpty()
     @IsString()
@@ -221,17 +244,11 @@ export const UpdateInputMixin = <TClassType extends ClassType>(
   @ObjectType({ isAbstract: true })
   @InputType({ isAbstract: true })
   class UpdateInput extends BaseClass {
-    @Field({ nullable: false })
+    @Field()
     @IsPositive()
     @Length(1, 10)
     @IsNumber()
     uid!: number;
-
-    @Field({ nullable: true })
-    @Length(1, 20)
-    @IsNotEmpty()
-    @IsString()
-    name?: string;
   }
 
   return UpdateInput;

@@ -50,34 +50,34 @@ export abstract class IAccountProfile {
   @Field({ nullable: true })
   selfIntro!: string;
 
-  @Field((type) => AccountVIPLevel, { nullable: false })
+  @Field((type) => AccountVIPLevel)
   VIPLevel!: AccountVIPLevel;
 
-  @Field({ nullable: false })
+  @Field()
   isLifeTimeVIP!: boolean;
 }
 
 @InterfaceType({ description: "Account Interface Type" })
 export abstract class IAccount {
-  @Field((type) => ID, { nullable: false })
+  @Field((type) => ID)
   accountId!: number;
 
-  @Field({ nullable: false })
+  @Field()
   accountName!: string;
 
-  @Field({ nullable: false })
+  @Field()
   accountAvaliable!: boolean;
 
-  @Field({ nullable: false })
+  @Field()
   accountPwd!: string;
 
-  @Field({ nullable: false })
+  @Field()
   accountProfile!: string;
 
-  @Field((type) => ACCOUNT_TYPE, { nullable: false })
+  @Field((type) => ACCOUNT_TYPE)
   accountType!: ACCOUNT_TYPE;
 
-  @Field(() => Record, { nullable: true })
+  @Field((type) => Record, { nullable: true })
   relatedRecord!: Record;
 
   @Field((type) => Date)
@@ -92,13 +92,13 @@ export abstract class IAccount {
 @ObjectType({ isAbstract: true })
 @InputType({ isAbstract: true })
 export class AccountInput {
-  @Field({ nullable: false })
+  @Field()
   @IsNotEmpty()
   @Length(2, 15)
   @IsString()
   accountName!: string;
 
-  @Field({ nullable: false })
+  @Field()
   @IsNotEmpty()
   @Length(6, 20)
   @IsString()
@@ -126,7 +126,7 @@ export const LoginInputMixin = <TClassType extends ClassType>(
   @ObjectType({ isAbstract: true })
   @InputType({ isAbstract: true })
   class RegisterInput extends BaseClass {
-    @Field((type) => ACCOUNT_TYPE, { nullable: false })
+    @Field((type) => ACCOUNT_TYPE)
     @IsNotEmpty()
     @IsEnum(ACCOUNT_TYPE)
     loginType!: ACCOUNT_TYPE;
@@ -162,25 +162,25 @@ export const getAccountRelations = ({
 
 @InputType({ description: "Account Password Modify Input Type" })
 export class AccountPasswordModifyInput {
-  @Field((type) => Int, { nullable: false })
+  @Field((type) => Int)
   @IsPositive()
   @Length(1, 10)
   @IsNumber()
   accountId!: number;
 
-  @Field({ nullable: false })
+  @Field()
   @IsNotEmpty()
   @Length(2, 15)
   @IsString()
   accountName!: string;
 
-  @Field({ nullable: false })
+  @Field()
   @IsNotEmpty()
   @Length(6, 20)
   @IsString()
   prevPassword!: string;
 
-  @Field({ nullable: false })
+  @Field()
   @IsNotEmpty()
   @Length(6, 20)
   @IsString()

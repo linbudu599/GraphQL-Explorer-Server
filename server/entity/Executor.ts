@@ -53,13 +53,16 @@ export default class Executor extends BaseEntity implements IExecutor {
   @Column({ default: 10, nullable: false })
   age!: number;
 
-  @Column({ default: JOB.FE })
+  @Column({ default: JOB.FE, enum: JOB })
   job!: JOB;
+
+  @Column({ default: false, nullable: false })
+  avaliable!: boolean;
 
   @Column({ default: false, nullable: false })
   isFool!: boolean;
 
-  @Column({ default: JSON.stringify(EXECUTOR_DESC_DEFAULT) })
+  @Column({ default: JSON.stringify(EXECUTOR_DESC_DEFAULT), nullable: false })
   // @Extension needs to be used with @Field
   @Extensions({ info: "Executor.desc Field" })
   @Field()
