@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="./styles/graphdoc.css" />
-    <title>deprecated</title>
+    <title>TaskQueryInput</title>
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700" rel="stylesheet"><link type="text/css" rel="stylesheet" href="./assets/code.css" /><link type="text/css" rel="stylesheet" href="./assets/require-by.css" />
 </head>
 <body class="slds-scrollable--y">
@@ -415,7 +415,7 @@
                 TaskCreateInput
             </a>
         </li>
-        <li  title="TaskQueryInput">
+        <li class="slds-is-active" title="TaskQueryInput">
             <a href="taskqueryinput.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 TaskQueryInput
             </a>
@@ -435,7 +435,7 @@
 <div class="slds-grid slds-grid--vertical slds-navigation-list--vertical">
     <h4 class="slds-text-title--caps slds-p-around--medium">Directives</h4>
     <ul>
-        <li class="slds-is-active" title="deprecated">
+        <li  title="deprecated">
             <a href="deprecated.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 deprecated
             </a>
@@ -470,9 +470,9 @@
         </div>
     </div>
     <div class="container">
-        <p class="slds-text-title--caps slds-text-color--weak"></p>
-        <h1 class="slds-text-heading--large">deprecated</h1>
-        <div class="slds-text-body--regular"><p>Marks an element of a GraphQL schema as no longer supported.</p>
+        <p class="slds-text-title--caps slds-text-color--weak">INPUT_OBJECT</p>
+        <h1 class="slds-text-heading--large">TaskQueryInput</h1>
+        <div class="slds-text-body--regular"><p>Task Query Input</p>
 </div>
     </div>
 </section>
@@ -484,7 +484,7 @@
             </a>
             GraphQL Schema definition
         </h2>
-        <code class="highlight"><ul class="code" style="padding-left:28px"><li><span class="keyword operator ts">directive</span> <span class="keyword operator ts">@deprecated</span>(<span class="meta">reason</span>: <a class="support type" href="string.doc.html">String</a>) on <span class="keyword operator ts">FIELD_DEFINITION</span> | <span class="keyword operator ts">ARGUMENT_DEFINITION</span> | <span class="keyword operator ts">INPUT_FIELD_DEFINITION</span> | <span class="keyword operator ts">ENUM_VALUE</span></li></ul></code>
+        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">input</span> <span class="identifier">TaskQueryInput</span> {</li><li><span class="tab"><li><span class="tab"><span class="meta">taskTitle</span>: <a class="support type" href="string.doc.html">String</a></span></li></span></li><li><span class="tab"><li><span class="tab"><span class="meta">requireCleaner</span>: <a class="support type" href="boolean.doc.html">Boolean</a></span></li></span></li><li><span class="tab"><li><span class="tab"><span class="meta">requirePsychologicalIntervention</span>: <a class="support type" href="boolean.doc.html">Boolean</a></span></li></span></li><li><span class="tab"><li><span class="tab"><span class="meta">taskContent</span>: <a class="support type" href="string.doc.html">String</a></span></li></span></li><li><span class="tab"><li><span class="tab"><span class="meta">allowAbort</span>: <a class="support type" href="boolean.doc.html">Boolean</a></span></li></span></li><li><span class="tab"><li><span class="tab"><span class="meta">taskSource</span>: <a class="support type" href="tasksource.doc.html">TaskSource</a></span></li></span></li><li><span class="tab"><li><span class="tab"><span class="meta">taskLevel</span>: <a class="support type" href="difficultylevel.doc.html">DifficultyLevel</a></span></li></span></li><li><span class="tab"><li><span class="tab"><span class="meta">taskAvaliable</span>: <a class="support type" href="boolean.doc.html">Boolean</a></span></li></span></li><li><span class="tab"><li><span class="tab"><span class="meta">taskReward</span>: <a class="support type" href="int.doc.html">Int</a></span></li></span></li><li><span class="tab"><li><span class="tab"><span class="meta">taskRate</span>: <a class="support type" href="int.doc.html">Int</a></span></li></span></li><li><span class="tab"><li><span class="tab"><span class="meta">taskTarget</span>: <a class="support type" href="tasktarget.doc.html">TaskTarget</a></span></li></span></li><li>}</li></ul></code>
     </div>
 </section>
 <section>
@@ -495,7 +495,7 @@
             </a>
             Require by
         </h2>
-        <div class="require-by anyone">This element is not required by anyone</div>
+        <ul class="require-by"><li><a href="query.doc.html" title="Query - ">Query<em>null</em></a><li></ul>
     </div>
 </section>
 <footer>
