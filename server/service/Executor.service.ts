@@ -1,4 +1,4 @@
-import { FindConditions, Repository } from "typeorm";
+import { FindConditions, Repository, SelectQueryBuilder } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import { Service, Inject } from "typedi";
@@ -62,16 +62,17 @@ export default class ExecutorService implements IExecutorService {
     );
 
     // 直接关联
-    if (relations.includes("relatedRecord")) {
-      selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
-        "executor.relatedRecord",
-        "relatedRecord"
-      );
-    }
     if (relations.includes("tasks")) {
       selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
         "executor.tasks",
         "tasks"
+      );
+    }
+
+    if (relations.includes("relatedRecord")) {
+      selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
+        "executor.relatedRecord",
+        "relatedRecord"
       );
     }
 
@@ -84,6 +85,19 @@ export default class ExecutorService implements IExecutorService {
     }
 
     return selectQueryBuilder;
+  }
+
+  private conditionSelectBuilder(
+    builder: SelectQueryBuilder<Executor>,
+    conditions: ExecutorQueryArgs
+  ) {
+    Object.keys(conditions).forEach((key) => {
+      builder = builder.andWhere(`executor.${key}= :${key}`, {
+        [key]: conditions[key],
+      });
+    });
+
+    return builder;
   }
 
   async getAllExecutors(
@@ -118,17 +132,12 @@ export default class ExecutorService implements IExecutorService {
   ): Promise<Executor | undefined> {
     let initialSelectBuilder = this.generateSelectBuilder(relations);
 
-    Object.keys(conditions).forEach((key) => {
-      initialSelectBuilder = initialSelectBuilder.andWhere(
-        `executor.${key}= :${key}`,
-        {
-          [key]: conditions[key],
-        }
-      );
-    });
+    let conditionSelectBuilder = this.conditionSelectBuilder(
+      initialSelectBuilder,
+      conditions
+    );
 
-    const res = await initialSelectBuilder.getOne();
-
+    const res = await conditionSelectBuilder.getOne();
     return res;
   }
 
@@ -138,17 +147,12 @@ export default class ExecutorService implements IExecutorService {
   ): Promise<Executor[]> {
     let initialSelectBuilder = this.generateSelectBuilder(relations);
 
-    Object.keys(conditions).forEach((key) => {
-      initialSelectBuilder = initialSelectBuilder.andWhere(
-        `executor.${key}= :${key}`,
-        {
-          [key]: conditions[key],
-        }
-      );
-    });
+    let conditionSelectBuilder = this.conditionSelectBuilder(
+      initialSelectBuilder,
+      conditions
+    );
 
-    const res = await initialSelectBuilder.getMany();
-
+    const res = await conditionSelectBuilder.getMany();
     return res;
   }
 
@@ -163,14 +167,18 @@ export default class ExecutorService implements IExecutorService {
   ): Promise<Executor> {
     await this.executorRepository.update(indicator, infoUpdate);
 
-    const updatedItem = (await this.executorRepository.findOne(
-      indicator
-    )) as Executor;
+    const updatedItem = (await this.getOneExecutorById(indicator))!;
 
     return updatedItem;
   }
 
   async deleteExecutor(uid: number): Promise<void> {
-    await this.executorRepository.delete(uid);
+    await this.executorRepository
+      .createQueryBuilder()
+      .delete()
+      .from(Executor)
+      .where("uid = :uid")
+      .setParameter("uid", uid)
+      .execute();
   }
 }

@@ -114,8 +114,8 @@ export abstract class ITask {
   @Field((type) => Substance, { nullable: true })
   taskSubstance!: Substance;
 
-  @Field((type) => Record, { nullable: true })
-  relatedRecord!: Record;
+  @Field((type) => [Record]!, { nullable: true })
+  relatedRecord!: Record[];
 
   @Field()
   publishDate!: Date;
@@ -248,19 +248,19 @@ export class TaskUpdateInput extends UpdateTaskMixin(TaskInput) {}
 @InputType({ description: "Task Relations Input" })
 export class TaskRelationsInput {
   @Field({ nullable: true })
+  joinRecord: boolean = false;
+
+  @Field({ nullable: true })
   joinAssignee: boolean = false;
 
   @Field({ nullable: true })
   joinSubstance: boolean = false;
-
-  @Field({ nullable: true })
-  joinRecord: boolean = false;
 }
 
 interface ITaskRelationOptions {
+  joinRecord?: boolean;
   joinAssignee?: boolean;
   joinSubstance?: boolean;
-  joinRecord?: boolean;
 }
 export type TaskRelation = "assignee" | "taskSubstance" | "relatedRecord";
 

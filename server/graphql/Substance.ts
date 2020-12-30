@@ -49,11 +49,11 @@ export abstract class ISubstance {
   @Field()
   asylumed!: boolean;
 
-  @Field(() => Task, { nullable: true })
+  @Field((type) => Task, { nullable: true })
   relatedTask?: ITask;
 
-  @Field(() => Record, { nullable: true })
-  relatedRecord!: Record;
+  @Field((type) => [Record]!, { nullable: true })
+  relatedRecord!: Record[];
 
   @Field((type) => Date)
   substanceAppearDate!: Date;

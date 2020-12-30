@@ -6,8 +6,9 @@ import {
   BaseEntity,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToOne,
+  ManyToOne,
   JoinColumn,
+  RelationId,
 } from "typeorm";
 
 import { IRecord } from "../graphql/Record";
@@ -23,40 +24,36 @@ export default class Record extends BaseEntity implements IRecord {
   @PrimaryGeneratedColumn()
   recordId!: number;
 
-  @OneToOne((type) => Task, (task: Task) => task.relatedRecord, {
+  @ManyToOne((type) => Task, (task: Task) => task.relatedRecord, {
     nullable: true,
-    cascade: true,
     onDelete: "SET NULL",
   })
   @JoinColumn({ name: "recordTaskId" })
   recordTask!: Task;
 
-  @OneToOne((type) => Account, (account: Account) => account.relatedRecord, {
+  @ManyToOne((type) => Account, (account: Account) => account.relatedRecord, {
     nullable: true,
-    cascade: true,
     onDelete: "SET NULL",
   })
   @JoinColumn({ name: "recordAccountId" })
   recordAccount!: Account;
 
-  @OneToOne(
+  @ManyToOne(
     (type) => Substance,
     (substance: Substance) => substance.relatedRecord,
     {
       nullable: true,
-      cascade: true,
       onDelete: "SET NULL",
     }
   )
   @JoinColumn({ name: "recordSubstanceId" })
   recordSubstance!: Substance;
 
-  @OneToOne(
+  @ManyToOne(
     (type) => Executor,
     (executor: Executor) => executor.relatedRecord,
     {
       nullable: true,
-      cascade: true,
       onDelete: "SET NULL",
     }
   )

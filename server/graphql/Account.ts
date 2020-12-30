@@ -77,8 +77,8 @@ export abstract class IAccount {
   @Field((type) => ACCOUNT_TYPE)
   accountType!: ACCOUNT_TYPE;
 
-  @Field((type) => Record, { nullable: true })
-  relatedRecord!: Record;
+  @Field((type) => [Record]!, { nullable: true })
+  relatedRecord!: Record[];
 
   @Field((type) => Date)
   registryDate!: Date;
@@ -196,17 +196,41 @@ export class AccountProfileInput {
 export class AccountRelationsInput {
   @Field({ nullable: true })
   joinRecord: boolean = false;
+
+  @Field({ nullable: true })
+  joinRecordExecutor: boolean = false;
+
+  @Field({ nullable: true })
+  joinRecordTask: boolean = false;
+
+  @Field({ nullable: true })
+  joinRecordSubstance: boolean = false;
 }
 
 interface IAccountRelationOptions {
   joinRecord?: boolean;
+  joinRecordExecutor?: boolean;
+  joinRecordTask?: boolean;
+  joinRecordSubstance?: boolean;
 }
-export type AccountRelation = "relatedRecord";
+export type AccountRelation =
+  | "relatedRecord"
+  | "recordExecutor"
+  | "recordTask"
+  | "recordSubstance";
 
 export const getAccountRelations = ({
   joinRecord = false,
+  joinRecordExecutor = false,
+  joinRecordTask = false,
+  joinRecordSubstance = false,
 }: IAccountRelationOptions): AccountRelation[] => {
   const relations: AccountRelation[] = [];
+
   joinRecord ? relations.push("relatedRecord") : void 0;
+  joinRecordExecutor ? relations.push("recordExecutor") : void 0;
+  joinRecordTask ? relations.push("recordTask") : void 0;
+  joinRecordSubstance ? relations.push("recordSubstance") : void 0;
+
   return relations;
 };

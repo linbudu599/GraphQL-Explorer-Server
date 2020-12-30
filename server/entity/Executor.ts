@@ -87,8 +87,12 @@ export default class Executor extends BaseEntity implements IExecutor {
   @RelationId((executor: Executor) => executor.tasks)
   taskIds?: number[];
 
-  @OneToOne((type) => Record, (record) => record.recordExecutor)
-  relatedRecord!: Record;
+  // 记录
+  @OneToMany((type) => Record, (record) => record.recordExecutor, {
+    cascade: true,
+    nullable: true,
+  })
+  relatedRecord!: Record[];
 
   @RelationId((executor: Executor) => executor.relatedRecord)
   relatedRecordId?: number[];

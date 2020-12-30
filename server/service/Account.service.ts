@@ -32,7 +32,7 @@ export interface IAccountService {
     indicator: number,
     infoUpdate: Partial<IAccount>
   ): Promise<Account>;
-  deleteAccount(accountName: string): Promise<void>;
+  deleteAccount(accountId: number): Promise<void>;
 }
 
 @Service()
@@ -42,6 +42,45 @@ export default class AccountService implements IAccountService {
     private readonly accountRepository: Repository<Account>
   ) {}
 
+  private generateSelectBuilder(relations: AccountRelation[]) {
+    let selectQueryBuilder = this.accountRepository.createQueryBuilder(
+      "account"
+    );
+
+    if (relations.includes("relatedRecord")) {
+      selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
+        "account.relatedRecord",
+        "records"
+      );
+    } else {
+      // 如果关系中不包含relatedRecord, 就不能进行后面的查询
+      return selectQueryBuilder;
+    }
+
+    if (relations.includes("recordExecutor")) {
+      selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
+        "records.recordExecutor",
+        "executor"
+      );
+    }
+
+    if (relations.includes("recordTask")) {
+      selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
+        "records.recordTask",
+        "task"
+      );
+    }
+
+    if (relations.includes("recordSubstance")) {
+      selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
+        "records.recordSubstance",
+        "substance"
+      );
+    }
+
+    return selectQueryBuilder;
+  }
+
   async getAllAccounts(
     pagination: Required<PaginationOptions>,
 
@@ -49,11 +88,11 @@ export default class AccountService implements IAccountService {
   ): Promise<Account[]> {
     const { cursor, offset } = pagination;
 
-    const accounts = await this.accountRepository.find({
-      relations,
-      skip: cursor,
-      take: offset,
-    });
+    const accounts = await this.generateSelectBuilder(relations)
+      .take(offset)
+      .skip(cursor)
+      .getMany();
+
     return accounts;
   }
 
@@ -61,10 +100,10 @@ export default class AccountService implements IAccountService {
     accountName: string,
     relations: AccountRelation[] = []
   ): Promise<Account | undefined> {
-    const account = await this.accountRepository.findOne(
-      { accountName },
-      { relations }
-    );
+    const account = await this.generateSelectBuilder(relations)
+      .where("account.accountName = :accountName", { accountName })
+      .getOne();
+
     return account;
   }
 
@@ -72,9 +111,10 @@ export default class AccountService implements IAccountService {
     accountId: number,
     relations: AccountRelation[] = []
   ): Promise<Account | undefined> {
-    const account = await this.accountRepository.findOne(accountId, {
-      relations,
-    });
+    const account = await this.generateSelectBuilder(relations)
+      .where("account.accountId = :accountId", { accountId })
+      .getOne();
+
     return account;
   }
 
@@ -89,14 +129,18 @@ export default class AccountService implements IAccountService {
   ): Promise<Account> {
     await this.accountRepository.update(indicator, infoUpdate);
 
-    const updatedItem = (await this.accountRepository.findOne(
-      indicator
-    )) as Account;
+    const updatedItem = (await this.getOneAccountById(indicator))!;
 
     return updatedItem;
   }
 
-  async deleteAccount(accountName: string): Promise<void> {
-    await this.accountRepository.delete({ accountName });
+  async deleteAccount(accountId: number): Promise<void> {
+    await this.accountRepository
+      .createQueryBuilder()
+      .delete()
+      .from(Account)
+      .where("accountId = :accountId")
+      .setParameter("accountId", accountId)
+      .execute();
   }
 }

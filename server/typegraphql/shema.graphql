@@ -17,7 +17,7 @@ type Account implements IAccount {
   accountType: AccountType!
   lastUpdateDate: Timestamp!
   registryDate: Timestamp!
-  relatedRecord: Record
+  relatedRecord: [Record!]
 }
 
 """
@@ -70,6 +70,9 @@ Account Relations Input Type
 """
 input AccountRelationsInput {
   joinRecord: Boolean = false
+  joinRecordExecutor: Boolean = false
+  joinRecordSubstance: Boolean = false
+  joinRecordTask: Boolean = false
 }
 
 """
@@ -174,7 +177,7 @@ type Executor implements IExecutor {
   lastUpdateDate: Timestamp!
   name: String!
   region: Region!
-  relatedRecord: Record
+  relatedRecord: [Record!]
   spAgeField(param: Float): Int!
   tasks: [Task!]
   uid: ID!
@@ -250,7 +253,7 @@ interface IAccount {
   accountType: AccountType!
   lastUpdateDate: Timestamp!
   registryDate: Timestamp!
-  relatedRecord: Record
+  relatedRecord: [Record!]
 }
 
 """
@@ -284,7 +287,7 @@ interface IExecutor {
   lastUpdateDate: Timestamp!
   name: String!
   region: Region!
-  relatedRecord: Record
+  relatedRecord: [Record!]
   spAgeField: Int
   tasks: [Task!]
   uid: ID!
@@ -318,7 +321,7 @@ Substance Interface Type
 interface ISubstance {
   asylumed: Boolean!
   lastActiveDate: Timestamp!
-  relatedRecord: Record
+  relatedRecord: [Record!]
   relatedTask: Task
   substanceAlive: Boolean!
   substanceAppearDate: Timestamp!
@@ -337,7 +340,7 @@ interface ITask {
   assignee: Executor
   lastUpdateDate: Timestamp!
   publishDate: Timestamp!
-  relatedRecord: Record
+  relatedRecord: [Record!]
   requireCleaner: Boolean!
   requirePsychologicalIntervention: Boolean!
   taskAccmplished: Boolean!
@@ -771,7 +774,7 @@ type Subscription {
 type Substance implements ISubstance {
   asylumed: Boolean!
   lastActiveDate: Timestamp!
-  relatedRecord: Record
+  relatedRecord: [Record!]
   relatedTask: Task
   substanceAlive: Boolean!
   substanceAppearDate: Timestamp!
@@ -839,7 +842,7 @@ type Task implements ITask {
   assignee: Executor
   lastUpdateDate: Timestamp!
   publishDate: Timestamp!
-  relatedRecord: Record
+  relatedRecord: [Record!]
   requireCleaner: Boolean!
   requirePsychologicalIntervention: Boolean!
   taskAccmplished: Boolean!

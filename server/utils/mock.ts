@@ -271,11 +271,11 @@ export const dbConnect = async (): Promise<any> => {
     record1.recordSubstance = sub4;
     record1.recordTask = mockTaskGroup[3];
 
-    await record1.save();
-
     await connection.manager.save(mockTaskGroup);
     await connection.manager.save(mockSubstanceGroup);
     await connection.manager.save(mockExecutorGroup);
+
+    await record1.save();
 
     log("[TypeORM] Initial Mock Data Inserted\n");
   } catch (error) {

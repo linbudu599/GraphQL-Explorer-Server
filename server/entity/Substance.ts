@@ -9,6 +9,7 @@ import {
   OneToOne,
   RelationId,
   JoinColumn,
+  OneToMany,
 } from "typeorm";
 
 import Task from "./Task";
@@ -58,11 +59,14 @@ export default class Substance extends BaseEntity implements ISubstance {
   relatedTaskId?: string;
 
   // 实体关联记录
-  @OneToOne((type) => Record, (record) => record.recordTask)
-  relatedRecord!: Record;
+  @OneToMany((type) => Record, (record) => record.recordSubstance, {
+    cascade: true,
+    nullable: true,
+  })
+  relatedRecord!: Record[];
 
   @RelationId((substance: Substance) => substance.relatedRecord)
-  relatedRecordId?: string;
+  relatedRecordId?: number[];
 
   @CreateDateColumn({ comment: "实体首次出现时间" })
   substanceAppearDate!: Date;

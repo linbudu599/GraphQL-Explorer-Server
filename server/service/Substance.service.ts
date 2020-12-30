@@ -1,5 +1,5 @@
 import { Service } from "typedi";
-import { Repository } from "typeorm";
+import { Repository, SelectQueryBuilder } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import Substance from "../entity/Substance";
@@ -80,6 +80,19 @@ export default class SubstanceService implements ISubstanceService {
     return selectQueryBuilder;
   }
 
+  private conditionSelectBuilder(
+    builder: SelectQueryBuilder<Substance>,
+    conditions: SubstanceQueryInput
+  ) {
+    Object.keys(conditions).forEach((key) => {
+      builder = builder.andWhere(`substance.${key}= :${key}`, {
+        [key]: conditions[key],
+      });
+    });
+
+    return builder;
+  }
+
   async getAllSubstances(
     pagination: Required<PaginationOptions>,
     relations: SubstanceRelation[]
@@ -111,15 +124,12 @@ export default class SubstanceService implements ISubstanceService {
   ): Promise<Substance | undefined> {
     let initialSelectBuilder = this.generateSelectBuilder(relations);
 
-    Object.keys(conditions).forEach((key) => {
-      initialSelectBuilder = initialSelectBuilder.andWhere(
-        `substance.${key}= :${key}`,
-        {
-          [key]: conditions[key],
-        }
-      );
-    });
-    const res = await initialSelectBuilder.getOne();
+    let conditionSelectBuilder = this.conditionSelectBuilder(
+      initialSelectBuilder,
+      conditions
+    );
+
+    const res = await conditionSelectBuilder.getOne();
     return res;
   }
 
@@ -132,15 +142,15 @@ export default class SubstanceService implements ISubstanceService {
 
     let initialSelectBuilder = this.generateSelectBuilder(relations);
 
-    Object.keys(conditions).forEach((key) => {
-      initialSelectBuilder = initialSelectBuilder.andWhere(
-        `substance.${key}= :${key}`,
-        {
-          [key]: conditions[key],
-        }
-      );
-    });
-    const res = await initialSelectBuilder.take(offset).skip(cursor).getMany();
+    let conditionSelectBuilder = this.conditionSelectBuilder(
+      initialSelectBuilder,
+      conditions
+    );
+
+    const res = await conditionSelectBuilder
+      .take(offset)
+      .skip(cursor)
+      .getMany();
     return res;
   }
 
@@ -157,14 +167,18 @@ export default class SubstanceService implements ISubstanceService {
   ): Promise<Substance> {
     await this.substanceRepository.update(indicator, infoUpdate);
 
-    const updatedItem = (await this.getOneSubstanceById(
-      indicator
-    )) as Substance;
+    const updatedItem = (await this.getOneSubstanceById(indicator))!;
 
     return updatedItem;
   }
 
   async deleteSubstance(sId: number): Promise<void> {
-    await this.substanceRepository.delete(sId);
+    await this.substanceRepository
+      .createQueryBuilder()
+      .delete()
+      .from(Substance)
+      .where("substanceId = :sId")
+      .setParameter("sId", sId)
+      .execute();
   }
 }

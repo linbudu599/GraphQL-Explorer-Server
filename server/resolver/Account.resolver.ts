@@ -59,6 +59,7 @@ export default class AccountResolver {
     @Arg("relations", (type) => AccountRelationsInput, { nullable: true })
     relationOptions: Partial<AccountRelationsInput> = {}
   ): Promise<AccountStatus> {
+    // TODO: 关系校验, 如果需要查询record相关, 就必须包含relatedRecord关系
     try {
       const queryPagination = (pagination ??
         DEFAULT_QUERY_PAGINATION) as Required<PaginationOptions>;
@@ -296,7 +297,7 @@ export default class AccountResolver {
         );
       }
 
-      await this.accountService.deleteAccount(accountName);
+      await this.accountService.deleteAccount(isExistingAccount.accountId);
 
       return new LoginOrRegisterStatusHandler(
         true,

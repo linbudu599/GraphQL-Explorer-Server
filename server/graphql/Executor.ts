@@ -140,8 +140,8 @@ export abstract class IExecutor {
   @Field((type) => Int, { nullable: true })
   spAgeField?: number;
 
-  @Field((type) => Record, { nullable: true })
-  relatedRecord!: Record;
+  @Field((type) => [Record]!, { nullable: true })
+  relatedRecord!: Record[];
 
   @Field((type) => Date)
   joinDate!: Date;
@@ -161,7 +161,7 @@ export class ExecutorQueryArgs {
   @Field((type) => Int, { nullable: true })
   @IsOptional()
   @Max(100)
-  @Min(10)
+  @Min(0)
   @IsNumber()
   age?: number;
 

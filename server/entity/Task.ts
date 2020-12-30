@@ -10,6 +10,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToOne,
+  OneToMany,
 } from "typeorm";
 import { TypeormLoader } from "type-graphql-dataloader";
 
@@ -113,12 +114,15 @@ export default class Task extends BaseEntity implements ITask {
   @RelationId((task: Task) => task.assignee)
   assigneeUid?: number;
 
-  // 任务关联记录
-  @OneToOne((type) => Record, (record) => record.recordTask)
-  relatedRecord!: Record;
+  // 记录
+  @OneToMany((type) => Record, (record) => record.recordTask, {
+    cascade: true,
+    nullable: true,
+  })
+  relatedRecord!: Record[];
 
   @RelationId((task: Task) => task.relatedRecord)
-  relatedRecordId?: string;
+  relatedRecordId?: number[];
 
   @CreateDateColumn({ comment: "任务发布时间" })
   publishDate!: Date;

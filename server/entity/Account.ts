@@ -8,9 +8,9 @@ import {
   BaseEntity,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToOne,
   RelationId,
   Generated,
+  OneToMany,
 } from "typeorm";
 
 import { IAccount, IAccountProfile, AccountVIPLevel } from "../graphql/Account";
@@ -77,12 +77,15 @@ export default class Account extends BaseEntity implements IAccount {
   })
   accountType!: ACCOUNT_TYPE;
 
-  // 账号关联记录
-  @OneToOne((type) => Record, (record) => record.recordAccount)
-  relatedRecord!: Record;
+  // 记录
+  @OneToMany((type) => Record, (record) => record.recordAccount, {
+    cascade: true,
+    nullable: true,
+  })
+  relatedRecord!: Record[];
 
   @RelationId((account: Account) => account.relatedRecord)
-  relatedRecordId?: string;
+  relatedRecordId?: number[];
 
   @CreateDateColumn({ comment: "注册时间" })
   registryDate!: Date;
