@@ -47,28 +47,28 @@ export default class Executor extends BaseEntity implements IExecutor {
   @PrimaryGeneratedColumn()
   uid!: number;
 
-  @Column({ unique: true, nullable: false })
+  @Column({ unique: true })
   name!: string;
 
-  @Column({ default: 10, nullable: false })
+  @Column({ default: 10 })
   age!: number;
 
   @Column({ default: JOB.FE, enum: JOB })
   job!: JOB;
 
-  @Column({ default: false, nullable: false })
+  @Column({ default: false })
   avaliable!: boolean;
 
-  @Column({ default: false, nullable: false })
+  @Column({ default: false })
   isFool!: boolean;
 
-  @Column({ default: JSON.stringify(EXECUTOR_DESC_DEFAULT), nullable: false })
+  @Column({ default: JSON.stringify(EXECUTOR_DESC_DEFAULT) })
   // @Extension needs to be used with @Field
   @Extensions({ info: "Executor.desc Field" })
   @Field()
   desc!: string;
 
-  @Column({ default: REGION.OTHER, nullable: false, enum: REGION })
+  @Column({ default: REGION.OTHER, enum: REGION })
   region!: REGION;
 
   @Extensions({ complexity: 1 })
@@ -87,7 +87,6 @@ export default class Executor extends BaseEntity implements IExecutor {
   @RelationId((executor: Executor) => executor.tasks)
   taskIds?: number[];
 
-  // 关联记录 >>> 变更关联
   @OneToOne((type) => Record, (record) => record.recordExecutor)
   relatedRecord!: Record;
 

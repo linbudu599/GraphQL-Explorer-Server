@@ -28,25 +28,25 @@ registerEnumType(CthulhuType, {
 
 @InterfaceType({ description: "Substance Interface Type" })
 export abstract class ISubstance {
-  @Field((type) => ID, { nullable: false })
+  @Field((type) => ID)
   substanceId!: number;
 
-  @Field({ nullable: false })
+  @Field()
   substanceName!: string;
 
-  @Field({ nullable: false })
+  @Field()
   substanceAlive!: boolean;
 
-  @Field({ nullable: false })
+  @Field()
   substanceDesc!: string;
 
-  @Field({ nullable: false })
+  @Field()
   substanceIssues!: string;
 
-  @Field(() => DifficultyLevel, { nullable: false })
+  @Field(() => DifficultyLevel)
   substanceLevel!: DifficultyLevel;
 
-  @Field({ nullable: false })
+  @Field()
   asylumed!: boolean;
 
   @Field(() => Task, { nullable: true })
@@ -55,10 +55,10 @@ export abstract class ISubstance {
   @Field(() => Record, { nullable: true })
   relatedRecord!: Record;
 
-  @Field({ nullable: false })
+  @Field((type) => Date)
   substanceAppearDate!: Date;
 
-  @Field({ nullable: false })
+  @Field((type) => Date)
   lastActiveDate!: Date;
 }
 
@@ -98,10 +98,10 @@ export const CreateSubstanceMixin = <TClassType extends ClassType>(
   @ObjectType({ isAbstract: true })
   @InputType({ isAbstract: true })
   class CreateInput extends BaseClass {
-    @Field({ nullable: false })
+    @Field()
     substanceName!: string;
 
-    // @Field((type) => DifficultyLevel, { nullable: false })
+    // @Field((type) => DifficultyLevel, )
     // substanceLevel!: DifficultyLevel;
   }
 
@@ -114,7 +114,7 @@ export const UpdateSubstanceMixin = <TClassType extends ClassType>(
   @ObjectType({ isAbstract: true })
   @InputType({ isAbstract: true })
   class UpdateInput extends BaseClass {
-    @Field((type) => Int, { nullable: false })
+    @Field((type) => Int)
     substanceId!: number;
   }
 

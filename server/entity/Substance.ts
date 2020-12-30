@@ -24,27 +24,26 @@ export default class Substance extends BaseEntity implements ISubstance {
   @PrimaryGeneratedColumn()
   substanceId!: number;
 
-  @Column({ unique: true, nullable: false, comment: "实体命名" })
+  @Column({ unique: true, comment: "实体命名" })
   substanceName!: string;
 
-  @Column({ nullable: false, default: true, comment: "实体是否存活" })
+  @Column({ default: true, comment: "实体是否存活" })
   substanceAlive!: boolean;
 
-  @Column({ nullable: false, default: "实体描述未收集", comment: "实体描述" })
+  @Column({ default: "实体描述未收集", comment: "实体描述" })
   substanceDesc!: string;
 
-  @Column({ nullable: false, default: "实体事件未收集" })
+  @Column({ default: "实体事件未收集" })
   substanceIssues!: string;
 
   @Column({
-    nullable: false,
     default: DifficultyLevel.ROOKIE,
     comment: "实体威胁级别",
     enum: DifficultyLevel,
   })
   substanceLevel!: DifficultyLevel;
 
-  @Column({ nullable: false, default: false, comment: "是否已收收容" })
+  @Column({ default: false, comment: "是否已收收容" })
   asylumed!: boolean;
 
   // 实体关联任务

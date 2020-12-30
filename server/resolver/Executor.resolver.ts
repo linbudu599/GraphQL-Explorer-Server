@@ -15,7 +15,6 @@ import {
 import Executor, { ExecutorDesc } from "../entity/Executor";
 
 import ExecutorService from "../service/Executor.service";
-import TaskService from "../service/Task.service";
 
 import {
   ExecutorCreateInput,
@@ -33,7 +32,6 @@ import {
   StatusHandler,
   ExecutorStatus,
 } from "../graphql/Common";
-import { DifficultyLevel } from "../graphql/Public";
 
 import {
   RESPONSE_INDICATOR,
@@ -48,10 +46,7 @@ import { IContext } from "../typding";
 
 @Resolver((of) => Executor)
 export default class ExecutorResolver {
-  constructor(
-    private readonly executorService: ExecutorService,
-    private readonly taskService: TaskService
-  ) {}
+  constructor(private readonly executorService: ExecutorService) {}
 
   @Query(() => ExecutorStatus, {
     nullable: false,

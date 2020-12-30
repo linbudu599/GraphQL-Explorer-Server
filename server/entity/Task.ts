@@ -33,37 +33,35 @@ export default class Task extends BaseEntity implements ITask {
   @PrimaryGeneratedColumn()
   taskId!: number;
 
-  @Column({ unique: true, nullable: false, comment: "任务名称" })
+  @Column({ unique: true, comment: "任务名称" })
   taskTitle!: string;
 
-  @Column({ nullable: false, default: false, comment: "是否需要清扫者" })
+  @Column({ default: false, comment: "是否需要清扫者" })
   requireCleaner!: boolean;
 
-  @Column({ nullable: false, default: false, comment: "是否需要心理干预" })
+  @Column({ default: false, comment: "是否需要心理干预" })
   requirePsychologicalIntervention!: boolean;
 
   @Column({
-    nullable: false,
     default: TaskPriority.MIDDLE,
     comment: "任务优先级",
     enum: TaskPriority,
   })
   taskPriority!: TaskPriority;
 
-  @Column({ nullable: false, default: true, comment: "是否允许中途放弃" })
+  @Column({ default: true, comment: "是否允许中途放弃" })
   allowAbort!: boolean;
 
-  @Column({ nullable: false, default: "任务内容待补充", comment: "任务内容" })
+  @Column({ default: "任务内容待补充", comment: "任务内容" })
   taskContent!: string;
 
-  @Column({ nullable: false, default: false, comment: "任务是否完成" })
+  @Column({ default: false, comment: "任务是否完成" })
   taskAccmplished!: Boolean;
 
-  @Column({ nullable: false, default: true, comment: "任务当前是否可接取" })
+  @Column({ default: true, comment: "任务当前是否可接取" })
   taskAvaliable!: Boolean;
 
   @Column({
-    nullable: false,
     default: TaskSource.OTHER,
     comment: "任务来源",
     enum: TaskSource,
@@ -71,7 +69,6 @@ export default class Task extends BaseEntity implements ITask {
   taskSource!: TaskSource;
 
   @Column({
-    nullable: false,
     default: DifficultyLevel.ROOKIE,
     comment: "任务级别",
     enum: DifficultyLevel,
@@ -79,11 +76,10 @@ export default class Task extends BaseEntity implements ITask {
   taskLevel!: DifficultyLevel;
 
   // TODO: cash + credit
-  @Column({ nullable: false, default: 1000, comment: "任务回报" })
+  @Column({ default: 1000, comment: "任务回报" })
   taskReward!: number;
 
   @Column({
-    nullable: false,
     default: TaskTarget.OTHER,
     comment: "任务目标",
     enum: TaskTarget,

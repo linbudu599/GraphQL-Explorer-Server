@@ -40,9 +40,9 @@ input AccountPasswordModifyInput {
 }
 
 type AccountProfile implements IAccountProfile {
-  avatar: String
+  avatar: String!
   isLifeTimeVIP: Boolean!
-  selfIntro: String
+  selfIntro: String!
   VIPLevel: AccountVIPLevel!
 }
 
@@ -111,7 +111,7 @@ enum AccountVIPLevel {
 Recipe >>> Cook >>> WorkExperience >> Company
 """
 type Company {
-  description: String!
+  description: Timestamp!
   name: String!
   registerDate: Timestamp!
   scale: CompanyScale
@@ -257,9 +257,9 @@ interface IAccount {
 Account Profile Type
 """
 interface IAccountProfile {
-  avatar: String
+  avatar: String!
   isLifeTimeVIP: Boolean!
-  selfIntro: String
+  selfIntro: String!
   VIPLevel: AccountVIPLevel!
 }
 
@@ -555,7 +555,10 @@ type Query {
   """
   查询所有用户
   """
-  QueryAllAccounts(relations: AccountRelationsInput): AccountStatus!
+  QueryAllAccounts(
+    pagination: PaginationOptions
+    relations: AccountRelationsInput
+  ): AccountStatus!
 
   """
   获取所有执行者
@@ -725,10 +728,10 @@ type Record implements IRecord {
 Record Relations Input
 """
 input RecordRelationsInput {
-  joinAccount: Boolean = false
-  joinExecutor: Boolean = false
-  joinSubstance: Boolean = false
-  joinTask: Boolean = false
+  joinAccount: Boolean = true
+  joinExecutor: Boolean = true
+  joinSubstance: Boolean = true
+  joinTask: Boolean = true
 }
 
 """
@@ -958,5 +961,5 @@ Recipe >>> Cook >>> WorkExperience
 type WorkExperience {
   company: Company!
   isFired: Boolean!
-  workYears: Float!
+  workYears: Int!
 }

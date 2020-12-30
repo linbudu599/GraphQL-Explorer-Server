@@ -41,13 +41,13 @@ export class Company {
   @Field()
   name!: string;
 
-  @Field(() => CompanyScale, { nullable: true })
+  @Field((type) => CompanyScale, { nullable: true })
   scale!: CompanyScale;
 
-  @Field()
+  @Field((type) => Date)
   registerDate!: Date;
 
-  @Field()
+  @Field((type) => Date)
   description!: string;
 }
 @Directive("@cacheControl(maxAge: 1000)")
@@ -59,7 +59,7 @@ export class WorkExperience {
   @Field()
   isFired!: boolean;
 
-  @Field()
+  @Field((type) => Int)
   workYears!: number;
 }
 

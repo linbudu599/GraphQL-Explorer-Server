@@ -23,24 +23,24 @@ export default class Record extends BaseEntity implements IRecord {
   @PrimaryGeneratedColumn()
   recordId!: number;
 
-  @OneToOne(() => Task, (task: Task) => task.relatedRecord, {
+  @OneToOne((type) => Task, (task: Task) => task.relatedRecord, {
     nullable: true,
     cascade: true,
     onDelete: "SET NULL",
   })
-  @JoinColumn()
+  @JoinColumn({ name: "recordTaskId" })
   recordTask!: Task;
 
-  @OneToOne(() => Account, (account: Account) => account.relatedRecord, {
+  @OneToOne((type) => Account, (account: Account) => account.relatedRecord, {
     nullable: true,
     cascade: true,
     onDelete: "SET NULL",
   })
-  @JoinColumn()
+  @JoinColumn({ name: "recordAccountId" })
   recordAccount!: Account;
 
   @OneToOne(
-    () => Substance,
+    (type) => Substance,
     (substance: Substance) => substance.relatedRecord,
     {
       nullable: true,
@@ -48,20 +48,24 @@ export default class Record extends BaseEntity implements IRecord {
       onDelete: "SET NULL",
     }
   )
-  @JoinColumn()
+  @JoinColumn({ name: "recordSubstanceId" })
   recordSubstance!: Substance;
 
-  @OneToOne(() => Executor, (executor: Executor) => executor.relatedRecord, {
-    nullable: true,
-    cascade: true,
-    onDelete: "SET NULL",
-  })
-  @JoinColumn()
+  @OneToOne(
+    (type) => Executor,
+    (executor: Executor) => executor.relatedRecord,
+    {
+      nullable: true,
+      cascade: true,
+      onDelete: "SET NULL",
+    }
+  )
+  @JoinColumn({ name: "recordExecutorId" })
   recordExecutor!: Executor;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ comment: "记录创建时间" })
   createDate!: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ comment: "记录更新时间" })
   lastUpdateDate!: Date;
 }

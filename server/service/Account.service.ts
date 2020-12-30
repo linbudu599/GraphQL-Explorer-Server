@@ -9,8 +9,14 @@ import {
   AccountRelation,
 } from "../graphql/Account";
 
+import { PaginationOptions } from "../graphql/Common";
+
 export interface IAccountService {
-  getAllAccounts(relations: AccountRelation[]): Promise<Account[]>;
+  getAllAccounts(
+    pagination: Required<PaginationOptions>,
+
+    relations: AccountRelation[]
+  ): Promise<Account[]>;
   getOneAccount(
     accountName: string,
     relations: AccountRelation[]
@@ -36,8 +42,18 @@ export default class AccountService implements IAccountService {
     private readonly accountRepository: Repository<Account>
   ) {}
 
-  async getAllAccounts(relations: AccountRelation[] = []): Promise<Account[]> {
-    const accounts = await this.accountRepository.find({ relations });
+  async getAllAccounts(
+    pagination: Required<PaginationOptions>,
+
+    relations: AccountRelation[] = []
+  ): Promise<Account[]> {
+    const { cursor, offset } = pagination;
+
+    const accounts = await this.accountRepository.find({
+      relations,
+      skip: cursor,
+      take: offset,
+    });
     return accounts;
   }
 

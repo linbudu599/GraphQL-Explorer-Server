@@ -7,41 +7,41 @@ import Substance from "../entity/Substance";
 
 @InterfaceType({ description: "Record Interface Type" })
 export abstract class IRecord {
-  @Field((type) => ID, { nullable: false })
+  @Field((type) => ID)
   recordId!: number;
 
-  @Field(() => Task, { nullable: true })
+  @Field((type) => Task, { nullable: true })
   recordTask!: Task;
 
-  @Field(() => Account, { nullable: true })
+  @Field((type) => Account, { nullable: true })
   recordAccount!: Account;
 
-  @Field(() => Executor, { nullable: true })
+  @Field((type) => Executor, { nullable: true })
   recordExecutor!: Executor;
 
-  @Field(() => Substance, { nullable: true })
+  @Field((type) => Substance, { nullable: true })
   recordSubstance!: Substance;
 
-  @Field()
+  @Field((type) => Date)
   createDate!: Date;
 
-  @Field()
+  @Field((type) => Date)
   lastUpdateDate!: Date;
 }
 
 @InputType({ description: "Record Relations Input" })
 export class RecordRelationsInput {
   @Field({ nullable: true })
-  joinTask: boolean = false;
+  joinTask: boolean = true;
 
   @Field({ nullable: true })
-  joinAccount: boolean = false;
+  joinAccount: boolean = true;
 
   @Field({ nullable: true })
-  joinExecutor: boolean = false;
+  joinExecutor: boolean = true;
 
   @Field({ nullable: true })
-  joinSubstance: boolean = false;
+  joinSubstance: boolean = true;
 }
 
 interface IRecordRelationOptions {
@@ -57,10 +57,10 @@ export type RecordRelations =
   | "recordSubstance";
 
 export const getRecordRelations = ({
-  joinTask = false,
-  joinAccount = false,
-  joinExecutor = false,
-  joinSubstance = false,
+  joinTask = true,
+  joinAccount = true,
+  joinExecutor = true,
+  joinSubstance = true,
 }: IRecordRelationOptions): RecordRelations[] => {
   const relations: RecordRelations[] = [];
 

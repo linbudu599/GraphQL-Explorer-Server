@@ -28,13 +28,12 @@ export class AccountProfile extends BaseEntity implements IAccountProfile {
   selfIntro!: string;
 
   @Column({
-    nullable: false,
     default: AccountVIPLevel.NON_VIP,
     comment: "账号VIP等级",
   })
   VIPLevel!: AccountVIPLevel;
 
-  @Column({ nullable: false, default: false, comment: "自我介绍" })
+  @Column({ default: false, comment: "自我介绍" })
   isLifeTimeVIP!: boolean;
 }
 
@@ -56,24 +55,22 @@ export default class Account extends BaseEntity implements IAccount {
   @Generated("uuid")
   accountUUID!: string;
 
-  @Column({ unique: true, nullable: false, comment: "账号名称" })
+  @Column({ unique: true, comment: "账号名称" })
   accountName!: string;
 
-  @Column({ nullable: false, comment: "账号密码" })
+  @Column({ comment: "账号密码" })
   accountPwd!: string;
 
-  @Column({ nullable: false, default: true, comment: "账号是否可用" })
+  @Column({ default: true, comment: "账号是否可用" })
   accountAvaliable!: boolean;
 
   @Column({
-    nullable: false,
     default: JSON.stringify(ACCOUNT_PROFILE_DEFAULT),
     comment: "账号资料",
   })
   accountProfile!: string;
 
   @Column({
-    nullable: false,
     default: ACCOUNT_TYPE.VISITOR,
     comment: "账号类型",
     enum: ACCOUNT_TYPE,

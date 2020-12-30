@@ -16,6 +16,8 @@ import { DifficultyLevel } from "../graphql/Public";
 import Executor, { ExecutorDesc } from "../entity/Executor";
 import Task from "../entity/Task";
 import Substance from "../entity/Substance";
+import Record from "../entity/Record";
+import Account from "../entity/Account";
 
 import { log } from "./helper";
 
@@ -256,6 +258,20 @@ export const dbConnect = async (): Promise<any> => {
     sub4.substanceDesc = "即刻祓除";
     sub4.substanceLevel = DifficultyLevel.OLD_DOMINATOR;
     mockTaskGroup[3].taskSubstance = sub4;
+
+    const account1 = new Account();
+    account1.accountName = "mock-account-name-01";
+    account1.accountPwd = "mock-account-pwd-01";
+
+    await account1.save();
+
+    const record1 = new Record();
+    record1.recordAccount = account1;
+    record1.recordExecutor = executor3;
+    record1.recordSubstance = sub4;
+    record1.recordTask = mockTaskGroup[3];
+
+    await record1.save();
 
     await connection.manager.save(mockTaskGroup);
     await connection.manager.save(mockSubstanceGroup);

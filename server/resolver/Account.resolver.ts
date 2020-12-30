@@ -16,6 +16,7 @@ import {
   LoginOrRegisterStatusHandler,
   StatusHandler,
   AccountUnionResult,
+  PaginationOptions,
 } from "../graphql/Common";
 import {
   AccountRegistryInput,
@@ -34,7 +35,11 @@ import AccountService from "../service/Account.service";
 import { ExtraFieldLogMiddlewareGenerator } from "../middleware/log";
 
 import { dispatchToken, validateToken } from "../utils/jwt";
-import { ACCOUNT_TYPE, RESPONSE_INDICATOR } from "../utils/constants";
+import {
+  ACCOUNT_TYPE,
+  RESPONSE_INDICATOR,
+  DEFAULT_QUERY_PAGINATION,
+} from "../utils/constants";
 import { encode, compare } from "../utils/bcrypt";
 
 @Resolver((of) => Account)
@@ -48,12 +53,21 @@ export default class AccountResolver {
   })
   @UseMiddleware(ExtraFieldLogMiddlewareGenerator("Check All Accounts"))
   async QueryAllAccounts(
+    @Arg("pagination", { nullable: true })
+    pagination: PaginationOptions,
+
     @Arg("relations", (type) => AccountRelationsInput, { nullable: true })
     relationOptions: Partial<AccountRelationsInput> = {}
   ): Promise<AccountStatus> {
     try {
+      const queryPagination = (pagination ??
+        DEFAULT_QUERY_PAGINATION) as Required<PaginationOptions>;
       const relations: AccountRelation[] = getAccountRelations(relationOptions);
-      const accounts = await this.accountService.getAllAccounts(relations);
+
+      const accounts = await this.accountService.getAllAccounts(
+        queryPagination,
+        relations
+      );
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, accounts);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
@@ -115,6 +129,7 @@ export default class AccountResolver {
   })
   async CheckAccountDetail(
     @Arg("accountId", (type) => Int) accountId: number,
+
     @Arg("relations", (type) => AccountRelationsInput, { nullable: true })
     relationOptions: Partial<AccountRelationsInput> = {}
   ): Promise<AccountStatus> {
