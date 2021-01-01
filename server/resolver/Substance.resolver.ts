@@ -82,6 +82,7 @@ export default class SubstanceResolver {
       if (!res) {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
+
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
@@ -90,7 +91,7 @@ export default class SubstanceResolver {
 
   @Query(() => SubstanceStatus, {
     nullable: false,
-    description: "基于条件查单个实体",
+    description: "基于条件查找单个实体",
   })
   async QueryOneSubstanceByConditions(
     @Arg("substanceQueryParam") param: SubstanceQueryInput,
@@ -105,7 +106,6 @@ export default class SubstanceResolver {
 
       const res = await this.substancesService.getOneSubstanceByConditions(
         param,
-
         relations
       );
 
@@ -228,6 +228,7 @@ export default class SubstanceResolver {
   })
   async CombineSubstanceAndTask(
     @Arg("substanceId", (type) => Int) substanceId: number,
+
     @Arg("taskId", (type) => Int) taskId: number
   ): Promise<SubstanceStatus> {
     try {

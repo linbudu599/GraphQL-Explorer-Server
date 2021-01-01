@@ -22,6 +22,8 @@ import {
   AccountRegistryInput,
   AccountLoginInput,
   AccountProfileInput,
+  AccountProfileQueryInput,
+  AccountProfileUpdateInput,
   AccountPasswordModifyInput,
   AccountRelationsInput,
   AccountRelation,
@@ -36,7 +38,7 @@ import { ExtraFieldLogMiddlewareGenerator } from "../middleware/log";
 
 import { ACCOUNT_TYPE, RESPONSE_INDICATOR } from "../utils/constants";
 
-import { generatePagination } from "../utils/helper";
+import { generatePagination, mergeJSONWithObj } from "../utils/helper";
 import { encode, compare } from "../utils/bcrypt";
 import { dispatchToken, validateToken } from "../utils/jwt";
 
@@ -67,6 +69,30 @@ export default class AccountResolver {
       );
 
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, accounts);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
+  }
+
+  @Query(() => AccountStatus, {
+    nullable: false,
+    description: "基于资料查找用户",
+  })
+  async QueryAccountByProfile(
+    @Arg("profileQueryParams", (type) => AccountProfileQueryInput, {
+      nullable: true,
+    })
+    params: AccountProfileQueryInput,
+
+    @Arg("pagination", { nullable: true })
+    pagination: PaginationOptions,
+
+    @Arg("relations", (type) => AccountRelationsInput, { nullable: true })
+    relationOptions: AccountRelationsInput = {}
+  ): Promise<AccountStatus> {
+    try {
+      // TODO: 可能换个支持这种方式的数据库再搞
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, []);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
     }
@@ -366,7 +392,7 @@ export default class AccountResolver {
   })
   async MutateAccountProfile(
     @Arg("accountId", (type) => Int) accountId: number,
-    @Arg("modifiedAccountProfile") accountProfile: AccountProfileInput
+    @Arg("modifiedAccountProfile") accountProfile: AccountProfileUpdateInput
   ): Promise<AccountStatus> {
     try {
       const account = await this.accountService.getOneAccountById(accountId);
@@ -378,13 +404,11 @@ export default class AccountResolver {
         );
       }
 
-      const updatedProfile = {
-        ...JSON.parse(account.accountProfile),
-        ...accountProfile,
-      };
-
       const res = await this.accountService.updateAccount(accountId, {
-        accountProfile: JSON.stringify(updatedProfile),
+        accountProfile: mergeJSONWithObj(
+          account.accountProfile,
+          accountProfile
+        ),
       });
 
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);

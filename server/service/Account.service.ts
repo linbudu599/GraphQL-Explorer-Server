@@ -7,6 +7,7 @@ import {
   IAccount,
   AccountRegistryInput,
   AccountRelation,
+  AccountProfileQueryInput,
 } from "../graphql/Account";
 
 import { PaginationOptions } from "../graphql/Common";
@@ -26,6 +27,12 @@ export interface IAccountService {
     relations: AccountRelation[]
   ): Promise<Account | undefined>;
 
+  // getAccountsByConditions(
+  //   conditions: AccountProfileQueryInput,
+  //   pagination: Required<PaginationOptions>,
+  //   relations: AccountRelation[]
+  // ): Promise<Account[]>;
+
   createAccount(account: AccountRegistryInput): Promise<Account>;
 
   updateAccount(
@@ -42,7 +49,7 @@ export default class AccountService implements IAccountService {
     private readonly accountRepository: Repository<Account>
   ) {}
 
-  private generateSelectBuilder(relations: AccountRelation[]) {
+  private generateSelectBuilder(relations: AccountRelation[] = []) {
     let selectQueryBuilder = this.accountRepository.createQueryBuilder(
       "account"
     );

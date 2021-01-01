@@ -169,7 +169,7 @@ export class AccountPasswordModifyInput {
 }
 
 @InputType({ description: "Account Profile Input Type" })
-export class AccountProfileInput {
+export class AccountProfileInput implements Partial<IAccountProfile> {
   @Field({ nullable: true })
   @IsOptional()
   @IsString()
@@ -191,6 +191,39 @@ export class AccountProfileInput {
   @Field({ nullable: true })
   isLifeTimeVIP?: boolean;
 }
+
+export const AccountProfileQueryMixin = <TClassType extends ClassType>(
+  BaseClass: TClassType
+) => {
+  @ObjectType({ isAbstract: true })
+  @InputType({ isAbstract: true })
+  class QueryInput extends BaseClass {}
+
+  return QueryInput;
+};
+
+export const AccountProfileUpdateMixin = <TClassType extends ClassType>(
+  BaseClass: TClassType
+) => {
+  @ObjectType({ isAbstract: true })
+  @InputType({ isAbstract: true })
+  class UpdateInput extends BaseClass {
+    @Field((type) => ID)
+    accountId!: number;
+  }
+
+  return UpdateInput;
+};
+
+@InputType({ description: "Account Profile Query Input" })
+export class AccountProfileQueryInput extends AccountProfileQueryMixin(
+  AccountProfileInput
+) {}
+
+@InputType({ description: "Account Profile Update Input" })
+export class AccountProfileUpdateInput extends AccountProfileQueryMixin(
+  AccountProfileInput
+) {}
 
 @InputType({ description: "Account Relations Input Type" })
 export class AccountRelationsInput {
