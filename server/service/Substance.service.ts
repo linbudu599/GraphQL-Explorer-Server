@@ -57,10 +57,11 @@ export default class SubstanceService implements ISubstanceService {
     );
 
     if (relations.includes("relatedRecord")) {
-      selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
-        "substance.relatedRecord",
-        "relatedRecord"
-      );
+      selectQueryBuilder = selectQueryBuilder
+        .leftJoinAndSelect("substance.relatedRecord", "records")
+        .leftJoinAndSelect("records.recordExecutor", "recordExecutor")
+        .leftJoinAndSelect("records.recordTask", "recordTask")
+        .leftJoinAndSelect("records.recordAccount", "recordAccount");
     }
     if (relations.includes("relatedTask")) {
       selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
@@ -80,17 +81,22 @@ export default class SubstanceService implements ISubstanceService {
     return selectQueryBuilder;
   }
 
-  private conditionSelectBuilder(
-    builder: SelectQueryBuilder<Substance>,
-    conditions: SubstanceQueryInput
+  private SubstanceConditionQuery(
+    conditions: SubstanceQueryInput,
+    relations: SubstanceRelation[] = []
   ) {
+    let initialSelectBuilder = this.generateSelectBuilder(relations);
+
     Object.keys(conditions).forEach((key) => {
-      builder = builder.andWhere(`substance.${key}= :${key}`, {
-        [key]: conditions[key],
-      });
+      initialSelectBuilder = initialSelectBuilder.andWhere(
+        `substance.${key}= :${key}`,
+        {
+          [key]: conditions[key],
+        }
+      );
     });
 
-    return builder;
+    return initialSelectBuilder;
   }
 
   async getAllSubstances(
@@ -122,14 +128,11 @@ export default class SubstanceService implements ISubstanceService {
     conditions: SubstanceQueryInput,
     relations: SubstanceRelation[] = []
   ): Promise<Substance | undefined> {
-    let initialSelectBuilder = this.generateSelectBuilder(relations);
+    const res = await this.SubstanceConditionQuery(
+      conditions,
+      relations
+    ).getOne();
 
-    let conditionSelectBuilder = this.conditionSelectBuilder(
-      initialSelectBuilder,
-      conditions
-    );
-
-    const res = await conditionSelectBuilder.getOne();
     return res;
   }
 
@@ -140,17 +143,11 @@ export default class SubstanceService implements ISubstanceService {
   ): Promise<Substance[]> {
     const { cursor, offset } = pagination;
 
-    let initialSelectBuilder = this.generateSelectBuilder(relations);
-
-    let conditionSelectBuilder = this.conditionSelectBuilder(
-      initialSelectBuilder,
-      conditions
-    );
-
-    const res = await conditionSelectBuilder
+    const res = await this.SubstanceConditionQuery(conditions, relations)
       .take(offset)
       .skip(cursor)
       .getMany();
+
     return res;
   }
 

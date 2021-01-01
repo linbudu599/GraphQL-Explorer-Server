@@ -1,5 +1,5 @@
 import { Service } from "typedi";
-import { FindConditions, Repository } from "typeorm";
+import { FindConditions, Repository, SelectQueryBuilder } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import Task from "../entity/Task";
@@ -28,6 +28,7 @@ export interface ITaskService {
   ): Promise<Task | undefined>;
   getTasksByConditions(
     conditions: FindConditions<Task>,
+    pagination: Required<PaginationOptions>,
     relations: TaskRelation[]
   ): Promise<Task[]>;
 
@@ -46,17 +47,62 @@ export default class TaskService implements ITaskService {
     private readonly taskRepository: Repository<Task>
   ) {}
 
+  private generateSelectBuilder(relations: TaskRelation[]) {
+    let selectQueryBuilder = this.taskRepository.createQueryBuilder("task");
+
+    if (relations.includes("assignee")) {
+      selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
+        "task.assignee",
+        "assignee"
+      );
+    }
+
+    if (relations.includes("taskSubstance")) {
+      selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
+        "task.taskSubstance",
+        "substance"
+      );
+    }
+
+    if (relations.includes("relatedRecord")) {
+      selectQueryBuilder = selectQueryBuilder
+        .leftJoinAndSelect("task.relatedRecord", "records")
+        .leftJoinAndSelect("records.recordAccount", "recordAccount")
+        .leftJoinAndSelect("records.recordExecutor", "recordExecutor")
+        .leftJoinAndSelect("records.recordSubstance", "recordSubstance");
+    }
+
+    return selectQueryBuilder;
+  }
+
+  private TaskConditionQuery(
+    conditions: TaskQueryInput,
+    relations: TaskRelation[] = []
+  ) {
+    let initialSelectBuilder = this.generateSelectBuilder(relations);
+
+    Object.keys(conditions).forEach((key) => {
+      initialSelectBuilder = initialSelectBuilder.andWhere(
+        `task.${key}= :${key}`,
+        {
+          [key]: conditions[key],
+        }
+      );
+    });
+
+    return initialSelectBuilder;
+  }
+
   async getAllTasks(
     pagination: Required<PaginationOptions>,
     relations: TaskRelation[] = []
   ): Promise<Task[]> {
     const { cursor, offset } = pagination;
 
-    const res = await this.taskRepository.find({
-      skip: cursor,
-      take: offset,
-      relations,
-    });
+    const res = await this.generateSelectBuilder(relations)
+      .take(offset)
+      .skip(cursor)
+      .getMany();
 
     return res;
   }
@@ -65,9 +111,9 @@ export default class TaskService implements ITaskService {
     taskId: number,
     relations: TaskRelation[] = []
   ): Promise<Task | undefined> {
-    const res = await this.taskRepository.findOne(taskId, {
-      relations,
-    });
+    const res = await this.generateSelectBuilder(relations)
+      .where("task.taskId = :taskId", { taskId })
+      .getOne();
 
     return res;
   }
@@ -76,23 +122,17 @@ export default class TaskService implements ITaskService {
     conditions: TaskQueryInput,
     relations: TaskRelation[] = []
   ): Promise<Task | undefined> {
-    const res = await this.taskRepository.findOne(conditions, {
-      relations,
-    });
+    const res = await this.TaskConditionQuery(conditions, relations).getOne();
 
     return res;
   }
 
   async getTasksByConditions(
     conditions: TaskQueryInput,
+    pagination: Required<PaginationOptions>,
     relations: TaskRelation[] = []
   ): Promise<Task[]> {
-    const res = await this.taskRepository.find({
-      where: {
-        ...conditions,
-      },
-      relations,
-    });
+    const res = await this.TaskConditionQuery(conditions, relations).getMany();
     return res;
   }
 
@@ -107,12 +147,18 @@ export default class TaskService implements ITaskService {
   ): Promise<Task> {
     await this.taskRepository.update(indicator, infoUpdate);
 
-    const updatedItem = (await this.taskRepository.findOne(indicator)) as Task;
+    const updatedItem = (await this.getOneTaskById(indicator))!;
 
     return updatedItem;
   }
 
   async deleteTask(taskId: number): Promise<void> {
-    await this.taskRepository.delete(taskId);
+    await this.taskRepository
+      .createQueryBuilder()
+      .delete()
+      .from(Task)
+      .where("taskId = :taskId")
+      .setParameter("taskId", taskId)
+      .execute();
   }
 }

@@ -14,6 +14,8 @@ import Substance from "../entity/Substance";
 import Account from "../entity/Account";
 import Record from "../entity/Record";
 
+import { IPaginationOptions } from "../utils/helper";
+
 @InterfaceType({ description: "Basic Status Wrapper" })
 export class IBaseStatus {
   @Field()
@@ -107,7 +109,7 @@ export class StatusHandler {
 }
 
 @InputType({ description: "Pagination Options Input" })
-export class PaginationOptions {
+export class PaginationOptions implements IPaginationOptions {
   @Field(() => Int, { nullable: true })
   @Max(100)
   @Min(0)

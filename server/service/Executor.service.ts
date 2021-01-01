@@ -1,4 +1,4 @@
-import { FindConditions, Repository, SelectQueryBuilder } from "typeorm";
+import { Repository, SelectQueryBuilder } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import { Service, Inject } from "typedi";
@@ -70,10 +70,11 @@ export default class ExecutorService implements IExecutorService {
     }
 
     if (relations.includes("relatedRecord")) {
-      selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
-        "executor.relatedRecord",
-        "relatedRecord"
-      );
+      selectQueryBuilder = selectQueryBuilder
+        .leftJoinAndSelect("executor.relatedRecord", "records")
+        .leftJoinAndSelect("records.recordTask", "recordTask")
+        .leftJoinAndSelect("records.recordAccount", "recordAccount")
+        .leftJoinAndSelect("records.recordSubstance", "recordSubstance");
     }
 
     // 任务 >>> 实体

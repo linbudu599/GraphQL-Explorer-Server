@@ -17,10 +17,9 @@ import {
   SubstanceRelationsInput,
 } from "../graphql/Substance";
 
-import {
-  RESPONSE_INDICATOR,
-  DEFAULT_QUERY_PAGINATION,
-} from "../utils/constants";
+import { RESPONSE_INDICATOR } from "../utils/constants";
+
+import { generatePagination } from "../utils/helper";
 
 import SubstanceService from "../service/Substance.service";
 import TaskService from "../service/Task.service";
@@ -44,9 +43,7 @@ export default class SubstanceResolver {
     relationOptions: Partial<SubstanceRelationsInput> = {}
   ): Promise<SubstanceStatus> {
     try {
-      const queryPagination = (pagination ??
-        DEFAULT_QUERY_PAGINATION) as Required<PaginationOptions>;
-
+      const queryPagination = generatePagination(pagination);
       const relations: SubstanceRelation[] = getSubstanceRelations(
         relationOptions
       );
@@ -132,9 +129,7 @@ export default class SubstanceResolver {
     relationOptions: Partial<SubstanceRelationsInput> = {}
   ): Promise<SubstanceStatus> {
     try {
-      const queryPagination = (pagination ??
-        DEFAULT_QUERY_PAGINATION) as Required<PaginationOptions>;
-
+      const queryPagination = generatePagination(pagination);
       const relations: SubstanceRelation[] = getSubstanceRelations(
         relationOptions
       );

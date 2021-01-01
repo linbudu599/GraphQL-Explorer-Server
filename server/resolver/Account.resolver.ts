@@ -34,13 +34,11 @@ import AccountService from "../service/Account.service";
 
 import { ExtraFieldLogMiddlewareGenerator } from "../middleware/log";
 
-import { dispatchToken, validateToken } from "../utils/jwt";
-import {
-  ACCOUNT_TYPE,
-  RESPONSE_INDICATOR,
-  DEFAULT_QUERY_PAGINATION,
-} from "../utils/constants";
+import { ACCOUNT_TYPE, RESPONSE_INDICATOR } from "../utils/constants";
+
+import { generatePagination } from "../utils/helper";
 import { encode, compare } from "../utils/bcrypt";
+import { dispatchToken, validateToken } from "../utils/jwt";
 
 @Resolver((of) => Account)
 export default class AccountResolver {
@@ -57,18 +55,17 @@ export default class AccountResolver {
     pagination: PaginationOptions,
 
     @Arg("relations", (type) => AccountRelationsInput, { nullable: true })
-    relationOptions: Partial<AccountRelationsInput> = {}
+    relationOptions: AccountRelationsInput = {}
   ): Promise<AccountStatus> {
-    // TODO: 关系校验, 如果需要查询record相关, 就必须包含relatedRecord关系
     try {
-      const queryPagination = (pagination ??
-        DEFAULT_QUERY_PAGINATION) as Required<PaginationOptions>;
+      const queryPagination = generatePagination(pagination);
       const relations: AccountRelation[] = getAccountRelations(relationOptions);
 
       const accounts = await this.accountService.getAllAccounts(
         queryPagination,
         relations
       );
+
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, accounts);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);

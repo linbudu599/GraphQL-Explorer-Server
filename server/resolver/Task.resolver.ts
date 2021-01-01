@@ -21,10 +21,9 @@ import TaskService from "../service/Task.service";
 import ExecutorService from "../service/Executor.service";
 import SubstanceService from "../service/Substance.service";
 
-import {
-  RESPONSE_INDICATOR,
-  DEFAULT_QUERY_PAGINATION,
-} from "../utils/constants";
+import { RESPONSE_INDICATOR } from "../utils/constants";
+
+import { generatePagination } from "../utils/helper";
 
 @Resolver((of) => Task)
 export default class TaskResolver {
@@ -43,10 +42,9 @@ export default class TaskResolver {
     relationOptions: Partial<TaskRelationsInput> = {}
   ): Promise<TaskStatus> {
     try {
-      const queryPagination = (pagination ??
-        DEFAULT_QUERY_PAGINATION) as Required<PaginationOptions>;
-
+      const queryPagination = generatePagination(pagination);
       const relations: TaskRelation[] = getTaskRelations(relationOptions);
+
       const res = this.taskService.getAllTasks(queryPagination, relations);
 
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, res);
@@ -107,13 +105,22 @@ export default class TaskResolver {
   async QueryTasksByConditions(
     @Arg("taskQueryParams") param: TaskQueryInput,
 
+    @Arg("pagination", { nullable: true })
+    pagination: PaginationOptions,
+
     @Arg("relations", (type) => TaskRelationsInput, { nullable: true })
     relationOptions: Partial<TaskRelationsInput> = {}
   ): Promise<TaskStatus> {
     try {
+      const queryPagination = generatePagination(pagination);
+
       const relations: TaskRelation[] = getTaskRelations(relationOptions);
 
-      const res = await this.taskService.getTasksByConditions(param, relations);
+      const res = await this.taskService.getTasksByConditions(
+        param,
+        queryPagination,
+        relations
+      );
 
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, res);
     } catch (error) {
@@ -128,10 +135,15 @@ export default class TaskResolver {
   async QueryExecutorTasks(
     @Arg("uid") uid: number,
 
+    @Arg("pagination", { nullable: true })
+    pagination: PaginationOptions,
+
     @Arg("relations", (type) => TaskRelationsInput, { nullable: true })
     relationOptions: Partial<TaskRelationsInput> = {}
   ) {
     try {
+      const queryPagination = generatePagination(pagination);
+
       const executor = await this.executorService.getOneExecutorById(uid);
 
       if (!executor) {
@@ -146,6 +158,7 @@ export default class TaskResolver {
             uid,
           },
         },
+        queryPagination,
         relations
       );
 

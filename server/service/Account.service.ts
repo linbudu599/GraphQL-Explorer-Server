@@ -48,34 +48,11 @@ export default class AccountService implements IAccountService {
     );
 
     if (relations.includes("relatedRecord")) {
-      selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
-        "account.relatedRecord",
-        "records"
-      );
-    } else {
-      // 如果关系中不包含relatedRecord, 就不能进行后面的查询
-      return selectQueryBuilder;
-    }
-
-    if (relations.includes("recordExecutor")) {
-      selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
-        "records.recordExecutor",
-        "executor"
-      );
-    }
-
-    if (relations.includes("recordTask")) {
-      selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
-        "records.recordTask",
-        "task"
-      );
-    }
-
-    if (relations.includes("recordSubstance")) {
-      selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
-        "records.recordSubstance",
-        "substance"
-      );
+      selectQueryBuilder = selectQueryBuilder
+        .leftJoinAndSelect("account.relatedRecord", "records")
+        .leftJoinAndSelect("records.recordExecutor", "executor")
+        .leftJoinAndSelect("records.recordTask", "task")
+        .leftJoinAndSelect("records.recordSubstance", "substance");
     }
 
     return selectQueryBuilder;

@@ -195,42 +195,29 @@ export class AccountProfileInput {
 @InputType({ description: "Account Relations Input Type" })
 export class AccountRelationsInput {
   @Field({ nullable: true })
-  joinRecord: boolean = false;
+  joinRecord?: boolean;
 
   @Field({ nullable: true })
-  joinRecordExecutor: boolean = false;
+  joinRecordExecutor?: boolean;
 
   @Field({ nullable: true })
-  joinRecordTask: boolean = false;
+  joinRecordTask?: boolean;
 
   @Field({ nullable: true })
-  joinRecordSubstance: boolean = false;
+  joinRecordSubstance?: boolean;
 }
 
 interface IAccountRelationOptions {
   joinRecord?: boolean;
-  joinRecordExecutor?: boolean;
-  joinRecordTask?: boolean;
-  joinRecordSubstance?: boolean;
 }
-export type AccountRelation =
-  | "relatedRecord"
-  | "recordExecutor"
-  | "recordTask"
-  | "recordSubstance";
+export type AccountRelation = "relatedRecord";
 
 export const getAccountRelations = ({
   joinRecord = false,
-  joinRecordExecutor = false,
-  joinRecordTask = false,
-  joinRecordSubstance = false,
 }: IAccountRelationOptions): AccountRelation[] => {
   const relations: AccountRelation[] = [];
 
   joinRecord ? relations.push("relatedRecord") : void 0;
-  joinRecordExecutor ? relations.push("recordExecutor") : void 0;
-  joinRecordTask ? relations.push("recordTask") : void 0;
-  joinRecordSubstance ? relations.push("recordSubstance") : void 0;
 
   return relations;
 };

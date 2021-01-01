@@ -4,6 +4,9 @@ import {
   GraphQLFieldConfig,
   GraphQLObjectTypeConfig,
 } from "graphql";
+import { DEFAULT_QUERY_PAGINATION } from "./constants";
+
+import { PaginationOptions } from "../graphql/Common";
 
 export function log(msg: string, color: string = "green"): void {
   console.log(chalk[color](msg));
@@ -55,3 +58,17 @@ export const mergeJSONWithObj = (json: string, convertion: object): string =>
     ...JSON.parse(json),
     ...convertion,
   });
+
+export interface IPaginationOptions {
+  readonly cursor?: number;
+  readonly offset?: number;
+}
+
+export const generatePagination = (
+  pagination?: IPaginationOptions
+): Required<IPaginationOptions> => {
+  return {
+    cursor: pagination?.cursor ?? DEFAULT_QUERY_PAGINATION.cursor,
+    offset: pagination?.offset ?? DEFAULT_QUERY_PAGINATION.offset,
+  };
+};

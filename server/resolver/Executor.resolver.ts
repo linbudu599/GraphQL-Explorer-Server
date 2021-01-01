@@ -33,11 +33,8 @@ import {
   ExecutorStatus,
 } from "../graphql/Common";
 
-import {
-  RESPONSE_INDICATOR,
-  DEFAULT_QUERY_PAGINATION,
-} from "../utils/constants";
-import { mergeJSONWithObj } from "../utils/helper";
+import { RESPONSE_INDICATOR } from "../utils/constants";
+import { mergeJSONWithObj, generatePagination } from "../utils/helper";
 import { InjectCurrentUser, CustomArgsValidation } from "../decorators";
 
 import { ExtraFieldLogMiddlewareGenerator } from "../middleware/log";
@@ -64,8 +61,7 @@ export default class ExecutorResolver {
     relationOptions: Partial<ExecutorRelationsInput> = {}
   ): Promise<ExecutorStatus> {
     try {
-      const queryPagination = (pagination ??
-        DEFAULT_QUERY_PAGINATION) as Required<PaginationOptions>;
+      const queryPagination = generatePagination(pagination);
       const relations: ExecutorRelation[] = getExecutorRelations(
         relationOptions
       );
@@ -158,9 +154,8 @@ export default class ExecutorResolver {
     @Arg("relations", (type) => ExecutorRelationsInput, { nullable: true })
     relationOptions: Partial<ExecutorRelationsInput> = {}
   ): Promise<ExecutorStatus> {
+    const queryPagination = generatePagination(pagination);
     const relations: ExecutorRelation[] = getExecutorRelations(relationOptions);
-    const queryPagination = (pagination ??
-      DEFAULT_QUERY_PAGINATION) as Required<PaginationOptions>;
 
     const { level, successRate, satisfaction } = desc;
 

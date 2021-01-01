@@ -69,10 +69,10 @@ input AccountRegistryInput {
 Account Relations Input Type
 """
 input AccountRelationsInput {
-  joinRecord: Boolean = false
-  joinRecordExecutor: Boolean = false
-  joinRecordSubstance: Boolean = false
-  joinRecordTask: Boolean = false
+  joinRecord: Boolean
+  joinRecordExecutor: Boolean
+  joinRecordSubstance: Boolean
+  joinRecordTask: Boolean
 }
 
 """
@@ -631,7 +631,11 @@ type Query {
   """
   查询执行者当前被分配的任务
   """
-  QueryExecutorTasks(relations: TaskRelationsInput, uid: Float!): TaskStatus!
+  QueryExecutorTasks(
+    pagination: PaginationOptions
+    relations: TaskRelationsInput
+    uid: Float!
+  ): TaskStatus!
 
   """
   基于条件查单个实体
@@ -699,6 +703,7 @@ type Query {
   基于条件获取多个任务
   """
   QueryTasksByConditions(
+    pagination: PaginationOptions
     relations: TaskRelationsInput
     taskQueryParams: TaskQueryInput!
   ): TaskStatus!
