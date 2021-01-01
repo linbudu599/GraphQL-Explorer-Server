@@ -11,7 +11,6 @@ import {
   UpdateDateColumn,
   OneToMany,
   RelationId,
-  JoinColumn,
   OneToOne,
 } from "typeorm";
 
@@ -35,7 +34,7 @@ export class ExecutorDesc extends BaseEntity implements IExecutorDesc {
   satisfaction!: number;
 }
 
-const Executor_DESC_DEFAULT = plainToClass(ExecutorDesc, {
+const EXECUTOR_DESC_DEFAULT = plainToClass(ExecutorDesc, {
   level: DifficultyLevel.ROOKIE,
   successRate: 0,
   satisfaction: 0,
@@ -46,27 +45,30 @@ const Executor_DESC_DEFAULT = plainToClass(ExecutorDesc, {
 export default class Executor extends BaseEntity implements IExecutor {
   // 执行者基本信息
   @PrimaryGeneratedColumn()
-  uid!: string;
+  uid!: number;
 
-  @Column({ unique: true, nullable: false })
+  @Column({ unique: true })
   name!: string;
 
-  @Column({ default: 0, nullable: false })
+  @Column({ default: 10 })
   age!: number;
 
-  @Column({ default: JOB.FE })
+  @Column({ default: JOB.FE, enum: JOB })
   job!: JOB;
 
-  @Column({ default: false, nullable: false })
+  @Column({ default: false })
+  avaliable!: boolean;
+
+  @Column({ default: false })
   isFool!: boolean;
 
-  @Column({ default: JSON.stringify(Executor_DESC_DEFAULT) })
+  @Column({ default: JSON.stringify(EXECUTOR_DESC_DEFAULT) })
   // @Extension needs to be used with @Field
   @Extensions({ info: "Executor.desc Field" })
   @Field()
   desc!: string;
 
-  @Column({ default: REGION.OTHER, nullable: false })
+  @Column({ default: REGION.OTHER, enum: REGION })
   region!: REGION;
 
   @Extensions({ complexity: 1 })
@@ -75,23 +77,25 @@ export default class Executor extends BaseEntity implements IExecutor {
   spAgeField?: number;
 
   // 任务
-  @OneToMany(() => Task, (task) => task.assignee)
-  @TypeormLoader((type) => Executor, (Executor: Executor) => Executor.taskIds)
+  @OneToMany((type) => Task, (task) => task.assignee, {
+    cascade: true,
+    nullable: true,
+  })
+  @TypeormLoader((type) => Task, (executor: Executor) => executor.taskIds)
   tasks?: Task[];
 
-  @RelationId((Executor: Executor) => Executor.tasks)
-  taskIds?: string[];
+  @RelationId((executor: Executor) => executor.tasks)
+  taskIds?: number[];
 
-  // 关联记录
-  @OneToOne((type) => Record, (record) => record.recordExecutor, {
-    nullable: true,
+  // 记录
+  @OneToMany((type) => Record, (record) => record.recordExecutor, {
     cascade: true,
+    nullable: true,
   })
-  @JoinColumn()
-  relatedRecord!: Record;
+  relatedRecord!: Record[];
 
   @RelationId((executor: Executor) => executor.relatedRecord)
-  relatedRecordId?: string;
+  relatedRecordId?: number[];
 
   @CreateDateColumn()
   joinDate!: Date;

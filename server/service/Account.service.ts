@@ -1,21 +1,45 @@
 import { Service } from "typedi";
-import { FindConditions, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import Account from "../entity/Account";
-import { IAccount, AccountRegistryInput } from "../graphql/Account";
+import {
+  IAccount,
+  AccountRegistryInput,
+  AccountRelation,
+  AccountProfileQueryInput,
+} from "../graphql/Account";
+
+import { PaginationOptions } from "../graphql/Common";
 
 export interface IAccountService {
-  getAllAccounts(): Promise<Account[]>;
-  getOneAccount(accountName: string): Promise<Account | undefined>;
-  getOneAccountById(accountId: string): Promise<Account | undefined>;
+  getAllAccounts(
+    pagination: Required<PaginationOptions>,
+
+    relations: AccountRelation[]
+  ): Promise<Account[]>;
+  getOneAccount(
+    accountName: string,
+    relations: AccountRelation[]
+  ): Promise<Account | undefined>;
+  getOneAccountById(
+    accountId: number,
+    relations: AccountRelation[]
+  ): Promise<Account | undefined>;
+
+  // getAccountsByConditions(
+  //   conditions: AccountProfileQueryInput,
+  //   pagination: Required<PaginationOptions>,
+  //   relations: AccountRelation[]
+  // ): Promise<Account[]>;
+
   createAccount(account: AccountRegistryInput): Promise<Account>;
 
   updateAccount(
-    indicator: Partial<IAccount>,
+    indicator: number,
     infoUpdate: Partial<IAccount>
-  ): Promise<void>;
-  deleteAccount(accountName: string): Promise<void>;
+  ): Promise<Account>;
+  deleteAccount(accountId: number): Promise<void>;
 }
 
 @Service()
@@ -25,18 +49,56 @@ export default class AccountService implements IAccountService {
     private readonly accountRepository: Repository<Account>
   ) {}
 
-  async getAllAccounts(): Promise<Account[]> {
-    const accounts = await this.accountRepository.find();
+  private generateSelectBuilder(relations: AccountRelation[] = []) {
+    let selectQueryBuilder = this.accountRepository.createQueryBuilder(
+      "account"
+    );
+
+    if (relations.includes("relatedRecord")) {
+      selectQueryBuilder = selectQueryBuilder
+        .leftJoinAndSelect("account.relatedRecord", "records")
+        .leftJoinAndSelect("records.recordExecutor", "executor")
+        .leftJoinAndSelect("records.recordTask", "task")
+        .leftJoinAndSelect("records.recordSubstance", "substance");
+    }
+
+    return selectQueryBuilder;
+  }
+
+  async getAllAccounts(
+    pagination: Required<PaginationOptions>,
+
+    relations: AccountRelation[] = []
+  ): Promise<Account[]> {
+    const { cursor, offset } = pagination;
+
+    const accounts = await this.generateSelectBuilder(relations)
+      .take(offset)
+      .skip(cursor)
+      .getMany();
+
     return accounts;
   }
 
-  async getOneAccount(accountName: string): Promise<Account | undefined> {
-    const account = await this.accountRepository.findOne({ accountName });
+  async getOneAccount(
+    accountName: string,
+    relations: AccountRelation[] = []
+  ): Promise<Account | undefined> {
+    const account = await this.generateSelectBuilder(relations)
+      .where("account.accountName = :accountName", { accountName })
+      .getOne();
+
     return account;
   }
 
-  async getOneAccountById(accountId: string): Promise<Account | undefined> {
-    const account = await this.accountRepository.findOne(accountId);
+  async getOneAccountById(
+    accountId: number,
+    relations: AccountRelation[] = []
+  ): Promise<Account | undefined> {
+    const account = await this.generateSelectBuilder(relations)
+      .where("account.accountId = :accountId", { accountId })
+      .getOne();
+
     return account;
   }
 
@@ -46,13 +108,23 @@ export default class AccountService implements IAccountService {
   }
 
   async updateAccount(
-    indicator: FindConditions<IAccount> | string,
+    indicator: number,
     infoUpdate: Partial<IAccount>
-  ): Promise<void> {
+  ): Promise<Account> {
     await this.accountRepository.update(indicator, infoUpdate);
+
+    const updatedItem = (await this.getOneAccountById(indicator))!;
+
+    return updatedItem;
   }
 
-  async deleteAccount(accountName: string): Promise<void> {
-    await this.accountRepository.delete({ accountName });
+  async deleteAccount(accountId: number): Promise<void> {
+    await this.accountRepository
+      .createQueryBuilder()
+      .delete()
+      .from(Account)
+      .where("accountId = :accountId")
+      .setParameter("accountId", accountId)
+      .execute();
   }
 }

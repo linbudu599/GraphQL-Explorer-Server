@@ -6,6 +6,7 @@ import {
   InterfaceType,
   ClassType,
   ObjectType,
+  Int,
 } from "type-graphql";
 import {
   Length,
@@ -68,19 +69,19 @@ registerEnumType(TaskPriority, {
 
 @InterfaceType({ description: "Task Interface Type" })
 export abstract class ITask {
-  @Field((type) => ID, { nullable: false })
-  taskId!: string;
+  @Field((type) => ID)
+  taskId!: number;
 
   @Field()
   taskTitle!: string;
 
-  @Field({ nullable: false })
+  @Field()
   requireCleaner!: boolean;
 
-  @Field({ nullable: false })
+  @Field()
   requirePsychologicalIntervention!: boolean;
 
-  @Field(() => Executor, { nullable: true })
+  @Field((type) => Executor, { nullable: true })
   assignee!: IExecutor;
 
   @Field()
@@ -89,10 +90,10 @@ export abstract class ITask {
   @Field()
   allowAbort!: boolean;
 
-  @Field(() => TaskSource, { nullable: false })
+  @Field((type) => TaskSource)
   taskSource!: TaskSource;
 
-  @Field(() => DifficultyLevel, { nullable: false })
+  @Field((type) => DifficultyLevel)
   taskLevel!: DifficultyLevel;
 
   @Field()
@@ -101,20 +102,20 @@ export abstract class ITask {
   @Field()
   taskAvaliable!: Boolean;
 
-  @Field()
+  @Field((type) => Int)
   taskReward!: number;
 
-  @Field()
+  @Field((type) => Int)
   taskRate!: number;
 
-  @Field(() => TaskTarget, { nullable: false })
+  @Field((type) => TaskTarget)
   taskTarget!: TaskTarget;
 
-  @Field(() => Substance, { nullable: true })
+  @Field((type) => Substance, { nullable: true })
   taskSubstance!: Substance;
 
-  @Field(() => Record, { nullable: true })
-  relatedRecord!: Record;
+  @Field((type) => [Record]!, { nullable: true })
+  relatedRecord!: Record[];
 
   @Field()
   publishDate!: Date;
@@ -127,12 +128,43 @@ export abstract class ITask {
 @InputType({ isAbstract: true })
 export class TaskInput implements Partial<ITask> {
   @Field({ nullable: true })
+  @Length(5, 10)
+  @IsString()
+  taskTitle?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  requireCleaner?: boolean;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  requirePsychologicalIntervention?: boolean;
+
+  @Field({ nullable: true })
   @Length(2, 100)
   @IsString()
   @IsOptional()
   taskContent?: string;
 
   @Field({ nullable: true })
+  @IsOptional()
+  allowAbort?: boolean;
+
+  @Field((type) => TaskSource, { nullable: true })
+  @IsOptional()
+  @IsEnum(TaskSource)
+  taskSource?: TaskSource;
+
+  @Field((type) => DifficultyLevel, { nullable: true })
+  @IsOptional()
+  @IsEnum(DifficultyLevel)
+  taskLevel?: DifficultyLevel;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  taskAvaliable?: Boolean;
+
+  @Field((type) => Int, { nullable: true })
   @Max(1000)
   @Min(0)
   @IsNumber()
@@ -140,21 +172,25 @@ export class TaskInput implements Partial<ITask> {
   @IsOptional()
   taskReward?: number;
 
-  @Field({ nullable: true })
+  @Field((type) => Int, { nullable: true })
   @IsOptional()
-  @IsEnum(TaskSource)
-  taskSource?: TaskSource;
+  taskRate?: number;
 
-  @Field({ nullable: true })
-  @IsOptional()
-  @IsEnum(DifficultyLevel)
-  taskLevel?: DifficultyLevel;
-
-  @Field({ nullable: true })
+  @Field((type) => TaskTarget, { nullable: true })
   @IsOptional()
   @IsEnum(TaskTarget)
   taskTarget?: TaskTarget;
 }
+
+export const QueryTaskMixin = <TClassType extends ClassType>(
+  BaseClass: TClassType
+) => {
+  @ObjectType({ isAbstract: true })
+  @InputType({ isAbstract: true })
+  class QueryInput extends BaseClass {}
+
+  return QueryInput;
+};
 
 export const PublishTaskMixin = <TClassType extends ClassType>(
   BaseClass: TClassType
@@ -167,9 +203,10 @@ export const PublishTaskMixin = <TClassType extends ClassType>(
     @IsString()
     taskTitle!: string;
 
-    @Field({ nullable: false })
-    @IsString()
-    substanceId!: string;
+    @Field((type) => ID, { nullable: false })
+    @IsPositive()
+    @IsNumber()
+    substanceId!: number;
   }
 
   return PublishInput;
@@ -181,16 +218,13 @@ export const UpdateTaskMixin = <TClassType extends ClassType>(
   @ObjectType({ isAbstract: true })
   @InputType({ isAbstract: true })
   class UpdateInput extends BaseClass {
-    @Field({ nullable: false })
-    @IsString()
-    taskId!: string;
+    @Field((type) => Int, { nullable: false })
+    @IsPositive()
+    @Length(1, 10)
+    @IsNumber()
+    taskId!: number;
 
-    @Field({ nullable: true })
-    @Length(5, 10)
-    @IsString()
-    taskTitle?: string;
-
-    @Field({ nullable: true })
+    @Field((type) => Int, { nullable: true })
     @Max(10)
     @Min(0)
     @IsNumber()
@@ -202,57 +236,31 @@ export const UpdateTaskMixin = <TClassType extends ClassType>(
   return UpdateInput;
 };
 
+@InputType({ description: "Task Query Input" })
+export class TaskQueryInput extends QueryTaskMixin(TaskInput) {}
+
 @InputType({ description: "Task Create Input" })
 export class TaskCreateInput extends PublishTaskMixin(TaskInput) {}
 
 @InputType({ description: "Task Update Input" })
 export class TaskUpdateInput extends UpdateTaskMixin(TaskInput) {}
 
-// 以函数的形式来返回 实现更灵活的控制 比如某些时候默认join上指派者等
-
-// interface ITaskJoinOptions {
-//   shouldJoinAssignee?: boolean;
-//   shouldJoinSubstance?: boolean;
-// }
-
-// class ITaskRelation {
-//   joinAssignee!: boolean;
-//   joinSubstance!: boolean;
-// }
-
-// // 函数有点麻烦啊...
-// export const createTaskRelationsInput = ({
-//   shouldJoinAssignee,
-//   shouldJoinSubstance,
-// }: ITaskJoinOptions): typeof ITaskRelation => {
-//   @InputType({ description: "Task Relations Input" })
-//   class TaskRelationsInputMixin extends ITaskRelation {
-//     @Field({ nullable: true })
-//     joinAssignee: boolean = shouldJoinAssignee ?? false;
-
-//     @Field({ nullable: true })
-//     joinSubstance: boolean = shouldJoinSubstance ?? false;
-//   }
-
-//   return TaskRelationsInputMixin;
-// };
-
 @InputType({ description: "Task Relations Input" })
 export class TaskRelationsInput {
+  @Field({ nullable: true })
+  joinRecord: boolean = false;
+
   @Field({ nullable: true })
   joinAssignee: boolean = false;
 
   @Field({ nullable: true })
   joinSubstance: boolean = false;
-
-  @Field({ nullable: true })
-  joinRecord: boolean = false;
 }
 
 interface ITaskRelationOptions {
+  joinRecord?: boolean;
   joinAssignee?: boolean;
   joinSubstance?: boolean;
-  joinRecord?: boolean;
 }
 export type TaskRelation = "assignee" | "taskSubstance" | "relatedRecord";
 

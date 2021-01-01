@@ -1,20 +1,34 @@
-import { Resolver, Query, Arg, Mutation } from "type-graphql";
-import { Repository, Transaction } from "typeorm";
-import { InjectRepository } from "typeorm-typedi-extensions";
+import { Resolver, Query, Arg, Mutation, Int } from "type-graphql";
 
 import Substance from "../entity/Substance";
 
-import { PaginationOptions } from "../graphql/Common";
-import { StatusHandler, SubstanceStatus } from "../graphql/Common";
+import {
+  PaginationOptions,
+  StatusHandler,
+  SubstanceStatus,
+} from "../graphql/Common";
+
+import {
+  SubstanceQueryInput,
+  SubstanceCreateInput,
+  SubstanceUpdateInput,
+  SubstanceRelation,
+  getSubstanceRelations,
+  SubstanceRelationsInput,
+} from "../graphql/Substance";
 
 import { RESPONSE_INDICATOR } from "../utils/constants";
 
-// TODO: 可选是否联查任务信息
+import { generatePagination } from "../utils/helper";
+
+import SubstanceService from "../service/Substance.service";
+import TaskService from "../service/Task.service";
+
 @Resolver((of) => Substance)
 export default class SubstanceResolver {
   constructor(
-    @InjectRepository(Substance)
-    private readonly substanceRepository: Repository<Substance>
+    private readonly substancesService: SubstanceService,
+    private readonly taskService: TaskService
   ) {}
 
   @Query(() => SubstanceStatus, {
@@ -24,18 +38,20 @@ export default class SubstanceResolver {
   async QueryAllSubstances(
     @Arg("pagination", { nullable: true })
     pagination: PaginationOptions,
-    @Arg("joinTask", { nullable: true })
-    joinTask: boolean = false
+
+    @Arg("relations", (type) => SubstanceRelationsInput, { nullable: true })
+    relationOptions: Partial<SubstanceRelationsInput> = {}
   ): Promise<SubstanceStatus> {
     try {
-      const { cursor, offset } = pagination ?? { cursor: 0, offset: 20 };
-      const relations = joinTask ? ["relatedTask"] : [];
+      const queryPagination = generatePagination(pagination);
+      const relations: SubstanceRelation[] = getSubstanceRelations(
+        relationOptions
+      );
 
-      const res = await this.substanceRepository.find({
-        skip: cursor,
-        take: offset,
-        relations,
-      });
+      const res = await this.substancesService.getAllSubstances(
+        queryPagination,
+        relations
+      );
 
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, res);
     } catch (error) {
@@ -48,74 +64,200 @@ export default class SubstanceResolver {
     description: "基于ID查找实体",
   })
   async QuerySubstanceById(
-    @Arg("joinTask", { nullable: true })
-    joinTask: boolean = false
+    @Arg("substanceId", (type) => Int) substanceId: number,
+
+    @Arg("relations", (type) => SubstanceRelationsInput, { nullable: true })
+    relationOptions: Partial<SubstanceRelationsInput> = {}
   ): Promise<SubstanceStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+    try {
+      const relations: SubstanceRelation[] = getSubstanceRelations(
+        relationOptions
+      );
+
+      const res = await this.substancesService.getOneSubstanceById(
+        substanceId,
+        relations
+      );
+
+      if (!res) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
+      }
+
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 
   @Query(() => SubstanceStatus, {
     nullable: false,
-    description: "基于条件查找实体",
+    description: "基于条件查找单个实体",
   })
-  async QuerySubstanceByConditions(): Promise<SubstanceStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+  async QueryOneSubstanceByConditions(
+    @Arg("substanceQueryParam") param: SubstanceQueryInput,
+
+    @Arg("relations", (type) => SubstanceRelationsInput, { nullable: true })
+    relationOptions: Partial<SubstanceRelationsInput> = {}
+  ): Promise<SubstanceStatus> {
+    try {
+      const relations: SubstanceRelation[] = getSubstanceRelations(
+        relationOptions
+      );
+
+      const res = await this.substancesService.getOneSubstanceByConditions(
+        param,
+        relations
+      );
+
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 
   @Query(() => SubstanceStatus, {
     nullable: false,
-    description: "基于威胁级别查找实体",
+    description: "基于条件查找多个实体",
   })
-  async QuerySubstanceByLevel(): Promise<SubstanceStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+  async QuerySubstancesByConditions(
+    @Arg("substanceQueryParam") param: SubstanceQueryInput,
+
+    @Arg("pagination", { nullable: true })
+    pagination: PaginationOptions,
+
+    @Arg("relations", (type) => SubstanceRelationsInput, { nullable: true })
+    relationOptions: Partial<SubstanceRelationsInput> = {}
+  ): Promise<SubstanceStatus> {
+    try {
+      const queryPagination = generatePagination(pagination);
+      const relations: SubstanceRelation[] = getSubstanceRelations(
+        relationOptions
+      );
+
+      const res = await this.substancesService.getSubstancesByConditions(
+        param,
+        queryPagination,
+        relations
+      );
+
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, res);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 
   @Mutation(() => SubstanceStatus, {
     nullable: false,
-    description: "变更实体收容状态",
+    description: "新增实体",
   })
-  async ToggleSubstanceAsylume(): Promise<SubstanceStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+  async CreateSubstance(
+    @Arg("substanceCreateParam") param: SubstanceCreateInput
+  ): Promise<SubstanceStatus> {
+    try {
+      const { substanceName } = param;
+
+      const isExistingSubstance = await this.substancesService.getOneSubstanceByConditions(
+        { substanceName }
+      );
+
+      if (isExistingSubstance) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.EXISTED, "");
+      }
+
+      const res = await this.substancesService.createSubstance(param);
+
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 
   @Mutation(() => SubstanceStatus, {
     nullable: false,
-    description: "变更实体存活状态",
+    description: "变更实体信息",
   })
-  async ToggleSubstanceAlive(): Promise<SubstanceStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
-  }
+  async UpdateSubstanceInfo(
+    @Arg("substanceUpdateParam") param: SubstanceUpdateInput
+  ): Promise<SubstanceStatus> {
+    try {
+      const { substanceId } = param;
 
-  @Transaction()
-  @Mutation(() => SubstanceStatus, {
-    nullable: false,
-    description: "新增实体，同时新增任务",
-  })
-  async CreateSubstanceAndTask(): Promise<SubstanceStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
-  }
+      const isExistingSubstance = await this.substancesService.getOneSubstanceById(
+        substanceId
+      );
 
-  @Mutation(() => SubstanceStatus, {
-    nullable: false,
-    description: "仅新增实体",
-  })
-  async CreateSubstanceOnly(): Promise<SubstanceStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
-  }
+      if (!isExistingSubstance) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, "");
+      }
 
-  @Mutation(() => SubstanceStatus, {
-    nullable: false,
-    description: "变更实体基本信息",
-  })
-  async MutateSubstanceInfo(): Promise<SubstanceStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+      const updated = await this.substancesService.updateSubstance(
+        substanceId,
+        param
+      );
+
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updated]);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 
   @Mutation(() => SubstanceStatus, {
     nullable: false,
-    description: "变更实体威胁级别",
+    description: "删除实体",
   })
-  async MutateSubstanceLevel(): Promise<SubstanceStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+  async DeleteSubstance(
+    @Arg("substanceId", (type) => Int) sId: number
+  ): Promise<SubstanceStatus> {
+    try {
+      const res = await this.substancesService.getOneSubstanceById(sId);
+
+      if (!res) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
+      }
+
+      await this.substancesService.deleteSubstance(sId);
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, []);
+    } catch (error) {
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
+  }
+
+  @Mutation(() => SubstanceStatus, {
+    nullable: false,
+    description: "将实体关联到任务",
+  })
+  async CombineSubstanceAndTask(
+    @Arg("substanceId", (type) => Int) substanceId: number,
+
+    @Arg("taskId", (type) => Int) taskId: number
+  ): Promise<SubstanceStatus> {
+    try {
+      const substance = await this.substancesService.getOneSubstanceById(
+        substanceId,
+        ["relatedTask"]
+      );
+      const task = await this.taskService.getOneTaskById(taskId);
+
+      if (!substance || !task) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
+      }
+
+      if (substance.relatedTask) {
+        return new StatusHandler(false, RESPONSE_INDICATOR.EXISTED, [
+          substance,
+        ]);
+      }
+
+      // FIXME: 同时确保此任务尚未被实体关联
+
+      substance.relatedTask = task;
+
+      const res = await this.substancesService.createSubstance(substance);
+
+      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
+    } catch (error) {
+      console.log(error);
+      return new StatusHandler(false, JSON.stringify(error), []);
+    }
   }
 }

@@ -22,7 +22,7 @@ export default class RecordService implements IRecordService {
   }
 
   async getOneRecordById(
-    recordId: string,
+    recordId: number,
     relations: RecordRelations[] = []
   ): Promise<Record | undefined> {
     const records = await this.recordRepository.findOne(recordId, {

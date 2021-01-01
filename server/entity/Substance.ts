@@ -9,6 +9,7 @@ import {
   OneToOne,
   RelationId,
   JoinColumn,
+  OneToMany,
 } from "typeorm";
 
 import Task from "./Task";
@@ -22,47 +23,50 @@ import { ISubstance } from "../graphql/Substance";
 export default class Substance extends BaseEntity implements ISubstance {
   // 实体基本信息
   @PrimaryGeneratedColumn()
-  substanceId!: string;
+  substanceId!: number;
 
-  @Column({ unique: true, nullable: false, comment: "实体命名" })
+  @Column({ unique: true, comment: "实体命名" })
   substanceName!: string;
 
-  @Column({ nullable: false, default: true, comment: "实体是否存活" })
+  @Column({ default: true, comment: "实体是否存活" })
   substanceAlive!: boolean;
 
-  @Column({ nullable: false, default: "实体描述未收集", comment: "实体描述" })
+  @Column({ default: "实体描述未收集", comment: "实体描述" })
   substanceDesc!: string;
 
-  @Column({ nullable: false, default: "实体事件未收集" })
+  @Column({ default: "实体事件未收集" })
   substanceIssues!: string;
 
   @Column({
-    nullable: false,
     default: DifficultyLevel.ROOKIE,
     comment: "实体威胁级别",
+    enum: DifficultyLevel,
   })
   substanceLevel!: DifficultyLevel;
 
-  @Column({ nullable: false, default: false, comment: "是否已收收容" })
+  @Column({ default: false, comment: "是否已收收容" })
   asylumed!: boolean;
 
   // 实体关联任务
-  @OneToOne(() => Task, (task) => task.taskSubstance)
+  @OneToOne(() => Task, (task) => task.taskSubstance, {
+    onDelete: "SET NULL",
+    nullable: true,
+  })
+  @JoinColumn({ name: "relatedTaskId" })
   relatedTask!: Task;
 
   @RelationId((substance: Substance) => substance.relatedTask)
   relatedTaskId?: string;
 
   // 实体关联记录
-  @OneToOne((type) => Record, (record) => record.recordTask, {
-    nullable: true,
+  @OneToMany((type) => Record, (record) => record.recordSubstance, {
     cascade: true,
+    nullable: true,
   })
-  @JoinColumn()
-  relatedRecord!: Record;
+  relatedRecord!: Record[];
 
   @RelationId((substance: Substance) => substance.relatedRecord)
-  relatedRecordId?: string;
+  relatedRecordId?: number[];
 
   @CreateDateColumn({ comment: "实体首次出现时间" })
   substanceAppearDate!: Date;

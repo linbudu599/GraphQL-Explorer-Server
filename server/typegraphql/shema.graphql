@@ -7,11 +7,17 @@ type Account implements IAccount {
   accountAvaliable: Boolean!
   accountId: ID!
   accountName: String!
+  accountProfile: String!
+
+  """
+  账号资料
+  """
+  AccountProfileField: AccountProfile!
   accountPwd: String!
   accountType: AccountType!
   lastUpdateDate: Timestamp!
   registryDate: Timestamp!
-  relatedRecord: Record
+  relatedRecord: [Record!]
 }
 
 """
@@ -24,12 +30,49 @@ input AccountLoginInput {
 }
 
 """
+Account Password Modify Input Type
+"""
+input AccountPasswordModifyInput {
+  accountId: Int!
+  accountName: String!
+  newPassword: String!
+  prevPassword: String!
+}
+
+type AccountProfile implements IAccountProfile {
+  avatar: String!
+  isLifeTimeVIP: Boolean!
+  selfIntro: String!
+  VIPLevel: AccountVIPLevel!
+}
+
+"""
+Account Profile Input Type
+"""
+input AccountProfileInput {
+  avatar: String
+  isLifeTimeVIP: Boolean
+  selfIntro: String
+  VIPLevel: AccountVIPLevel
+}
+
+"""
 Register Input Type
 """
 input AccountRegistryInput {
   accountName: String!
   accountPwd: String!
   loginType: AccountType
+}
+
+"""
+Account Relations Input Type
+"""
+input AccountRelationsInput {
+  joinRecord: Boolean
+  joinRecordExecutor: Boolean
+  joinRecordSubstance: Boolean
+  joinRecordTask: Boolean
 }
 
 """
@@ -57,10 +100,21 @@ enum AccountType {
 union AccountUnionResult = AccountStatus | LoginOrRegisterStatus
 
 """
+Account VIP Level Enum
+"""
+enum AccountVIPLevel {
+  DIAMOND
+  DOMINATOR
+  GOLD
+  NON_VIP
+  SILVER
+}
+
+"""
 Recipe >>> Cook >>> WorkExperience >> Company
 """
 type Company {
-  description: String!
+  description: Timestamp!
   name: String!
   registerDate: Timestamp!
   scale: CompanyScale
@@ -110,6 +164,7 @@ enum DifficultyLevel {
 
 type Executor implements IExecutor {
   age: Float!
+  avaliable: Boolean!
   desc: String!
 
   """
@@ -122,7 +177,7 @@ type Executor implements IExecutor {
   lastUpdateDate: Timestamp!
   name: String!
   region: Region!
-  relatedRecord: Record
+  relatedRecord: [Record!]
   spAgeField(param: Float): Int!
   tasks: [Task!]
   uid: ID!
@@ -133,6 +188,7 @@ Executor Create Input
 """
 input ExecutorCreateInput {
   age: Int
+  avaliable: Boolean
   isFool: Boolean
   job: Job
   name: String!
@@ -159,6 +215,7 @@ Executor Relations Input
 """
 input ExecutorRelationsInput {
   joinRecord: Boolean = false
+  joinSubstance: Boolean = false
   joinTasks: Boolean = false
 }
 
@@ -176,11 +233,12 @@ Executor Update Input
 """
 input ExecutorUpdateInput {
   age: Int
+  avaliable: Boolean
   isFool: Boolean
   job: Job
   name: String
   region: Region
-  uid: String!
+  uid: Float!
 }
 
 """
@@ -190,11 +248,22 @@ interface IAccount {
   accountAvaliable: Boolean!
   accountId: ID!
   accountName: String!
+  accountProfile: String!
   accountPwd: String!
   accountType: AccountType!
   lastUpdateDate: Timestamp!
   registryDate: Timestamp!
-  relatedRecord: Record
+  relatedRecord: [Record!]
+}
+
+"""
+Account Profile Type
+"""
+interface IAccountProfile {
+  avatar: String!
+  isLifeTimeVIP: Boolean!
+  selfIntro: String!
+  VIPLevel: AccountVIPLevel!
 }
 
 """
@@ -210,14 +279,15 @@ Update Executor Basic Info Input
 """
 interface IExecutor {
   age: Float!
-  desc: String
+  avaliable: Boolean!
+  desc: String!
   isFool: Boolean!
   job: Job!
   joinDate: Timestamp!
   lastUpdateDate: Timestamp!
   name: String!
   region: Region!
-  relatedRecord: Record
+  relatedRecord: [Record!]
   spAgeField: Int
   tasks: [Task!]
   uid: ID!
@@ -251,7 +321,7 @@ Substance Interface Type
 interface ISubstance {
   asylumed: Boolean!
   lastActiveDate: Timestamp!
-  relatedRecord: Record
+  relatedRecord: [Record!]
   relatedTask: Task
   substanceAlive: Boolean!
   substanceAppearDate: Timestamp!
@@ -270,7 +340,7 @@ interface ITask {
   assignee: Executor
   lastUpdateDate: Timestamp!
   publishDate: Timestamp!
-  relatedRecord: Record
+  relatedRecord: [Record!]
   requireCleaner: Boolean!
   requirePsychologicalIntervention: Boolean!
   taskAccmplished: Boolean!
@@ -278,8 +348,8 @@ interface ITask {
   taskContent: String!
   taskId: ID!
   taskLevel: DifficultyLevel!
-  taskRate: Float!
-  taskReward: Float!
+  taskRate: Int!
+  taskReward: Int!
   taskSource: TaskSource!
   taskSubstance: Substance
   taskTarget: TaskTarget!
@@ -318,10 +388,7 @@ type Mutation {
   """
   提升或下降用户权限等级
   """
-  AccountLevelMutate(
-    accountId: String!
-    level: AccountType!
-  ): AccountUnionResult!
+  AccountLevelMutate(accountId: Int!, level: AccountType!): AccountUnionResult!
 
   """
   新用户注册
@@ -331,7 +398,12 @@ type Mutation {
   """
   指派任务
   """
-  AssignTask(taskId: String!, uid: String!): TaskStatus!
+  AssignTask(taskId: Float!, uid: Float!): TaskStatus!
+
+  """
+  将实体关联到任务
+  """
+  CombineSubstanceAndTask(substanceId: Int!, taskId: Int!): SubstanceStatus!
 
   """
   添加执行者
@@ -344,71 +416,72 @@ type Mutation {
   CreateNewTask(taskCreateParam: TaskCreateInput!): TaskStatus!
 
   """
-  新增实体，同时新增任务
+  新增实体
   """
-  CreateSubstanceAndTask: SubstanceStatus!
-
-  """
-  仅新增实体
-  """
-  CreateSubstanceOnly: SubstanceStatus!
+  CreateSubstance(substanceCreateParam: SubstanceCreateInput!): SubstanceStatus!
 
   """
   删除执行者
   """
-  DeleteExecutor(uid: String!): ExecutorStatus!
+  DeleteExecutor(uid: Int!): ExecutorStatus!
+
+  """
+  删除实体
+  """
+  DeleteSubstance(substanceId: Int!): SubstanceStatus!
 
   """
   删除任务
   """
-  DeleteTask(taskId: String!): TaskStatus!
+  DeleteTask(taskId: Float!): TaskStatus!
+
+  """
+  冻结账号
+  """
+  FreezeAccount(accountId: Int!): AccountStatus!
 
   """
   冻结任务 无法恢复
   """
-  FreezeTask(taskId: String!): TaskStatus!
+  FreezeTask(taskId: Float!): TaskStatus!
 
   """
   修改密码
   """
   ModifyPassword(
-    accountName: String!
-    newPassword: String!
-    prevPassword: String!
+    accountInfo: AccountPasswordModifyInput!
   ): LoginOrRegisterStatus!
 
   """
-  变更实体基本信息
+  账号详情变更
   """
-  MutateSubstanceInfo: SubstanceStatus!
-
-  """
-  变更实体威胁级别
-  """
-  MutateSubstanceLevel: SubstanceStatus!
+  MutateAccountProfile(
+    accountId: Int!
+    modifiedAccountProfile: AccountProfileInput!
+  ): AccountStatus!
 
   """
   变更任务级别
   """
-  MutateTaskLevel(level: DifficultyLevel!, taskId: String!): TaskStatus!
+  MutateTaskLevel(level: DifficultyLevel!, taskId: Float!): TaskStatus!
   publisherMutation(message: String): Boolean!
   pubSubMutation(message: String): Boolean!
   pubSubMutationToDynamicTopic(message: String, topic: String!): Boolean!
 
   """
-  变更实体存活状态
+  发送邮件验证码
   """
-  ToggleSubstanceAlive: SubstanceStatus!
+  SendEmailVerifyCode: LoginOrRegisterStatus!
 
   """
-  变更实体收容状态
+  发送短信验证码
   """
-  ToggleSubstanceAsylume: SubstanceStatus!
+  SendPhoneVerifyCode: LoginOrRegisterStatus!
 
   """
   变更任务状态
   """
-  ToggleTaskStatus(taskId: String!): TaskStatus!
+  ToggleTaskStatus(taskId: Float!): TaskStatus!
 
   """
   更新执行者基本信息
@@ -421,9 +494,16 @@ type Mutation {
   更新执行者描述
   """
   UpdateExecutorDesc(
-    uid: String!
+    uid: Int!
     userDesc: ExecutorDescUpdateInput!
   ): ExecutorStatus!
+
+  """
+  变更实体信息
+  """
+  UpdateSubstanceInfo(
+    substanceUpdateParam: SubstanceUpdateInput!
+  ): SubstanceStatus!
 
   """
   变更任务基本信息
@@ -452,9 +532,22 @@ type Query {
   AccountLogin(account: AccountLoginInput!): LoginOrRegisterStatus!
 
   """
+  账号详情
+  """
+  CheckAccountDetail(
+    accountId: Int!
+    relations: AccountRelationsInput
+  ): AccountStatus!
+
+  """
   检验token是否合法
   """
   CheckIsTokenValid(token: String!): LoginOrRegisterStatus!
+
+  """
+  验证邮件
+  """
+  CheckVerifyCode: LoginOrRegisterStatus!
 
   """
   容器注册时间
@@ -465,7 +558,10 @@ type Query {
   """
   查询所有用户
   """
-  QueryAllAccounts: AccountStatus!
+  QueryAllAccounts(
+    pagination: PaginationOptions
+    relations: AccountRelationsInput
+  ): AccountStatus!
 
   """
   获取所有执行者
@@ -480,8 +576,8 @@ type Query {
   查找所有实体信息
   """
   QueryAllSubstances(
-    joinTask: Boolean
     pagination: PaginationOptions
+    relations: SubstanceRelationsInput
   ): SubstanceStatus!
 
   """
@@ -505,14 +601,12 @@ type Query {
   """
   QueryExecutorByConditions(
     age: Int
+    avaliable: Boolean
     isFool: Boolean
-    job: String
-    level: DifficultyLevel
+    job: Job
     name: String
-    region: Float
+    region: Region
     relations: ExecutorRelationsInput
-    satisfaction: Int
-    successRate: Int
   ): ExecutorStatus!
 
   """
@@ -527,17 +621,29 @@ type Query {
   ): ExecutorStatus!
 
   """
-  查找特定执行者
+  根据ID查找特定执行者信息
   """
   QueryExecutorById(
     relations: ExecutorRelationsInput
-    uid: String!
+    uid: Int!
   ): ExecutorStatus!
 
   """
   查询执行者当前被分配的任务
   """
-  QueryExecutorTasks(relations: TaskRelationsInput, uid: String!): TaskStatus!
+  QueryExecutorTasks(
+    pagination: PaginationOptions
+    relations: TaskRelationsInput
+    uid: Float!
+  ): TaskStatus!
+
+  """
+  基于条件查单个实体
+  """
+  QueryOneSubstanceByConditions(
+    relations: SubstanceRelationsInput
+    substanceQueryParam: SubstanceQueryInput!
+  ): SubstanceStatus!
 
   """
   基于难度查找菜谱
@@ -550,11 +656,11 @@ type Query {
   QueryRecipesByIngredients(ingredients: [String!]): [Recipe!]!
 
   """
-  返回所有菜谱 厨师 和 咸鱼!
+  返回所有菜谱 厨师 和 咸鱼
   """
   QueryRecipeUnions: [RecipeUnionResult!]!
   QueryRecordById(
-    recordId: String!
+    recordId: Int!
     relations: RecordRelationsInput
   ): RecordStatus!
 
@@ -564,24 +670,43 @@ type Query {
   QuerySaltFishByCoefficient(coefficient: Int!): [SaltFish!]!
 
   """
-  基于条件查找实体
-  """
-  QuerySubstanceByConditions: SubstanceStatus!
-
-  """
   基于ID查找实体
   """
-  QuerySubstanceById(joinTask: Boolean): SubstanceStatus!
+  QuerySubstanceById(
+    relations: SubstanceRelationsInput
+    substanceId: Int!
+  ): SubstanceStatus!
 
   """
-  基于威胁级别查找实体
+  基于条件查找多个实体
   """
-  QuerySubstanceByLevel: SubstanceStatus!
+  QuerySubstancesByConditions(
+    pagination: PaginationOptions
+    relations: SubstanceRelationsInput
+    substanceQueryParam: SubstanceQueryInput!
+  ): SubstanceStatus!
+
+  """
+  基于条件获取单个任务
+  """
+  QueryTaskByConditions(
+    relations: TaskRelationsInput
+    taskQueryParams: TaskQueryInput!
+  ): TaskStatus!
 
   """
   基于ID获取任务
   """
-  QueryTaskByID(relations: TaskRelationsInput, taskId: String!): TaskStatus!
+  QueryTaskByID(relations: TaskRelationsInput, taskId: Float!): TaskStatus!
+
+  """
+  基于条件获取多个任务
+  """
+  QueryTasksByConditions(
+    pagination: PaginationOptions
+    relations: TaskRelationsInput
+    taskQueryParams: TaskQueryInput!
+  ): TaskStatus!
 }
 
 """
@@ -611,10 +736,10 @@ type Record implements IRecord {
 Record Relations Input
 """
 input RecordRelationsInput {
-  joinAccount: Boolean = false
-  joinExecutor: Boolean = false
-  joinSubstance: Boolean = false
-  joinTask: Boolean = false
+  joinAccount: Boolean = true
+  joinExecutor: Boolean = true
+  joinSubstance: Boolean = true
+  joinTask: Boolean = true
 }
 
 """
@@ -654,7 +779,7 @@ type Subscription {
 type Substance implements ISubstance {
   asylumed: Boolean!
   lastActiveDate: Timestamp!
-  relatedRecord: Record
+  relatedRecord: [Record!]
   relatedTask: Task
   substanceAlive: Boolean!
   substanceAppearDate: Timestamp!
@@ -666,6 +791,37 @@ type Substance implements ISubstance {
 }
 
 """
+Substance Create Input
+"""
+input SubstanceCreateInput {
+  asylumed: Boolean
+  substanceAlive: Boolean
+  substanceIssues: String
+  substanceLevel: DifficultyLevel
+  substanceName: String!
+}
+
+"""
+Substance Create Input
+"""
+input SubstanceQueryInput {
+  asylumed: Boolean
+  substanceAlive: Boolean
+  substanceIssues: String
+  substanceLevel: DifficultyLevel
+  substanceName: String
+}
+
+"""
+Substance Relations Input
+"""
+input SubstanceRelationsInput {
+  joinAssignee: Boolean = false
+  joinRecord: Boolean = false
+  joinTask: Boolean = false
+}
+
+"""
 Substance Response Status Indicator
 """
 type SubstanceStatus implements IBaseStatus {
@@ -674,12 +830,24 @@ type SubstanceStatus implements IBaseStatus {
   success: Boolean!
 }
 
+"""
+Substance Update Input
+"""
+input SubstanceUpdateInput {
+  asylumed: Boolean
+  substanceAlive: Boolean
+  substanceId: Int!
+  substanceIssues: String
+  substanceLevel: DifficultyLevel
+  substanceName: String
+}
+
 type Task implements ITask {
   allowAbort: Boolean!
   assignee: Executor
   lastUpdateDate: Timestamp!
   publishDate: Timestamp!
-  relatedRecord: Record
+  relatedRecord: [Record!]
   requireCleaner: Boolean!
   requirePsychologicalIntervention: Boolean!
   taskAccmplished: Boolean!
@@ -687,8 +855,8 @@ type Task implements ITask {
   taskContent: String!
   taskId: ID!
   taskLevel: DifficultyLevel!
-  taskRate: Float!
-  taskReward: Float!
+  taskRate: Int!
+  taskReward: Int!
   taskSource: TaskSource!
   taskSubstance: Substance
   taskTarget: TaskTarget!
@@ -699,13 +867,35 @@ type Task implements ITask {
 Task Create Input
 """
 input TaskCreateInput {
-  substanceId: String!
+  allowAbort: Boolean
+  requireCleaner: Boolean
+  requirePsychologicalIntervention: Boolean
+  substanceId: ID!
+  taskAvaliable: Boolean
   taskContent: String
-  taskLevel: Float
-  taskReward: Float
-  taskSource: Float
-  taskTarget: Float
+  taskLevel: DifficultyLevel
+  taskRate: Int
+  taskReward: Int
+  taskSource: TaskSource
+  taskTarget: TaskTarget
   taskTitle: String!
+}
+
+"""
+Task Query Input
+"""
+input TaskQueryInput {
+  allowAbort: Boolean
+  requireCleaner: Boolean
+  requirePsychologicalIntervention: Boolean
+  taskAvaliable: Boolean
+  taskContent: String
+  taskLevel: DifficultyLevel
+  taskRate: Int
+  taskReward: Int
+  taskSource: TaskSource
+  taskTarget: TaskTarget
+  taskTitle: String
 }
 
 """
@@ -754,13 +944,17 @@ enum TaskTarget {
 Task Update Input
 """
 input TaskUpdateInput {
+  allowAbort: Boolean
+  requireCleaner: Boolean
+  requirePsychologicalIntervention: Boolean
+  taskAvaliable: Boolean
   taskContent: String
-  taskId: String!
-  taskLevel: Float
-  taskRate: Float
-  taskReward: Float
-  taskSource: Float
-  taskTarget: Float
+  taskId: Int!
+  taskLevel: DifficultyLevel
+  taskRate: Int
+  taskReward: Int
+  taskSource: TaskSource
+  taskTarget: TaskTarget
   taskTitle: String
 }
 
@@ -775,5 +969,5 @@ Recipe >>> Cook >>> WorkExperience
 type WorkExperience {
   company: Company!
   isFired: Boolean!
-  workYears: Float!
+  workYears: Int!
 }

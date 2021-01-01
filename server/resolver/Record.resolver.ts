@@ -1,4 +1,4 @@
-import { Resolver, Query, Arg } from "type-graphql";
+import { Resolver, Query, Arg, Int } from "type-graphql";
 
 import Record from "../entity/Record";
 
@@ -30,7 +30,7 @@ export default class RecordResolver {
 
   @Query(() => RecordStatus)
   async QueryRecordById(
-    @Arg("recordId", { nullable: false }) recordId: string,
+    @Arg("recordId", (type) => Int) recordId: number,
     @Arg("relations", (type) => RecordRelationsInput, { nullable: true })
     relationOptions: Partial<RecordRelationsInput> = {}
   ): Promise<RecordStatus> {

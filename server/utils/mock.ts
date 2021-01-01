@@ -16,6 +16,8 @@ import { DifficultyLevel } from "../graphql/Public";
 import Executor, { ExecutorDesc } from "../entity/Executor";
 import Task from "../entity/Task";
 import Substance from "../entity/Substance";
+import Record from "../entity/Record";
+import Account from "../entity/Account";
 
 import { log } from "./helper";
 
@@ -142,7 +144,7 @@ const createSubstance = (substance: Partial<Substance>): Substance =>
   plainToClass(Substance, substance);
 
 export const mockSubstance = (len: number) => {
-  const mockSubstanceInfo: Partial<Substance>[] = [];
+  const mockSubstanceInfo: Substance[] = [];
 
   for (let i = 0; i < len; i++) {
     mockSubstanceInfo.push(
@@ -160,7 +162,7 @@ export const mockSubstance = (len: number) => {
 const createTask = (task: Partial<Task>): Task => plainToClass(Task, task);
 
 export const mockTask = (len: number) => {
-  const mockTaskInfo: Partial<Task>[] = [];
+  const mockTaskInfo: Task[] = [];
 
   for (let i = 0; i < len; i++) {
     mockTaskInfo.push(
@@ -185,7 +187,7 @@ const createExecutor = (executor: Partial<Executor>): Executor =>
   plainToClass(Executor, executor);
 
 export const mockExecutor = (len: number) => {
-  const mockExecutorInfo: Partial<Executor>[] = [];
+  const mockExecutorInfo: Executor[] = [];
 
   for (let i = 0; i < len; i++) {
     mockExecutorInfo.push(
@@ -214,27 +216,66 @@ export const dbConnect = async (): Promise<any> => {
     const connection = await TypeORM.createConnection();
     log("[TypeORM] Database Connection Established");
 
-    const mockTaskGroup = mockTask(5);
-    const mockExecutorGroup = mockExecutor(5);
+    const mockTaskGroup = mockTask(10);
     const mockSubstanceGroup = mockSubstance(5);
+    const mockExecutorGroup = mockExecutor(5);
 
-    await connection.manager.save(mockExecutorGroup);
+    const executor1 = new Executor();
+    executor1.name = `Executor001-With-Tasks`;
+    executor1.tasks = mockTaskGroup.slice(0, 2);
+    await connection.manager.save(executor1);
 
-    const executor = new Executor();
-    executor.name = `林不渡-${Math.floor(Math.random() * 1000)}`;
-    executor.tasks = (mockTaskGroup as Task[]).slice(0, 2);
-    await connection.manager.save(executor);
+    const executor2 = new Executor();
+    executor2.name = `Executor002-With-Tasks`;
+    executor2.tasks = mockTaskGroup.slice(2, 3);
+    await connection.manager.save(executor2);
 
-    const sub = new Substance();
-    sub.substanceName = `SCP-1128 深海巨妖-${Math.floor(Math.random() * 1000)}`;
-    sub.substanceDesc = "离谱";
-    sub.substanceLevel = DifficultyLevel.OLD_DOMINATOR;
+    const executor3 = new Executor();
+    executor3.name = `Executor003-With-Tasks`;
+    executor3.tasks = mockTaskGroup.slice(3, 5);
+    await connection.manager.save(executor3);
 
-    mockTaskGroup[0].taskSubstance = sub;
-    await connection.manager.save(mockTaskGroup[0]);
+    const sub1 = new Substance();
+    sub1.substanceName = "SCP-1128 深海巨妖";
+    sub1.substanceDesc = "离谱";
+    sub1.substanceLevel = DifficultyLevel.OLD_DOMINATOR;
+    mockTaskGroup[0].taskSubstance = sub1;
+
+    const sub2 = new Substance();
+    sub2.substanceName = "机神G5";
+    sub2.substanceDesc = "来自组织";
+    sub2.substanceLevel = DifficultyLevel.LEGEND;
+    mockTaskGroup[1].taskSubstance = sub2;
+
+    const sub3 = new Substance();
+    sub3.substanceName = "夏油 杰";
+    sub3.substanceDesc = "假";
+    sub3.substanceLevel = DifficultyLevel.LEGEND;
+    mockTaskGroup[2].taskSubstance = sub3;
+
+    const sub4 = new Substance();
+    sub4.substanceName = "宿傩";
+    sub4.substanceDesc = "即刻祓除";
+    sub4.substanceLevel = DifficultyLevel.OLD_DOMINATOR;
+    mockTaskGroup[3].taskSubstance = sub4;
+
+    const account1 = new Account();
+    account1.accountName = "mock-account-name-01";
+    account1.accountPwd = "mock-account-pwd-01";
+
+    await account1.save();
+
+    const record1 = new Record();
+    record1.recordAccount = account1;
+    record1.recordExecutor = executor3;
+    record1.recordSubstance = sub4;
+    record1.recordTask = mockTaskGroup[3];
 
     await connection.manager.save(mockTaskGroup);
     await connection.manager.save(mockSubstanceGroup);
+    await connection.manager.save(mockExecutorGroup);
+
+    await record1.save();
 
     log("[TypeORM] Initial Mock Data Inserted\n");
   } catch (error) {

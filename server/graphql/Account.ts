@@ -1,4 +1,14 @@
-import { IsEnum, IsNotEmpty, IsString, Length } from "class-validator";
+import {
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  Length,
+  Max,
+} from "class-validator";
 import {
   Field,
   ID,
@@ -7,6 +17,7 @@ import {
   InputType,
   ObjectType,
   ClassType,
+  Int,
 } from "type-graphql";
 
 import Record from "../entity/Record";
@@ -18,25 +29,56 @@ registerEnumType(ACCOUNT_TYPE, {
   description: "Account Type Enum",
 });
 
+export enum AccountVIPLevel {
+  NON_VIP,
+  SILVER,
+  GOLD,
+  DIAMOND,
+  DOMINATOR,
+}
+
+registerEnumType(AccountVIPLevel, {
+  name: "AccountVIPLevel",
+  description: "Account VIP Level Enum",
+});
+
+@InterfaceType({ description: "Account Profile Type" })
+export abstract class IAccountProfile {
+  @Field()
+  avatar!: string;
+
+  @Field()
+  selfIntro!: string;
+
+  @Field((type) => AccountVIPLevel)
+  VIPLevel!: AccountVIPLevel;
+
+  @Field()
+  isLifeTimeVIP!: boolean;
+}
+
 @InterfaceType({ description: "Account Interface Type" })
 export abstract class IAccount {
-  @Field((type) => ID, { nullable: false })
-  accountId!: string;
+  @Field((type) => ID)
+  accountId!: number;
 
-  @Field({ nullable: false })
+  @Field()
   accountName!: string;
 
-  @Field({ nullable: false })
+  @Field()
   accountAvaliable!: boolean;
 
-  @Field({ nullable: false })
+  @Field()
   accountPwd!: string;
 
-  @Field((type) => ACCOUNT_TYPE, { nullable: false })
+  @Field()
+  accountProfile!: string;
+
+  @Field((type) => ACCOUNT_TYPE)
   accountType!: ACCOUNT_TYPE;
 
-  @Field(() => Record, { nullable: true })
-  relatedRecord!: Record;
+  @Field((type) => [Record]!, { nullable: true })
+  relatedRecord!: Record[];
 
   @Field((type) => Date)
   registryDate!: Date;
@@ -50,13 +92,13 @@ export abstract class IAccount {
 @ObjectType({ isAbstract: true })
 @InputType({ isAbstract: true })
 export class AccountInput {
-  @Field({ nullable: false })
+  @Field()
   @IsNotEmpty()
   @Length(2, 15)
   @IsString()
   accountName!: string;
 
-  @Field({ nullable: false })
+  @Field()
   @IsNotEmpty()
   @Length(6, 20)
   @IsString()
@@ -84,7 +126,7 @@ export const LoginInputMixin = <TClassType extends ClassType>(
   @ObjectType({ isAbstract: true })
   @InputType({ isAbstract: true })
   class RegisterInput extends BaseClass {
-    @Field((type) => ACCOUNT_TYPE, { nullable: false })
+    @Field((type) => ACCOUNT_TYPE)
     @IsNotEmpty()
     @IsEnum(ACCOUNT_TYPE)
     loginType!: ACCOUNT_TYPE;
@@ -99,10 +141,103 @@ export class AccountRegistryInput extends RegisterInputMixin(AccountInput) {}
 @InputType({ description: "Login Input Type" })
 export class AccountLoginInput extends LoginInputMixin(AccountInput) {}
 
-@InputType({ description: "Account Relations Input" })
+@InputType({ description: "Account Password Modify Input Type" })
+export class AccountPasswordModifyInput {
+  @Field((type) => Int)
+  @IsPositive()
+  @Length(1, 10)
+  @IsNumber()
+  accountId!: number;
+
+  @Field()
+  @IsNotEmpty()
+  @Length(2, 15)
+  @IsString()
+  accountName!: string;
+
+  @Field()
+  @IsNotEmpty()
+  @Length(6, 20)
+  @IsString()
+  prevPassword!: string;
+
+  @Field()
+  @IsNotEmpty()
+  @Length(6, 20)
+  @IsString()
+  newPassword!: string;
+}
+
+@InputType({ description: "Account Profile Input Type" })
+export class AccountProfileInput implements Partial<IAccountProfile> {
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  avatar?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  @Length(0, 100)
+  selfIntro?: string;
+
+  @IsEnum(AccountVIPLevel)
+  @IsOptional()
+  @Field((type) => AccountVIPLevel, { nullable: true })
+  VIPLevel?: AccountVIPLevel;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  isLifeTimeVIP?: boolean;
+}
+
+export const AccountProfileQueryMixin = <TClassType extends ClassType>(
+  BaseClass: TClassType
+) => {
+  @ObjectType({ isAbstract: true })
+  @InputType({ isAbstract: true })
+  class QueryInput extends BaseClass {}
+
+  return QueryInput;
+};
+
+export const AccountProfileUpdateMixin = <TClassType extends ClassType>(
+  BaseClass: TClassType
+) => {
+  @ObjectType({ isAbstract: true })
+  @InputType({ isAbstract: true })
+  class UpdateInput extends BaseClass {
+    @Field((type) => ID)
+    accountId!: number;
+  }
+
+  return UpdateInput;
+};
+
+@InputType({ description: "Account Profile Query Input" })
+export class AccountProfileQueryInput extends AccountProfileQueryMixin(
+  AccountProfileInput
+) {}
+
+@InputType({ description: "Account Profile Update Input" })
+export class AccountProfileUpdateInput extends AccountProfileQueryMixin(
+  AccountProfileInput
+) {}
+
+@InputType({ description: "Account Relations Input Type" })
 export class AccountRelationsInput {
   @Field({ nullable: true })
-  joinRecord: boolean = false;
+  joinRecord?: boolean;
+
+  @Field({ nullable: true })
+  joinRecordExecutor?: boolean;
+
+  @Field({ nullable: true })
+  joinRecordTask?: boolean;
+
+  @Field({ nullable: true })
+  joinRecordSubstance?: boolean;
 }
 
 interface IAccountRelationOptions {
@@ -114,6 +249,8 @@ export const getAccountRelations = ({
   joinRecord = false,
 }: IAccountRelationOptions): AccountRelation[] => {
   const relations: AccountRelation[] = [];
+
   joinRecord ? relations.push("relatedRecord") : void 0;
+
   return relations;
 };

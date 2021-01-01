@@ -1,11 +1,17 @@
 import { Service } from "typedi";
-import { FindConditions, Repository } from "typeorm";
+import { FindConditions, Repository, SelectQueryBuilder } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
 import Task from "../entity/Task";
 
 import { PaginationOptions } from "../graphql/Common";
-import { ITask, TaskRelation } from "../graphql/Task";
+import {
+  ITask,
+  TaskQueryInput,
+  TaskCreateInput,
+  TaskRelation,
+  TaskUpdateInput,
+} from "../graphql/Task";
 
 export interface ITaskService {
   getAllTasks(
@@ -13,20 +19,25 @@ export interface ITaskService {
     relations: TaskRelation[]
   ): Promise<Task[]>;
   getOneTaskById(
-    taskId: string,
+    taskId: number,
     relations: TaskRelation[]
   ): Promise<Task | undefined>;
   getOneTaskByConditions(
-    conditions: Partial<ITask>,
+    conditions: TaskQueryInput,
     relations: TaskRelation[]
   ): Promise<Task | undefined>;
   getTasksByConditions(
     conditions: FindConditions<Task>,
+    pagination: Required<PaginationOptions>,
     relations: TaskRelation[]
   ): Promise<Task[]>;
 
-  updateTask(indicator: string, infoUpdate: Partial<ITask>): Promise<Task>;
-  deleteTask(taskId: string): Promise<void>;
+  createTask(task: TaskCreateInput | Task): Promise<Task>;
+  updateTask(
+    indicator: number,
+    infoUpdate: Partial<TaskUpdateInput>
+  ): Promise<Task>;
+  deleteTask(taskId: number): Promise<void>;
 }
 
 @Service()
@@ -36,70 +47,118 @@ export default class TaskService implements ITaskService {
     private readonly taskRepository: Repository<Task>
   ) {}
 
+  private generateSelectBuilder(relations: TaskRelation[]) {
+    let selectQueryBuilder = this.taskRepository.createQueryBuilder("task");
+
+    if (relations.includes("assignee")) {
+      selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
+        "task.assignee",
+        "assignee"
+      );
+    }
+
+    if (relations.includes("taskSubstance")) {
+      selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
+        "task.taskSubstance",
+        "substance"
+      );
+    }
+
+    if (relations.includes("relatedRecord")) {
+      selectQueryBuilder = selectQueryBuilder
+        .leftJoinAndSelect("task.relatedRecord", "records")
+        .leftJoinAndSelect("records.recordAccount", "recordAccount")
+        .leftJoinAndSelect("records.recordExecutor", "recordExecutor")
+        .leftJoinAndSelect("records.recordSubstance", "recordSubstance");
+    }
+
+    return selectQueryBuilder;
+  }
+
+  private TaskConditionQuery(
+    conditions: TaskQueryInput,
+    relations: TaskRelation[] = []
+  ) {
+    let initialSelectBuilder = this.generateSelectBuilder(relations);
+
+    Object.keys(conditions).forEach((key) => {
+      initialSelectBuilder = initialSelectBuilder.andWhere(
+        `task.${key}= :${key}`,
+        {
+          [key]: conditions[key],
+        }
+      );
+    });
+
+    return initialSelectBuilder;
+  }
+
   async getAllTasks(
     pagination: Required<PaginationOptions>,
     relations: TaskRelation[] = []
   ): Promise<Task[]> {
     const { cursor, offset } = pagination;
 
-    const res = await this.taskRepository.find({
-      skip: cursor,
-      take: offset,
-      relations,
-    });
+    const res = await this.generateSelectBuilder(relations)
+      .take(offset)
+      .skip(cursor)
+      .getMany();
 
     return res;
   }
 
   async getOneTaskById(
-    taskId: string,
+    taskId: number,
     relations: TaskRelation[] = []
   ): Promise<Task | undefined> {
-    const res = await this.taskRepository.findOne(taskId, {
-      relations,
-    });
+    const res = await this.generateSelectBuilder(relations)
+      .where("task.taskId = :taskId", { taskId })
+      .getOne();
 
     return res;
   }
 
   async getOneTaskByConditions(
-    conditions: Partial<ITask>,
+    conditions: TaskQueryInput,
     relations: TaskRelation[] = []
   ): Promise<Task | undefined> {
-    const res = await this.taskRepository.findOne(conditions, {
-      relations,
-    });
+    const res = await this.TaskConditionQuery(conditions, relations).getOne();
 
     return res;
   }
 
   async getTasksByConditions(
-    conditions: FindConditions<Task>,
+    conditions: TaskQueryInput,
+    pagination: Required<PaginationOptions>,
     relations: TaskRelation[] = []
   ): Promise<Task[]> {
-    console.log(Array.from(new Set(relations)));
-    const res = await this.taskRepository.find({
-      where: {
-        ...conditions,
-      },
-      relations: Array.from(new Set(relations)),
-    });
+    const res = await this.TaskConditionQuery(conditions, relations).getMany();
+    return res;
+  }
 
+  async createTask(task: TaskCreateInput | Task): Promise<Task> {
+    const res = await this.taskRepository.save(task);
     return res;
   }
 
   async updateTask(
-    indicator: string,
-    infoUpdate: Partial<ITask>
+    indicator: number,
+    infoUpdate: Partial<TaskUpdateInput>
   ): Promise<Task> {
     await this.taskRepository.update(indicator, infoUpdate);
 
-    const updatedItem = (await this.taskRepository.findOne(indicator)) as Task;
+    const updatedItem = (await this.getOneTaskById(indicator))!;
 
     return updatedItem;
   }
 
-  async deleteTask(taskId: string): Promise<void> {
-    await this.taskRepository.delete(taskId);
+  async deleteTask(taskId: number): Promise<void> {
+    await this.taskRepository
+      .createQueryBuilder()
+      .delete()
+      .from(Task)
+      .where("taskId = :taskId")
+      .setParameter("taskId", taskId)
+      .execute();
   }
 }

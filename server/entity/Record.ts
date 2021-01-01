@@ -2,12 +2,13 @@ import { ObjectType } from "type-graphql";
 
 import {
   Entity,
-  Column,
   PrimaryGeneratedColumn,
   BaseEntity,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToOne,
+  ManyToOne,
+  JoinColumn,
+  RelationId,
 } from "typeorm";
 
 import { IRecord } from "../graphql/Record";
@@ -21,23 +22,47 @@ import Account from "./Account";
 @Entity()
 export default class Record extends BaseEntity implements IRecord {
   @PrimaryGeneratedColumn()
-  recordId!: string;
+  recordId!: number;
 
-  @OneToOne(() => Task, (task: Task) => task.relatedRecord)
+  @ManyToOne((type) => Task, (task: Task) => task.relatedRecord, {
+    nullable: true,
+    onDelete: "SET NULL",
+  })
+  @JoinColumn({ name: "recordTaskId" })
   recordTask!: Task;
 
-  @OneToOne(() => Account, (account: Account) => account.relatedRecord)
+  @ManyToOne((type) => Account, (account: Account) => account.relatedRecord, {
+    nullable: true,
+    onDelete: "SET NULL",
+  })
+  @JoinColumn({ name: "recordAccountId" })
   recordAccount!: Account;
 
-  @OneToOne(() => Substance, (substance: Substance) => substance.relatedRecord)
+  @ManyToOne(
+    (type) => Substance,
+    (substance: Substance) => substance.relatedRecord,
+    {
+      nullable: true,
+      onDelete: "SET NULL",
+    }
+  )
+  @JoinColumn({ name: "recordSubstanceId" })
   recordSubstance!: Substance;
 
-  @OneToOne(() => Executor, (executor: Executor) => executor.relatedRecord)
+  @ManyToOne(
+    (type) => Executor,
+    (executor: Executor) => executor.relatedRecord,
+    {
+      nullable: true,
+      onDelete: "SET NULL",
+    }
+  )
+  @JoinColumn({ name: "recordExecutorId" })
   recordExecutor!: Executor;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ comment: "记录创建时间" })
   createDate!: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ comment: "记录更新时间" })
   lastUpdateDate!: Date;
 }

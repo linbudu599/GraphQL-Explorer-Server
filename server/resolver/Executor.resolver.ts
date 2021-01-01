@@ -11,13 +11,10 @@ import {
   Root,
   Int,
 } from "type-graphql";
-import { Repository, Transaction, TransactionRepository } from "typeorm";
 
 import Executor, { ExecutorDesc } from "../entity/Executor";
-import Task from "../entity/Task";
 
 import ExecutorService from "../service/Executor.service";
-import TaskService from "../service/Task.service";
 
 import {
   ExecutorCreateInput,
@@ -28,6 +25,7 @@ import {
   IExecutorDesc,
   ExecutorRelationsInput,
   getExecutorRelations,
+  ExecutorRelation,
 } from "../graphql/Executor";
 import {
   PaginationOptions,
@@ -36,6 +34,7 @@ import {
 } from "../graphql/Common";
 
 import { RESPONSE_INDICATOR } from "../utils/constants";
+import { mergeJSONWithObj, generatePagination } from "../utils/helper";
 import { InjectCurrentUser, CustomArgsValidation } from "../decorators";
 
 import { ExtraFieldLogMiddlewareGenerator } from "../middleware/log";
@@ -44,10 +43,7 @@ import { IContext } from "../typding";
 
 @Resolver((of) => Executor)
 export default class ExecutorResolver {
-  constructor(
-    private readonly executorService: ExecutorService,
-    private readonly taskService: TaskService
-  ) {}
+  constructor(private readonly executorService: ExecutorService) {}
 
   @Query(() => ExecutorStatus, {
     nullable: false,
@@ -65,15 +61,12 @@ export default class ExecutorResolver {
     relationOptions: Partial<ExecutorRelationsInput> = {}
   ): Promise<ExecutorStatus> {
     try {
-      const { cursor, offset } = (pagination ?? {
-        cursor: 0,
-        offset: 20,
-      }) as Required<PaginationOptions>;
-      const relations = getExecutorRelations(relationOptions);
-
+      const queryPagination = generatePagination(pagination);
+      const relations: ExecutorRelation[] = getExecutorRelations(
+        relationOptions
+      );
       const ExecutorsWithTasks = await this.executorService.getAllExecutors(
-        cursor,
-        offset,
+        queryPagination,
         relations
       );
 
@@ -89,16 +82,18 @@ export default class ExecutorResolver {
 
   @Query(() => ExecutorStatus, {
     nullable: false,
-    description: "查找特定执行者",
+    description: "根据ID查找特定执行者信息",
   })
   async QueryExecutorById(
-    @Arg("uid") uid: string,
+    @Arg("uid", (type) => Int) uid: number,
 
     @Arg("relations", (type) => ExecutorRelationsInput, { nullable: true })
     relationOptions: Partial<ExecutorRelationsInput> = {}
   ): Promise<ExecutorStatus> {
     try {
-      const relations = getExecutorRelations(relationOptions);
+      const relations: ExecutorRelation[] = getExecutorRelations(
+        relationOptions
+      );
       const executor = await this.executorService.getOneExecutorById(
         uid,
         relations
@@ -125,7 +120,9 @@ export default class ExecutorResolver {
     relationOptions: Partial<ExecutorRelationsInput> = {}
   ): Promise<ExecutorStatus> {
     try {
-      const relations = getExecutorRelations(relationOptions);
+      const relations: ExecutorRelation[] = getExecutorRelations(
+        relationOptions
+      );
 
       const res = await this.executorService.getExecutorsByConditions(
         conditions,
@@ -149,24 +146,21 @@ export default class ExecutorResolver {
     description: "根据描述（等级、成功率、评分）查找执行者",
   })
   async QueryExecutorByDesc(
-    @Args() desc: ExecutorDescQuery,
+    @Args((type) => ExecutorDescQuery) desc: ExecutorDescQuery,
+
     @Arg("pagination", { nullable: true })
     pagination: PaginationOptions,
 
     @Arg("relations", (type) => ExecutorRelationsInput, { nullable: true })
     relationOptions: Partial<ExecutorRelationsInput> = {}
   ): Promise<ExecutorStatus> {
-    const relations = getExecutorRelations(relationOptions);
-    const { cursor, offset } = (pagination ?? {
-      cursor: 0,
-      offset: 20,
-    }) as Required<PaginationOptions>;
+    const queryPagination = generatePagination(pagination);
+    const relations: ExecutorRelation[] = getExecutorRelations(relationOptions);
 
     const { level, successRate, satisfaction } = desc;
 
     const executors = await this.executorService.getAllExecutors(
-      cursor,
-      offset,
+      queryPagination,
       relations
     );
 
@@ -206,7 +200,9 @@ export default class ExecutorResolver {
         }
       );
       if (isExistingExecutor) {
-        return new StatusHandler(false, RESPONSE_INDICATOR.EXISTED, []);
+        return new StatusHandler(false, RESPONSE_INDICATOR.EXISTED, [
+          isExistingExecutor,
+        ]);
       }
 
       const res = await this.executorService.createExecutor(executor);
@@ -221,7 +217,7 @@ export default class ExecutorResolver {
     description: "更新执行者描述",
   })
   async UpdateExecutorDesc(
-    @Arg("uid") uid: string,
+    @Arg("uid", (type) => Int) uid: number,
     @Arg("userDesc") desc: ExecutorDescUpdateInput
   ): Promise<ExecutorStatus> {
     try {
@@ -233,13 +229,8 @@ export default class ExecutorResolver {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
 
-      const updatedDesc = {
-        ...JSON.parse(isExistingExecutor.desc ?? "{}"),
-        ...desc,
-      };
-
       const res = await this.executorService.updateExecutor(uid, {
-        desc: JSON.stringify(updatedDesc),
+        desc: mergeJSONWithObj(isExistingExecutor.desc, desc),
       });
 
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [res]);
@@ -274,17 +265,12 @@ export default class ExecutorResolver {
     }
   }
 
-  @Transaction()
   @Mutation(() => ExecutorStatus, {
     nullable: false,
     description: "删除执行者",
   })
   async DeleteExecutor(
-    @Arg("uid") uid: string,
-    @TransactionRepository(Executor)
-    executorTransRepo: Repository<Executor>,
-    @TransactionRepository(Task)
-    taskTransRepo: Repository<Task>
+    @Arg("uid", (type) => Int) uid: number
   ): Promise<ExecutorStatus> {
     try {
       const isExistingExecutor = await this.executorService.getOneExecutorById(
@@ -294,36 +280,18 @@ export default class ExecutorResolver {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
 
-      const hasAssignedTask = await this.taskService.getTasksByConditions({
-        assignee: {
-          uid,
-        },
-      });
+      await this.executorService.deleteExecutor(uid);
 
-      if (!hasAssignedTask) {
-        await this.executorService.deleteExecutor(uid);
-      } else {
-        // TODO:
-        await taskTransRepo.update(
-          {
-            assignee: {
-              uid,
-            },
-          },
-          {
-            assignee: undefined,
-          }
-        );
-      }
-
-      await executorTransRepo.delete({ uid });
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, []);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
     }
   }
 
-  @FieldResolver(() => Int, { nullable: false, description: "字段级解析器" })
+  @FieldResolver(() => Int, {
+    nullable: false,
+    description: "字段级解析器示例",
+  })
   async spAgeField(
     @Root() executor: Executor,
     @Arg("param", { nullable: true }) param?: number
@@ -336,14 +304,8 @@ export default class ExecutorResolver {
     nullable: false,
     description: "获取对象类型的执行者描述",
   })
-  async ExecutorDescField(
-    @Root() executor: Executor
-  ): Promise<ExecutorDesc | null> {
+  async ExecutorDescField(@Root() executor: Executor): Promise<ExecutorDesc> {
     const { desc } = executor;
-    try {
-      return JSON.parse(desc);
-    } catch (err) {
-      return null;
-    }
+    return JSON.parse(desc);
   }
 }
