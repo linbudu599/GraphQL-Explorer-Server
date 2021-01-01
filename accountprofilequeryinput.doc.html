@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="./styles/graphdoc.css" />
-    <title>AccountStatus</title>
+    <title>AccountProfileQueryInput</title>
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700" rel="stylesheet"><link type="text/css" rel="stylesheet" href="./assets/code.css" /><link type="text/css" rel="stylesheet" href="./assets/require-by.css" />
 </head>
 <body class="slds-scrollable--y">
@@ -215,7 +215,7 @@
                 AccountProfile
             </a>
         </li>
-        <li class="slds-is-active" title="AccountStatus">
+        <li  title="AccountStatus">
             <a href="accountstatus.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 AccountStatus
             </a>
@@ -345,7 +345,7 @@
                 AccountPasswordModifyInput
             </a>
         </li>
-        <li  title="AccountProfileQueryInput">
+        <li class="slds-is-active" title="AccountProfileQueryInput">
             <a href="accountprofilequeryinput.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 AccountProfileQueryInput
             </a>
@@ -475,9 +475,9 @@
         </div>
     </div>
     <div class="container">
-        <p class="slds-text-title--caps slds-text-color--weak">OBJECT</p>
-        <h1 class="slds-text-heading--large">AccountStatus</h1>
-        <div class="slds-text-body--regular"><p>Primitive Response Status Indicator</p>
+        <p class="slds-text-title--caps slds-text-color--weak">INPUT_OBJECT</p>
+        <h1 class="slds-text-heading--large">AccountProfileQueryInput</h1>
+        <div class="slds-text-body--regular"><p>Account Profile Query Input</p>
 </div>
     </div>
 </section>
@@ -489,7 +489,7 @@
             </a>
             GraphQL Schema definition
         </h2>
-        <code class="highlight"><ul class="code" style="padding-left:28px"><li><span class="keyword operator ts">type</span> <span class="identifier">AccountStatus</span> <span class="keyword operator ts">implements</span> <a class="support type" href="ibasestatus.doc.html">IBaseStatus</a> {</li><li></li><li><span class="tab"><span class="meta">success</span>: <a class="support type" href="boolean.doc.html">Boolean</a>! </span></li><li></li><li><span class="tab"><span class="meta">message</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">data</span>: [<a class="support type" href="account.doc.html">Account</a>!] </span></li><li>}</li></ul></code>
+        <code class="highlight"><ul class="code" style="padding-left:28px"><li><span class="keyword operator ts">input</span> <span class="identifier">AccountProfileQueryInput</span> {</li><li><span class="tab"><li><span class="tab"><span class="meta">avatar</span>: <a class="support type" href="string.doc.html">String</a></span></li></span></li><li><span class="tab"><li><span class="tab"><span class="meta">selfIntro</span>: <a class="support type" href="string.doc.html">String</a></span></li></span></li><li><span class="tab"><li><span class="tab"><span class="meta">VIPLevel</span>: <a class="support type" href="accountviplevel.doc.html">AccountVIPLevel</a></span></li></span></li><li><span class="tab"><li><span class="tab"><span class="meta">isLifeTimeVIP</span>: <a class="support type" href="boolean.doc.html">Boolean</a></span></li></span></li><li>}</li></ul></code>
     </div>
 </section>
 <section>
@@ -500,7 +500,7 @@
             </a>
             Require by
         </h2>
-        <ul class="require-by"><li><a href="accountunionresult.doc.html" title="AccountUnionResult - ">AccountUnionResult<em>null</em></a><li><li><a href="mutation.doc.html" title="Mutation - ">Mutation<em>null</em></a><li><li><a href="query.doc.html" title="Query - ">Query<em>null</em></a><li></ul>
+        <ul class="require-by"><li><a href="query.doc.html" title="Query - ">Query<em>null</em></a><li></ul>
     </div>
 </section>
 <footer>
