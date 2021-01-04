@@ -47,9 +47,19 @@ type AccountProfile implements IAccountProfile {
 }
 
 """
-Account Profile Input Type
+Account Profile Query Input
 """
-input AccountProfileInput {
+input AccountProfileQueryInput {
+  avatar: String
+  isLifeTimeVIP: Boolean
+  selfIntro: String
+  VIPLevel: AccountVIPLevel
+}
+
+"""
+Account Profile Update Input
+"""
+input AccountProfileUpdateInput {
   avatar: String
   isLifeTimeVIP: Boolean
   selfIntro: String
@@ -70,9 +80,6 @@ Account Relations Input Type
 """
 input AccountRelationsInput {
   joinRecord: Boolean
-  joinRecordExecutor: Boolean
-  joinRecordSubstance: Boolean
-  joinRecordTask: Boolean
 }
 
 """
@@ -457,7 +464,7 @@ type Mutation {
   """
   MutateAccountProfile(
     accountId: Int!
-    modifiedAccountProfile: AccountProfileInput!
+    modifiedAccountProfile: AccountProfileUpdateInput!
   ): AccountStatus!
 
   """
@@ -556,6 +563,15 @@ type Query {
   currentDate: Timestamp!
 
   """
+  基于资料查找用户
+  """
+  QueryAccountByProfile(
+    pagination: PaginationOptions
+    profileQueryParams: AccountProfileQueryInput
+    relations: AccountRelationsInput
+  ): AccountStatus!
+
+  """
   查询所有用户
   """
   QueryAllAccounts(
@@ -638,7 +654,7 @@ type Query {
   ): TaskStatus!
 
   """
-  基于条件查单个实体
+  基于条件查找单个实体
   """
   QueryOneSubstanceByConditions(
     relations: SubstanceRelationsInput

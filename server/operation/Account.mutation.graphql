@@ -1,18 +1,3 @@
-fragment LoginOrRegistryFields on LoginOrRegisterStatus {
-  success
-  message
-  token
-  expiredDate
-}
-fragment AccountFields on Account {
-  accountId
-  accountName
-  accountPwd
-  accountType
-  registryDate
-  lastUpdateDate
-}
-
 mutation AccountMutation {
   AccountRegistry(
     account: {

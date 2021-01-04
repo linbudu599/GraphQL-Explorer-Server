@@ -40,7 +40,6 @@ export default class Substance extends BaseEntity implements ISubstance {
   @Column({
     default: DifficultyLevel.ROOKIE,
     comment: "实体威胁级别",
-    enum: DifficultyLevel,
   })
   substanceLevel!: DifficultyLevel;
 

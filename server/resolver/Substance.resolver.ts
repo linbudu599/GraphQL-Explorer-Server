@@ -55,6 +55,7 @@ export default class SubstanceResolver {
 
       return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, res);
     } catch (error) {
+      console.log(error);
       return new StatusHandler(false, JSON.stringify(error), []);
     }
   }

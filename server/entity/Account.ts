@@ -73,7 +73,6 @@ export default class Account extends BaseEntity implements IAccount {
   @Column({
     default: ACCOUNT_TYPE.VISITOR,
     comment: "账号类型",
-    enum: ACCOUNT_TYPE,
   })
   accountType!: ACCOUNT_TYPE;
 

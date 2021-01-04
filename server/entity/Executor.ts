@@ -53,7 +53,7 @@ export default class Executor extends BaseEntity implements IExecutor {
   @Column({ default: 10 })
   age!: number;
 
-  @Column({ default: JOB.FE, enum: JOB })
+  @Column({ default: JOB.FE })
   job!: JOB;
 
   @Column({ default: false })
@@ -68,7 +68,7 @@ export default class Executor extends BaseEntity implements IExecutor {
   @Field()
   desc!: string;
 
-  @Column({ default: REGION.OTHER, enum: REGION })
+  @Column({ default: REGION.OTHER })
   region!: REGION;
 
   @Extensions({ complexity: 1 })

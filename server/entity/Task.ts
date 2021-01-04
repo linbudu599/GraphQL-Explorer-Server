@@ -46,7 +46,6 @@ export default class Task extends BaseEntity implements ITask {
   @Column({
     default: TaskPriority.MIDDLE,
     comment: "任务优先级",
-    enum: TaskPriority,
   })
   taskPriority!: TaskPriority;
 
@@ -65,14 +64,12 @@ export default class Task extends BaseEntity implements ITask {
   @Column({
     default: TaskSource.OTHER,
     comment: "任务来源",
-    enum: TaskSource,
   })
   taskSource!: TaskSource;
 
   @Column({
     default: DifficultyLevel.ROOKIE,
     comment: "任务级别",
-    enum: DifficultyLevel,
   })
   taskLevel!: DifficultyLevel;
 
@@ -83,7 +80,6 @@ export default class Task extends BaseEntity implements ITask {
   @Column({
     default: TaskTarget.OTHER,
     comment: "任务目标",
-    enum: TaskTarget,
   })
   taskTarget!: TaskTarget;
 

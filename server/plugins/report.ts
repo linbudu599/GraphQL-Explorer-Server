@@ -3,7 +3,7 @@ import {
   ApolloServerPluginSchemaReporting,
 } from "apollo-server-core";
 
-// APISchema
+// API Schema
 export const schemaPlugin = () =>
   process.env.APOLLO_KEY ? ApolloServerPluginSchemaReporting() : {};
 

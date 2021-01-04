@@ -21,6 +21,7 @@ module.exports = {
     { value: ":heavy_plus_sign: add", name: "add:      新增依赖" },
     { value: ":arrow_down: minus", name: "minus:    版本回退" },
     { value: ":fire: del", name: "del:      删除代码/文件" },
+    { value: ":pencil2: docs", name: "docs:     文档相关" },
     {
       value: ":chart_with_upwards_trend: chore:",
       name: "chore:    埋点相关",

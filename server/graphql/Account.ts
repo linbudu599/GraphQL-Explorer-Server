@@ -229,15 +229,6 @@ export class AccountProfileUpdateInput extends AccountProfileQueryMixin(
 export class AccountRelationsInput {
   @Field({ nullable: true })
   joinRecord?: boolean;
-
-  @Field({ nullable: true })
-  joinRecordExecutor?: boolean;
-
-  @Field({ nullable: true })
-  joinRecordTask?: boolean;
-
-  @Field({ nullable: true })
-  joinRecordSubstance?: boolean;
 }
 
 interface IAccountRelationOptions {

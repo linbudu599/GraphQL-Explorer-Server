@@ -1,36 +1,20 @@
-fragment AccountFields on Account {
-  accountId
-  accountPwd
-  accountType
-  registryDate
-  lastUpdateDate
-}
-
 query AccountQuery {
-  QueryAllAccounts {
+  QueryAllAccounts(relations: { joinRecord: true }) {
     success
     message
     data {
-      ...AccountFields
+      accountId
+      accountName
+      accountPwd
+      accountType
+      AccountProfileField {
+        ...AccountProfileFields
+      }
+      relatedRecord {
+        ...RecordFields
+      }
+      registryDate
+      lastUpdateDate
     }
-  }
-
-  AccountLogin(
-    account: {
-      accountName: "xxxxxx"
-      accountPwd: "xxxxxxxxxx"
-      loginType: VISITOR
-    }
-  ) {
-    success
-    message
-    token
-    expiredDate
-  }
-
-  CheckIsTokenValid(token: "xxxx") {
-    success
-    message
-    expiredDate
   }
 }
