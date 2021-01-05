@@ -28,6 +28,7 @@ import {
   AccountRelationsInput,
   AccountRelation,
   getAccountRelations,
+  AccountJSON,
 } from "../graphql/Account";
 
 import Account, { AccountProfile } from "../entity/Account";
@@ -449,7 +450,16 @@ export default class AccountResolver {
     description: "账号资料",
   })
   async AccountProfileField(@Root() account: Account): Promise<AccountProfile> {
+    console.log(account);
     const { accountProfile } = account;
     return JSON.parse(accountProfile);
+  }
+
+  @FieldResolver(() => AccountJSON, {
+    nullable: false,
+    description: "ACCOUNT_JSON_TYPE",
+  })
+  async AccountJSONField(@Root() account: Account): Promise<AccountJSON> {
+    return account.accountJSON;
   }
 }

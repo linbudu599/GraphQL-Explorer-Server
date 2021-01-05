@@ -13,7 +13,12 @@ import {
   OneToMany,
 } from "typeorm";
 
-import { IAccount, IAccountProfile, AccountVIPLevel } from "../graphql/Account";
+import {
+  IAccount,
+  IAccountProfile,
+  AccountVIPLevel,
+  AccountJSONType,
+} from "../graphql/Account";
 
 import Record from "./Record";
 
@@ -75,6 +80,13 @@ export default class Account extends BaseEntity implements IAccount {
     comment: "账号类型",
   })
   accountType!: ACCOUNT_TYPE;
+
+  @Column("simple-json", {
+    default: JSON.stringify({
+      _JUST_FOR_TEST_: 599,
+    }),
+  })
+  accountJSON!: AccountJSONType;
 
   // 记录
   @OneToMany((type) => Record, (record) => record.recordAccount, {

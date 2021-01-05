@@ -57,6 +57,10 @@ export abstract class IAccountProfile {
   isLifeTimeVIP!: boolean;
 }
 
+export type AccountJSONType = {
+  _JUST_FOR_TEST_: number;
+};
+
 @InterfaceType({ description: "Account Interface Type" })
 export abstract class IAccount {
   @Field((type) => ID)
@@ -85,6 +89,12 @@ export abstract class IAccount {
 
   @Field((type) => Date)
   lastUpdateDate!: Date;
+}
+
+@ObjectType()
+export class AccountJSON implements AccountJSONType {
+  @Field((type) => Int)
+  _JUST_FOR_TEST_!: number;
 }
 
 // isAbstract: will not register type in schema emitted

@@ -6,6 +6,11 @@
 type Account implements IAccount {
   accountAvaliable: Boolean!
   accountId: ID!
+
+  """
+  ACCOUNT_JSON_TYPE
+  """
+  AccountJSONField: AccountJSON!
   accountName: String!
   accountProfile: String!
 
@@ -18,6 +23,10 @@ type Account implements IAccount {
   lastUpdateDate: Timestamp!
   registryDate: Timestamp!
   relatedRecord: [Record!]
+}
+
+type AccountJSON {
+  _JUST_FOR_TEST_: Int!
 }
 
 """

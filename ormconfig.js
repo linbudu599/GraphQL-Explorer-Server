@@ -11,7 +11,7 @@ ${chalk.green(`[TypeORM] Config Env `)} ${chalk.cyan(
 module.exports = {
   type: "sqlite",
   name: "default",
-  database: "info.db",
+  database: "db.sqlite",
   // synchronize: IS_DEV,
   synchronize: true,
   dropSchema: IS_DEV,

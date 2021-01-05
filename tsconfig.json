@@ -1,5 +1,4 @@
 {
-  // use in server code only for now
   "include": ["./server/**/*.ts"],
   "compilerOptions": {
     // required by TypeGraphQL
@@ -8,7 +7,6 @@
     "module": "commonjs",
     "allowJs": true,
     "checkJs": true,
-    "jsx": "react",
     "declaration": true,
     "declarationMap": false,
     "sourceMap": false,
