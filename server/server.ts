@@ -49,6 +49,7 @@ import complexityPlugin from "./plugins/complexity";
 import extensionPlugin from "./plugins/extension";
 import { schemaPlugin, usagePlugin } from "./plugins/report";
 import scopedContainerPlugin from "./plugins/scopedContainer";
+import responseCachePlugin from "apollo-server-plugin-response-cache";
 
 Container.set({ id: "INIT_INJECT_DATA", factory: () => new Date() });
 
@@ -69,7 +70,6 @@ const basicMiddlewares = [
 setRecipeInContainer();
 
 const schema = buildSchemaSync({
-  // TODO: get by generation
   resolvers: [
     ExecutorResolver,
     RecipeResolver,
@@ -94,77 +94,89 @@ const schema = buildSchemaSync({
     : [...basicMiddlewares, ErrorLoggerMiddleware],
 });
 
+const server = new ApolloServer({
+  schema,
+  subscriptions: {
+    onConnect: () => log("[Subscription] Connected to websocket"),
+  },
+  context: async ({ ctx }: { ctx: Context }) => {
+    // TODO: get account type from token
+    // const token: string | null = ctx.request?.headers?.token ?? null;
+
+    const { id, type } = genarateRandomID();
+    // 每次请求使用一个随机ID注册容器
+    const container = Container.of(id);
+
+    const context = {
+      env: process.env.NODE_ENV,
+      currentUser: {
+        accountId: id,
+        roles: type,
+      },
+      container,
+    };
+
+    container.set("context", context);
+    return context;
+  },
+  extensions: [() => new CustomExtension()],
+  // 其实放在context里就可以自己用了
+  dataSources: () => ({
+    SpaceXAPI: new SpaceXDataSource(),
+  }),
+  plugins: [
+    schemaPlugin(),
+    usagePlugin(),
+    complexityPlugin(schema),
+    extensionPlugin(),
+    scopedContainerPlugin(Container),
+    ApolloServerLoaderPlugin({
+      typeormGetConnection: TypeORM.getConnection,
+    }),
+    responseCachePlugin({
+      // 被标记为PRIVATE的字段缓存只会用于相同sessionID
+      sessionId: (ctx: GraphQLRequestContext) =>
+        ctx.request.http?.headers.get("sessionId") || null,
+      shouldReadFromCache: (ctx: GraphQLRequestContext) => false,
+      shouldWriteToCache: (ctx: GraphQLRequestContext) => false,
+    }),
+  ],
+  // 关于RootValue和Context：https://stackoverflow.com/questions/44344560/context-vs-rootvalue-in-apollo-graphql
+  // 简单的说，RootValue就像是一个自定义的类型（和其他类型一样），但它只拥有一个动态解析的字段
+  // RootValue是解析链的初始值 也就是入口Resolver的parent参数
+  rootValue: (documentAST) => {
+    const op = getOperationAST(documentAST);
+    return {
+      operation: op?.operation,
+    };
+  },
+  // 2333 关掉不能在生产环境用playground了hhh 但是能正常查询
+  introspection: true,
+  // engine: true,
+  // formatError: () => {},
+  formatResponse: (
+    response: GraphQLResponse | null,
+    requestContext: GraphQLRequestContext<object>
+  ) => {
+    response!.extensions = {
+      ...response!.extensions,
+      FROM_RESPONSE_FORMATTER: "FROM_RESPONSE_FORMATTER",
+    };
+
+    return response as GraphQLResponse;
+  },
+  playground: {
+    settings: PLAY_GROUND_SETTINGS,
+  },
+  cacheControl: {
+    defaultMaxAge: 60,
+  },
+});
+
 export default async (): Promise<ApolloServer> => {
   await dbConnect();
 
-  const server = new ApolloServer({
-    schema,
-    subscriptions: {
-      onConnect: () => log("[Subscription] Connected to websocket"),
-    },
-    context: async ({ ctx }: { ctx: Context }) => {
-      // TODO: get account type from token
-      const token: string | null = ctx.request?.headers?.token ?? null;
-
-      const { id, type } = genarateRandomID();
-      // 每次请求使用一个随机ID注册容器
-      const container = Container.of(id);
-
-      const context = {
-        env: process.env.NODE_ENV,
-        currentUser: {
-          accountId: id,
-          roles: type,
-        },
-        container,
-      };
-
-      container.set("context", context);
-      return context;
-    },
-    extensions: [() => new CustomExtension()],
-    // 其实放在context里就可以自己用了
-    dataSources: () => ({
-      SpaceXAPI: new SpaceXDataSource(),
-    }),
-    plugins: [
-      schemaPlugin(),
-      usagePlugin(),
-      complexityPlugin(schema),
-      extensionPlugin(),
-      scopedContainerPlugin(Container),
-      ApolloServerLoaderPlugin({
-        typeormGetConnection: TypeORM.getConnection,
-      }),
-    ],
-    // 关于RootValue和Context：https://stackoverflow.com/questions/44344560/context-vs-rootvalue-in-apollo-graphql
-    // 简单的说，RootValue就像是一个自定义的类型（和其他类型一样），但它只拥有一个动态解析的字段
-    // RootValue是解析链的初始值 也就是入口Resolver的parent参数
-    rootValue: (documentAST) => {
-      const op = getOperationAST(documentAST);
-      return {
-        operation: op?.operation,
-      };
-    },
-    // 2333 关掉不能在生产环境用playground了hhh 但是能正常查询
-    introspection: true,
-    // engine: true,
-    // formatError: () => {},
-    formatResponse: (
-      response: GraphQLResponse | null,
-      requestContext: GraphQLRequestContext<object>
-    ) => {
-      response!.extensions = {
-        ...response!.extensions,
-        FROM_RESPONSE_FORMATTER: "FROM_RESPONSE_FORMATTER",
-      };
-
-      return response as GraphQLResponse;
-    },
-    playground: {
-      settings: PLAY_GROUND_SETTINGS,
-    },
-  });
-
   return server;
 };
+
+export const createTestServer = (): ApolloServer => server;

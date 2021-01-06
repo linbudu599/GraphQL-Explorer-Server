@@ -11,7 +11,8 @@
     "server/entity/seeds/",
     "/**/*.json",
     "/**/*.graphql",
-    "/**/*.gql"
+    "/**/*.gql",
+    "/**/*.test.ts"
   ],
   "verbose": true,
   "execMap": {

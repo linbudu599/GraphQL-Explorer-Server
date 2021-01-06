@@ -27,8 +27,9 @@ export default class RecipeResolver {
     nullable: false,
     description: "返回所有菜谱 厨师 和 咸鱼",
   })
+  // 以下任一缓存控制都能生效
   @UseMiddleware(CacheMiddleware)
-  @CacheControl(RecipeCacheHint)
+  // @CacheControl(RecipeCacheHint)
   async QueryRecipeUnions(): Promise<typeof RecipeUnionResult[]> {
     const recipes = await this.recipeService.getAllRecipes();
     const cooks = await this.recipeService.getAllCooks();

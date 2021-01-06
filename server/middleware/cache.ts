@@ -3,7 +3,6 @@ import { MiddlewareInterface, ResolverData, NextFn } from "type-graphql";
 
 import { IContext } from "../typding";
 
-// FIXME: not really working
 @Service()
 export default class CacheMiddleware implements MiddlewareInterface<IContext> {
   async use({ context, info }: ResolverData<IContext>, next: NextFn) {

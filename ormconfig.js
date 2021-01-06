@@ -1,6 +1,8 @@
 const chalk = require("chalk");
 
-const IS_DEV = process.env.NODE_ENV === "development";
+const IS_DEV = process.env.NODE_ENV === "development" || "test";
+
+const IS_TEST = process.env.NODE_ENV === "test";
 
 console.log(`
 ${chalk.green(`[TypeORM] Config Env `)} ${chalk.cyan(
@@ -15,7 +17,7 @@ module.exports = {
   // synchronize: IS_DEV,
   synchronize: true,
   dropSchema: IS_DEV,
-  logging: "all",
+  logging: IS_TEST ? false : "all",
   maxQueryExecutionTime: 1000,
   logger: "advanced-console",
   entities: [IS_DEV ? "server/entity/*.ts" : "dist/entity/*.js"],
