@@ -57,9 +57,6 @@ TypeORM.useContainer(Container);
 
 const dev = process.env.NODE_ENV === "development";
 
-dotenv.config({ path: dev ? ".env.dev" : ".env.prod" });
-log(`[Env] Loading ${dev ? "[DEV]" : "[PROD]"} File`);
-
 const basicMiddlewares = [
   ResolveTime,
   // InterceptorOnSCP1128,

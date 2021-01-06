@@ -1,6 +1,7 @@
 const chalk = require("chalk");
 
-const IS_DEV = process.env.NODE_ENV === "development" || "test";
+const IS_DEV =
+  process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test";
 
 const IS_TEST = process.env.NODE_ENV === "test";
 
@@ -13,7 +14,7 @@ ${chalk.green(`[TypeORM] Config Env `)} ${chalk.cyan(
 module.exports = {
   type: "sqlite",
   name: "default",
-  database: "db.sqlite",
+  database: IS_DEV ? "db.sqlite" : "db-prod.sqlite",
   // synchronize: IS_DEV,
   synchronize: true,
   dropSchema: IS_DEV,
