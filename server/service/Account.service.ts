@@ -1,6 +1,6 @@
 import { Service } from "typedi";
-import { Repository } from "typeorm";
-import { InjectRepository } from "typeorm-typedi-extensions";
+import { Repository, Connection } from "typeorm";
+import { InjectRepository, InjectConnection } from "typeorm-typedi-extensions";
 
 import Account from "../entity/Account";
 import {
@@ -11,6 +11,7 @@ import {
 } from "../graphql/Account";
 
 import { PaginationOptions } from "../graphql/Common";
+import { TypeORMCacheIds } from "../utils/constants";
 
 export interface IAccountService {
   getAllAccounts(
@@ -46,7 +47,10 @@ export interface IAccountService {
 export default class AccountService implements IAccountService {
   constructor(
     @InjectRepository(Account)
-    private readonly accountRepository: Repository<Account>
+    private readonly accountRepository: Repository<Account>,
+
+    @InjectConnection()
+    private readonly connection: Connection
   ) {}
 
   private generateSelectBuilder(relations: AccountRelation[] = []) {
@@ -75,6 +79,7 @@ export default class AccountService implements IAccountService {
     const accounts = await this.generateSelectBuilder(relations)
       .take(offset)
       .skip(cursor)
+      .cache(TypeORMCacheIds.account, 1000 * 5)
       .getMany();
 
     return accounts;
@@ -104,6 +109,7 @@ export default class AccountService implements IAccountService {
 
   async createAccount(account: AccountRegistryInput): Promise<Account> {
     const res = await this.accountRepository.save(account);
+    await this.connection.queryResultCache?.remove([TypeORMCacheIds.account]);
     return res;
   }
 
@@ -126,5 +132,7 @@ export default class AccountService implements IAccountService {
       .where("accountId = :accountId")
       .setParameter("accountId", accountId)
       .execute();
+
+    await this.connection.queryResultCache?.remove([TypeORMCacheIds.account]);
   }
 }

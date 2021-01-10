@@ -1,5 +1,5 @@
-import { Repository, SelectQueryBuilder } from "typeorm";
-import { InjectRepository } from "typeorm-typedi-extensions";
+import { Connection, Repository, SelectQueryBuilder } from "typeorm";
+import { InjectRepository, InjectConnection } from "typeorm-typedi-extensions";
 
 import { Service, Inject } from "typedi";
 
@@ -13,6 +13,7 @@ import {
   ExecutorQueryArgs,
   ExecutorUpdateInput,
 } from "../graphql/Executor";
+import { TypeORMCacheIds } from "../utils/constants";
 
 export interface IExecutorService {
   // Query
@@ -53,7 +54,10 @@ export default class ExecutorService implements IExecutorService {
   constructor(
     @InjectRepository(Executor)
     private readonly executorRepository: Repository<Executor>,
-    @Inject("INIT_INJECT_DATA") private readonly dateInfo: Date
+    @Inject("INIT_INJECT_DATA") private readonly dateInfo: Date,
+
+    @InjectConnection()
+    private readonly connection: Connection
   ) {}
 
   private generateSelectBuilder(relations: ExecutorRelation[]) {
@@ -111,6 +115,7 @@ export default class ExecutorService implements IExecutorService {
     const res = await this.generateSelectBuilder(relations)
       .take(offset)
       .skip(cursor)
+      .cache(TypeORMCacheIds.executor, 1000 * 5)
       .getMany();
 
     return res;
@@ -159,6 +164,8 @@ export default class ExecutorService implements IExecutorService {
 
   async createExecutor(executor: ExecutorCreateInput): Promise<Executor> {
     const res = await this.executorRepository.save(executor);
+    await this.connection.queryResultCache?.remove([TypeORMCacheIds.executor]);
+
     return res;
   }
 
@@ -181,5 +188,7 @@ export default class ExecutorService implements IExecutorService {
       .where("uid = :uid")
       .setParameter("uid", uid)
       .execute();
+
+    await this.connection.queryResultCache?.remove([TypeORMCacheIds.executor]);
   }
 }

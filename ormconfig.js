@@ -25,6 +25,6 @@ module.exports = {
   factories: ["server/entity/factories/*.ts"],
   seeds: ["server/entity/seeds/*.ts"],
   cache: {
-    duration: 3000,
+    duration: 1000,
   },
 };

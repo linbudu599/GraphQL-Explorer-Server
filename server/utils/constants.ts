@@ -67,3 +67,10 @@ export const DEFAULT_QUERY_PAGINATION = {
   cursor: 0,
   offset: 20,
 } as const;
+
+export const TypeORMCacheIds = {
+  account: "all_accounts",
+  executor: "all_executors",
+  task: "all_tasks",
+  substance: "all_substances",
+};

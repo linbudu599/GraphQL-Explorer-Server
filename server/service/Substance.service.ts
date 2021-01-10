@@ -1,6 +1,6 @@
 import { Service } from "typedi";
-import { Repository, SelectQueryBuilder } from "typeorm";
-import { InjectRepository } from "typeorm-typedi-extensions";
+import { Repository, SelectQueryBuilder, Connection } from "typeorm";
+import { InjectRepository, InjectConnection } from "typeorm-typedi-extensions";
 
 import Substance from "../entity/Substance";
 
@@ -11,6 +11,8 @@ import {
   SubstanceCreateInput,
   SubstanceUpdateInput,
 } from "../graphql/Substance";
+
+import { TypeORMCacheIds } from "../utils/constants";
 
 export interface ISubstanceService {
   getAllSubstances(
@@ -48,7 +50,10 @@ export interface ISubstanceService {
 export default class SubstanceService implements ISubstanceService {
   constructor(
     @InjectRepository(Substance)
-    private readonly substanceRepository: Repository<Substance>
+    private readonly substanceRepository: Repository<Substance>,
+
+    @InjectConnection()
+    private readonly connection: Connection
   ) {}
 
   private generateSelectBuilder(relations: SubstanceRelation[]) {
@@ -108,6 +113,7 @@ export default class SubstanceService implements ISubstanceService {
     const res = await this.generateSelectBuilder(relations)
       .take(offset)
       .skip(cursor)
+      .cache(TypeORMCacheIds.substance, 1000 * 5)
       .getMany();
 
     return res;
@@ -155,6 +161,7 @@ export default class SubstanceService implements ISubstanceService {
     substance: SubstanceCreateInput | Substance
   ): Promise<Substance> {
     const res = await this.substanceRepository.save(substance);
+    await this.connection.queryResultCache?.remove([TypeORMCacheIds.substance]);
     return res;
   }
 
@@ -177,5 +184,7 @@ export default class SubstanceService implements ISubstanceService {
       .where("substanceId = :sId")
       .setParameter("sId", sId)
       .execute();
+
+    await this.connection.queryResultCache?.remove([TypeORMCacheIds.substance]);
   }
 }

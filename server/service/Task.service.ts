@@ -1,6 +1,11 @@
 import { Service } from "typedi";
-import { FindConditions, Repository, SelectQueryBuilder } from "typeorm";
-import { InjectRepository } from "typeorm-typedi-extensions";
+import {
+  Connection,
+  FindConditions,
+  Repository,
+  SelectQueryBuilder,
+} from "typeorm";
+import { InjectRepository, InjectConnection } from "typeorm-typedi-extensions";
 
 import Task from "../entity/Task";
 
@@ -12,6 +17,8 @@ import {
   TaskRelation,
   TaskUpdateInput,
 } from "../graphql/Task";
+
+import { TypeORMCacheIds } from "../utils/constants";
 
 export interface ITaskService {
   getAllTasks(
@@ -44,7 +51,10 @@ export interface ITaskService {
 export default class TaskService implements ITaskService {
   constructor(
     @InjectRepository(Task)
-    private readonly taskRepository: Repository<Task>
+    private readonly taskRepository: Repository<Task>,
+
+    @InjectConnection()
+    private readonly connection: Connection
   ) {}
 
   private generateSelectBuilder(relations: TaskRelation[]) {
@@ -102,6 +112,7 @@ export default class TaskService implements ITaskService {
     const res = await this.generateSelectBuilder(relations)
       .take(offset)
       .skip(cursor)
+      .cache(TypeORMCacheIds.task, 1000 * 5)
       .getMany();
 
     return res;
@@ -138,6 +149,10 @@ export default class TaskService implements ITaskService {
 
   async createTask(task: TaskCreateInput | Task): Promise<Task> {
     const res = await this.taskRepository.save(task);
+    await this.connection.queryResultCache?.remove([
+      TypeORMCacheIds.task,
+      TypeORMCacheIds.substance,
+    ]);
     return res;
   }
 
@@ -160,5 +175,10 @@ export default class TaskService implements ITaskService {
       .where("taskId = :taskId")
       .setParameter("taskId", taskId)
       .execute();
+
+    await this.connection.queryResultCache?.remove([
+      TypeORMCacheIds.task,
+      TypeORMCacheIds.substance,
+    ]);
   }
 }
