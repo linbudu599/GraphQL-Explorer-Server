@@ -35,7 +35,7 @@ mutation ExecutorMutation {
 
   UpdateExecutorBasicInfo(
     modifiedExecutorInfo: {
-      uid: "1"
+      uid: 1
       name: "MODIFIED_NAME"
       age: 38
       region: CENTRAL
@@ -48,7 +48,7 @@ mutation ExecutorMutation {
     }
   }
 
-  DeleteExecutor(uid: "1") {
+  DeleteExecutor(uid: 1) {
     success
     message
     data {
@@ -56,7 +56,7 @@ mutation ExecutorMutation {
     }
   }
 
-  UpdateExecutorDesc(uid: "1", userDesc: { level: OLD_DOMINATOR }) {
+  UpdateExecutorDesc(uid: 1, userDesc: { level: OLD_DOMINATOR }) {
     success
     message
     data {

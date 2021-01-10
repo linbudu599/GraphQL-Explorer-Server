@@ -45,7 +45,4 @@ db-prod.sqlite
 /api-dist
 
 /server/generated
-
-/docs
-
 .vercel
