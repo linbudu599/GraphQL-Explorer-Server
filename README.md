@@ -23,6 +23,10 @@ This is a **demo** which contains `GraphQL` and framework based on it(or work wi
   - Class-Validator
   - Class-Transformer
 
+## :satellite: Explain
+
+- :construction: **WIP** [使用最流行的技术栈搭建一个 GraphQL 服务器](./docs/README.md)
+
 ## 🏗️ &nbsp; Server & Docs Deployment
 
 - [x] [Docs by Surge](http://graphql-explorer-docs.surge.sh/)
