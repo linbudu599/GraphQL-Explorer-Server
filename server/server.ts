@@ -82,7 +82,8 @@ const schema = buildSchemaSync({
   container: ({ context }: ResolverData<IContext>) => context.container,
   // TypeGraphQL built-in Scalar Date
   dateScalarMode: "timestamp",
-  authChecker: dev ? () => true : authChecker,
+  // authChecker: dev ? () => true : authChecker,
+  authChecker,
   authMode: "error",
   emitSchemaFile: path.resolve(__dirname, "./typegraphql/shema.graphql"),
   validate: true,
@@ -108,7 +109,7 @@ const server = new ApolloServer({
       env: process.env.NODE_ENV,
       currentUser: {
         accountId: id,
-        roles: type,
+        accountType: type,
       },
       container,
     };

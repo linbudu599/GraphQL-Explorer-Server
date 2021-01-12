@@ -110,6 +110,8 @@ enum AccountType {
   ENTERPRISE
   GOV
   ORG
+  PERSONAL
+  UN_LOGIN
   VISITOR
 }
 

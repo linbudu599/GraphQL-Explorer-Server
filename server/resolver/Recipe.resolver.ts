@@ -1,5 +1,12 @@
 import { Service } from "typedi";
-import { Resolver, Query, Arg, UseMiddleware, Int } from "type-graphql";
+import {
+  Resolver,
+  Query,
+  Arg,
+  UseMiddleware,
+  Int,
+  Authorized,
+} from "type-graphql";
 
 import {
   RecipeUnionResult,
@@ -10,7 +17,6 @@ import {
 
 import RecipeService from "../service/Recipe.service";
 
-import CacheControl, { RecipeCacheHint } from "../middleware/cacheControl";
 import CacheMiddleware from "../middleware/cache";
 
 import { log } from "../utils/helper";
@@ -20,9 +26,10 @@ import { log } from "../utils/helper";
 export default class RecipeResolver {
   constructor(private readonly recipeService: RecipeService) {
     // created for each request (scoped)
-    log("=== recipeService Created! ===");
+    log("=== RecipeService Created! ===");
   }
 
+  @Authorized()
   @Query(() => [RecipeUnionResult], {
     nullable: false,
     description: "返回所有菜谱 厨师 和 咸鱼",

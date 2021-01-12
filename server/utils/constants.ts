@@ -1,18 +1,6 @@
-export enum USER_ROLES {
-  BANNED = -1,
-  COMMON = 0,
-  ADMIN = 1,
-}
-
 export const DATA_SOURCE_URL = "http://api.linbudu.top/data";
 
 export const SPACEX_API = "https://api.spacexdata.com/v4";
-
-export enum ACCOUNT_AUTH {
-  UN_LOGIN = -1,
-  COMMON = 0,
-  ADMIN = 1,
-}
 
 // TODO: 需要更详尽的错误码+信息提示
 export enum RESPONSE_INDICATOR {
@@ -32,13 +20,15 @@ export enum RESPONSE_INDICATOR {
 }
 
 export enum ACCOUNT_TYPE {
-  VISITOR,
-  COMMON,
-  ORG,
-  ENTERPRISE,
-  GOV,
-  ADMIN,
-  DOMINATOR,
+  UN_LOGIN = "UN_LOGIN",
+  VISITOR = "VISITOR",
+  COMMON = "COMMON",
+  PERSONAL = "PERSONAL",
+  ORG = "ORG",
+  ENTERPRISE = "ENTERPRISE",
+  GOV = "GOV",
+  ADMIN = "ADMIN",
+  DOMINATOR = "DOMINATOR",
 }
 
 export const MAX_ALLOWED_COMPLEXITY = 100;
