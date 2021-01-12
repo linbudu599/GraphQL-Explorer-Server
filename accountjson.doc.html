@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="./styles/graphdoc.css" />
-    <title>TaskStatus</title>
+    <title>AccountJSON</title>
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700" rel="stylesheet"><link type="text/css" rel="stylesheet" href="./assets/code.css" /><link type="text/css" rel="stylesheet" href="./assets/require-by.css" />
 </head>
 <body class="slds-scrollable--y">
@@ -210,7 +210,7 @@
                 Account
             </a>
         </li>
-        <li  title="AccountJSON">
+        <li class="slds-is-active" title="AccountJSON">
             <a href="accountjson.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 AccountJSON
             </a>
@@ -295,7 +295,7 @@
                 Task
             </a>
         </li>
-        <li class="slds-is-active" title="TaskStatus">
+        <li  title="TaskStatus">
             <a href="taskstatus.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 TaskStatus
             </a>
@@ -481,9 +481,8 @@
     </div>
     <div class="container">
         <p class="slds-text-title--caps slds-text-color--weak">OBJECT</p>
-        <h1 class="slds-text-heading--large">TaskStatus</h1>
-        <div class="slds-text-body--regular"><p>Task Response Status Indicator</p>
-</div>
+        <h1 class="slds-text-heading--large">AccountJSON</h1>
+        <div class="slds-text-body--regular"></div>
     </div>
 </section>
 <section>
@@ -494,7 +493,7 @@
             </a>
             GraphQL Schema definition
         </h2>
-        <code class="highlight"><ul class="code" style="padding-left:28px"><li><span class="keyword operator ts">type</span> <span class="identifier">TaskStatus</span> <span class="keyword operator ts">implements</span> <a class="support type" href="ibasestatus.doc.html">IBaseStatus</a> {</li><li></li><li><span class="tab"><span class="meta">success</span>: <a class="support type" href="boolean.doc.html">Boolean</a>! </span></li><li></li><li><span class="tab"><span class="meta">message</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">data</span>: [<a class="support type" href="task.doc.html">Task</a>!] </span></li><li>}</li></ul></code>
+        <code class="highlight"><ul class="code" style="padding-left:28px"><li><span class="keyword operator ts">type</span> <span class="identifier">AccountJSON</span> {</li><li></li><li><span class="tab"><span class="meta">_JUST_FOR_TEST_</span>: <a class="support type" href="int.doc.html">Int</a>! </span></li><li>}</li></ul></code>
     </div>
 </section>
 <section>
@@ -505,7 +504,7 @@
             </a>
             Require by
         </h2>
-        <ul class="require-by"><li><a href="mutation.doc.html" title="Mutation - ">Mutation<em>null</em></a><li><li><a href="query.doc.html" title="Query - ">Query<em>null</em></a><li></ul>
+        <ul class="require-by"><li><a href="account.doc.html" title="Account - ">Account<em>null</em></a><li></ul>
     </div>
 </section>
 <footer>
