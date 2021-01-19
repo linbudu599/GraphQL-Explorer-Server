@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { TOKEN_EXPIRED_IN, ACCOUNT_TYPE } from "./constants";
+import { TOKEN_EXPIRED_IN, ACCOUNT_TYPE, ACCOUNT_ROLE } from "./constants";
 
 if (process.env.NODE_ENV === "test") {
   process.env.SECRET_KEY = "test_secret_key";
@@ -7,12 +7,14 @@ if (process.env.NODE_ENV === "test") {
 
 export const dispatchToken = (
   username: string,
-  loginType: ACCOUNT_TYPE = ACCOUNT_TYPE.VISITOR
+  accountType: ACCOUNT_TYPE = ACCOUNT_TYPE.VISITOR,
+  accountRole: ACCOUNT_ROLE = ACCOUNT_ROLE.UNKNOWN
 ) =>
   jwt.sign(
     {
       username,
-      loginType,
+      accountType,
+      accountRole,
     },
     process.env.SECRET_KEY ?? "dev_secret_key",
     {
@@ -27,7 +29,8 @@ type TTOkenInfo = {
   username: string;
   // 签发时间
   iat: number;
-  loginType: ACCOUNT_TYPE;
+  accountType: ACCOUNT_TYPE;
+  accountRole: ACCOUNT_ROLE;
   // 到期时间
   exp: number;
 };

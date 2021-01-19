@@ -45,11 +45,14 @@ import { IContext } from "./typding";
 
 import { GraphQLResponse } from "graphql-extensions";
 
+// Apollo Server Plugin
 import complexityPlugin from "./plugins/complexity";
 import extensionPlugin from "./plugins/extension";
 import { schemaPlugin, usagePlugin } from "./plugins/report";
 import scopedContainerPlugin from "./plugins/scopedContainer";
 import responseCachePlugin from "apollo-server-plugin-response-cache";
+
+import { validateToken } from "./utils/jwt";
 
 Container.set({ id: "INIT_INJECT_DATA", factory: () => new Date() });
 
@@ -98,10 +101,10 @@ const server = new ApolloServer({
     onConnect: () => log("[Subscription] Connected to websocket"),
   },
   context: async ({ ctx }: { ctx: Context }) => {
-    // TODO: get account type from token
-    // const token: string | null = ctx.request?.headers?.token ?? null;
+    const token: string | null = ctx.request?.headers?.token ?? null;
+    // validateToken(token) ...
 
-    const { id, type } = genarateRandomID();
+    const { id, accountType, accountRole } = genarateRandomID();
     // 每次请求使用一个随机ID注册容器
     const container = Container.of(id);
 
@@ -109,7 +112,8 @@ const server = new ApolloServer({
       env: process.env.NODE_ENV,
       currentUser: {
         accountId: id,
-        accountType: type,
+        accountType,
+        accountRole,
       },
       container,
     };

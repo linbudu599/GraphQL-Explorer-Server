@@ -21,6 +21,8 @@ import CacheMiddleware from "../middleware/cache";
 
 import { log } from "../utils/helper";
 
+import { ACCOUNT_TYPE, ACCOUNT_ROLE, AuthRule } from "../utils/constants";
+
 @Service()
 @Resolver()
 export default class RecipeResolver {
@@ -29,7 +31,7 @@ export default class RecipeResolver {
     log("=== RecipeService Created! ===");
   }
 
-  @Authorized()
+  @Authorized([ACCOUNT_TYPE.VISITOR, [ACCOUNT_ROLE.UNKNOWN]] as AuthRule)
   @Query(() => [RecipeUnionResult], {
     nullable: false,
     description: "返回所有菜谱 厨师 和 咸鱼",

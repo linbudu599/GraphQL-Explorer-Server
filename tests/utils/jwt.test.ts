@@ -1,5 +1,5 @@
-import { dispatchToken, validateToken } from "../../utils/jwt";
-import { ACCOUNT_TYPE } from "../../utils/constants";
+import { dispatchToken, validateToken } from "../../server/utils/jwt";
+import { ACCOUNT_TYPE } from "../../server/utils/constants";
 
 const USER_NAME = "林不渡";
 const LOGIN_TYPE = ACCOUNT_TYPE.DOMINATOR;
