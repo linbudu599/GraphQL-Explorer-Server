@@ -1,6 +1,6 @@
 import { gql } from "apollo-server-koa";
 import { createTestClient } from "apollo-server-testing";
-import createServer from "./../../server";
+import createServer from "../../server/server";
 
 const CONTAINER_REGISTER_TIME = gql`
   query {
@@ -21,7 +21,7 @@ describe("Apollo Server Integration Test", () => {
 
     const res = await query({ query: CONTAINER_REGISTER_TIME });
     expect(typeof res.data.ContainerRegisterTime).toBe("number");
-    // expect(res.data.ContainerRegisterTime.toString().length).toBe(13);
-    // expect(res.extensions).toEqual(EXTENSION);
+    expect(res.data.ContainerRegisterTime.toString().length).toBe(13);
+    expect(res.extensions).toEqual(EXTENSION);
   });
 });

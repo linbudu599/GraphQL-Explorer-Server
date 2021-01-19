@@ -21,6 +21,8 @@ export const authChecker: AuthChecker<IContext> = (
 
   const [requiredType, requiredRole] = requiredAuth;
 
+  console.log(requiredType, requiredRole);
+
   if (accountType >= Number(requiredType)) {
     return (
       requiredRole.includes(accountRole) ||
