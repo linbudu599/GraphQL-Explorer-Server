@@ -101,22 +101,39 @@ const server = new ApolloServer({
     onConnect: () => log("[Subscription] Connected to websocket"),
   },
   context: async ({ ctx }: { ctx: Context }) => {
-    const token: string | null = ctx.request?.headers?.token ?? null;
-    // validateToken(token) ...
+    const token: string = ctx.request?.headers?.token ?? null;
 
+    if (!token) {
+      return;
+    }
+
+    const tokenValidation = validateToken(token);
     const { id, accountType, accountRole } = genarateRandomID();
     // 每次请求使用一个随机ID注册容器
     const container = Container.of(id);
 
-    const context = {
-      env: process.env.NODE_ENV,
+    if (!tokenValidation.valid) {
+      return {};
+    }
+
+    const context: IContext = {
       currentUser: {
         accountId: id,
-        accountType,
-        accountRole,
+        accountType: tokenValidation.info.accountType,
+        accountRole: tokenValidation.info.accountRole,
       },
       container,
     };
+
+    // const context: IContext = {
+    //   env: process.env.NODE_ENV ?? "",
+    //   currentUser: {
+    //     // accountId: id,
+    //     accountType,
+    //     accountRole,
+    //   },
+    //   container,
+    // };
 
     container.set("context", context);
     return context;

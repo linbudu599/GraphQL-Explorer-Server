@@ -47,6 +47,7 @@ export default class RecipeResolver {
     return [...recipes, ...cooks, ...saltFishes];
   }
 
+  @Authorized([ACCOUNT_TYPE.ADMIN, [ACCOUNT_ROLE.GOV]] as AuthRule)
   @Query(() => [Recipe], { nullable: false, description: "基于难度查找菜谱" })
   async QueryRecipesByDifficulty(
     @Arg("difficulty", (type) => Difficulty, { nullable: true })

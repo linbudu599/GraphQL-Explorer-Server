@@ -8,18 +8,25 @@ export const authChecker: AuthChecker<IContext> = (
     root,
     args,
     context: {
-      currentUser: { accountId, accountType },
+      currentUser: { accountId, accountType, accountRole },
     },
     info,
   },
-  requiredTypes
+  requiredAuth
 ): boolean => {
   log(`[Auth Check] Current User ID: ${accountId}`);
   log(`[Auth Check] Current User Type: ${accountType}`);
-  log(`[Auth Check] Required Types: ${requiredTypes}`);
+  log(`[Auth Check] Current User Role: ${accountRole}`);
+  log(`[Auth Check] Required Types: ${requiredAuth}`);
 
-  // return requiredTypes && requiredTypes.length
-  //   ? requiredTypes.includes(accountType)
-  //   : accountType !== ACCOUNT_TYPE.UN_LOGIN;
-  return true;
+  const [requiredType, requiredRole] = requiredAuth;
+
+  if (accountType >= Number(requiredType)) {
+    return (
+      requiredRole.includes(accountRole) ||
+      requiredRole.includes(ACCOUNT_ROLE.UNKNOWN)
+    );
+  } else {
+    return false;
+  }
 };
