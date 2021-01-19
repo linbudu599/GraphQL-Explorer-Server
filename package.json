@@ -21,7 +21,8 @@
     "prod:vercel": "vc -prod",
     "prettier": "prettier --write ./**/*.ts ./**/*.js ./**/*.json ./**/*.graphql",
     "seed:config": "cross-env NODE_ENV=development ts-node ./node_modules/typeorm-seeding/dist/cli.js config",
-    "seed:run": "cross-env NODE_ENV=development ts-node ./node_modules/typeorm-seeding/dist/cli.js seed"
+    "seed:run": "cross-env NODE_ENV=development ts-node ./node_modules/typeorm-seeding/dist/cli.js seed",
+    "genql": "rimraf -rf ./server/genql-generated &&  genql --schema ./server/typegraphql/schema.graphql --output ./server/genql-generated"
   },
   "repository": {
     "type": "git",
@@ -59,6 +60,7 @@
     "@2fd/graphdoc": "^2.4.0",
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
+    "@genql/runtime": "^2.3.3",
     "@saeris/apollo-server-vercel": "^0.4.0",
     "apollo-datasource-rest": "^0.9.5",
     "apollo-server": "^2.17.0",
@@ -105,6 +107,7 @@
     "@babel/preset-react": "^7.10.4",
     "@babel/preset-typescript": "^7.10.4",
     "@babel/runtime": "^7.11.2",
+    "@genql/cli": "^2.3.3",
     "@graphql-codegen/cli": "^1.19.2",
     "@graphql-codegen/fragment-matcher": "^2.0.0",
     "@graphql-codegen/introspection": "^1.18.0",

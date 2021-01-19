@@ -65,7 +65,7 @@ npm run dev # dev
 - `gen:docs`: generate documentation site from GraphQL schema by [graphdoc](https://github.com/2fd/graphdoc)
 - `gen`: generate docs & code, as `gen:code` & `gen:docs` require local server alive, this command will use NodeJS `child_process` mod to handle server setup.
 
-  not avaliable in windows cause `bash` command used.
+> not avaliable in windows cause `bash` command used.
 
 - `serve:docs`: generate & serve documentation site by [serve](https://github.com/vercel/serve)
 - `commit`: commit code by [custom commitlint config](.cz-config.js)
@@ -74,6 +74,7 @@ npm run dev # dev
 - `build:vercel`: build script on [Vercel Functions](https://vercel.com/)
 - `seed:config`: check [typeorm-seeding](https://github.com/w3tecch/typeorm-seeding) config
 - `seed:run`: start seeding data in `/server/entity/seeds`
+- `genql`: generate GraphQL query builder by [GenQL](https://github.com/remorses/genql)
 
 ## 📔&nbsp; Document
 

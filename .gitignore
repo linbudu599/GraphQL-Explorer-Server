@@ -44,5 +44,6 @@ db-prod.sqlite
 /server-dist
 /api-dist
 
-/server/generated
+/server/codegen-generated
+/server/genql-generated
 .vercel

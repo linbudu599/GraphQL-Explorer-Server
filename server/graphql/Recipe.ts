@@ -44,11 +44,11 @@ export class Company {
   @Field((type) => CompanyScale, { nullable: true })
   scale!: CompanyScale;
 
-  @Field((type) => Date)
-  registerDate!: Date;
+  @Field()
+  description!: string;
 
   @Field((type) => Date)
-  description!: string;
+  registerDate!: Date;
 }
 @Directive("@cacheControl(maxAge: 1000)")
 @ObjectType({ description: "Recipe >>> Cook >>> WorkExperience" })

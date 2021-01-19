@@ -84,7 +84,7 @@ const schema = buildSchemaSync({
   dateScalarMode: "timestamp",
   authChecker: dev ? () => true : authChecker,
   authMode: "error",
-  emitSchemaFile: path.resolve(__dirname, "./typegraphql/shema.graphql"),
+  emitSchemaFile: path.resolve(__dirname, "./typegraphql/schema.graphql"),
   validate: true,
   globalMiddlewares: dev
     ? basicMiddlewares
