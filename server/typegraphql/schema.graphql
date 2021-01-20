@@ -141,7 +141,7 @@ enum AccountVIPLevel {
 Recipe >>> Cook >>> WorkExperience >> Company
 """
 type Company {
-  description: Timestamp!
+  description: String!
   name: String!
   registerDate: Timestamp!
   scale: CompanyScale

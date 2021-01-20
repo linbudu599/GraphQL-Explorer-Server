@@ -1,13 +1,13 @@
 {
-  "include": ["./server/**/*.ts"],
-  "exclude": ["./tests/*", "./logs", "./server/generated/**"],
+  "include": ["./server/**/*"],
+  "exclude": ["./tests/*", "./logs"],
   "compilerOptions": {
     // required by TypeGraphQL
     "lib": ["esnext.asynciterable", "ES2018"],
     "target": "ES2018",
     "module": "commonjs",
     "allowJs": true,
-    "checkJs": true,
+    "checkJs": false,
     "declaration": true,
     "declarationMap": false,
     "sourceMap": false,
