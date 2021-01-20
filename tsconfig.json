@@ -1,6 +1,6 @@
 {
-  "include": ["./server/**/*.ts"],
-  "exclude": ["./tests/*", "./logs", "./server/genql-generated/*"],
+  "include": ["./server/**/*"],
+  "exclude": ["./tests/*", "./logs"],
   "compilerOptions": {
     // required by TypeGraphQL
     "lib": ["esnext.asynciterable", "ES2018"],

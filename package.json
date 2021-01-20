@@ -4,8 +4,8 @@
   "description": "API & Ability Usage of GraphQL.",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon ./server/app.ts",
-    "build": "node ./scripts/clean.js --server && tsc",
-    "build:vercel": "cross-env NODE_ENV=production && node ./scripts/clean.js --vercel && tsc --build vercel-tsconfig.json",
+    "build": "npm run genql && node ./scripts/clean.js --server && tsc",
+    "build:vercel": "npm run genql && cross-env NODE_ENV=production node ./scripts/clean.js --vercel && tsc --build vercel-tsconfig.json",
     "clean": "node ./scripts/clean.js --server --vercel",
     "test": "cross-env NODE_ENV=test jest --forceExit",
     "start": "npm run build && cross-env NODE_ENV=production nodemon ./dist/app.js",
