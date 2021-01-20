@@ -9,10 +9,4 @@ describe("[auth.ts] Unit Tests", () => {
     expect(invokeRes.accountType).toBeLessThanOrEqual(ACCOUNT_TYPE.DOMINATOR);
     expect(invokeRes.accountRole).toBeDefined();
   });
-
-  it("should return different objects", () => {
-    const invokeRes1 = genarateRandomID();
-    const invokeRes2 = genarateRandomID();
-    expect(invokeRes1.id).not.toBe(invokeRes2.id);
-  });
 });

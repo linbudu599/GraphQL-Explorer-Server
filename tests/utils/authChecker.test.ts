@@ -4,7 +4,7 @@ import { authChecker } from "../../server/utils/authChecker";
 
 import { ACCOUNT_TYPE, ACCOUNT_ROLE } from "../../server/utils/constants";
 
-describe.only("TypeGraphQL AuthChecker", () => {
+describe("TypeGraphQL AuthChecker", () => {
   it("should pass whenever role contains 'UNKNOWN'", () => {
     const checkRes = authChecker(
       {
