@@ -20,13 +20,18 @@ import {
   Int,
 } from "type-graphql";
 
-import Record from "../entity/Record";
+import Record from "../entities/Record";
 
-import { ACCOUNT_TYPE } from "../utils/constants";
+import { ACCOUNT_TYPE, ACCOUNT_ROLE } from "../utils/constants";
 
 registerEnumType(ACCOUNT_TYPE, {
   name: "AccountType",
   description: "Account Type Enum",
+});
+
+registerEnumType(ACCOUNT_ROLE, {
+  name: "AccountRole",
+  description: "Account Role Enum",
 });
 
 export enum AccountVIPLevel {
@@ -81,6 +86,9 @@ export abstract class IAccount {
   @Field((type) => ACCOUNT_TYPE)
   accountType!: ACCOUNT_TYPE;
 
+  @Field((type) => ACCOUNT_ROLE)
+  accountRole!: ACCOUNT_ROLE;
+
   @Field((type) => [Record]!, { nullable: true })
   relatedRecord!: Record[];
 
@@ -124,7 +132,12 @@ export const RegisterInputMixin = <TClassType extends ClassType>(
     @Field((type) => ACCOUNT_TYPE, { nullable: true })
     @IsNotEmpty()
     @IsEnum(ACCOUNT_TYPE)
-    loginType?: ACCOUNT_TYPE;
+    accountType?: ACCOUNT_TYPE;
+
+    @Field((type) => ACCOUNT_ROLE, { nullable: true })
+    @IsNotEmpty()
+    @IsEnum(ACCOUNT_ROLE)
+    accountRole?: ACCOUNT_ROLE;
   }
 
   return RegisterInput;
@@ -135,14 +148,19 @@ export const LoginInputMixin = <TClassType extends ClassType>(
 ) => {
   @ObjectType({ isAbstract: true })
   @InputType({ isAbstract: true })
-  class RegisterInput extends BaseClass {
+  class LoginInput extends BaseClass {
     @Field((type) => ACCOUNT_TYPE)
     @IsNotEmpty()
     @IsEnum(ACCOUNT_TYPE)
-    loginType!: ACCOUNT_TYPE;
+    accountType!: ACCOUNT_TYPE;
+
+    @Field((type) => ACCOUNT_ROLE, { nullable: true })
+    @IsNotEmpty()
+    @IsEnum(ACCOUNT_ROLE)
+    accountRole!: ACCOUNT_ROLE;
   }
 
-  return RegisterInput;
+  return LoginInput;
 };
 
 @InputType({ description: "Register Input Type" })

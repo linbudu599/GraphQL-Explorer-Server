@@ -31,11 +31,11 @@ import {
   AccountJSON,
 } from "../graphql/Account";
 
-import Account, { AccountProfile } from "../entity/Account";
+import Account, { AccountProfile } from "../entities/Account";
 
-import AccountService from "../service/Account.service";
+import AccountService from "../services/Account.service";
 
-import { ExtraFieldLogMiddlewareGenerator } from "../middleware/log";
+import { ExtraFieldLogMiddlewareGenerator } from "../middlewares/log";
 
 import { ACCOUNT_TYPE, RESPONSE_INDICATOR } from "../utils/constants";
 
@@ -105,7 +105,7 @@ export default class AccountResolver {
   })
   async AccountLogin(
     @Arg("account", (type) => AccountLoginInput)
-    { accountName, accountPwd, loginType }: AccountLoginInput
+    { accountName, accountPwd, accountType, accountRole }: AccountLoginInput
   ): Promise<LoginOrRegisterStatus> {
     try {
       const account = await this.accountService.getOneAccount(accountName);
@@ -117,7 +117,11 @@ export default class AccountResolver {
         );
       }
 
-      const { accountPwd: savedPwd, accountType: savedType } = account;
+      const {
+        accountPwd: savedPwd,
+        accountType: savedType,
+        accountRole: savedRole,
+      } = account;
       const pass = compare(accountPwd, savedPwd);
 
       if (!pass) {
@@ -128,7 +132,8 @@ export default class AccountResolver {
         );
       }
 
-      if (savedType !== loginType) {
+      // 这个真的会发生吗
+      if (savedType !== accountType || savedRole !== accountRole) {
         return new LoginOrRegisterStatusHandler(
           false,
           RESPONSE_INDICATOR.INVALID_LOGIN_TYPE,
@@ -136,7 +141,7 @@ export default class AccountResolver {
         );
       }
 
-      const token = dispatchToken(accountName, loginType);
+      const token = dispatchToken(accountName, accountType, accountRole);
 
       return new LoginOrRegisterStatusHandler(
         true,
@@ -178,7 +183,7 @@ export default class AccountResolver {
     @Arg("token") token: string
   ): Promise<LoginOrRegisterStatus> {
     const validateRes = validateToken(token);
-
+    console.log(validateRes);
     if (validateRes.valid) {
       return new LoginOrRegisterStatusHandler(
         true,
@@ -227,7 +232,11 @@ export default class AccountResolver {
       account.accountPwd = encode(account.accountPwd);
       await this.accountService.createAccount(account);
 
-      const token = dispatchToken(account.accountName, account.loginType);
+      const token = dispatchToken(
+        account.accountName,
+        account.accountType,
+        account.accountRole
+      );
 
       return new LoginOrRegisterStatusHandler(
         true,
@@ -333,13 +342,14 @@ export default class AccountResolver {
     }
   }
 
+  // Auth: ADMIN / DOMINATOR + Same Type Required
   @Mutation(() => AccountUnionResult, {
     nullable: false,
-    description: "提升或下降用户权限等级",
+    description: "提升/下降 用户类型",
   })
   async AccountLevelMutate(
     @Arg("accountId", (type) => Int) accountId: number,
-    @Arg("level", (type) => ACCOUNT_TYPE) level: ACCOUNT_TYPE
+    @Arg("type", (type) => ACCOUNT_TYPE) type: ACCOUNT_TYPE
   ): Promise<AccountStatus | LoginOrRegisterStatus> {
     try {
       const isExistingAccount = await this.accountService.getOneAccountById(
@@ -354,7 +364,7 @@ export default class AccountResolver {
       }
 
       const updated = await this.accountService.updateAccount(accountId, {
-        accountType: level,
+        accountType: type,
       });
 
       return plainToClass(AccountStatus, {
@@ -369,6 +379,14 @@ export default class AccountResolver {
         token: "",
       });
     }
+  }
+
+  @Mutation(() => LoginOrRegisterStatus, {
+    nullable: false,
+    description: "变更用户角色",
+  })
+  async MutateAccountRole(): Promise<LoginOrRegisterStatus> {
+    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
   }
 
   @Mutation(() => LoginOrRegisterStatus, {

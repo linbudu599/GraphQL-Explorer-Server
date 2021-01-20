@@ -1,6 +1,6 @@
 import { MiddlewareFn } from "type-graphql";
 import { SubstanceStatus } from "../graphql/Common";
-import Substance from "../entity/Substance";
+import Substance from "../entities/Substance";
 
 import { log } from "../utils/helper";
 

@@ -2,7 +2,7 @@ import "reflect-metadata";
 import Koa from "koa";
 import dotenv from "dotenv";
 
-import cors from "./middleware/cors";
+import cors from "./middlewares/cors";
 import { log } from "./utils/helper";
 
 import initialize from "./server";

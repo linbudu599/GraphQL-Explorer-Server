@@ -1,4 +1,4 @@
-import { encode, compare } from "../../utils/bcrypt";
+import { encode, compare } from "../../server/utils/bcrypt";
 
 describe("[bcrypt.js] Unit Tests", () => {
   it("should salt and return different salted res on same strings", () => {

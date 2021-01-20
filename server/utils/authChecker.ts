@@ -1,21 +1,34 @@
 import { AuthChecker } from "type-graphql";
 import { IContext } from "../typding";
 import { log } from "./helper";
+import { ACCOUNT_TYPE, ACCOUNT_ROLE } from "./constants";
 
 export const authChecker: AuthChecker<IContext> = (
   {
     root,
     args,
     context: {
-      currentUser: { accountId, roles: userRoleLevel },
+      currentUser: { accountId, accountType, accountRole },
     },
     info,
   },
-  requiredLevelGroup
+  requiredAuth
 ): boolean => {
-  const requiredLevel = Number(requiredLevelGroup[0]);
-  log(`[Auth Check] Current User ACCOUNT_ID: ${accountId}`);
-  log(`[Auth Check] Current User Role: ${userRoleLevel}`);
+  log(`[Auth Check] Current User ID: ${accountId}`);
+  log(`[Auth Check] Current User Type: ${accountType}`);
+  log(`[Auth Check] Current User Role: ${accountRole}`);
+  log(`[Auth Check] Required Types: ${requiredAuth}`);
 
-  return userRoleLevel >= requiredLevel;
+  const [requiredType, requiredRole] = requiredAuth;
+
+  console.log(requiredType, requiredRole);
+
+  if (accountType >= Number(requiredType)) {
+    return (
+      requiredRole.includes(accountRole) ||
+      requiredRole.includes(ACCOUNT_ROLE.UNKNOWN)
+    );
+  } else {
+    return false;
+  }
 };

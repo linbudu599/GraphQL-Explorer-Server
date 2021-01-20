@@ -22,8 +22,8 @@ import {
   IsPositive,
 } from "class-validator";
 
-import Task from "../entity/Task";
-import Record from "../entity/Record";
+import Task from "../entities/Task";
+import Record from "../entities/Record";
 
 import { DifficultyLevel } from "./Public";
 

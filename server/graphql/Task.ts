@@ -19,9 +19,9 @@ import {
   IsEnum,
 } from "class-validator";
 
-import Executor from "../entity/Executor";
-import Substance from "../entity/Substance";
-import Record from "../entity/Record";
+import Executor from "../entities/Executor";
+import Substance from "../entities/Substance";
+import Record from "../entities/Record";
 
 import { IExecutor } from "./Executor";
 import { DifficultyLevel } from "./Public";

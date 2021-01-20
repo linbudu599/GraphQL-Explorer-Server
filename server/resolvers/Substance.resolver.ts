@@ -1,6 +1,6 @@
 import { Resolver, Query, Arg, Mutation, Int } from "type-graphql";
 
-import Substance from "../entity/Substance";
+import Substance from "../entities/Substance";
 
 import {
   PaginationOptions,
@@ -21,8 +21,8 @@ import { RESPONSE_INDICATOR } from "../utils/constants";
 
 import { generatePagination } from "../utils/helper";
 
-import SubstanceService from "../service/Substance.service";
-import TaskService from "../service/Task.service";
+import SubstanceService from "../services/Substance.service";
+import TaskService from "../services/Task.service";
 
 @Resolver((of) => Substance)
 export default class SubstanceResolver {

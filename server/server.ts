@@ -12,14 +12,14 @@ import { ApolloServer } from "apollo-server-koa";
 import { GraphQLRequestContext } from "apollo-server-plugin-base";
 import { ApolloServerLoaderPlugin } from "type-graphql-dataloader";
 
-import ExecutorResolver from "./resolver/Executor.resolver";
-import RecipeResolver from "./resolver/Recipe.resolver";
-import TaskResolver from "./resolver/Task.resolver";
-import PubSubResolver from "./resolver/PubSub.resolver";
-import AccountResolver from "./resolver/Account.resolver";
-import SubstanceResolver from "./resolver/Substance.resolver";
-import PublicResolver from "./resolver/Public.resolver";
-import RecordResolver from "./resolver/Record.resolver";
+import ExecutorResolver from "./resolvers/Executor.resolver";
+import RecipeResolver from "./resolvers/Recipe.resolver";
+import TaskResolver from "./resolvers/Task.resolver";
+import PubSubResolver from "./resolvers/PubSub.resolver";
+import AccountResolver from "./resolvers/Account.resolver";
+import SubstanceResolver from "./resolvers/Substance.resolver";
+import PublicResolver from "./resolvers/Public.resolver";
+import RecordResolver from "./resolvers/Record.resolver";
 
 import { log } from "./utils/helper";
 import { genarateRandomID } from "./utils/auth";
@@ -28,10 +28,10 @@ import { PLAY_GROUND_SETTINGS } from "./utils/constants";
 import { setRecipeInContainer, dbConnect } from "./utils/mock";
 
 // Middlewares applied on TypeGraphQL
-import ResolveTime from "./middleware/time";
-import { InterceptorOnSCP1128 } from "./middleware/interceptor";
-import LogAccessMiddleware from "./middleware/log";
-import ErrorLoggerMiddleware from "./middleware/error";
+import ResolveTime from "./middlewares/time";
+import { InterceptorOnSCP1128 } from "./middlewares/interceptor";
+import LogAccessMiddleware from "./middlewares/log";
+import ErrorLoggerMiddleware from "./middlewares/error";
 
 // Extensions powered by TypeGraphQL
 import { ExtensionsMetadataRetriever } from "./extensions/GetMetadata";
@@ -45,11 +45,14 @@ import { IContext } from "./typding";
 
 import { GraphQLResponse } from "graphql-extensions";
 
+// Apollo Server Plugin
 import complexityPlugin from "./plugins/complexity";
 import extensionPlugin from "./plugins/extension";
 import { schemaPlugin, usagePlugin } from "./plugins/report";
 import scopedContainerPlugin from "./plugins/scopedContainer";
 import responseCachePlugin from "apollo-server-plugin-response-cache";
+
+import { validateToken } from "./utils/jwt";
 
 Container.set({ id: "INIT_INJECT_DATA", factory: () => new Date() });
 
@@ -82,7 +85,8 @@ const schema = buildSchemaSync({
   container: ({ context }: ResolverData<IContext>) => context.container,
   // TypeGraphQL built-in Scalar Date
   dateScalarMode: "timestamp",
-  authChecker: dev ? () => true : authChecker,
+  // authChecker: dev ? () => true : authChecker,
+  authChecker,
   authMode: "error",
   emitSchemaFile: path.resolve(__dirname, "./typegraphql/schema.graphql"),
   validate: true,
@@ -97,18 +101,35 @@ const server = new ApolloServer({
     onConnect: () => log("[Subscription] Connected to websocket"),
   },
   context: async ({ ctx }: { ctx: Context }) => {
-    // TODO: get account type from token
-    // const token: string | null = ctx.request?.headers?.token ?? null;
+    // const token: string = ctx.request?.headers?.token ?? null;
 
-    const { id, type } = genarateRandomID();
+    // if (!token) {
+    //   return;
+    // }
+
+    // const tokenValidation = validateToken(token);
+    const { id, accountType, accountRole } = genarateRandomID();
     // 每次请求使用一个随机ID注册容器
     const container = Container.of(id);
 
-    const context = {
-      env: process.env.NODE_ENV,
+    // if (!tokenValidation.valid) {
+    //   return {};
+    // }
+
+    // const context: IContext = {
+    //   currentUser: {
+    //     accountId: id,
+    //     accountType: tokenValidation.info.accountType,
+    //     accountRole: tokenValidation.info.accountRole,
+    //   },
+    //   container,
+    // };
+
+    const context: IContext = {
       currentUser: {
         accountId: id,
-        roles: type,
+        accountType,
+        accountRole,
       },
       container,
     };

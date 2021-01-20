@@ -1,12 +1,12 @@
 import { ContainerInstance } from "typedi";
 
-import { ACCOUNT_AUTH } from "./utils/constants";
+import { ACCOUNT_TYPE, ACCOUNT_ROLE } from "./utils/constants";
 
 export interface IContext {
-  env: string;
   currentUser: {
-    accountId: string;
-    roles: ACCOUNT_AUTH;
+    accountId: number;
+    accountType: ACCOUNT_TYPE;
+    accountRole: ACCOUNT_ROLE;
   };
   container: ContainerInstance;
 }

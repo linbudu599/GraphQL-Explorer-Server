@@ -1,18 +1,6 @@
-export enum USER_ROLES {
-  BANNED = -1,
-  COMMON = 0,
-  ADMIN = 1,
-}
-
 export const DATA_SOURCE_URL = "http://api.linbudu.top/data";
 
 export const SPACEX_API = "https://api.spacexdata.com/v4";
-
-export enum ACCOUNT_AUTH {
-  UN_LOGIN = -1,
-  COMMON = 0,
-  ADMIN = 1,
-}
 
 // TODO: 需要更详尽的错误码+信息提示
 export enum RESPONSE_INDICATOR {
@@ -31,15 +19,36 @@ export enum RESPONSE_INDICATOR {
   UNDER_DEVELOPING = "Interface Under Developing",
 }
 
+/**
+ * 鉴权说明: 除未知角色UNKNOWN以外, 其他角色又包含四种账号类型
+ * 下发的TOKEN中包含这两种信息
+ * @Authorized()装饰器包含的规则数组:
+ *
+ * 第0项为账号类型, 实际类型高于枚举值即可
+ *
+ * 第1项为账号角色, 当账号角色中包含UNKNOWN时, 任意角色均可访问此解析器
+ *
+ * 否则, 仅有对应的角色可以访问
+ */
+
+// 账号类型
 export enum ACCOUNT_TYPE {
-  VISITOR,
+  VISITOR = 1,
   COMMON,
-  ORG,
-  ENTERPRISE,
-  GOV,
   ADMIN,
   DOMINATOR,
 }
+
+// 账号角色
+export enum ACCOUNT_ROLE {
+  UNKNOWN = "UNKNOWN",
+  PERSONAL = "PERSONAL",
+  ORG = "ORG",
+  ENTERPRISE = "ENTERPRISE",
+  GOV = "GOV",
+}
+
+export type AuthRule = [ACCOUNT_TYPE, Array<ACCOUNT_ROLE>];
 
 export const MAX_ALLOWED_COMPLEXITY = 100;
 

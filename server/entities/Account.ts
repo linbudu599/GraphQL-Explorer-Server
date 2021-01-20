@@ -22,7 +22,7 @@ import {
 
 import Record from "./Record";
 
-import { ACCOUNT_TYPE } from "../utils/constants";
+import { ACCOUNT_TYPE, ACCOUNT_ROLE } from "../utils/constants";
 
 @ObjectType({ implements: IAccountProfile })
 export class AccountProfile extends BaseEntity implements IAccountProfile {
@@ -80,6 +80,12 @@ export default class Account extends BaseEntity implements IAccount {
     comment: "账号类型",
   })
   accountType!: ACCOUNT_TYPE;
+
+  @Column({
+    default: ACCOUNT_ROLE.UNKNOWN,
+    comment: "账号角色",
+  })
+  accountRole!: ACCOUNT_ROLE;
 
   @Column("simple-json", {
     default: JSON.stringify({

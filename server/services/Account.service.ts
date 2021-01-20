@@ -2,7 +2,7 @@ import { Service } from "typedi";
 import { Repository, Connection } from "typeorm";
 import { InjectRepository, InjectConnection } from "typeorm-typedi-extensions";
 
-import Account from "../entity/Account";
+import Account from "../entities/Account";
 import {
   IAccount,
   AccountRegistryInput,

@@ -1,6 +1,6 @@
 import { Resolver, Query, Arg, Mutation } from "type-graphql";
 
-import Task from "../entity/Task";
+import Task from "../entities/Task";
 
 import {
   PaginationOptions,
@@ -17,9 +17,9 @@ import {
 } from "../graphql/Task";
 import { DifficultyLevel } from "../graphql/Public";
 
-import TaskService from "../service/Task.service";
-import ExecutorService from "../service/Executor.service";
-import SubstanceService from "../service/Substance.service";
+import TaskService from "../services/Task.service";
+import ExecutorService from "../services/Executor.service";
+import SubstanceService from "../services/Substance.service";
 
 import { RESPONSE_INDICATOR } from "../utils/constants";
 

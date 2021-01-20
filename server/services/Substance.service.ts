@@ -2,7 +2,7 @@ import { Service } from "typedi";
 import { Repository, SelectQueryBuilder, Connection } from "typeorm";
 import { InjectRepository, InjectConnection } from "typeorm-typedi-extensions";
 
-import Substance from "../entity/Substance";
+import Substance from "../entities/Substance";
 
 import { PaginationOptions } from "../graphql/Common";
 import {

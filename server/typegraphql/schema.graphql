@@ -19,6 +19,7 @@ type Account implements IAccount {
   """
   AccountProfileField: AccountProfile!
   accountPwd: String!
+  accountRole: AccountRole!
   accountType: AccountType!
   lastUpdateDate: Timestamp!
   registryDate: Timestamp!
@@ -35,7 +36,8 @@ Login Input Type
 input AccountLoginInput {
   accountName: String!
   accountPwd: String!
-  loginType: AccountType!
+  accountRole: AccountRole
+  accountType: AccountType!
 }
 
 """
@@ -81,7 +83,8 @@ Register Input Type
 input AccountRegistryInput {
   accountName: String!
   accountPwd: String!
-  loginType: AccountType
+  accountRole: AccountRole
+  accountType: AccountType
 }
 
 """
@@ -89,6 +92,17 @@ Account Relations Input Type
 """
 input AccountRelationsInput {
   joinRecord: Boolean
+}
+
+"""
+Account Role Enum
+"""
+enum AccountRole {
+  ENTERPRISE
+  GOV
+  ORG
+  PERSONAL
+  UNKNOWN
 }
 
 """
@@ -107,9 +121,6 @@ enum AccountType {
   ADMIN
   COMMON
   DOMINATOR
-  ENTERPRISE
-  GOV
-  ORG
   VISITOR
 }
 
@@ -266,6 +277,7 @@ interface IAccount {
   accountName: String!
   accountProfile: String!
   accountPwd: String!
+  accountRole: AccountRole!
   accountType: AccountType!
   lastUpdateDate: Timestamp!
   registryDate: Timestamp!
@@ -402,9 +414,9 @@ type Mutation {
   ): LoginOrRegisterStatus!
 
   """
-  提升或下降用户权限等级
+  提升/下降 用户类型
   """
-  AccountLevelMutate(accountId: Int!, level: AccountType!): AccountUnionResult!
+  AccountLevelMutate(accountId: Int!, type: AccountType!): AccountUnionResult!
 
   """
   新用户注册
@@ -475,6 +487,11 @@ type Mutation {
     accountId: Int!
     modifiedAccountProfile: AccountProfileUpdateInput!
   ): AccountStatus!
+
+  """
+  变更用户角色
+  """
+  MutateAccountRole: LoginOrRegisterStatus!
 
   """
   变更任务级别

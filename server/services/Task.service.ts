@@ -7,7 +7,7 @@ import {
 } from "typeorm";
 import { InjectRepository, InjectConnection } from "typeorm-typedi-extensions";
 
-import Task from "../entity/Task";
+import Task from "../entities/Task";
 
 import { PaginationOptions } from "../graphql/Common";
 import {

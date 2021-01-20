@@ -6,7 +6,7 @@ const IS_DEV =
 const IS_TEST = process.env.NODE_ENV === "test";
 
 console.log(`
-${chalk.green(`[TypeORM] Config Env `)} ${chalk.cyan(
+${chalk.green(`[TypeORM] Config Env: `)} ${chalk.cyan(
   IS_DEV ? "-DEV-" : "-PROD-"
 )}
 `);
@@ -21,9 +21,9 @@ module.exports = {
   logging: IS_TEST ? false : "all",
   maxQueryExecutionTime: 1000,
   logger: "advanced-console",
-  entities: [IS_DEV ? "server/entity/*.ts" : "dist/entity/*.js"],
-  factories: ["server/entity/factories/*.ts"],
-  seeds: ["server/entity/seeds/*.ts"],
+  entities: [IS_DEV ? "server/entities/*.ts" : "dist/entities/*.js"],
+  factories: ["server/entities/factories/*.ts"],
+  seeds: ["server/entities/seeds/*.ts"],
   cache: {
     duration: 1000,
   },
