@@ -1,9 +1,9 @@
 import { Field, ID, InputType, InterfaceType } from "type-graphql";
 
-import Task from "../entity/Task";
-import Executor from "../entity/Executor";
-import Account from "../entity/Account";
-import Substance from "../entity/Substance";
+import Task from "../entities/Task";
+import Executor from "../entities/Executor";
+import Account from "../entities/Account";
+import Substance from "../entities/Substance";
 
 @InterfaceType({ description: "Record Interface Type" })
 export abstract class IRecord {

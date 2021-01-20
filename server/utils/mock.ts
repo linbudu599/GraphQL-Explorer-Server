@@ -13,11 +13,11 @@ import {
 } from "../graphql/Recipe";
 import { DifficultyLevel } from "../graphql/Public";
 
-import Executor, { ExecutorDesc } from "../entity/Executor";
-import Task from "../entity/Task";
-import Substance from "../entity/Substance";
-import Record from "../entity/Record";
-import Account from "../entity/Account";
+import Executor, { ExecutorDesc } from "../entities/Executor";
+import Task from "../entities/Task";
+import Substance from "../entities/Substance";
+import Record from "../entities/Record";
+import Account from "../entities/Account";
 
 import { log } from "./helper";
 

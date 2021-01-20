@@ -3,7 +3,7 @@ import { InjectRepository, InjectConnection } from "typeorm-typedi-extensions";
 
 import { Service, Inject } from "typedi";
 
-import Executor from "../entity/Executor";
+import Executor from "../entities/Executor";
 
 import { PaginationOptions } from "../graphql/Common";
 import {

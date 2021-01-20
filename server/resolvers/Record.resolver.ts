@@ -1,11 +1,11 @@
 import { Resolver, Query, Arg, Int } from "type-graphql";
 
-import Record from "../entity/Record";
+import Record from "../entities/Record";
 
 import { RecordStatus, StatusHandler } from "../graphql/Common";
 import { RecordRelationsInput, getRecordRelations } from "../graphql/Record";
 
-import RecordService from "../service/Record.service";
+import RecordService from "../services/Record.service";
 
 import { RESPONSE_INDICATOR } from "../utils/constants";
 

@@ -2,7 +2,7 @@ import { Service } from "typedi";
 import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 
-import Record from "../entity/Record";
+import Record from "../entities/Record";
 import { RecordRelations } from "../graphql/Record";
 
 export interface IRecordService {

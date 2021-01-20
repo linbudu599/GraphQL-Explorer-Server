@@ -1,12 +1,12 @@
 import { Resolver, Query, Arg } from "type-graphql";
 
-import Executor from "../entity/Executor";
-import Task from "../entity/Task";
+import Executor from "../entities/Executor";
+import Task from "../entities/Task";
 
-import ExecutorService from "../service/Executor.service";
-import PublicService from "../service/Public.service";
-import TaskService from "../service/Task.service";
-import SubstanceService from "../service/Substance.service";
+import ExecutorService from "../services/Executor.service";
+import PublicService from "../services/Public.service";
+import TaskService from "../services/Task.service";
+import SubstanceService from "../services/Substance.service";
 
 import { IExecutorDesc } from "../graphql/Executor";
 import { PaginationOptions, PrimitiveStatus } from "../graphql/Common";

@@ -73,7 +73,8 @@ const client = createClient({
       account: {
         accountName: "xxxxxxx",
         accountPwd: "xxxxxxx",
-        loginType: "ADMIN",
+        accountType: "VISITOR",
+        accountRole: "UNKNOWN",
       },
     })
     .get({ ...everything });

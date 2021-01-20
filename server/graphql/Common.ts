@@ -8,11 +8,11 @@ import {
   createUnionType,
 } from "type-graphql";
 
-import Executor from "../entity/Executor";
-import Task from "../entity/Task";
-import Substance from "../entity/Substance";
-import Account from "../entity/Account";
-import Record from "../entity/Record";
+import Executor from "../entities/Executor";
+import Task from "../entities/Task";
+import Substance from "../entities/Substance";
+import Account from "../entities/Account";
+import Record from "../entities/Record";
 
 import { IPaginationOptions } from "../utils/helper";
 

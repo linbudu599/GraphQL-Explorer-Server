@@ -31,11 +31,11 @@ import {
   AccountJSON,
 } from "../graphql/Account";
 
-import Account, { AccountProfile } from "../entity/Account";
+import Account, { AccountProfile } from "../entities/Account";
 
-import AccountService from "../service/Account.service";
+import AccountService from "../services/Account.service";
 
-import { ExtraFieldLogMiddlewareGenerator } from "../middleware/log";
+import { ExtraFieldLogMiddlewareGenerator } from "../middlewares/log";
 
 import { ACCOUNT_TYPE, RESPONSE_INDICATOR } from "../utils/constants";
 

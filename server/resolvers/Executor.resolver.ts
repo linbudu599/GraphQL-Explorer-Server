@@ -12,9 +12,9 @@ import {
   Int,
 } from "type-graphql";
 
-import Executor, { ExecutorDesc } from "../entity/Executor";
+import Executor, { ExecutorDesc } from "../entities/Executor";
 
-import ExecutorService from "../service/Executor.service";
+import ExecutorService from "../services/Executor.service";
 
 import {
   ExecutorCreateInput,
@@ -37,7 +37,7 @@ import { RESPONSE_INDICATOR } from "../utils/constants";
 import { mergeJSONWithObj, generatePagination } from "../utils/helper";
 import { InjectCurrentUser, CustomArgsValidation } from "../decorators";
 
-import { ExtraFieldLogMiddlewareGenerator } from "../middleware/log";
+import { ExtraFieldLogMiddlewareGenerator } from "../middlewares/log";
 
 import { IContext } from "../typding";
 

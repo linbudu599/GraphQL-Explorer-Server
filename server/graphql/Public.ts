@@ -1,7 +1,7 @@
 import { registerEnumType, createUnionType } from "type-graphql";
 
-import Executor from "../entity/Executor";
-import Task from "../entity/Task";
+import Executor from "../entities/Executor";
+import Task from "../entities/Task";
 
 export enum DifficultyLevel {
   ROOKIE,

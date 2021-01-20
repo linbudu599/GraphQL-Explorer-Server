@@ -20,7 +20,7 @@ import {
   Int,
 } from "type-graphql";
 
-import Record from "../entity/Record";
+import Record from "../entities/Record";
 
 import { ACCOUNT_TYPE, ACCOUNT_ROLE } from "../utils/constants";
 

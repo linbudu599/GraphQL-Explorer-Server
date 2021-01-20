@@ -15,9 +15,9 @@ import {
   SaltFish,
 } from "../graphql/Recipe";
 
-import RecipeService from "../service/Recipe.service";
+import RecipeService from "../services/Recipe.service";
 
-import CacheMiddleware from "../middleware/cache";
+import CacheMiddleware from "../middlewares/cache";
 
 import { log } from "../utils/helper";
 

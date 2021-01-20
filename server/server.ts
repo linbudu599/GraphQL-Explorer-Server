@@ -12,14 +12,14 @@ import { ApolloServer } from "apollo-server-koa";
 import { GraphQLRequestContext } from "apollo-server-plugin-base";
 import { ApolloServerLoaderPlugin } from "type-graphql-dataloader";
 
-import ExecutorResolver from "./resolver/Executor.resolver";
-import RecipeResolver from "./resolver/Recipe.resolver";
-import TaskResolver from "./resolver/Task.resolver";
-import PubSubResolver from "./resolver/PubSub.resolver";
-import AccountResolver from "./resolver/Account.resolver";
-import SubstanceResolver from "./resolver/Substance.resolver";
-import PublicResolver from "./resolver/Public.resolver";
-import RecordResolver from "./resolver/Record.resolver";
+import ExecutorResolver from "./resolvers/Executor.resolver";
+import RecipeResolver from "./resolvers/Recipe.resolver";
+import TaskResolver from "./resolvers/Task.resolver";
+import PubSubResolver from "./resolvers/PubSub.resolver";
+import AccountResolver from "./resolvers/Account.resolver";
+import SubstanceResolver from "./resolvers/Substance.resolver";
+import PublicResolver from "./resolvers/Public.resolver";
+import RecordResolver from "./resolvers/Record.resolver";
 
 import { log } from "./utils/helper";
 import { genarateRandomID } from "./utils/auth";
@@ -28,10 +28,10 @@ import { PLAY_GROUND_SETTINGS } from "./utils/constants";
 import { setRecipeInContainer, dbConnect } from "./utils/mock";
 
 // Middlewares applied on TypeGraphQL
-import ResolveTime from "./middleware/time";
-import { InterceptorOnSCP1128 } from "./middleware/interceptor";
-import LogAccessMiddleware from "./middleware/log";
-import ErrorLoggerMiddleware from "./middleware/error";
+import ResolveTime from "./middlewares/time";
+import { InterceptorOnSCP1128 } from "./middlewares/interceptor";
+import LogAccessMiddleware from "./middlewares/log";
+import ErrorLoggerMiddleware from "./middlewares/error";
 
 // Extensions powered by TypeGraphQL
 import { ExtensionsMetadataRetriever } from "./extensions/GetMetadata";
