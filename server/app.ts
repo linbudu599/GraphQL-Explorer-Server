@@ -9,7 +9,7 @@ import initialize from "./server";
 
 const dev = process.env.NODE_ENV === "development";
 
-dotenv.config({ path: dev ? ".env.dev" : ".env.prod" });
+dotenv.config({ path: dev ? ".env" : ".env.prod" });
 
 log(`[Env] Loading ${dev ? "[DEV]" : "[PROD]"} File`);
 
