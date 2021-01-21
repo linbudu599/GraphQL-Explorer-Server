@@ -4,11 +4,13 @@
   "description": "API & Ability Usage of GraphQL.",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon ./server/app.ts",
-    "build": "npm run genql && node ./scripts/clean.js --server && tsc",
+    "prebuild": "npm run genql && node ./scripts/clean.js --server && npm run prisma",
+    "build": "tsc",
     "build:vercel": "npm run genql && cross-env NODE_ENV=production node ./scripts/clean.js --vercel && tsc --build vercel-tsconfig.json",
     "clean": "node ./scripts/clean.js --server --vercel",
     "test": "cross-env NODE_ENV=test jest --forceExit",
-    "start": "npm run build && cross-env NODE_ENV=production nodemon ./dist/app.js",
+    "prestart": "npm run build",
+    "start": "cross-env NODE_ENV=production nodemon ./dist/app.js",
     "pm2": "npm run build && pm2 start ecosystem.config.js",
     "stress-test": "node ./scripts/st-main.js --time 1000 * 60",
     "voyager": "serve -s voyager/local.html",
@@ -22,7 +24,12 @@
     "prettier": "prettier --write ./**/*.ts ./**/*.js ./**/*.json ./**/*.graphql",
     "seed:config": "cross-env NODE_ENV=development ts-node ./node_modules/typeorm-seeding/dist/cli.js config",
     "seed:run": "cross-env NODE_ENV=development ts-node ./node_modules/typeorm-seeding/dist/cli.js seed",
-    "genql": "rimraf -rf ./server/genql-generated &&  genql --schema ./server/typegraphql/schema.graphql --output ./server/genql-generated"
+    "genql": "genql --schema ./server/typegraphql/schema.graphql --output ./server/genql-generated",
+    "prisma": "npm run prisma:db && npm run prisma:generate",
+    "prisma:db": "prisma db push --preview-feature",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate:dev": "prisma migrate dev --preview-feature",
+    "prisma:migrate:reset": "prisma migrate reset --preview-feature"
   },
   "repository": {
     "type": "git",
@@ -38,6 +45,9 @@
   "graphdoc": {
     "endpoint": "http://localhost:4000/graphql",
     "output": "./docs"
+  },
+  "prisma": {
+    "schema": "server/prisma/schema.prisma"
   },
   "husky": {
     "hooks": {
@@ -61,6 +71,8 @@
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
     "@genql/runtime": "^2.3.3",
+    "@prisma/cli": "^2.15.0",
+    "@prisma/client": "^2.15.0",
     "@saeris/apollo-server-vercel": "^0.4.0",
     "apollo-datasource-rest": "^0.9.5",
     "apollo-server": "^2.17.0",
