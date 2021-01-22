@@ -1,6 +1,6 @@
 {
   "include": ["./server/**/*"],
-  "exclude": ["./tests/*", "./logs"],
+  "exclude": ["./tests/*", "./logs", "./server/prisma/client/*"],
   "compilerOptions": {
     // required by TypeGraphQL
     "lib": ["esnext.asynciterable", "ES2018"],

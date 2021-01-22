@@ -612,6 +612,8 @@ type Query {
     pagination: PaginationOptions
     relations: ExecutorRelationsInput
   ): ExecutorStatus!
+  QueryAllPrismaItems: [TodoItem!]!
+  QueryAllPrismaUsers: [User!]!
   QueryAllRecords(relations: RecordRelationsInput): RecordStatus!
 
   """
@@ -1004,6 +1006,23 @@ input TaskUpdateInput {
 The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
 """
 scalar Timestamp
+
+type TodoItem {
+  content: String
+  createdAt: Timestamp!
+  id: ID!
+  owner: User
+  ownerId: Int
+  title: String!
+  updatedAt: Timestamp!
+}
+
+type User {
+  id: ID!
+  items: [TodoItem!]
+  name: String!
+  nickName: String
+}
 
 """
 Recipe >>> Cook >>> WorkExperience

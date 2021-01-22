@@ -4,6 +4,8 @@ import { authChecker } from "../../server/utils/authChecker";
 
 import { ACCOUNT_TYPE, ACCOUNT_ROLE } from "../../server/utils/constants";
 
+import { PrismaClient } from "@prisma/client";
+
 describe("TypeGraphQL AuthChecker", () => {
   it("should pass whenever role contains 'UNKNOWN'", () => {
     const checkRes = authChecker(
@@ -17,6 +19,7 @@ describe("TypeGraphQL AuthChecker", () => {
             accountRole: ACCOUNT_ROLE.GOV,
           },
           container: {} as ContainerInstance,
+          prisma: {} as PrismaClient,
         },
         info: {} as GraphQLResolveInfo,
       },
@@ -39,6 +42,7 @@ describe("TypeGraphQL AuthChecker", () => {
             accountRole: ACCOUNT_ROLE.ENTERPRISE,
           },
           container: {} as ContainerInstance,
+          prisma: {} as PrismaClient,
         },
         info: {} as GraphQLResolveInfo,
       },
@@ -58,6 +62,7 @@ describe("TypeGraphQL AuthChecker", () => {
             accountRole: ACCOUNT_ROLE.ENTERPRISE,
           },
           container: {} as ContainerInstance,
+          prisma: {} as PrismaClient,
         },
         info: {} as GraphQLResolveInfo,
       },
@@ -79,6 +84,7 @@ describe("TypeGraphQL AuthChecker", () => {
             accountRole: ACCOUNT_ROLE.ENTERPRISE,
           },
           container: {} as ContainerInstance,
+          prisma: {} as PrismaClient,
         },
         info: {} as GraphQLResolveInfo,
       },
@@ -98,6 +104,7 @@ describe("TypeGraphQL AuthChecker", () => {
             accountRole: ACCOUNT_ROLE.GOV,
           },
           container: {} as ContainerInstance,
+          prisma: {} as PrismaClient,
         },
         info: {} as GraphQLResolveInfo,
       },

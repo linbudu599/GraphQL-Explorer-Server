@@ -21,6 +21,9 @@ import SubstanceResolver from "./resolvers/Substance.resolver";
 import PublicResolver from "./resolvers/Public.resolver";
 import RecordResolver from "./resolvers/Record.resolver";
 
+// Prisma Integration
+import PrismaResolver from "./resolvers/prisma/index.resolver";
+
 import { log } from "./utils/helper";
 import { genarateRandomID } from "./utils/auth";
 import { authChecker } from "./utils/authChecker";
@@ -54,6 +57,10 @@ import responseCachePlugin from "apollo-server-plugin-response-cache";
 
 import { validateToken } from "./utils/jwt";
 
+import { PrismaClient } from "./prisma/client";
+
+const prisma = new PrismaClient();
+
 Container.set({ id: "INIT_INJECT_DATA", factory: () => new Date() });
 
 TypeORM.useContainer(Container);
@@ -79,6 +86,7 @@ const schema = buildSchemaSync({
     SubstanceResolver,
     PublicResolver,
     RecordResolver,
+    PrismaResolver,
   ],
   // container: Container,
   // scoped-container，每次从context中拿到本次注册容器
@@ -132,6 +140,7 @@ const server = new ApolloServer({
         accountRole,
       },
       container,
+      prisma,
     };
 
     container.set("context", context);

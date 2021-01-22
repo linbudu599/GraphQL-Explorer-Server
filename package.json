@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon ./server/app.ts",
     "prebuild": "npm run genql && node ./scripts/clean.js --server && npm run prisma",
-    "build": "tsc",
+    "build": "cross-env NODE_ENV=production tsc",
+    "postbuild": "node ./scripts/prisma/copy.js && npm run prisma:db:prod && node ./dist/prisma/seed.js",
     "build:vercel": "npm run genql && cross-env NODE_ENV=production node ./scripts/clean.js --vercel && tsc --build vercel-tsconfig.json",
     "clean": "node ./scripts/clean.js --server --vercel",
     "test": "cross-env NODE_ENV=test jest --forceExit",
@@ -27,9 +28,11 @@
     "genql": "genql --schema ./server/typegraphql/schema.graphql --output ./server/genql-generated",
     "prisma": "npm run prisma:db && npm run prisma:generate",
     "prisma:db": "prisma db push --preview-feature",
+    "prisma:db:prod": "prisma db push --schema=./dist/prisma/schema.prisma --preview-feature",
     "prisma:generate": "prisma generate",
     "prisma:migrate:dev": "prisma migrate dev --preview-feature",
-    "prisma:migrate:reset": "prisma migrate reset --preview-feature"
+    "prisma:migrate:reset": "prisma migrate reset --preview-feature",
+    "prisma:seed": "ts-node ./server/prisma/seed.ts"
   },
   "repository": {
     "type": "git",
@@ -141,6 +144,7 @@
     "babel-plugin-transform-async-to-promises": "^0.8.15",
     "chalk": "^4.1.0",
     "esbuild-node-tsc": "^1.0.5",
+    "fs-extra": "^0.30.0",
     "husky": "^4.3.0",
     "jest": "^26.4.2",
     "nodemon": "^2.0.4",
