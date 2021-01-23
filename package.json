@@ -2,6 +2,9 @@
   "name": "GraphQL-Explorer-Server",
   "version": "1.0.0",
   "description": "API & Ability Usage of GraphQL.",
+  "bin": {
+    "ges": "./bin/ges"
+  },
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon ./server/app.ts",
     "prebuild": "npm run genql && node ./scripts/clean.js --server && npm run prisma",
@@ -32,7 +35,10 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate:dev": "prisma migrate dev --preview-feature",
     "prisma:migrate:reset": "prisma migrate reset --preview-feature",
-    "prisma:seed": "ts-node ./server/prisma/seed.ts"
+    "prisma:seed": "ts-node ./server/prisma/seed.ts",
+    "gen:resolver": "node ./scripts/command/index.js gen --type=resolver",
+    "gen:entity": "node ./scripts/command/index.js gen --type=entity",
+    "gen:type": "node ./scripts/command/index.js gen --type=type"
   },
   "repository": {
     "type": "git",
@@ -147,6 +153,7 @@
     "fs-extra": "^0.30.0",
     "husky": "^4.3.0",
     "jest": "^26.4.2",
+    "minimist": "^1.2.5",
     "nodemon": "^2.0.4",
     "prettier": "^2.2.0",
     "pretty-quick": "^3.1.0",
