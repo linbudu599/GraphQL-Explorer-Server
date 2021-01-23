@@ -1,9 +1,9 @@
 {
-  "include": ["./server/**/*"],
+  "include": ["./server/**/*", "./scripts/command/**/*"],
   "exclude": ["./tests/*", "./logs", "./server/prisma/client/*"],
   "compilerOptions": {
     // required by TypeGraphQL
-    "lib": ["esnext.asynciterable", "ES2018"],
+    "lib": ["ESNext.asynciterable", "ES2018", "ESNext.String"],
     "target": "ES2018",
     "module": "commonjs",
     "allowJs": true,

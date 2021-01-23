@@ -17,7 +17,7 @@ export default class __ENTITY_NAME__
   extends BaseEntity
   implements I__ENTITY_NAME__ {
   @PrimaryGeneratedColumn()
-  __LOWER_CASE_ENEITY_NAME__Id!: number;
+  __LOWERCASE_ENTITY_NAME__Id!: number;
 
   @Column()
   prop!: string;
