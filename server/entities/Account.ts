@@ -1,5 +1,7 @@
 import { ObjectType } from "type-graphql";
 import { plainToClass } from "class-transformer";
+import bcrypt from "bcrypt";
+import { SALT } from "../utils/constants";
 
 import {
   Entity,
@@ -11,6 +13,8 @@ import {
   RelationId,
   Generated,
   OneToMany,
+  BeforeInsert,
+  AfterInsert,
 } from "typeorm";
 
 import {
@@ -109,4 +113,12 @@ export default class Account extends BaseEntity implements IAccount {
 
   @UpdateDateColumn({ comment: "更新时间" })
   lastUpdateDate!: Date;
+
+  @BeforeInsert()
+  encodePassword() {}
+
+  @AfterInsert()
+  encodedPassword() {
+    console.log(`SALTED PASSWORD: ${this.accountPwd}`);
+  }
 }

@@ -1,10 +1,7 @@
 {
   "name": "GraphQL-Explorer-Server",
   "version": "1.0.0",
-  "description": "API & Ability Usage of GraphQL.",
-  "bin": {
-    "ges": "./bin/ges"
-  },
+  "description": "API Usage of GraphQL Stack",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon ./server/app.ts",
     "prebuild": "npm run genql && node ./scripts/clean.js --server && npm run prisma",
@@ -59,7 +56,8 @@
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-push": "npm run build && npm run test"
     }
   },
   "config": {
@@ -105,11 +103,10 @@
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.0",
     "minimist": "^1.2.5",
-    "mysql": "^2.18.1",
     "npm-run-all": "^4.1.5",
     "pm2": "^4.5.0",
     "serve": "^11.3.2",
-    "sqlite3": "^5.0.0",
+    "sqlite3": "^5.0.1",
     "type-graphql": "^1.0.0",
     "type-graphql-dataloader": "^0.3.7",
     "typedi": "^0.8.0",

@@ -20,6 +20,8 @@ import Record from "../entities/Record";
 import Account from "../entities/Account";
 
 import { log } from "./helper";
+import { dbConnect } from "./connect";
+import { getConnection } from "typeorm";
 
 const createWorkExperience = (
   workExp: Partial<WorkExperience>
@@ -210,11 +212,9 @@ export const mockExecutor = (len: number) => {
   return mockExecutorInfo;
 };
 
-export const dbConnect = async (): Promise<any> => {
-  log("[TypeORM] TypeORM Connecting");
+export const insertInitMockData = async (): Promise<any> => {
   try {
-    const connection = await TypeORM.createConnection();
-    log("[TypeORM] Database Connection Established");
+    const connection = getConnection();
 
     const mockTaskGroup = mockTask(10);
     const mockSubstanceGroup = mockSubstance(5);

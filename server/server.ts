@@ -2,7 +2,7 @@ import "reflect-metadata";
 import "apollo-cache-control";
 import { Context } from "koa";
 import path from "path";
-import { getOperationAST } from "graphql";
+import { getOperationAST, DocumentNode } from "graphql";
 import dotenv from "dotenv";
 import { Container } from "typedi";
 import * as TypeORM from "typeorm";
@@ -12,6 +12,7 @@ import { ApolloServer } from "apollo-server-koa";
 import { GraphQLRequestContext } from "apollo-server-plugin-base";
 import { ApolloServerLoaderPlugin } from "type-graphql-dataloader";
 
+// TODO: generate resolver groups by fs mod
 import ExecutorResolver from "./resolvers/Executor.resolver";
 import RecipeResolver from "./resolvers/Recipe.resolver";
 import TaskResolver from "./resolvers/Task.resolver";
@@ -28,7 +29,8 @@ import { log } from "./utils/helper";
 import { genarateRandomID } from "./utils/auth";
 import { authChecker } from "./utils/authChecker";
 import { PLAY_GROUND_SETTINGS } from "./utils/constants";
-import { setRecipeInContainer, dbConnect } from "./utils/mock";
+import { setRecipeInContainer, insertInitMockData } from "./utils/mock";
+import { dbConnect } from "./utils/connect";
 
 // Middlewares applied on TypeGraphQL
 import ResolveTime from "./middlewares/time";
@@ -171,7 +173,7 @@ const server = new ApolloServer({
   // 关于RootValue和Context：https://stackoverflow.com/questions/44344560/context-vs-rootvalue-in-apollo-graphql
   // 简单的说，RootValue就像是一个自定义的类型（和其他类型一样），但它只拥有一个动态解析的字段
   // RootValue是解析链的初始值 也就是入口Resolver的parent参数
-  rootValue: (documentAST) => {
+  rootValue: (documentAST: DocumentNode) => {
     const op = getOperationAST(documentAST);
     return {
       operation: op?.operation,
@@ -202,6 +204,8 @@ const server = new ApolloServer({
 
 export default async (): Promise<ApolloServer> => {
   await dbConnect();
+
+  await insertInitMockData();
 
   return server;
 };
