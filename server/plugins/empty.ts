@@ -12,7 +12,7 @@ import {
   GraphQLServiceContext,
 } from "apollo-server-plugin-base";
 
-import { IContext } from "../typding";
+import { IContext } from "../typing";
 
 const emptyFullLifeCyclePluginUsage: PluginDefinition = {
   async serverWillStart(service: GraphQLServiceContext) {

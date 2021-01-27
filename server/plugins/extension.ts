@@ -1,6 +1,6 @@
 import { GraphQLRequestContext } from "apollo-server-plugin-base";
 
-import { IContext } from "../typding";
+import { IContext } from "../typing";
 
 const extensionPlugin = () => ({
   requestDidStart: () => ({

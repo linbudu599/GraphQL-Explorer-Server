@@ -1,7 +1,7 @@
 import { GraphQLRequestContext } from "apollo-server-plugin-base";
 import { ContainerInstance } from "typedi";
 
-import { IContext } from "../typding";
+import { IContext } from "../typing";
 
 const scopedContainerPlugin = (Container) => ({
   requestDidStart: () => ({

@@ -1,4 +1,3 @@
-import * as TypeORM from "typeorm";
 import Container from "typedi";
 import { plainToClass } from "class-transformer";
 

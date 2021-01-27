@@ -8,7 +8,7 @@ import {
 } from "graphql-query-complexity";
 
 import { MAX_ALLOWED_COMPLEXITY } from "../utils/constants";
-import { IContext } from "../typding";
+import { IContext } from "../typing";
 
 const complexityPlugin = (schema: GraphQLSchema): PluginDefinition => ({
   // 在每次请求开始前销毁上一个容器

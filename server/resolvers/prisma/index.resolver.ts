@@ -3,7 +3,7 @@ import { Resolver, Query, Ctx } from "type-graphql";
 import PrismaUser from "../../graphql/prisma/User";
 import PrismaItem from "../../graphql/prisma/Item";
 
-import { IContext } from "../../typding";
+import { IContext } from "../../typing";
 
 @Resolver()
 export default class PrismaResolver {

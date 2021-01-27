@@ -1,9 +1,10 @@
 import "reflect-metadata";
 import "apollo-cache-control";
-import { Context } from "koa";
+
 import path from "path";
+
+import { Context } from "koa";
 import { getOperationAST, DocumentNode } from "graphql";
-import dotenv from "dotenv";
 import { Container } from "typedi";
 import * as TypeORM from "typeorm";
 import { buildSchemaSync, ResolverData } from "type-graphql";
@@ -46,7 +47,7 @@ import { CustomExtension } from "./extensions/apollo";
 // Apollo Data Source
 import SpaceXDataSource from "./datasource/SpaceX";
 
-import { IContext } from "./typding";
+import { IContext } from "./typing";
 
 import { GraphQLResponse } from "graphql-extensions";
 

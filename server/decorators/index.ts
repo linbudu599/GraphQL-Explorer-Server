@@ -7,7 +7,7 @@ import {
   MiddlewareFn,
 } from "type-graphql";
 
-import { IContext } from "../typding";
+import { IContext } from "../typing";
 
 /**
  * @desc 注入当前的用户

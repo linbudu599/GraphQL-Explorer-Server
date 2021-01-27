@@ -1,5 +1,5 @@
 import { MiddlewareInterface, NextFn, ResolverData } from "type-graphql";
-import { IContext } from "../typding";
+import { IContext } from "../typing";
 import { log } from "../utils/helper";
 
 export class ExtensionsMetadataRetriever

@@ -16,7 +16,7 @@ This is a **demo** which contains `GraphQL` and framework based on it(or work wi
 - [x] Apollo-Server
 - [x] DataLoader
 - [x] TypeORM + SQLite3
-- [ ] Prisma Migration
+- [x] Prisma Migration
 - [ ] Redis + IORedis
 - [x] Winston
 - [x] TypeStack Product
