@@ -20,7 +20,7 @@ import { DifficultyLevel } from "../graphql/Public";
 import Task from "./Task";
 import Record from "./Record";
 
-import { LogExtension } from "../extensions/LogExtension";
+import { LogExtension } from "../extensions/logExtension";
 
 @ObjectType({ implements: IExecutorDesc })
 export class ExecutorDesc extends BaseEntity implements IExecutorDesc {

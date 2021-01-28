@@ -10,21 +10,21 @@ import {
 import { IContext } from "../typing";
 
 /**
- * @desc 注入当前的用户
+ * @desc 注入当前的用户 Inject Current User From Context
  * @example `@InjectCurrentUser()`
  */
 export const InjectCurrentUser = () =>
   createParamDecorator<IContext>(({ context }) => context.currentUser);
 
 /**
- * @desc 注入本次请求容器
+ * @desc 注入本次请求容器 Inject Current Request-Scoped Container
  * @example `@InjectCurrentContainer()`
  */
 export const InjectCurrentContainer = () =>
   createParamDecorator<IContext>(({ context }) => context.container);
 
 /**
- * @desc 自定义校验schema
+ * @desc 自定义校验schema custom schema for validation
  * @example `@CustomArgsValidation(ExecutorQueryArgs)`
  * @requires 禁用Arg装饰器的校验`@Args({ validate: false })`
  */

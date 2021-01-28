@@ -40,7 +40,7 @@ import LogAccessMiddleware from "./middlewares/log";
 import ErrorLoggerMiddleware from "./middlewares/error";
 
 // Extensions powered by TypeGraphQL
-import { ExtensionsMetadataRetriever } from "./extensions/GetMetadata";
+import { ExtensionsMetadataRetriever } from "./extensions/getMetadata";
 // Extension pn Apollo(GraphQL-Extensions Package)
 import { CustomExtension } from "./extensions/apollo";
 

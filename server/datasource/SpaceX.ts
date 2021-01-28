@@ -13,8 +13,12 @@ export interface ICapsules {
   id: string;
 }
 
-// 实际上是不必要的 因为Apollo的Resolver与TypeGraphQL的不兼容
-// 如果要做BFF 直接在TypeGraphQL的Resolver或者FieldResolver中做
+/**
+ * Apollo DataSource, use `@Ctx()` to get Apollo Context in TypeGraphQL Resolver
+ * @export
+ * @class WorkerAPI
+ * @extends {RESTDataSource}
+ */
 export default class WorkerAPI extends RESTDataSource {
   constructor() {
     super();

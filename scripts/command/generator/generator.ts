@@ -15,9 +15,22 @@ enum ResourceType {
   Entity = "entity",
 }
 
+/**
+ *
+ *
+ * @param {ResourceType} resourceType
+ * @return {*} {string} resource template path
+ */
 const getTemplatePath = (resourceType: ResourceType): string =>
   path.join(__dirname, `../generator/templates/_${resourceType}.ts`);
 
+/**
+ *
+ *
+ * @param {ResourceType} resourceType
+ * @param {string} entityName
+ * @return {*} {string} generated resource emit path
+ */
 const getDestPath = (
   resourceType: ResourceType,
   entityName: string
@@ -45,6 +58,7 @@ interface IGenPromptRes {
 }
 
 // TODO: support [should format entity name] prompt
+
 export const resourceGenerator = () => {
   inquirer
     .prompt([

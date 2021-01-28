@@ -95,6 +95,7 @@
     "graphqldoc": "^2.5.2",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.0",
+    "mysql": "^2.18.1",
     "sqlite3": "^5.0.1",
     "type-graphql": "^1.0.0",
     "type-graphql-dataloader": "^0.3.7",

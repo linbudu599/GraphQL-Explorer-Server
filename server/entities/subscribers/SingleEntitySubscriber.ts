@@ -7,6 +7,13 @@ import {
 import Account from "../Account";
 import { encode } from "../../utils/bcrypt";
 
+/**
+ *
+ * TypeORM Subscribers (listen to `Account Entity` only)
+ * @export
+ * @class AccountSubscriber
+ * @implements {EntitySubscriberInterface<Account>}
+ */
 @EventSubscriber()
 export class AccountSubscriber implements EntitySubscriberInterface<Account> {
   listenTo() {

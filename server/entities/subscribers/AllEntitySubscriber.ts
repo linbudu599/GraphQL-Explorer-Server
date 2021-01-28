@@ -14,8 +14,15 @@ import Record from "../Record";
 
 type AvaliableEntities = Account | Executor | Task | Substance | Record;
 
+/**
+ *
+ * TypeORM Subscribers (listen to all entities)
+ * @export
+ * @class PostSubscriber
+ * @implements {EntitySubscriberInterface}
+ */
 @EventSubscriber()
-export class PostSubscriber implements EntitySubscriberInterface {
+export class AllSubscriber implements EntitySubscriberInterface {
   beforeInsert(event: InsertEvent<AvaliableEntities>) {
     // console.log(`BEFORE ENTITY INSERTED: `, event.entity);
   }

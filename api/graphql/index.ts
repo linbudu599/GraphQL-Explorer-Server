@@ -1,12 +1,11 @@
 import "reflect-metadata";
 import { buildSchemaSync } from "type-graphql";
-import * as TypeORM from "typeorm";
 import { ApolloServer as ApolloVercelServer } from "@saeris/apollo-server-vercel";
 
-import RecipeResolver from "./resolver";
+import SubstanceResolver from "./resolver";
 
 const schema = buildSchemaSync({
-  resolvers: [RecipeResolver],
+  resolvers: [SubstanceResolver],
 });
 
 const server = new ApolloVercelServer({
@@ -15,4 +14,10 @@ const server = new ApolloVercelServer({
   introspection: true,
 });
 
-export default server.createHandler();
+export default server.createHandler({
+  cors: {
+    origin: "*",
+    methods: "*",
+    allowedHeaders: "*",
+  },
+});
