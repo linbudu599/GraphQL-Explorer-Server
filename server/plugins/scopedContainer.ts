@@ -1,5 +1,5 @@
 import { GraphQLRequestContext } from "apollo-server-plugin-base";
-import { ContainerInstance } from "typedi";
+import { ContainerInstance, Container } from "typedi";
 
 import { IContext } from "../typing";
 
