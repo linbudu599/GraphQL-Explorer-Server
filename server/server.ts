@@ -58,6 +58,10 @@ import { schemaPlugin, usagePlugin } from "./plugins/report";
 import scopedContainerPlugin from "./plugins/scopedContainer";
 import responseCachePlugin from "apollo-server-plugin-response-cache";
 
+import { SchemaDirectiveVisitor } from "graphql-tools";
+// import { deprecatedDirective } from "./directives/sample";
+import { SomeDirective } from "./directives/class";
+
 import { validateToken } from "./utils/jwt";
 
 import { PrismaClient } from "./prisma/client";
@@ -105,6 +109,10 @@ export default async (): Promise<ApolloServer> => {
     globalMiddlewares: dev
       ? basicMiddlewares
       : [...basicMiddlewares, ErrorLoggerMiddleware],
+  });
+
+  SchemaDirectiveVisitor.visitSchemaDirectives(schema, {
+    sample: SomeDirective,
   });
 
   const server = new ApolloServer({

@@ -6,6 +6,7 @@ import {
   UseMiddleware,
   Int,
   Authorized,
+  Directive,
 } from "type-graphql";
 
 import {
@@ -31,6 +32,7 @@ export default class RecipeResolver {
     log("=== RecipeService Created! ===");
   }
 
+  @Directive('@sample(reason: "Sample Implementation")')
   @Authorized([ACCOUNT_TYPE.VISITOR, [ACCOUNT_ROLE.UNKNOWN]] as AuthRule)
   @Query(() => [RecipeUnionResult], {
     nullable: false,
