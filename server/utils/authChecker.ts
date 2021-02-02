@@ -1,5 +1,5 @@
 import { AuthChecker } from "type-graphql";
-import { IContext } from "../typding";
+import { IContext } from "../typing";
 import { log } from "./helper";
 import { ACCOUNT_TYPE, ACCOUNT_ROLE } from "./constants";
 

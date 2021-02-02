@@ -228,8 +228,7 @@ export default class AccountResolver {
           RESPONSE_INDICATOR.EXISTED
         );
       }
-
-      account.accountPwd = encode(account.accountPwd);
+      // account.accountPwd = encode(account.accountPwd);
       await this.accountService.createAccount(account);
 
       const token = dispatchToken(

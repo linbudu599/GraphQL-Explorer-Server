@@ -1,7 +1,14 @@
 import { MiddlewareInterface, NextFn, ResolverData } from "type-graphql";
-import { IContext } from "../typding";
+import { IContext } from "../typing";
 import { log } from "../utils/helper";
 
+/**
+ * Extract metadata from `info.fieldName`
+ *
+ * @export
+ * @class ExtensionsMetadataRetriever
+ * @implements {MiddlewareInterface<IContext>}
+ */
 export class ExtensionsMetadataRetriever
   implements MiddlewareInterface<IContext> {
   use({ info }: ResolverData, next: NextFn) {

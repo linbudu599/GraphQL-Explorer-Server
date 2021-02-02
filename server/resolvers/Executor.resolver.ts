@@ -39,7 +39,7 @@ import { InjectCurrentUser, CustomArgsValidation } from "../decorators";
 
 import { ExtraFieldLogMiddlewareGenerator } from "../middlewares/log";
 
-import { IContext } from "../typding";
+import { IContext } from "../typing";
 
 @Resolver((of) => Executor)
 export default class ExecutorResolver {

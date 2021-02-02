@@ -108,6 +108,7 @@ export default class AccountService implements IAccountService {
   }
 
   async createAccount(account: AccountRegistryInput): Promise<Account> {
+    // FIXME: this kind save action will not trigger After/BeforeInsert Hook
     const res = await this.accountRepository.save(account);
     await this.connection.queryResultCache?.remove([TypeORMCacheIds.account]);
     return res;

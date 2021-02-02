@@ -7,7 +7,7 @@ import {
 } from "type-graphql";
 
 import { Logger, LOG_TYPE } from "../utils/winston";
-import { IContext } from "../typding";
+import { IContext } from "../typing";
 
 @Service()
 export default class ErrorLoggerMiddleware

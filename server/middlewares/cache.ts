@@ -1,7 +1,7 @@
 import { Service } from "typedi";
 import { MiddlewareInterface, ResolverData, NextFn } from "type-graphql";
 
-import { IContext } from "../typding";
+import { IContext } from "../typing";
 
 @Service()
 export default class CacheMiddleware implements MiddlewareInterface<IContext> {

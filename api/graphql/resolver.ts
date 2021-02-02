@@ -1,16 +1,24 @@
-import { Resolver, Query, Arg } from "type-graphql";
+// @ts-nocheck
+import { Resolver, Query } from "type-graphql";
+import { Connection } from "typeorm";
 
-import { RecipeUnionResult, Cook, Recipe, SaltFish } from "./module";
-import { sampleCooks, sampleRecipes, sampleSaltFishes } from "./data";
+import SubstanceEntity from "./entity";
+import Substance from "./module";
 
-@Resolver()
-export default class RecipeResolver {
-  private recipesData: Recipe[] = sampleRecipes;
-  private cooksData: Cook[] = sampleCooks;
-  private saltFishesData: SaltFish[] = sampleSaltFishes;
+import { connector } from "./util";
 
-  @Query(() => [RecipeUnionResult])
-  async QueryRecipeUnions(): Promise<typeof RecipeUnionResult[]> {
-    return [...this.recipesData, ...this.cooksData, ...this.saltFishesData];
+@Resolver((of) => Substance)
+export default class SubstanceResolver {
+  connection: Connection;
+
+  @Query(() => [Substance])
+  async QueryAllSubstances() {
+    try {
+      this.connection = await connector(this.connection, [SubstanceEntity]);
+      return await this.connection.manager.find(SubstanceEntity);
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
   }
 }

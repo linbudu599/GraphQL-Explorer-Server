@@ -8,7 +8,7 @@
       "maxDuration": 10,
       "memory": 1024
     },
-    "api/migrate/index.ts": {
+    "api/sample/index.ts": {
       "maxDuration": 10,
       "memory": 1024
     }

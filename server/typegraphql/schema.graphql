@@ -4,20 +4,19 @@
 # -----------------------------------------------
 
 type Account implements IAccount {
-  accountAvaliable: Boolean!
-  accountId: ID!
-
   """
   ACCOUNT_JSON_TYPE
   """
   AccountJSONField: AccountJSON!
-  accountName: String!
-  accountProfile: String!
 
   """
   账号资料
   """
   AccountProfileField: AccountProfile!
+  accountAvaliable: Boolean!
+  accountId: ID!
+  accountName: String!
+  accountProfile: String!
   accountPwd: String!
   accountRole: AccountRole!
   accountType: AccountType!
@@ -51,30 +50,30 @@ input AccountPasswordModifyInput {
 }
 
 type AccountProfile implements IAccountProfile {
+  VIPLevel: AccountVIPLevel!
   avatar: String!
   isLifeTimeVIP: Boolean!
   selfIntro: String!
-  VIPLevel: AccountVIPLevel!
 }
 
 """
 Account Profile Query Input
 """
 input AccountProfileQueryInput {
+  VIPLevel: AccountVIPLevel
   avatar: String
   isLifeTimeVIP: Boolean
   selfIntro: String
-  VIPLevel: AccountVIPLevel
 }
 
 """
 Account Profile Update Input
 """
 input AccountProfileUpdateInput {
+  VIPLevel: AccountVIPLevel
   avatar: String
   isLifeTimeVIP: Boolean
   selfIntro: String
-  VIPLevel: AccountVIPLevel
 }
 
 """
@@ -190,14 +189,13 @@ enum DifficultyLevel {
 }
 
 type Executor implements IExecutor {
-  age: Float!
-  avaliable: Boolean!
-  desc: String!
-
   """
   获取对象类型的执行者描述
   """
   ExecutorDescField: ExecutorDesc!
+  age: Float!
+  avaliable: Boolean!
+  desc: String!
   isFool: Boolean!
   job: Job!
   joinDate: Timestamp!
@@ -288,10 +286,10 @@ interface IAccount {
 Account Profile Type
 """
 interface IAccountProfile {
+  VIPLevel: AccountVIPLevel!
   avatar: String!
   isLifeTimeVIP: Boolean!
   selfIntro: String!
-  VIPLevel: AccountVIPLevel!
 }
 
 """
@@ -497,9 +495,6 @@ type Mutation {
   变更任务级别
   """
   MutateTaskLevel(level: DifficultyLevel!, taskId: Float!): TaskStatus!
-  publisherMutation(message: String): Boolean!
-  pubSubMutation(message: String): Boolean!
-  pubSubMutationToDynamicTopic(message: String, topic: String!): Boolean!
 
   """
   发送邮件验证码
@@ -542,6 +537,9 @@ type Mutation {
   变更任务基本信息
   """
   UpdateTaskInfo(taskUpdateParam: TaskUpdateInput!): TaskStatus!
+  pubSubMutation(message: String): Boolean!
+  pubSubMutationToDynamicTopic(message: String, topic: String!): Boolean!
+  publisherMutation(message: String): Boolean!
 }
 
 type Notification {
@@ -586,7 +584,6 @@ type Query {
   容器注册时间
   """
   ContainerRegisterTime: Timestamp!
-  currentDate: Timestamp!
 
   """
   基于资料查找用户
@@ -612,6 +609,8 @@ type Query {
     pagination: PaginationOptions
     relations: ExecutorRelationsInput
   ): ExecutorStatus!
+  QueryAllPrismaItems: [TodoItem!]!
+  QueryAllPrismaUsers: [User!]!
   QueryAllRecords(relations: RecordRelationsInput): RecordStatus!
 
   """
@@ -688,6 +687,11 @@ type Query {
   ): SubstanceStatus!
 
   """
+  返回所有菜谱 厨师 和 咸鱼
+  """
+  QueryRecipeUnions: [RecipeUnionResult!]!
+
+  """
   基于难度查找菜谱
   """
   QueryRecipesByDifficulty(difficulty: Difficulty): [Recipe!]!
@@ -696,11 +700,6 @@ type Query {
   基于作料查找菜谱
   """
   QueryRecipesByIngredients(ingredients: [String!]): [Recipe!]!
-
-  """
-  返回所有菜谱 厨师 和 咸鱼
-  """
-  QueryRecipeUnions: [RecipeUnionResult!]!
   QueryRecordById(
     recordId: Int!
     relations: RecordRelationsInput
@@ -749,6 +748,7 @@ type Query {
     relations: TaskRelationsInput
     taskQueryParams: TaskQueryInput!
   ): TaskStatus!
+  currentDate: Timestamp!
 }
 
 """
@@ -1004,6 +1004,23 @@ input TaskUpdateInput {
 The javascript `Date` as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
 """
 scalar Timestamp
+
+type TodoItem {
+  content: String
+  createdAt: Timestamp!
+  id: ID!
+  owner: User
+  ownerId: Int
+  title: String!
+  updatedAt: Timestamp!
+}
+
+type User {
+  id: ID!
+  items: [TodoItem!]
+  name: String!
+  nickName: String
+}
 
 """
 Recipe >>> Cook >>> WorkExperience

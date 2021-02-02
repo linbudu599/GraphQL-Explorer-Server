@@ -20,7 +20,7 @@ import { DifficultyLevel } from "../graphql/Public";
 import Task from "./Task";
 import Record from "./Record";
 
-import { LogExtension } from "../extensions/LogExtension";
+import { LogExtension } from "../extensions/logExtension";
 
 @ObjectType({ implements: IExecutorDesc })
 export class ExecutorDesc extends BaseEntity implements IExecutorDesc {
@@ -81,7 +81,7 @@ export default class Executor extends BaseEntity implements IExecutor {
     cascade: true,
     nullable: true,
   })
-  @TypeormLoader((type) => Task, (executor: Executor) => executor.taskIds)
+  // @TypeormLoader((type) => Task, (executor: Executor) => executor.taskIds)
   tasks?: Task[];
 
   @RelationId((executor: Executor) => executor.tasks)
