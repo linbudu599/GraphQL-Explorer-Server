@@ -708,7 +708,7 @@ type Query {
   """
   根据恩格尔系数查找咸鱼
   """
-  QuerySaltFishByCoefficient(coefficient: Int!): [SaltFish!]!
+  QuerySaltFishByCoefficient(coefficient: Int): [SaltFish!]!
 
   """
   基于ID查找实体
@@ -810,6 +810,8 @@ useless object type in union type, just for funny:)
 """
 type SaltFish {
   EngelCoefficient: Int!
+  date: Timestamp!
+  fishName: String!
 }
 
 type Subscription {

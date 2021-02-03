@@ -59,7 +59,11 @@ import scopedContainerPlugin from "./plugins/scopedContainer";
 import responseCachePlugin from "apollo-server-plugin-response-cache";
 
 import { SchemaDirectiveVisitor } from "graphql-tools";
+
 import { DeprecatedDirective } from "./directives/deprecated";
+import { UpperDirective } from "./directives/upper";
+import { FetchDirective } from "./directives/fetch";
+import { DateFormatDirective } from "./directives/dateFormat";
 
 import { validateToken } from "./utils/jwt";
 
@@ -113,6 +117,9 @@ export default async (): Promise<ApolloServer> => {
   // 试试在ApolloServer中直接映射的效果
   SchemaDirectiveVisitor.visitSchemaDirectives(schema, {
     sampleDeprecated: DeprecatedDirective,
+    upper: UpperDirective,
+    fetch: FetchDirective,
+    date: DateFormatDirective,
   });
 
   const server = new ApolloServer({

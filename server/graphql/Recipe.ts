@@ -108,6 +108,15 @@ export class SaltFish {
   )
   @Field((type) => Int)
   EngelCoefficient!: number;
+
+  @Directive("@upper")
+  @Directive('@fetch(url:"https://linbudu.top")')
+  @Field()
+  fishName!: string;
+
+  @Directive('@date(format: "mmmm d, yyyy")')
+  @Field((type) => Date)
+  date!: Date;
 }
 
 export const RecipeUnionResult = createUnionType({

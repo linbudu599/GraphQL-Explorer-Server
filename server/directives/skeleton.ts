@@ -26,7 +26,8 @@ import { SchemaDirectiveVisitor } from "graphql-tools";
  * (但是最终应该还是调用原生的指令API 见上面的源码)
  */
 
-// Apply On:
+// 原生Schema中定义:
+// directive @upper on FIELD_DEFINITION | xxx | xxx
 
 export class DeprecatedDirective extends SchemaDirectiveVisitor {
   // 可用Location:

@@ -73,8 +73,8 @@ export default class RecipeResolver {
     description: "根据恩格尔系数查找咸鱼",
   })
   async QuerySaltFishByCoefficient(
-    @Arg("coefficient", () => Int, { nullable: false })
-    coefficient: number
+    @Arg("coefficient", () => Int, { nullable: true })
+    coefficient?: number
   ): Promise<SaltFish[]> {
     return this.recipeService.getSaltFishesByCoefficient(coefficient);
   }

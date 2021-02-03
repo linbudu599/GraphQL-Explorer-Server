@@ -41,9 +41,13 @@ const createRecipe = (recipeData: Partial<Recipe>): Recipe =>
 export const sampleSaltFishes = [
   createSaltFish({
     EngelCoefficient: 90,
+    fishName: "salt fish 1",
+    date: new Date(),
   }),
   createSaltFish({
     EngelCoefficient: 80,
+    fishName: "salt fish 2",
+    date: new Date(),
   }),
 ];
 

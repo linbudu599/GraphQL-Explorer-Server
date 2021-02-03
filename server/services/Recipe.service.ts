@@ -62,9 +62,9 @@ export default class RecipeService implements IRecipeService {
     return this.saltFishes;
   }
 
-  async getSaltFishesByCoefficient(coefficient: number): Promise<SaltFish[]> {
-    return this.saltFishes.filter(
-      (fish) => fish.EngelCoefficient === coefficient
-    );
+  async getSaltFishesByCoefficient(coefficient?: number): Promise<SaltFish[]> {
+    return coefficient
+      ? this.saltFishes.filter((fish) => fish.EngelCoefficient === coefficient)
+      : this.saltFishes;
   }
 }
