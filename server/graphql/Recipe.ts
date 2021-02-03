@@ -95,6 +95,7 @@ export class Recipe {
   cook!: Cook;
 }
 
+@Directive("@auth(requires: USER)")
 @Directive(
   '@sampleDeprecated(reason: "Sample Deprecated Apply On SaltFish ObjectType")'
 )
@@ -110,7 +111,8 @@ export class SaltFish {
   EngelCoefficient!: number;
 
   @Directive("@upper")
-  @Directive('@fetch(url:"https://linbudu.top")')
+  // @Directive('@fetch(url:"https://linbudu.top")')
+  @Directive("@auth(requires: USER)")
   @Field()
   fishName!: string;
 
@@ -122,4 +124,16 @@ export class SaltFish {
 export const RecipeUnionResult = createUnionType({
   name: "RecipeUnionResult",
   types: () => [Recipe, Cook, SaltFish] as const,
+});
+
+export enum AuthDirectiveRoleEnum {
+  ADMIN,
+  REVIEWER,
+  USER,
+  UNKNOWN,
+}
+
+registerEnumType(AuthDirectiveRoleEnum, {
+  name: "AuthDirectiveRoleEnum",
+  description: "For @auth usage only",
 });

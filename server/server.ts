@@ -64,6 +64,8 @@ import { DeprecatedDirective } from "./directives/deprecated";
 import { UpperDirective } from "./directives/upper";
 import { FetchDirective } from "./directives/fetch";
 import { DateFormatDirective } from "./directives/dateFormat";
+import { IntlDirective } from "./directives/intl";
+import { AuthDirective } from "./directives/auth";
 
 import { validateToken } from "./utils/jwt";
 
@@ -120,6 +122,8 @@ export default async (): Promise<ApolloServer> => {
     upper: UpperDirective,
     fetch: FetchDirective,
     date: DateFormatDirective,
+    intl: IntlDirective,
+    auth: AuthDirective,
   });
 
   const server = new ApolloServer({
