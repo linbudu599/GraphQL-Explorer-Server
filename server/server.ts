@@ -66,6 +66,7 @@ import { FetchDirective } from "./directives/fetch";
 import { DateFormatDirective } from "./directives/dateFormat";
 import { IntlDirective } from "./directives/intl";
 import { AuthDirective } from "./directives/auth";
+import { LengthRestrictionDirective } from "./directives/restrictions";
 
 import { validateToken } from "./utils/jwt";
 
@@ -124,6 +125,7 @@ export default async (): Promise<ApolloServer> => {
     date: DateFormatDirective,
     intl: IntlDirective,
     auth: AuthDirective,
+    length: LengthRestrictionDirective,
   });
 
   const server = new ApolloServer({

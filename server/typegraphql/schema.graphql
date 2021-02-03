@@ -137,6 +137,16 @@ enum AccountVIPLevel {
 }
 
 """
+For @auth usage only
+"""
+enum AuthDirectiveRoleEnum {
+  ADMIN
+  REVIEWER
+  UNKNOWN
+  USER
+}
+
+"""
 Recipe >>> Cook >>> WorkExperience >> Company
 """
 type Company {
@@ -812,6 +822,7 @@ type SaltFish {
   EngelCoefficient: Int!
   date: Timestamp!
   fishName: String!
+  role: AuthDirectiveRoleEnum
 }
 
 type Subscription {

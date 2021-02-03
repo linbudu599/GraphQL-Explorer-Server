@@ -1,4 +1,12 @@
-import { defaultFieldResolver, GraphQLField, GraphQLObjectType } from "graphql";
+import {
+  defaultFieldResolver,
+  DirectiveLocation,
+  GraphQLDirective,
+  GraphQLEnumType,
+  GraphQLField,
+  GraphQLObjectType,
+  GraphQLSchema,
+} from "graphql";
 import { SchemaDirectiveVisitor } from "graphql-tools";
 
 export const enum AuthDirectiveRoleEnum {
@@ -83,6 +91,42 @@ export class AuthDirective extends SchemaDirectiveVisitor {
 
         return resolve.apply(this, args);
       };
+    });
+  }
+
+  public static getDirectiveDeclaration(
+    directiveName: string,
+    schema: GraphQLSchema
+  ): GraphQLDirective {
+    console.log(directiveName);
+    const previousDirective = schema.getDirective(directiveName);
+    console.log("previousDirective: ", previousDirective);
+    if (previousDirective) {
+      // 如果这个指令已经存在 直接修改它即可
+      previousDirective.args.forEach((arg) => {
+        if (arg.name === "requires") {
+          arg.defaultValue = "REVIEWER";
+        }
+      });
+
+      return previousDirective;
+    }
+
+    // 否则返回一个新的实例
+    return new GraphQLDirective({
+      name: directiveName,
+      locations: [DirectiveLocation.OBJECT, DirectiveLocation.FIELD_DEFINITION],
+      // 这个参数是map而不是数组
+      args: {
+        requires: {
+          // Having the schema available here is important for obtaining
+          // references to existing type objects, such as the AuthDirectiveRoleEnum enum.
+          // 这个enum必须被使用 否则不会被注册进TypeGraphQL生成的schema中
+          type: schema.getType("AuthDirectiveRoleEnum") as GraphQLEnumType,
+          // Set the default minimum Role to REVIEWER.
+          defaultValue: "USER",
+        },
+      },
     });
   }
 }

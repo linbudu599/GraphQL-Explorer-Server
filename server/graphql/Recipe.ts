@@ -111,7 +111,7 @@ export class SaltFish {
   EngelCoefficient!: number;
 
   @Directive("@upper")
-  // @Directive('@fetch(url:"https://linbudu.top")')
+  @Directive('@fetch(url:"https://linbudu.top")')
   @Directive("@auth(requires: USER)")
   @Field()
   fishName!: string;
@@ -119,6 +119,9 @@ export class SaltFish {
   @Directive('@date(format: "mmmm d, yyyy")')
   @Field((type) => Date)
   date!: Date;
+
+  @Field((type) => AuthDirectiveRoleEnum, { nullable: true })
+  role?: AuthDirectiveRoleEnum;
 }
 
 export const RecipeUnionResult = createUnionType({
