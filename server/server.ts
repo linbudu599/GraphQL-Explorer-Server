@@ -6,13 +6,11 @@ import path from "path";
 import { Context } from "koa";
 import { getOperationAST, DocumentNode } from "graphql";
 import { Container } from "typedi";
-import * as TypeORM from "typeorm";
+import { useContainer as TypeORMUseContainer, getConnection } from "typeorm";
 import { buildSchemaSync, ResolverData } from "type-graphql";
 import { ApolloServer } from "apollo-server-koa";
 
-import { GraphQLRequestContext } from "apollo-server-plugin-base";
-import { ApolloServerLoaderPlugin } from "type-graphql-dataloader";
-
+// Resolvers
 // TODO: generate resolver groups by fs mod
 import ExecutorResolver from "./resolvers/Executor.resolver";
 import RecipeResolver from "./resolvers/Recipe.resolver";
@@ -23,23 +21,14 @@ import SubstanceResolver from "./resolvers/Substance.resolver";
 import PublicResolver from "./resolvers/Public.resolver";
 import RecordResolver from "./resolvers/Record.resolver";
 
-// Prisma Integration
-import PrismaResolver from "./resolvers/prisma/index.resolver";
-
-import { log } from "./utils/helper";
-import { genarateRandomID } from "./utils/auth";
-import { authChecker } from "./utils/authChecker";
-import { PLAY_GROUND_SETTINGS } from "./utils/constants";
-import { setRecipeInContainer, insertInitMockData } from "./utils/mock";
-import { dbConnect } from "./utils/connect";
-
-// Middlewares applied on TypeGraphQL
+// Middlewares & Interceptors Related
 import ResolveTime from "./middlewares/time";
 import { InterceptorOnSCP1128 } from "./middlewares/interceptor";
 import LogAccessMiddleware from "./middlewares/log";
 import ErrorLoggerMiddleware from "./middlewares/error";
 
-// Extensions powered by TypeGraphQL
+// Extensions Related
+// Extension by TypeGraphQL
 import { ExtensionsMetadataRetriever } from "./extensions/getMetadata";
 // Extension pn Apollo(GraphQL-Extensions Package)
 import { CustomExtension } from "./extensions/apollo";
@@ -47,19 +36,20 @@ import { CustomExtension } from "./extensions/apollo";
 // Apollo Data Source
 import SpaceXDataSource from "./datasource/SpaceX";
 
-import { IContext } from "./typing";
+// Apollo Server Plugin Related
+import {
+  GraphQLRequestContext,
+  GraphQLResponse,
+} from "apollo-server-plugin-base";
+import ResponseCachePlugin from "apollo-server-plugin-response-cache";
+import { ApolloServerLoaderPlugin } from "type-graphql-dataloader";
+import ComplexityPlugin from "./plugins/complexity";
+import ExtensionPlugin from "./plugins/extension";
+import { SchemaReportPlugin, SchemaUsagePlugin } from "./plugins/report";
+import ScopedContainerPlugin from "./plugins/scopedContainer";
 
-import { GraphQLResponse } from "graphql-extensions";
-
-// Apollo Server Plugin
-import complexityPlugin from "./plugins/complexity";
-import extensionPlugin from "./plugins/extension";
-import { schemaPlugin, usagePlugin } from "./plugins/report";
-import scopedContainerPlugin from "./plugins/scopedContainer";
-import responseCachePlugin from "apollo-server-plugin-response-cache";
-
+// GraphQL Directives Related
 import { SchemaDirectiveVisitor } from "graphql-tools";
-
 import { DeprecatedDirective } from "./directives/deprecated";
 import { UpperDirective } from "./directives/upper";
 import { FetchDirective } from "./directives/fetch";
@@ -68,17 +58,28 @@ import { IntlDirective } from "./directives/intl";
 import { AuthDirective } from "./directives/auth";
 import { LengthRestrictionDirective } from "./directives/restrictions";
 
+// Utils
+import { log } from "./utils/helper";
+import { genarateRandomID } from "./utils/auth";
 import { validateToken } from "./utils/jwt";
+import { authChecker } from "./utils/authChecker";
+import { PLAY_GROUND_SETTINGS } from "./utils/constants";
+import { setRecipeInContainer, insertInitMockData } from "./utils/mock";
+import { dbConnect } from "./utils/connect";
 
+import { IContext } from "./typing";
+
+// Prisma Related
+import PrismaResolver from "./resolvers/prisma/index.resolver";
 import { PrismaClient } from "./prisma/client";
 
 const prisma = new PrismaClient();
 
+const dev = process.env.NODE_ENV === "development";
+
 Container.set({ id: "INIT_INJECT_DATA", factory: () => new Date() });
 
-TypeORM.useContainer(Container);
-
-const dev = process.env.NODE_ENV === "development";
+TypeORMUseContainer(Container);
 
 export default async (): Promise<ApolloServer> => {
   const basicMiddlewares = [
@@ -179,15 +180,15 @@ export default async (): Promise<ApolloServer> => {
     }),
 
     plugins: [
-      schemaPlugin(),
-      usagePlugin(),
-      complexityPlugin(schema),
-      extensionPlugin(),
-      scopedContainerPlugin(Container),
+      SchemaReportPlugin(),
+      SchemaUsagePlugin(),
+      ComplexityPlugin(schema),
+      ExtensionPlugin(),
+      ScopedContainerPlugin(Container),
       ApolloServerLoaderPlugin({
-        typeormGetConnection: TypeORM.getConnection,
+        typeormGetConnection: getConnection,
       }),
-      responseCachePlugin({
+      ResponseCachePlugin({
         // 被标记为PRIVATE的字段缓存只会用于相同sessionID
         sessionId: (ctx: GraphQLRequestContext) =>
           ctx.request.http?.headers.get("sessionId") || null,

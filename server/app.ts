@@ -3,6 +3,7 @@ import Koa from "koa";
 import dotenv from "dotenv";
 
 import cors from "./middlewares/cors";
+
 import { log } from "./utils/helper";
 
 import initialize from "./server";
@@ -26,10 +27,12 @@ async function bootstrap() {
     log(`[Apollo Server] Server ready at http://localhost:${PORT}/graphql`);
   });
 
+  // or app.use(server.getMiddleware({}))
   server.applyMiddleware({ app });
 
   server.installSubscriptionHandlers(httpServer);
 }
 
 log(`=== [GraphQL Explorer] Bootstrapping ===`);
+
 bootstrap();

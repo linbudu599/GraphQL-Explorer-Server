@@ -2,7 +2,7 @@ import { GraphQLRequestContext } from "apollo-server-plugin-base";
 
 import { IContext } from "../typing";
 
-const extensionPlugin = () => ({
+const ExtensionPlugin = () => ({
   requestDidStart: () => ({
     willSendResponse(reqContext: GraphQLRequestContext<Partial<IContext>>) {
       reqContext.response!.extensions = {
@@ -13,4 +13,4 @@ const extensionPlugin = () => ({
   }),
 });
 
-export default extensionPlugin;
+export default ExtensionPlugin;
