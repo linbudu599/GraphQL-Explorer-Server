@@ -95,11 +95,17 @@ export class Recipe {
   cook!: Cook;
 }
 
+@Directive(
+  '@sampleDeprecated(reason: "Sample Deprecated Apply On SaltFish ObjectType")'
+)
 @Directive("@cacheControl(maxAge: 1000)")
 @ObjectType({
   description: "useless object type in union type, just for funny:)",
 })
 export class SaltFish {
+  @Directive(
+    '@sampleDeprecated(reason: "Sample Deprecated Apply On SaltFish.EngelCoefficient Field")'
+  )
   @Field((type) => Int)
   EngelCoefficient!: number;
 }

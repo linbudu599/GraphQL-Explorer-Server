@@ -59,8 +59,7 @@ import scopedContainerPlugin from "./plugins/scopedContainer";
 import responseCachePlugin from "apollo-server-plugin-response-cache";
 
 import { SchemaDirectiveVisitor } from "graphql-tools";
-// import { deprecatedDirective } from "./directives/sample";
-import { SomeDirective } from "./directives/class";
+import { DeprecatedDirective } from "./directives/deprecated";
 
 import { validateToken } from "./utils/jwt";
 
@@ -111,13 +110,14 @@ export default async (): Promise<ApolloServer> => {
       : [...basicMiddlewares, ErrorLoggerMiddleware],
   });
 
+  // 试试在ApolloServer中直接映射的效果
   SchemaDirectiveVisitor.visitSchemaDirectives(schema, {
-    sample: SomeDirective,
+    sampleDeprecated: DeprecatedDirective,
   });
 
   const server = new ApolloServer({
     schema,
-    tracing: true,
+    // tracing: true,
     subscriptions: {
       onConnect: () => log("[Subscription] Connected to websocket"),
     },
@@ -164,6 +164,7 @@ export default async (): Promise<ApolloServer> => {
     dataSources: () => ({
       SpaceXAPI: new SpaceXDataSource(),
     }),
+
     plugins: [
       schemaPlugin(),
       usagePlugin(),

@@ -32,7 +32,9 @@ export default class RecipeResolver {
     log("=== RecipeService Created! ===");
   }
 
-  @Directive('@sample(reason: "Sample Implementation")')
+  @Directive(
+    '@sampleDeprecated(reason: "Sample Deprecated Apply On QueryRecipeUnions Resolver")'
+  )
   @Authorized([ACCOUNT_TYPE.VISITOR, [ACCOUNT_ROLE.UNKNOWN]] as AuthRule)
   @Query(() => [RecipeUnionResult], {
     nullable: false,
