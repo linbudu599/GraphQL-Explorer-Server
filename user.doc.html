@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link type="text/css" rel="stylesheet" href="./styles/graphdoc.css" />
-    <title>Account</title>
+    <title>User</title>
     <link href="https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700" rel="stylesheet"><link type="text/css" rel="stylesheet" href="./assets/code.css" /><link type="text/css" rel="stylesheet" href="./assets/require-by.css" />
 </head>
 <body class="slds-scrollable--y">
@@ -215,7 +215,7 @@
 <div class="slds-grid slds-grid--vertical slds-navigation-list--vertical">
     <h4 class="slds-text-title--caps slds-p-around--medium">Objects</h4>
     <ul>
-        <li class="slds-is-active" title="Account">
+        <li  title="Account">
             <a href="account.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 Account
             </a>
@@ -315,7 +315,7 @@
                 TodoItem
             </a>
         </li>
-        <li  title="User">
+        <li class="slds-is-active" title="User">
             <a href="user.doc.html" class="slds-navigation-list--vertical__action slds-text-link--reset slds-truncate">
                 User
             </a>
@@ -501,7 +501,7 @@
     </div>
     <div class="container">
         <p class="slds-text-title--caps slds-text-color--weak">OBJECT</p>
-        <h1 class="slds-text-heading--large">Account</h1>
+        <h1 class="slds-text-heading--large">User</h1>
         <div class="slds-text-body--regular"></div>
     </div>
 </section>
@@ -513,7 +513,7 @@
             </a>
             GraphQL Schema definition
         </h2>
-        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">Account</span> <span class="keyword operator ts">implements</span> <a class="support type" href="iaccount.doc.html">IAccount</a> {</li><li></li><li><span class="tab"><span class="meta">accountId</span>: <a class="support type" href="id.doc.html">ID</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountName</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountAvaliable</span>: <a class="support type" href="boolean.doc.html">Boolean</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountPwd</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountProfile</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountType</span>: <a class="support type" href="accounttype.doc.html">AccountType</a>! </span></li><li></li><li><span class="tab"><span class="meta">accountRole</span>: <a class="support type" href="accountrole.doc.html">AccountRole</a>! </span></li><li></li><li><span class="tab"><span class="meta">relatedRecord</span>: [<a class="support type" href="record.doc.html">Record</a>!] </span></li><li></li><li><span class="tab"><span class="meta">registryDate</span>: <a class="support type" href="timestamp.doc.html">Timestamp</a>! </span></li><li></li><li><span class="tab"><span class="meta">lastUpdateDate</span>: <a class="support type" href="timestamp.doc.html">Timestamp</a>! </span></li><li></li><li><span class="tab"><span class="comment line">#   账号资料</span></span></li><li><span class="tab"><span class="meta">AccountProfileField</span>: <a class="support type" href="accountprofile.doc.html">AccountProfile</a>! </span></li><li></li><li><span class="tab"><span class="comment line">#   ACCOUNT_JSON_TYPE</span></span></li><li><span class="tab"><span class="meta">AccountJSONField</span>: <a class="support type" href="accountjson.doc.html">AccountJSON</a>! </span></li><li>}</li></ul></code>
+        <code class="highlight"><ul class="code" style="padding-left:42px"><li><span class="keyword operator ts">type</span> <span class="identifier">User</span> {</li><li></li><li><span class="tab"><span class="meta">id</span>: <a class="support type" href="id.doc.html">ID</a>! </span></li><li></li><li><span class="tab"><span class="meta">name</span>: <a class="support type" href="string.doc.html">String</a>! </span></li><li></li><li><span class="tab"><span class="meta">nickName</span>: <a class="support type" href="string.doc.html">String</a> </span></li><li></li><li><span class="tab"><span class="meta">items</span>: [<a class="support type" href="todoitem.doc.html">TodoItem</a>!] </span></li><li>}</li></ul></code>
     </div>
 </section>
 <section>
@@ -524,7 +524,7 @@
             </a>
             Require by
         </h2>
-        <ul class="require-by"><li><a href="accountstatus.doc.html" title="AccountStatus - Primitive Response Status Indicator">AccountStatus<em>Primitive Response Status Indicator</em></a><li><li><a href="irecord.doc.html" title="IRecord - Record Interface Type">IRecord<em>Record Interface Type</em></a><li><li><a href="record.doc.html" title="Record - ">Record<em>null</em></a><li></ul>
+        <ul class="require-by"><li><a href="query.doc.html" title="Query - ">Query<em>null</em></a><li><li><a href="todoitem.doc.html" title="TodoItem - ">TodoItem<em>null</em></a><li></ul>
     </div>
 </section>
 <footer>
