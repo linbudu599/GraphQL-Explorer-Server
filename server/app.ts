@@ -3,9 +3,7 @@ import Koa from "koa";
 import dotenv from "dotenv";
 
 import cors from "./middlewares/cors";
-
 import { log } from "./utils/helper";
-
 import initialize from "./server";
 
 const dev = process.env.NODE_ENV === "development";

@@ -30,7 +30,7 @@ import ErrorLoggerMiddleware from "./middlewares/error";
 // Extensions Related
 // Extension by TypeGraphQL
 import { ExtensionsMetadataRetriever } from "./extensions/getMetadata";
-// Extension pn Apollo(GraphQL-Extensions Package)
+// Extension pn Apollo Plugin
 import { CustomExtension } from "./extensions/apollo";
 
 // Apollo Data Source
