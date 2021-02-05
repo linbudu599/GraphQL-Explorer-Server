@@ -82,12 +82,12 @@ export class AuthDirective extends SchemaDirectiveVisitor {
           return resolve.apply(this, args);
         }
 
-        const context = args[2];
-        const userRoles = await getUser(context?.headers?.authToken ?? "");
+        // const context = args[2];
+        // const userRoles = await getUser(context?.headers?.authToken ?? "");
 
-        if (!userRoles.includes(requiredRole)) {
-          throw new Error("not authorized");
-        }
+        // if (!userRoles.includes(requiredRole)) {
+        //   throw new Error("not authorized");
+        // }
 
         return resolve.apply(this, args);
       };

@@ -110,8 +110,15 @@ export class SaltFish {
   @Field((type) => Int)
   EngelCoefficient!: number;
 
-  @Directive("@upper")
-  @Directive('@fetch(url:"https://linbudu.top")')
+  // @Directive("@upper")
+  // @Directive("@lower")
+  // @Directive("@camel")
+  // @Directive("@start")
+  // @Directive("@capitalize")
+  // @Directive("@kebab")
+  @Directive("@snake")
+  // @Directive("@trim")
+  // @Directive('@fetch(url:"https://linbudu.top")')
   @Directive("@auth(requires: USER)")
   @Field()
   fishName!: string;
@@ -122,6 +129,16 @@ export class SaltFish {
 
   @Field((type) => AuthDirectiveRoleEnum, { nullable: true })
   role?: AuthDirectiveRoleEnum;
+
+  // @Directive("@max(max: 10)")
+  // @Directive("@min(min: 10)")
+  @Field({ nullable: true })
+  str!: string;
+
+  // @Directive("@greater(limit: 10)")
+  @Directive("@less(limit: 10)")
+  @Field((type) => Int, { nullable: true })
+  num!: number;
 }
 
 export const RecipeUnionResult = createUnionType({

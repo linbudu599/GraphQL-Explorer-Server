@@ -15,10 +15,18 @@ import {
   capitalize,
   kebabCase,
   trim,
+  snakeCase,
 } from "lodash";
 
 export type StringTransformer = (arg: string) => string;
 
+/**
+ *
+ *
+ * @param {string} directiveNameArg Directive Name Appeared In DSL
+ * @param {StringTransformer} transformer string transformer function like `@lowerCase`
+ * @return {*}  {typeof SchemaDirectiveVisitor}
+ */
 const CreateStringDirectiveMixin = (
   directiveNameArg: string,
   transformer: StringTransformer
@@ -84,3 +92,8 @@ export const KebabCaseDirective = CreateStringDirectiveMixin(
 );
 
 export const TrimDirective = CreateStringDirectiveMixin("trim", trim);
+
+export const SnakeCaseDirective = CreateStringDirectiveMixin(
+  "snake",
+  snakeCase
+);

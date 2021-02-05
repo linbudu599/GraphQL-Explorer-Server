@@ -11,7 +11,6 @@ import {
 import { SchemaDirectiveVisitor } from "graphql-tools";
 import { ClassType } from "type-graphql";
 
-import { LimitedLengthScalarType } from "../scalars/LimitedLength";
 import {
   MaxLengthScalarType,
   MinLengthScalarType,
@@ -19,44 +18,15 @@ import {
   LessThanScalarType,
 } from "../scalars/Limit";
 
-export class LengthRestrictionDirective extends SchemaDirectiveVisitor {
-  visitInputFieldDefinition(
-    field: GraphQLInputField,
-    details: {
-      objectType: GraphQLInputObjectType;
-    }
-  ) {
-    this.wrapType(field);
-  }
-
-  visitFieldDefinition(
-    field: GraphQLField<any, any>,
-    details: {
-      objectType: GraphQLObjectType | GraphQLInterfaceType;
-    }
-  ) {
-    this.wrapType(field);
-  }
-
-  // Replace field.type with a custom GraphQLScalarType that enforces the
-  // length restriction.
-  wrapType(field: GraphQLField<any, any> | GraphQLInputField) {
-    if (
-      field.type instanceof GraphQLNonNull &&
-      field.type.ofType instanceof GraphQLScalarType
-    ) {
-      field.type = new GraphQLNonNull(
-        new LimitedLengthScalarType(field.type.ofType, this.args.max)
-      );
-    } else if (field.type instanceof GraphQLScalarType) {
-      field.type = new LimitedLengthScalarType(field.type, this.args.max);
-    } else {
-      throw new Error(`Not a scalar type: ${field.type}`);
-    }
-  }
-}
-
-export const CreateRestrictionDirectiveMixin = <TScalarType extends ClassType>(
+/**
+ *
+ * Create Restriction Series Directives
+ * @param {string} directiveName Directive Name(used in DSL)
+ * @param {string} argName Argument Name That Received by Directive, e.g. `@max(max: 10)`
+ * @param {TScalarType} ScalarType Custom Scalar Type Use to Limit Behaviour
+ * @return {*}  {typeof SchemaDirectiveVisitor}
+ */
+const CreateRestrictionDirectiveMixin = <TScalarType extends ClassType>(
   directiveName: string,
   argName: string,
   ScalarType: TScalarType
@@ -106,20 +76,20 @@ export const MaxLengthDirective = CreateRestrictionDirectiveMixin(
   MaxLengthScalarType
 );
 
-export const MainLengthDirective = CreateRestrictionDirectiveMixin(
+export const MinLengthDirective = CreateRestrictionDirectiveMixin(
   "minLength",
   "min",
   MinLengthScalarType
 );
 
 export const GreaterThanDirective = CreateRestrictionDirectiveMixin(
-  "greaterThen",
+  "greater",
   "limit",
   GreaterThanScalarType
 );
 
 export const LessThanDirective = CreateRestrictionDirectiveMixin(
-  "lessThan",
+  "less",
   "limit",
   LessThanScalarType
 );

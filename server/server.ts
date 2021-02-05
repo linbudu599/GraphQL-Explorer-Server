@@ -29,8 +29,8 @@ import ErrorLoggerMiddleware from "./middlewares/error";
 
 // Extensions Related
 // Extension by TypeGraphQL
-import { ExtensionsMetadataRetriever } from "./extensions/GetMetadata";
-// Extension pn Apollo Plugin
+// import { ExtensionsMetadataRetriever } from "./extensions/GetMetadata";
+// Extension on Apollo Plugin
 import { CustomExtension } from "./extensions/apollo";
 
 // Apollo Data Source
@@ -51,12 +51,28 @@ import ScopedContainerPlugin from "./plugins/scopedContainer";
 // GraphQL Directives Related
 import { SchemaDirectiveVisitor } from "graphql-tools";
 import { DeprecatedDirective } from "./directives/deprecated";
-import { UpperDirective } from "./directives/upper";
 import { FetchDirective } from "./directives/fetch";
 import { DateFormatDirective } from "./directives/dateFormat";
 import { IntlDirective } from "./directives/intl";
 import { AuthDirective } from "./directives/auth";
-import { LengthRestrictionDirective } from "./directives/restrictions";
+
+import {
+  UpperDirective,
+  LowerDirective,
+  CamelCaseDirective,
+  StartCaseDirective,
+  CapitalizeDirective,
+  KebabCaseDirective,
+  TrimDirective,
+  SnakeCaseDirective,
+} from "./directives/string";
+
+import {
+  MaxLengthDirective,
+  MinLengthDirective,
+  GreaterThanDirective,
+  LessThanDirective,
+} from "./directives/restrictions";
 
 // Utils
 import { log } from "./utils/helper";
@@ -85,7 +101,7 @@ export default async (): Promise<ApolloServer> => {
   const basicMiddlewares = [
     ResolveTime,
     // InterceptorOnSCP1128,
-    ExtensionsMetadataRetriever,
+    // ExtensionsMetadataRetriever,
     LogAccessMiddleware,
   ];
 
@@ -121,12 +137,24 @@ export default async (): Promise<ApolloServer> => {
   // 试试在ApolloServer中直接映射的效果
   SchemaDirectiveVisitor.visitSchemaDirectives(schema, {
     sampleDeprecated: DeprecatedDirective,
-    upper: UpperDirective,
     fetch: FetchDirective,
     date: DateFormatDirective,
     intl: IntlDirective,
     auth: AuthDirective,
-    length: LengthRestrictionDirective,
+    // string transform directives
+    upper: UpperDirective,
+    lower: LowerDirective,
+    camel: CamelCaseDirective,
+    start: StartCaseDirective,
+    capitalize: CapitalizeDirective,
+    kebab: KebabCaseDirective,
+    snake: SnakeCaseDirective,
+    trim: TrimDirective,
+    // restriction directives
+    max: MaxLengthDirective,
+    min: MinLengthDirective,
+    greater: GreaterThanDirective,
+    less: LessThanDirective,
   });
 
   const server = new ApolloServer({

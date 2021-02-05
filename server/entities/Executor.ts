@@ -20,7 +20,7 @@ import { DifficultyLevel } from "../graphql/Public";
 import Task from "./Task";
 import Record from "./Record";
 
-import { LogExtension } from "../extensions/LogExtension";
+// import { LogExtension } from "../extensions/LogExtension";
 
 @ObjectType({ implements: IExecutorDesc })
 export class ExecutorDesc extends BaseEntity implements IExecutorDesc {
@@ -72,7 +72,7 @@ export default class Executor extends BaseEntity implements IExecutor {
   region!: REGION;
 
   @Extensions({ complexity: 1 })
-  @LogExtension({ message: "我直接好家伙" })
+  // @LogExtension({ message: "我直接好家伙" })
   @Field((type) => Int)
   spAgeField?: number;
 

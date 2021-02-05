@@ -822,7 +822,9 @@ type SaltFish {
   EngelCoefficient: Int!
   date: Timestamp!
   fishName: String!
+  num: Int
   role: AuthDirectiveRoleEnum
+  str: String
 }
 
 type Subscription {
