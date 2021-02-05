@@ -23,6 +23,5 @@ describe.only("Apollo Server Integration Test", () => {
     console.log(res);
     expect(typeof res.data.ContainerRegisterTime).toBe("number");
     expect(res.data.ContainerRegisterTime.toString().length).toBe(13);
-    expect(res.extensions).toEqual(EXTENSION);
   });
 });

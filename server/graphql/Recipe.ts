@@ -95,16 +95,65 @@ export class Recipe {
   cook!: Cook;
 }
 
+@Directive("@auth(requires: USER)")
+@Directive(
+  '@sampleDeprecated(reason: "Sample Deprecated Apply On SaltFish ObjectType")'
+)
 @Directive("@cacheControl(maxAge: 1000)")
 @ObjectType({
   description: "useless object type in union type, just for funny:)",
 })
 export class SaltFish {
+  @Directive(
+    '@sampleDeprecated(reason: "Sample Deprecated Apply On SaltFish.EngelCoefficient Field")'
+  )
   @Field((type) => Int)
   EngelCoefficient!: number;
+
+  // @Directive("@upper")
+  // @Directive("@lower")
+  // @Directive("@camel")
+  // @Directive("@start")
+  // @Directive("@capitalize")
+  // @Directive("@kebab")
+  @Directive("@snake")
+  // @Directive("@trim")
+  // @Directive('@fetch(url:"https://linbudu.top")')
+  @Directive("@auth(requires: USER)")
+  @Field()
+  fishName!: string;
+
+  @Directive('@date(format: "mmmm d, yyyy")')
+  @Field((type) => Date)
+  date!: Date;
+
+  @Field((type) => AuthDirectiveRoleEnum, { nullable: true })
+  role?: AuthDirectiveRoleEnum;
+
+  // @Directive("@max(max: 10)")
+  // @Directive("@min(min: 10)")
+  @Field({ nullable: true })
+  str!: string;
+
+  // @Directive("@greater(limit: 10)")
+  @Directive("@less(limit: 10)")
+  @Field((type) => Int, { nullable: true })
+  num!: number;
 }
 
 export const RecipeUnionResult = createUnionType({
   name: "RecipeUnionResult",
   types: () => [Recipe, Cook, SaltFish] as const,
+});
+
+export enum AuthDirectiveRoleEnum {
+  ADMIN,
+  REVIEWER,
+  USER,
+  UNKNOWN,
+}
+
+registerEnumType(AuthDirectiveRoleEnum, {
+  name: "AuthDirectiveRoleEnum",
+  description: "For @auth usage only",
 });

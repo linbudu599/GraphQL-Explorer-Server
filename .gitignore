@@ -50,3 +50,5 @@ db.sqlite
 
 /server/prisma/client/
 /server/prisma/prisma.sqlite
+
+/docs

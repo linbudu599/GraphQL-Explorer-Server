@@ -40,10 +40,23 @@ const createRecipe = (recipeData: Partial<Recipe>): Recipe =>
 
 export const sampleSaltFishes = [
   createSaltFish({
-    EngelCoefficient: 90,
+    EngelCoefficient: 80,
+    fishName: "Foo Bar", // @snake test foo_bar
+    // fishName: "fooBar", // @kebab test foo-bar
+    // fishName: "foobar", // @capitalize test
+    // fishName: "   foobar    ", // @trim test
+    // fishName: "fooBar", // @start test Foo Bar
+    // fishName: "Foo Bar", // @camel test fooBar
+    // fishName: "SALT FISH 1", // @lower test
+    // fishName: "salt fish 1", // @upper test
+    date: new Date(),
+    str: "54655675656888rger",
+    num: 8,
   }),
   createSaltFish({
-    EngelCoefficient: 80,
+    EngelCoefficient: 90,
+    fishName: "salt fish 2",
+    date: new Date(),
   }),
 ];
 

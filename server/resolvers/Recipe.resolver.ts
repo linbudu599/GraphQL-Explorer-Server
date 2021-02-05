@@ -6,6 +6,7 @@ import {
   UseMiddleware,
   Int,
   Authorized,
+  Directive,
 } from "type-graphql";
 
 import {
@@ -31,6 +32,9 @@ export default class RecipeResolver {
     log("=== RecipeService Created! ===");
   }
 
+  @Directive(
+    '@sampleDeprecated(reason: "Sample Deprecated Apply On QueryRecipeUnions Resolver")'
+  )
   @Authorized([ACCOUNT_TYPE.VISITOR, [ACCOUNT_ROLE.UNKNOWN]] as AuthRule)
   @Query(() => [RecipeUnionResult], {
     nullable: false,
@@ -69,8 +73,8 @@ export default class RecipeResolver {
     description: "根据恩格尔系数查找咸鱼",
   })
   async QuerySaltFishByCoefficient(
-    @Arg("coefficient", () => Int, { nullable: false })
-    coefficient: number
+    @Arg("coefficient", () => Int, { nullable: true })
+    coefficient?: number
   ): Promise<SaltFish[]> {
     return this.recipeService.getSaltFishesByCoefficient(coefficient);
   }

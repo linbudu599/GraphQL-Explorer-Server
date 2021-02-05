@@ -10,7 +10,7 @@ import {
 import { MAX_ALLOWED_COMPLEXITY } from "../utils/constants";
 import { IContext } from "../typing";
 
-const complexityPlugin = (schema: GraphQLSchema): PluginDefinition => ({
+const ComplexityPlugin = (schema: GraphQLSchema): PluginDefinition => ({
   // 在每次请求开始前销毁上一个容器
   requestDidStart: (requestContext: GraphQLRequestContext<IContext>) => ({
     didResolveOperation({ request, document }) {
@@ -39,4 +39,4 @@ const complexityPlugin = (schema: GraphQLSchema): PluginDefinition => ({
   }),
 });
 
-export default complexityPlugin;
+export default ComplexityPlugin;
