@@ -29,7 +29,7 @@ import ErrorLoggerMiddleware from "./middlewares/error";
 
 // Extensions Related
 // Extension by TypeGraphQL
-import { ExtensionsMetadataRetriever } from "./extensions/getMetadata";
+import { ExtensionsMetadataRetriever } from "./extensions/GetMetadata";
 // Extension pn Apollo Plugin
 import { CustomExtension } from "./extensions/apollo";
 
