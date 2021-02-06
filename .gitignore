@@ -50,6 +50,4 @@ db.sqlite
 
 /server/prisma/client/
 /server/prisma/prisma.sqlite
-/server/typegraphql/schema.graphql
-
 /docs
