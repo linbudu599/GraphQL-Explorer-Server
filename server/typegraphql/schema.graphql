@@ -758,6 +758,11 @@ type Query {
     relations: TaskRelationsInput
     taskQueryParams: TaskQueryInput!
   ): TaskStatus!
+
+  """
+  DataLoader 实际效果演示
+  """
+  Recipes: [Recipe!]!
   currentDate: Timestamp!
 }
 
@@ -765,7 +770,9 @@ type Query {
 Recipe Type
 """
 type Recipe {
-  cook: Cook
+  CookExtraFieldResolver(name: String!): Cook!
+  RecipeExtraFieldResolver(title: String!): Recipe
+  cook: Cook!
   description: String
   ingredients: [String!]
   preparationDifficulty: Difficulty

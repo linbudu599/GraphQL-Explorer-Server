@@ -26,6 +26,7 @@ import ResolveTime from "./middlewares/time";
 import { InterceptorOnSCP1128 } from "./middlewares/interceptor";
 import LogAccessMiddleware from "./middlewares/log";
 import ErrorLoggerMiddleware from "./middlewares/error";
+import DataLoaderMiddleware from "./middlewares/dataLoader";
 
 // Extensions Related
 // Extension by TypeGraphQL
@@ -103,6 +104,7 @@ export default async (): Promise<ApolloServer> => {
     // InterceptorOnSCP1128,
     // ExtensionsMetadataRetriever,
     LogAccessMiddleware,
+    DataLoaderMiddleware,
   ];
 
   setRecipeInContainer();
@@ -188,7 +190,7 @@ export default async (): Promise<ApolloServer> => {
       //   container,
       // };
 
-      const context: IContext = {
+      const context: Partial<IContext> = {
         currentUser: {
           accountId: id,
           accountType,
@@ -196,6 +198,10 @@ export default async (): Promise<ApolloServer> => {
         },
         container,
         prisma,
+        dataLoader: {
+          initialized: false,
+          loaders: {},
+        },
       };
 
       container.set("context", context);

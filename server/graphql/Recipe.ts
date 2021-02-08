@@ -91,7 +91,7 @@ export class Recipe {
   @Field((type) => Difficulty, { nullable: true })
   preparationDifficulty!: Difficulty;
 
-  @Field({ nullable: true })
+  @Field()
   cook!: Cook;
 }
 
@@ -136,7 +136,7 @@ export class SaltFish {
   str!: string;
 
   // @Directive("@greater(limit: 10)")
-  @Directive("@less(limit: 10)")
+  // @Directive("@less(limit: 10)")
   @Field((type) => Int, { nullable: true })
   num!: number;
 }
