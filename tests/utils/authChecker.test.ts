@@ -5,6 +5,7 @@ import { authChecker } from "../../server/utils/authChecker";
 import { ACCOUNT_TYPE, ACCOUNT_ROLE } from "../../server/utils/constants";
 
 import { PrismaClient } from "@prisma/client";
+import { IContext } from "../../server/typing";
 
 describe("TypeGraphQL AuthChecker", () => {
   it("should pass whenever role contains 'UNKNOWN'", () => {
@@ -20,7 +21,7 @@ describe("TypeGraphQL AuthChecker", () => {
           },
           container: {} as ContainerInstance,
           prisma: {} as PrismaClient,
-        },
+        } as IContext,
         info: {} as GraphQLResolveInfo,
       },
       // @ts-ignore
@@ -43,7 +44,7 @@ describe("TypeGraphQL AuthChecker", () => {
           },
           container: {} as ContainerInstance,
           prisma: {} as PrismaClient,
-        },
+        } as IContext,
         info: {} as GraphQLResolveInfo,
       },
       // @ts-ignore
@@ -63,7 +64,7 @@ describe("TypeGraphQL AuthChecker", () => {
           },
           container: {} as ContainerInstance,
           prisma: {} as PrismaClient,
-        },
+        } as IContext,
         info: {} as GraphQLResolveInfo,
       },
       // @ts-ignore
@@ -85,7 +86,7 @@ describe("TypeGraphQL AuthChecker", () => {
           },
           container: {} as ContainerInstance,
           prisma: {} as PrismaClient,
-        },
+        } as IContext,
         info: {} as GraphQLResolveInfo,
       },
       // @ts-ignore
@@ -105,7 +106,7 @@ describe("TypeGraphQL AuthChecker", () => {
           },
           container: {} as ContainerInstance,
           prisma: {} as PrismaClient,
-        },
+        } as IContext,
         info: {} as GraphQLResolveInfo,
       },
       // @ts-ignore
