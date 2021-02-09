@@ -40,7 +40,6 @@ jobs:
 
   generation:
     name: Code & Docs Generation
-    if: runner.os != 'Windows'
 
     strategy:
       matrix:
@@ -63,13 +62,13 @@ jobs:
           npm install
 
       - name: Invoke Generation Scripts
+        if: runner.os != 'Windows'
         run: |
           npm run gen
 
   # 单元测试 + 覆盖率
   test-check:
     name: Unit Test & CodeCov Report
-    if: runner.os != 'Windows'
 
     strategy:
       matrix:
@@ -91,6 +90,7 @@ jobs:
           npm install
 
       - name: Unit Test & Codecov Report
+        if: runner.os != 'Windows'
         run: |
           npm run test
           bash <(curl -s https://codecov.io/bash)
