@@ -1,5 +1,4 @@
-import chalk from "chalk";
-import { ConnectionOptions } from "typeorm";
+const chalk = require("chalk");
 
 const IS_DEV =
   process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test";
@@ -19,7 +18,7 @@ module.exports = {
   // synchronize: IS_DEV,
   synchronize: true,
   dropSchema: IS_DEV,
-  logging: IS_DEV ? false : "all",
+  // logging: IS_DEV ? false : "all",
   maxQueryExecutionTime: 1000,
   logger: "advanced-console",
   entities: [IS_DEV ? "server/entities/*.ts" : "dist/entities/*.js"],
@@ -33,4 +32,4 @@ module.exports = {
       ? "server/entities/subscribers/*.ts"
       : "dist/entities/subscribers/*.js",
   ],
-} as ConnectionOptions;
+};

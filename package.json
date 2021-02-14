@@ -12,6 +12,7 @@
     "test": "cross-env NODE_ENV=test jest --forceExit",
     "prestart": "npm run build",
     "start": "cross-env NODE_ENV=production nodemon ./dist/app.js",
+    "start:dev": "rimraf db-prod.sqlite && cross-env NODE_ENV=production nodemon ./dist/app.js",
     "pm2": "npm run build && pm2 start ecosystem.config.js",
     "stress-test": "node ./scripts/st-main.js --time 1000 * 60",
     "voyager": "serve -s voyager/local.html",

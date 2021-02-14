@@ -4,7 +4,7 @@ import {
   generateQueryOp,
   QueryRequest,
   QueryResult,
-} from "../genql-generated";
+} from "../../genql-generated";
 
 const client = createClient({
   url: "http://localhost:4000/graphql",
@@ -13,7 +13,7 @@ const client = createClient({
 
 (async () => {
   // union types
-  const recipes = await client.query({
+  const recipeUnions = await client.query({
     QueryRecipeUnions: {
       __typename: true,
       on_Cook: {
@@ -32,6 +32,29 @@ const client = createClient({
       },
     },
   });
+
+  // with TypeGraphQL Field Resolver
+  const recipes = await client.query({
+    Recipes: {
+      RecipeExtraFieldResolver: [
+        {
+          title: "Recipe 1",
+        },
+        {
+          CookExtraFieldResolver: [
+            {
+              name: "Gordon Ramsay",
+            },
+            {
+              name: true,
+              yearsOfExperience: true,
+            },
+          ],
+        },
+      ],
+    },
+  });
+  console.log("recipes: ", recipes);
 
   // should use with typescript type guards
 
