@@ -31,6 +31,9 @@ export default class DataLoaderMiddleware
         cookLoader: new DataLoader((names: Readonly<string[]>) =>
           recipeService.getCookByNames(names)
         ),
+        workExpLoader: new DataLoader((years: Readonly<number[]>) =>
+          recipeService.getWorkEXPsByYears(years)
+        ),
         companyLoader: new DataLoader((names: Readonly<string[]>) =>
           recipeService.getCompaniesByNames(names)
         ),

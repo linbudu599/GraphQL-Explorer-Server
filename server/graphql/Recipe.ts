@@ -91,7 +91,7 @@ export class Recipe {
   @Field((type) => Difficulty, { nullable: true })
   preparationDifficulty!: Difficulty;
 
-  @Field()
+  @Field((type) => Cook)
   cook!: Cook;
 }
 

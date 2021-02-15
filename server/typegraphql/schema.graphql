@@ -169,6 +169,7 @@ enum CompanyScale {
 Recipe >>> Cook
 """
 type Cook {
+  WorkExperienceExtraFieldResolver(year: Float!): WorkExperience!
   experience: WorkExperience!
   name: String!
   yearsOfExperience: Int!
@@ -1048,6 +1049,7 @@ type User {
 Recipe >>> Cook >>> WorkExperience
 """
 type WorkExperience {
+  CompanyExtraFieldResolver(name: String!): Company!
   company: Company!
   isFired: Boolean!
   workYears: Int!

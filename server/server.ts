@@ -13,13 +13,16 @@ import { ApolloServer } from "apollo-server-koa";
 // Resolvers
 // TODO: generate resolver groups by fs mod
 import ExecutorResolver from "./resolvers/Executor.resolver";
-import RecipeResolver from "./resolvers/Recipe.resolver";
 import TaskResolver from "./resolvers/Task.resolver";
 import PubSubResolver from "./resolvers/PubSub.resolver";
 import AccountResolver from "./resolvers/Account.resolver";
 import SubstanceResolver from "./resolvers/Substance.resolver";
 import PublicResolver from "./resolvers/Public.resolver";
 import RecordResolver from "./resolvers/Record.resolver";
+
+import RecipeResolver from "./resolvers/recipes/Recipe.resolver";
+import CookResolver from "./resolvers/recipes/Cook.resolver";
+import WorkExpResolver from "./resolvers/recipes/WorkExp.resolver";
 
 // Middlewares & Interceptors Related
 import ResolveTime from "./middlewares/time";
@@ -120,6 +123,8 @@ export default async (): Promise<ApolloServer> => {
       PublicResolver,
       RecordResolver,
       PrismaResolver,
+      CookResolver,
+      WorkExpResolver,
     ],
     // container: Container,
     // scoped-container，每次从context中拿到本次注册容器

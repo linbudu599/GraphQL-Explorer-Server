@@ -90,7 +90,7 @@ const client = createClient({
   });
   console.log(saltFishes);
 
-  // chain mode
+  // chain syntax
   const accountLogin = await client.chain.query
     .AccountLogin({
       account: {
@@ -124,7 +124,7 @@ const client = createClient({
       },
     ],
   });
-  // GraphQL 查询语句
+  // GraphQL Query Schema
   console.log(query);
 
   // advanced type usage https://genql.now.sh/docs/usage/usage-with-other-clientss
