@@ -20,9 +20,15 @@ import SubstanceResolver from "./resolvers/Substance.resolver";
 import PublicResolver from "./resolvers/Public.resolver";
 import RecordResolver from "./resolvers/Record.resolver";
 
-import RecipeResolver from "./resolvers/recipes/Recipe.resolver";
-import CookResolver from "./resolvers/recipes/Cook.resolver";
-import WorkExpResolver from "./resolvers/recipes/WorkExp.resolver";
+import RecipeFieldResolver from "./resolvers/fields/recipes/Recipe.resolver";
+import CookFieldResolver from "./resolvers/fields/recipes/Cook.resolver";
+import WorkExpFieldResolver from "./resolvers/fields/recipes/WorkExp.resolver";
+
+import AccountFieldResolver from "./resolvers/fields/Account.resolver";
+import ExecutorFieldResolver from "./resolvers/fields/Executor.resolver";
+import TaskFieldResolver from "./resolvers/fields/Task.resolver";
+import RecordFieldResolver from "./resolvers/fields/Record.resolver";
+import SubstanceFieldResolver from "./resolvers/fields/Substance.resolver";
 
 // Middlewares & Interceptors Related
 import ResolveTime from "./middlewares/time";
@@ -115,16 +121,24 @@ export default async (): Promise<ApolloServer> => {
   const schema = buildSchemaSync({
     resolvers: [
       ExecutorResolver,
-      RecipeResolver,
       TaskResolver,
-      PubSubResolver,
       AccountResolver,
       SubstanceResolver,
       PublicResolver,
       RecordResolver,
+      // Subscription Resolver
+      PubSubResolver,
+      // Prisma Resolver
       PrismaResolver,
-      CookResolver,
-      WorkExpResolver,
+      // Field Resolver
+      ExecutorFieldResolver,
+      AccountFieldResolver,
+      TaskFieldResolver,
+      SubstanceResolver,
+      RecordFieldResolver,
+      RecipeFieldResolver,
+      CookFieldResolver,
+      WorkExpFieldResolver,
     ],
     // container: Container,
     // scoped-container，每次从context中拿到本次注册容器

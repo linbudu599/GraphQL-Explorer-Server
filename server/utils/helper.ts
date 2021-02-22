@@ -60,15 +60,15 @@ export const mergeJSONWithObj = (json: string, convertion: object): string =>
   });
 
 export interface IPaginationOptions {
-  readonly cursor?: number;
   readonly offset?: number;
+  readonly take?: number;
 }
 
 export const generatePagination = (
   pagination?: IPaginationOptions
 ): Required<IPaginationOptions> => {
   return {
-    cursor: pagination?.cursor ?? DEFAULT_QUERY_PAGINATION.cursor,
     offset: pagination?.offset ?? DEFAULT_QUERY_PAGINATION.offset,
+    take: pagination?.take ?? DEFAULT_QUERY_PAGINATION.take,
   };
 };

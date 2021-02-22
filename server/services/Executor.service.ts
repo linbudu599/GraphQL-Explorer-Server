@@ -110,10 +110,10 @@ export default class ExecutorService implements IExecutorService {
 
     relations: ExecutorRelation[] = []
   ) {
-    const { cursor, offset } = pagination;
+    const { offset, take } = pagination;
     const res = await this.generateSelectBuilder(relations)
-      .take(offset)
-      .skip(cursor)
+      .skip(offset)
+      .take(take)
       .cache(TypeORMCacheIds.executor, 1000 * 5)
       .getMany();
 

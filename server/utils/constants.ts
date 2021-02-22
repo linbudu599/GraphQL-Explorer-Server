@@ -73,8 +73,8 @@ export const PLAY_GROUND_SETTINGS = {
 export const SALT = 10;
 
 export const DEFAULT_QUERY_PAGINATION = {
-  cursor: 0,
-  offset: 20,
+  offset: 0,
+  take: 20,
 } as const;
 
 export const TypeORMCacheIds = {

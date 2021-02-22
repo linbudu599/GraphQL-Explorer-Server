@@ -18,16 +18,16 @@ import {
   Recipe,
   SaltFish,
   Cook,
-} from "../../graphql/Recipe";
+} from "../../../graphql/Recipe";
 
-import RecipeService from "../../services/Recipe.service";
+import RecipeService from "../../../services/Recipe.service";
 
-import CacheMiddleware from "../../middlewares/cache";
+import CacheMiddleware from "../../../middlewares/cache";
 
-import { log } from "../../utils/helper";
+import { log } from "../../../utils/helper";
 
-import { ACCOUNT_TYPE, ACCOUNT_ROLE, AuthRule } from "../../utils/constants";
-import { IContext } from "../../typing";
+import { ACCOUNT_TYPE, ACCOUNT_ROLE, AuthRule } from "../../../utils/constants";
+import { IContext } from "../../../typing";
 
 @Service()
 @Resolver((type) => Recipe)

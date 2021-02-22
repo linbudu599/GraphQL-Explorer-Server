@@ -4,6 +4,8 @@
 # -----------------------------------------------
 
 type Account implements IAccount {
+  AccountFieldResolver: [Account!]!
+
   """
   ACCOUNT_JSON_TYPE
   """
@@ -153,7 +155,7 @@ type Company {
   description: String!
   name: String!
   registerDate: Timestamp!
-  scale: CompanyScale
+  scale: CompanyScale!
 }
 
 """
@@ -204,6 +206,7 @@ type Executor implements IExecutor {
   获取对象类型的执行者描述
   """
   ExecutorDescField: ExecutorDesc!
+  ExecutorFieldResolver: [Executor!]!
   age: Float!
   avaliable: Boolean!
   desc: String!
@@ -563,8 +566,8 @@ type Notification {
 Pagination Options Input
 """
 input PaginationOptions {
-  cursor: Int
   offset: Int
+  take: Int
 }
 
 type Query {
@@ -783,6 +786,7 @@ type Recipe {
 union RecipeUnionResult = Cook | Recipe | SaltFish
 
 type Record implements IRecord {
+  RecordFieldResolver: [Record!]!
   createDate: Timestamp!
   lastUpdateDate: Timestamp!
   recordAccount: Account
@@ -908,6 +912,7 @@ input SubstanceUpdateInput {
 }
 
 type Task implements ITask {
+  TaskFieldResolver: [Task!]!
   allowAbort: Boolean!
   assignee: Executor
   lastUpdateDate: Timestamp!

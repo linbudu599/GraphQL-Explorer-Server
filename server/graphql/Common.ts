@@ -115,14 +115,14 @@ export class PaginationOptions implements IPaginationOptions {
   @Min(0)
   @IsOptional()
   @IsNumber()
-  cursor?: number;
+  offset?: number;
 
   @Field(() => Int, { nullable: true })
   @Max(200)
   @Min(0)
   @IsOptional()
   @IsNumber()
-  offset?: number;
+  take?: number;
 }
 
 export const AccountUnionResult = createUnionType({
