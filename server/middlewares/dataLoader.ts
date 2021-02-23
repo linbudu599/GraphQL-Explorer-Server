@@ -6,6 +6,10 @@ import { IContext } from "../typing";
 
 import RecipeService from "../services/Recipe.service";
 
+import ExecutorService from "../services/Executor.service";
+import SubstanceService from "../services/Substance.service";
+import TaskService from "../services/Task.service";
+
 // https://github.com/MichalLytek/type-graphql/issues/51
 
 @Service()
@@ -24,6 +28,10 @@ export default class DataLoaderMiddleware
       const loaders = context.dataLoader.loaders;
       const recipeService = Container.get(RecipeService);
 
+      const executorService = Container.get(ExecutorService);
+      const substanceService = Container.get(SubstanceService);
+      const taskService = Container.get(TaskService);
+
       loaders.recipeLoader = {
         rootRecipeLoader: new DataLoader((titles: Readonly<string[]>) =>
           recipeService.getRecipesByTitles(titles)
@@ -38,6 +46,42 @@ export default class DataLoaderMiddleware
           recipeService.getCompaniesByNames(names)
         ),
       };
+
+      // FIXME: use a better name
+      loaders.sysLoader = {
+        // FIXME: ManyToOne / ManyToMnay Relations Handle
+        // executorLoader: new DataLoader((recordIds: Readonly<number[]>) =>
+        //   executorService.getFullExecutorByRecordIdsBatch(recordIds)
+        // ),
+      };
+
+      context.connection.entityMetadatas.forEach((entityMetadata) => {
+        const resolver = entityMetadata.targetName;
+        if (!resolver) return;
+        if (!loaders[resolver]) {
+          loaders[resolver] = {};
+        }
+        entityMetadata.relations.forEach((relation) => {
+          if (!loaders[resolver][relation.propertyName]) {
+            // loader.Entity.RelationColumn
+            loaders[resolver][relation.propertyName] = new DataLoader(
+              async (entities: Readonly<any[]>) => {
+                console.log(
+                  `BatchLoader Apply On ${resolver}.${relation.propertyName}`
+                );
+                const res = (
+                  await context.connection.relationIdLoader.loadManyToManyRelationIdsAndGroup(
+                    relation,
+                    entities
+                  )
+                ).map((group) => group.related);
+
+                return res;
+              }
+            );
+          }
+        });
+      });
     }
 
     return next();

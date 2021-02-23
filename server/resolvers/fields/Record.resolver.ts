@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo } from "graphql";
-import { Resolver, FieldResolver, Root, Info } from "type-graphql";
+import { Resolver, FieldResolver, Root, Info, Ctx } from "type-graphql";
 
 import Account from "../../entities/Account";
 import Record from "../../entities/Record";
@@ -12,6 +12,7 @@ import RecordService from "../../services/Record.service";
 import ExecutorService from "../../services/Executor.service";
 import SubstanceService from "../../services/Substance.service";
 import TaskService from "../../services/Task.service";
+import { IContext } from "../../typing";
 
 @Resolver((of) => Record)
 export default class RecordFieldResolver {
@@ -34,21 +35,21 @@ export default class RecordFieldResolver {
   // }
 
   @FieldResolver(() => [Executor])
-  async ExecutorFieldResolver(@Root() record: Record) {
-    return await this.executorService.getFullExecutorByRecordId(
-      record.recordId
-    );
+  async ExecutorFieldResolver(@Root() record: Record, @Ctx() ctx: IContext) {
+    return [await ctx.dataLoader.loaders.Record.recordExecutor.load(record)];
   }
 
   @FieldResolver(() => [Substance])
-  async SubstanceFieldResolver(@Root() record: Record) {
-    return await this.substancesService.getFullSubstanceByRecordId(
-      record.recordId
-    );
+  async SubstanceFieldResolver(@Root() record: Record, @Ctx() ctx: IContext) {
+    // return await this.substancesService.getFullSubstanceByRecordId(
+    //   record.recordId
+    // );
+    return [await ctx.dataLoader.loaders.Record.recordSubstance.load(record)];
   }
 
   @FieldResolver(() => [Task])
-  async TaskFieldResolver(@Root() record: Record) {
-    return await this.taskService.getFullTaskByRecordId(record.recordId);
+  async TaskFieldResolver(@Root() record: Record, @Ctx() ctx: IContext) {
+    // return await this.taskService.getFullTaskByRecordId(record.recordId);
+    return [await ctx.dataLoader.loaders.Record.recordTask.load(record)];
   }
 }

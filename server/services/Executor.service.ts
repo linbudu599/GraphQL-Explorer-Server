@@ -203,4 +203,21 @@ export default class ExecutorService implements IExecutorService {
 
     return res;
   }
+
+  async getFullExecutorByRecordIdsBatch(
+    recordIds: Readonly<number[]>
+  ): Promise<Executor[]> {
+    console.log("getFullExecutorByRecordIdsBatch Invoked: " + recordIds);
+    const res = await this.generateSelectBuilder([
+      "relatedRecord",
+      "substance",
+      "tasks",
+    ])
+      .where("records.recordId IN (:...recordIds)", { recordIds })
+      .getMany();
+
+    console.log(res);
+
+    return res;
+  }
 }

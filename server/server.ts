@@ -155,7 +155,6 @@ export default async (): Promise<ApolloServer> => {
       : [...basicMiddlewares, ErrorLoggerMiddleware],
   });
 
-  // 试试在ApolloServer中直接映射的效果
   SchemaDirectiveVisitor.visitSchemaDirectives(schema, {
     sampleDeprecated: DeprecatedDirective,
     fetch: FetchDirective,
@@ -177,6 +176,8 @@ export default async (): Promise<ApolloServer> => {
     greater: GreaterThanDirective,
     less: LessThanDirective,
   });
+
+  await dbConnect();
 
   const server = new ApolloServer({
     schema,
@@ -221,6 +222,7 @@ export default async (): Promise<ApolloServer> => {
           initialized: false,
           loaders: {},
         },
+        connection: getConnection(),
       };
 
       container.set("context", context);
@@ -280,8 +282,6 @@ export default async (): Promise<ApolloServer> => {
       defaultMaxAge: 60,
     },
   });
-
-  await dbConnect();
 
   await insertInitMockData();
 
