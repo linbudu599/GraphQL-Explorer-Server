@@ -281,23 +281,67 @@ export const insertInitMockData = async (): Promise<any> => {
     sub4.substanceLevel = DifficultyLevel.OLD_DOMINATOR;
     mockTaskGroup[3].taskSubstance = sub4;
 
+    const sub5 = new Substance();
+    sub5.substanceName = "尼禄";
+    sub5.substanceDesc = "黄金桂冠";
+    sub5.substanceLevel = DifficultyLevel.OLD_DOMINATOR;
+    mockTaskGroup[4].taskSubstance = sub5;
+
     const account1 = new Account();
     account1.accountName = "mock-account-name-01";
     account1.accountPwd = "mock-account-pwd-01";
 
+    const account2 = new Account();
+    account2.accountName = "mock-account-name-02";
+    account2.accountPwd = "mock-account-pwd-02";
+
+    const account3 = new Account();
+    account3.accountName = "mock-account-name-03";
+    account3.accountPwd = "mock-account-pwd-03";
+
     await account1.save();
+    await account2.save();
+    await account3.save();
 
     const record1 = new Record();
     record1.recordAccount = account1;
-    record1.recordExecutor = executor3;
-    record1.recordSubstance = sub4;
-    record1.recordTask = mockTaskGroup[3];
+    record1.recordExecutor = executor1;
+    record1.recordSubstance = sub1;
+    record1.recordTask = mockTaskGroup[0];
+
+    const record2 = new Record();
+    record2.recordAccount = account2;
+    record2.recordExecutor = executor2;
+    record2.recordSubstance = sub2;
+    record2.recordTask = mockTaskGroup[1];
+
+    const record3 = new Record();
+    record3.recordAccount = account3;
+    record3.recordExecutor = executor3;
+    record3.recordSubstance = sub3;
+    record3.recordTask = mockTaskGroup[2];
+
+    const record4 = new Record();
+    record4.recordAccount = account1;
+    record4.recordExecutor = executor3;
+    record4.recordSubstance = sub3;
+    record4.recordTask = mockTaskGroup[3];
+
+    const record5 = new Record();
+    record5.recordAccount = account1;
+    record5.recordExecutor = executor3;
+    record5.recordSubstance = sub4;
+    record5.recordTask = mockTaskGroup[4];
 
     await connection.manager.save(mockTaskGroup);
     await connection.manager.save(mockSubstanceGroup);
     await connection.manager.save(mockExecutorGroup);
 
     await record1.save();
+    await record2.save();
+    await record3.save();
+    await record4.save();
+    await record5.save();
 
     log("[TypeORM] Initial Mock Data Inserted\n");
   } catch (error) {

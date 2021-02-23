@@ -30,4 +30,19 @@ export default class RecordService implements IRecordService {
     });
     return records;
   }
+
+  async getFullRecordByAccountName(accountName: string): Promise<Record[]> {
+    const selectQueryBuilder = this.recordRepository
+      .createQueryBuilder("record")
+      .leftJoinAndSelect("record.recordAccount", "account")
+      .leftJoinAndSelect("record.recordExecutor", "executor")
+      .leftJoinAndSelect("record.recordSubstance", "substance")
+      .leftJoinAndSelect("record.recordTask", "task");
+
+    const records = await selectQueryBuilder
+      .where("account.accountName = :accountName", { accountName })
+      .getMany();
+
+    return records;
+  }
 }

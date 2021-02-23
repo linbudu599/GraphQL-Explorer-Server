@@ -1,20 +1,24 @@
-import { Resolver, Root, FieldResolver } from "type-graphql";
+import { Resolver, Root, FieldResolver, Arg } from "type-graphql";
 
 import Account from "../../entities/Account";
+import Record from "../../entities/Record";
 
 import AccountService from "../../services/Account.service";
+import RecordService from "../../services/Record.service";
 
 @Resolver((of) => Account)
 export default class AccountFieldResolver {
-  constructor(private readonly accountService: AccountService) {}
+  constructor(
+    private readonly accountService: AccountService,
+    private readonly recordService: RecordService
+  ) {}
 
-  // Another Resolver Composite
-  @FieldResolver(() => [Account])
-  async AccountFieldResolver(@Root() account: Account) {
-    const res = await this.accountService.getAllAccounts({
-      offset: 0,
-      take: 200,
-    });
+  @FieldResolver(() => [Record])
+  async RecordFieldResolver(@Root() account: Account) {
+    const res = await this.recordService.getFullRecordByAccountName(
+      account.accountName
+    );
+
     return res;
   }
 }

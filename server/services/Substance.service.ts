@@ -188,4 +188,16 @@ export default class SubstanceService implements ISubstanceService {
 
     await this.connection.queryResultCache?.remove([TypeORMCacheIds.substance]);
   }
+
+  async getFullSubstanceByRecordId(recordId: number): Promise<Substance[]> {
+    const res = await this.generateSelectBuilder([
+      "relatedRecord",
+      "assignee",
+      "relatedTask",
+    ])
+      .where("records.recordId = :recordId", { recordId })
+      .getMany();
+
+    return res;
+  }
 }

@@ -4,8 +4,6 @@
 # -----------------------------------------------
 
 type Account implements IAccount {
-  AccountFieldResolver: [Account!]!
-
   """
   ACCOUNT_JSON_TYPE
   """
@@ -15,6 +13,7 @@ type Account implements IAccount {
   账号资料
   """
   AccountProfileField: AccountProfile!
+  RecordFieldResolver: [Record!]!
   accountAvaliable: Boolean!
   accountId: ID!
   accountName: String!
@@ -786,7 +785,9 @@ type Recipe {
 union RecipeUnionResult = Cook | Recipe | SaltFish
 
 type Record implements IRecord {
-  RecordFieldResolver: [Record!]!
+  ExecutorFieldResolver: [Executor!]!
+  SubstanceFieldResolver: [Substance!]!
+  TaskFieldResolver: [Task!]!
   createDate: Timestamp!
   lastUpdateDate: Timestamp!
   recordAccount: Account

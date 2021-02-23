@@ -181,4 +181,16 @@ export default class TaskService implements ITaskService {
       TypeORMCacheIds.substance,
     ]);
   }
+
+  async getFullTaskByRecordId(recordId: number): Promise<Task[]> {
+    const res = await this.generateSelectBuilder([
+      "relatedRecord",
+      "assignee",
+      "taskSubstance",
+    ])
+      .where("records.recordId = :recordId", { recordId })
+      .getMany();
+
+    return res;
+  }
 }

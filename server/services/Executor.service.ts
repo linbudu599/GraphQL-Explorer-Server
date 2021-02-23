@@ -190,4 +190,17 @@ export default class ExecutorService implements IExecutorService {
 
     await this.connection.queryResultCache?.remove([TypeORMCacheIds.executor]);
   }
+
+  async getFullExecutorByRecordId(recordId: number): Promise<Executor[]> {
+    console.log("getFullExecutorByRecordId Invoked: " + recordId);
+    const res = await this.generateSelectBuilder([
+      "relatedRecord",
+      "substance",
+      "tasks",
+    ])
+      .where("records.recordId = :recordId", { recordId })
+      .getMany();
+
+    return res;
+  }
 }
