@@ -1,35 +1,17 @@
-import {
-  Resolver,
-  Query,
-  Arg,
-  Mutation,
-  Int,
-  FieldResolver,
-  Root,
-} from "type-graphql";
+import { Resolver, FieldResolver, Root, Ctx } from "type-graphql";
 
+import Task from "../../entities/Task";
 import Substance from "../../entities/Substance";
 
-import SubstanceService from "../../services/Substance.service";
-import TaskService from "../../services/Task.service";
+import { IContext } from "../../typing";
 
 @Resolver((of) => Substance)
 export default class SubstanceFieldResolver {
-  constructor(
-    private readonly substancesService: SubstanceService,
-    private readonly taskService: TaskService
-  ) {}
-
-  @FieldResolver(() => [])
-  async SubstanceFieldResolver(
-    @Root() substance: Substance
-    // TODO: get by conditions
-    // @Arg("executorQueryArgs", { nullable: true}) executorQueryArgs: ExecutorQueryArgs
+  @FieldResolver(() => Task)
+  async SubstanceInnerTaskFieldResolver(
+    @Root() substance: Substance,
+    @Ctx() ctx: IContext
   ) {
-    const res = await this.substancesService.getAllSubstances({
-      offset: 0,
-      take: 200,
-    });
-    return res;
+    return await ctx.dataLoader.loaders.Substance.relatedTask.load(substance);
   }
 }

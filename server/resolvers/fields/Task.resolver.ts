@@ -1,33 +1,26 @@
-import {
-  Resolver,
-  Query,
-  Arg,
-  Mutation,
-  FieldResolver,
-  Root,
-} from "type-graphql";
+import { Resolver, FieldResolver, Root, Ctx } from "type-graphql";
 
 import Task from "../../entities/Task";
+import Executor from "../../entities/Executor";
+import Substance from "../../entities/Substance";
 
-import TaskService from "../../services/Task.service";
-import ExecutorService from "../../services/Executor.service";
-import SubstanceService from "../../services/Substance.service";
+import { IContext } from "../../typing";
 
 @Resolver((of) => Task)
 export default class TaskFieldResolver {
-  constructor(
-    private readonly taskService: TaskService,
-    private readonly executorService: ExecutorService,
-    private readonly SubstanceService: SubstanceService
-  ) {}
+  @FieldResolver(() => Substance)
+  async TaskInnerSubstanceFieldResolver(
+    @Root() task: Task,
+    @Ctx() ctx: IContext
+  ) {
+    return await ctx.dataLoader.loaders.Task.taskSubstance.load(task);
+  }
 
-  // Another Resolver Composite
-  @FieldResolver(() => [Task])
-  async TaskFieldResolver(@Root() task: Task) {
-    const res = await this.taskService.getAllTasks({
-      offset: 0,
-      take: 200,
-    });
-    return res;
+  @FieldResolver(() => Executor)
+  async TaskInnerExecutorFieldResolver(
+    @Root() task: Task,
+    @Ctx() ctx: IContext
+  ) {
+    return await ctx.dataLoader.loaders.Task.assignee.load(task);
   }
 }

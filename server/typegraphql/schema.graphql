@@ -205,7 +205,7 @@ type Executor implements IExecutor {
   获取对象类型的执行者描述
   """
   ExecutorDescField: ExecutorDesc!
-  ExecutorFieldResolver: [Executor!]!
+  ExecutorInnerTaskFieldResolver: [Task!]!
   age: Float!
   avaliable: Boolean!
   desc: String!
@@ -785,9 +785,9 @@ type Recipe {
 union RecipeUnionResult = Cook | Recipe | SaltFish
 
 type Record implements IRecord {
-  ExecutorFieldResolver: [Executor!]!
-  SubstanceFieldResolver: [Substance!]!
-  TaskFieldResolver: [Task!]!
+  RecordInnerExecutorFieldResolver: [Executor!]!
+  RecordInnerSubstanceFieldResolver: [Substance!]!
+  RecordInnerTaskFieldResolver: [Task!]!
   createDate: Timestamp!
   lastUpdateDate: Timestamp!
   recordAccount: Account
@@ -913,7 +913,8 @@ input SubstanceUpdateInput {
 }
 
 type Task implements ITask {
-  TaskFieldResolver: [Task!]!
+  TaskInnerExecutorFieldResolver: Executor!
+  TaskInnerSubstanceFieldResolver: Substance!
   allowAbort: Boolean!
   assignee: Executor
   lastUpdateDate: Timestamp!

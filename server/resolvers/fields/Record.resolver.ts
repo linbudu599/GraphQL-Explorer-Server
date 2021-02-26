@@ -24,23 +24,19 @@ export default class RecordFieldResolver {
     private readonly taskService: TaskService
   ) {}
 
-  // should support this ?
-  // @FieldResolver(() => [Account])
-  // async AccountFieldResolver(
-  //   @Root() record: Record,
-  //   @Info() info: GraphQLResolveInfo
-  // ) {
-  //   const res = await this.accountService.getFullAccountByRecordId(record.recordId)
-  //   return res;
-  // }
-
   @FieldResolver(() => [Executor])
-  async ExecutorFieldResolver(@Root() record: Record, @Ctx() ctx: IContext) {
+  async RecordInnerExecutorFieldResolver(
+    @Root() record: Record,
+    @Ctx() ctx: IContext
+  ) {
     return [await ctx.dataLoader.loaders.Record.recordExecutor.load(record)];
   }
 
   @FieldResolver(() => [Substance])
-  async SubstanceFieldResolver(@Root() record: Record, @Ctx() ctx: IContext) {
+  async RecordInnerSubstanceFieldResolver(
+    @Root() record: Record,
+    @Ctx() ctx: IContext
+  ) {
     // return await this.substancesService.getFullSubstanceByRecordId(
     //   record.recordId
     // );
@@ -48,7 +44,10 @@ export default class RecordFieldResolver {
   }
 
   @FieldResolver(() => [Task])
-  async TaskFieldResolver(@Root() record: Record, @Ctx() ctx: IContext) {
+  async RecordInnerTaskFieldResolver(
+    @Root() record: Record,
+    @Ctx() ctx: IContext
+  ) {
     // return await this.taskService.getFullTaskByRecordId(record.recordId);
     return [await ctx.dataLoader.loaders.Record.recordTask.load(record)];
   }
