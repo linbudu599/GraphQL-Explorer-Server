@@ -52,7 +52,7 @@ import {
   GraphQLResponse,
 } from "apollo-server-plugin-base";
 import ResponseCachePlugin from "apollo-server-plugin-response-cache";
-import { ApolloServerLoaderPlugin } from "type-graphql-dataloader";
+import { ApolloServerLoaderPlugin } from "./lib/dataloader";
 import ComplexityPlugin from "./plugins/complexity";
 import ExtensionPlugin from "./plugins/extension";
 import { SchemaReportPlugin, SchemaUsagePlugin } from "./plugins/report";
@@ -241,7 +241,7 @@ export default async (): Promise<ApolloServer> => {
       ExtensionPlugin(),
       ScopedContainerPlugin(Container),
       ApolloServerLoaderPlugin({
-        typeormGetConnection: getConnection,
+        connectionGetter: getConnection,
       }),
       ResponseCachePlugin({
         // 被标记为PRIVATE的字段缓存只会用于相同sessionID

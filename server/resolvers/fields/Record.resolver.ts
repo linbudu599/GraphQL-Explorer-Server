@@ -1,5 +1,6 @@
 import { GraphQLResolveInfo } from "graphql";
 import { Resolver, FieldResolver, Root, Info, Ctx } from "type-graphql";
+import { getRepository } from "typeorm";
 
 import Account from "../../entities/Account";
 import Record from "../../entities/Record";

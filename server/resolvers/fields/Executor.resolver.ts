@@ -1,4 +1,5 @@
 import { Resolver, FieldResolver, Root, Ctx } from "type-graphql";
+import { getRepository } from "typeorm";
 
 import Executor from "../../entities/Executor";
 import Task from "../../entities/Task";
