@@ -30,6 +30,7 @@ export function TypeormLoader<V>(
 ): PropertyDecorator;
 
 // TODO: reduce overload
+// @TypeormLoader((type) => User, (photo: Photo) => photo.userId)
 export function TypeormLoader<V>(
   typeFuncOrKeyFunc: ReturnTypeFunc<V> | KeyFunc,
   keyFuncOrOption?: KeyFunc | TypeormLoaderOption,
@@ -49,6 +50,8 @@ function TypeormLoaderImpl<V>(
 ): PropertyDecorator {
   return (target: Object, propertyKey: string | symbol) => {
     UseMiddleware(async ({ root, context }, next) => {
+      // tgdLoader will be attached at ApolloServerLoaderPlugin
+      // (with connectionGetter option)
       const tgdContext = (context as IContext).tgdLoader;
 
       if (tgdContext.connectionGetter == null) {
@@ -57,13 +60,20 @@ function TypeormLoaderImpl<V>(
 
       const relation = tgdContext
         .connectionGetter()
+        // Class which @TypeormLoader() applied
+        // get class metadata as TypeORM entity
         .getMetadata(target.constructor)
+        // get props relation by property name
         .findRelationWithPropertyPath(propertyKey.toString());
 
+      // skip if decorated prop has no relations
       if (relation == null) {
         return await next();
       }
 
+      // selfKey option provided
+      // only work at OneToMany/OneToOne withour @JoinColumn
+      // (which means prop cannot be the OneToOne Relation Owner)
       if (
         option?.selfKey &&
         !(relation.isOneToMany || relation.isOneToOneNotOwner)
@@ -73,6 +83,7 @@ function TypeormLoaderImpl<V>(
         );
       }
 
+      // pick a special loader
       const appropriateHandler =
         relation.isManyToOne || relation.isOneToOneOwner
           ? handleToOne
@@ -111,6 +122,7 @@ async function handler<V>(
     throw Error("Loading by multiple columns as foreign key is not supported.");
   }
 
+  // register dataloader
   const serviceId = `tgd-typeorm#${relation.entityMetadata.tableName}#${relation.propertyName}`;
   const container = Container.of(requestId);
   if (!container.has(serviceId)) {
@@ -208,6 +220,8 @@ function directLoader<V>(
     return ids.map((id) => entities[id]);
   };
 }
+
+// Relation specific DataLoader instances
 
 class ToManyDataloader<V> extends DataLoader<any, V> {
   constructor(relation: RelationMetadata, connection: Connection) {

@@ -47,14 +47,15 @@ export default class DataLoaderMiddleware
         ),
       };
 
-      // FIXME: use a better name
       loaders.sysLoader = {
+        // Support Only OneToOne Relations
         // FIXME: ManyToOne / ManyToMnay Relations Handle
         // executorLoader: new DataLoader((recordIds: Readonly<number[]>) =>
         //   executorService.getFullExecutorByRecordIdsBatch(recordIds)
         // ),
       };
 
+      //
       context.connection.entityMetadatas.forEach((entityMetadata) => {
         const resolver = entityMetadata.targetName;
         if (!resolver) return;
