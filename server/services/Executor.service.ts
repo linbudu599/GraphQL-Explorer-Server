@@ -110,10 +110,10 @@ export default class ExecutorService implements IExecutorService {
 
     relations: ExecutorRelation[] = []
   ) {
-    const { cursor, offset } = pagination;
+    const { offset, take } = pagination;
     const res = await this.generateSelectBuilder(relations)
-      .take(offset)
-      .skip(cursor)
+      .skip(offset)
+      .take(take)
       .cache(TypeORMCacheIds.executor, 1000 * 5)
       .getMany();
 
@@ -189,5 +189,35 @@ export default class ExecutorService implements IExecutorService {
       .execute();
 
     await this.connection.queryResultCache?.remove([TypeORMCacheIds.executor]);
+  }
+
+  async getFullExecutorByRecordId(recordId: number): Promise<Executor[]> {
+    console.log("getFullExecutorByRecordId Invoked: " + recordId);
+    const res = await this.generateSelectBuilder([
+      "relatedRecord",
+      "substance",
+      "tasks",
+    ])
+      .where("records.recordId = :recordId", { recordId })
+      .getMany();
+
+    return res;
+  }
+
+  async getFullExecutorByRecordIdsBatch(
+    recordIds: Readonly<number[]>
+  ): Promise<Executor[]> {
+    console.log("getFullExecutorByRecordIdsBatch Invoked: " + recordIds);
+    const res = await this.generateSelectBuilder([
+      "relatedRecord",
+      "substance",
+      "tasks",
+    ])
+      .where("records.recordId IN (:...recordIds)", { recordIds })
+      .getMany();
+
+    console.log(res);
+
+    return res;
   }
 }

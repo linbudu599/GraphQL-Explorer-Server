@@ -2,7 +2,12 @@ import { ContainerInstance } from "typedi";
 import DataLoader from "dataloader";
 import { ACCOUNT_TYPE, ACCOUNT_ROLE } from "./utils/constants";
 import { PrismaClient } from "./prisma/client";
+import type { Connection } from "typeorm";
 
+export interface TypeGraphQLDataLoaderContext {
+  requestId: string;
+  connectionGetter?: () => Connection;
+}
 export interface IContext {
   currentUser: {
     accountId: number;
@@ -15,4 +20,6 @@ export interface IContext {
     initialized: boolean;
     loaders: Record<string, Record<string, DataLoader<any, any>>>;
   };
+  connection: Connection;
+  tgdLoader: TypeGraphQLDataLoaderContext;
 }

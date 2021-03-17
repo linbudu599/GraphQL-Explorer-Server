@@ -13,6 +13,7 @@ type Account implements IAccount {
   账号资料
   """
   AccountProfileField: AccountProfile!
+  RecordFieldResolver: [Record!]!
   accountAvaliable: Boolean!
   accountId: ID!
   accountName: String!
@@ -153,7 +154,7 @@ type Company {
   description: String!
   name: String!
   registerDate: Timestamp!
-  scale: CompanyScale
+  scale: CompanyScale!
 }
 
 """
@@ -204,6 +205,7 @@ type Executor implements IExecutor {
   获取对象类型的执行者描述
   """
   ExecutorDescField: ExecutorDesc!
+  ExecutorInnerTaskFieldResolver: [Task!]!
   age: Float!
   avaliable: Boolean!
   desc: String!
@@ -563,8 +565,8 @@ type Notification {
 Pagination Options Input
 """
 input PaginationOptions {
-  cursor: Int
   offset: Int
+  take: Int
 }
 
 type Query {
@@ -783,6 +785,9 @@ type Recipe {
 union RecipeUnionResult = Cook | Recipe | SaltFish
 
 type Record implements IRecord {
+  RecordInnerExecutorFieldResolver: [Executor!]!
+  RecordInnerSubstanceFieldResolver: [Substance!]!
+  RecordInnerTaskFieldResolver: [Task!]!
   createDate: Timestamp!
   lastUpdateDate: Timestamp!
   recordAccount: Account
@@ -908,6 +913,8 @@ input SubstanceUpdateInput {
 }
 
 type Task implements ITask {
+  TaskInnerExecutorFieldResolver: Executor!
+  TaskInnerSubstanceFieldResolver: Substance!
   allowAbort: Boolean!
   assignee: Executor
   lastUpdateDate: Timestamp!

@@ -20,9 +20,15 @@ import SubstanceResolver from "./resolvers/Substance.resolver";
 import PublicResolver from "./resolvers/Public.resolver";
 import RecordResolver from "./resolvers/Record.resolver";
 
-import RecipeResolver from "./resolvers/recipes/Recipe.resolver";
-import CookResolver from "./resolvers/recipes/Cook.resolver";
-import WorkExpResolver from "./resolvers/recipes/WorkExp.resolver";
+import RecipeFieldResolver from "./resolvers/fields/recipes/Recipe.resolver";
+import CookFieldResolver from "./resolvers/fields/recipes/Cook.resolver";
+import WorkExpFieldResolver from "./resolvers/fields/recipes/WorkExp.resolver";
+
+import AccountFieldResolver from "./resolvers/fields/Account.resolver";
+import ExecutorFieldResolver from "./resolvers/fields/Executor.resolver";
+import TaskFieldResolver from "./resolvers/fields/Task.resolver";
+import RecordFieldResolver from "./resolvers/fields/Record.resolver";
+import SubstanceFieldResolver from "./resolvers/fields/Substance.resolver";
 
 // Middlewares & Interceptors Related
 import ResolveTime from "./middlewares/time";
@@ -46,7 +52,7 @@ import {
   GraphQLResponse,
 } from "apollo-server-plugin-base";
 import ResponseCachePlugin from "apollo-server-plugin-response-cache";
-import { ApolloServerLoaderPlugin } from "type-graphql-dataloader";
+import { ApolloServerLoaderPlugin } from "./lib/dataloader";
 import ComplexityPlugin from "./plugins/complexity";
 import ExtensionPlugin from "./plugins/extension";
 import { SchemaReportPlugin, SchemaUsagePlugin } from "./plugins/report";
@@ -115,16 +121,24 @@ export default async (): Promise<ApolloServer> => {
   const schema = buildSchemaSync({
     resolvers: [
       ExecutorResolver,
-      RecipeResolver,
       TaskResolver,
-      PubSubResolver,
       AccountResolver,
       SubstanceResolver,
       PublicResolver,
       RecordResolver,
+      // Subscription Resolver
+      PubSubResolver,
+      // Prisma Resolver
       PrismaResolver,
-      CookResolver,
-      WorkExpResolver,
+      // Field Resolver
+      ExecutorFieldResolver,
+      AccountFieldResolver,
+      TaskFieldResolver,
+      SubstanceResolver,
+      RecordFieldResolver,
+      RecipeFieldResolver,
+      CookFieldResolver,
+      WorkExpFieldResolver,
     ],
     // container: Container,
     // scoped-container，每次从context中拿到本次注册容器
@@ -141,7 +155,6 @@ export default async (): Promise<ApolloServer> => {
       : [...basicMiddlewares, ErrorLoggerMiddleware],
   });
 
-  // 试试在ApolloServer中直接映射的效果
   SchemaDirectiveVisitor.visitSchemaDirectives(schema, {
     sampleDeprecated: DeprecatedDirective,
     fetch: FetchDirective,
@@ -163,6 +176,8 @@ export default async (): Promise<ApolloServer> => {
     greater: GreaterThanDirective,
     less: LessThanDirective,
   });
+
+  await dbConnect();
 
   const server = new ApolloServer({
     schema,
@@ -207,6 +222,7 @@ export default async (): Promise<ApolloServer> => {
           initialized: false,
           loaders: {},
         },
+        connection: getConnection(),
       };
 
       container.set("context", context);
@@ -225,7 +241,7 @@ export default async (): Promise<ApolloServer> => {
       ExtensionPlugin(),
       ScopedContainerPlugin(Container),
       ApolloServerLoaderPlugin({
-        typeormGetConnection: getConnection,
+        connectionGetter: getConnection,
       }),
       ResponseCachePlugin({
         // 被标记为PRIVATE的字段缓存只会用于相同sessionID
@@ -266,8 +282,6 @@ export default async (): Promise<ApolloServer> => {
       defaultMaxAge: 60,
     },
   });
-
-  await dbConnect();
 
   await insertInitMockData();
 

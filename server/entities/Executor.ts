@@ -1,5 +1,5 @@
 import { Extensions, Field, Int, ObjectType } from "type-graphql";
-import { TypeormLoader } from "type-graphql-dataloader";
+import { TypeormLoader } from "../lib/dataloader";
 import { plainToClass } from "class-transformer";
 
 import {
@@ -81,7 +81,7 @@ export default class Executor extends BaseEntity implements IExecutor {
     cascade: true,
     nullable: true,
   })
-  // @TypeormLoader((type) => Task, (executor: Executor) => executor.taskIds)
+  @TypeormLoader((type) => Task, (executor: Executor) => executor.taskIds)
   tasks?: Task[];
 
   @RelationId((executor: Executor) => executor.tasks)

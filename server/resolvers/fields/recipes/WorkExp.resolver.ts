@@ -1,10 +1,10 @@
 import { Service } from "typedi";
 import { Resolver, Arg, FieldResolver, Root, Ctx } from "type-graphql";
 
-import { WorkExperience, Company } from "../../graphql/Recipe";
-import RecipeService from "../../services/Recipe.service";
-import { log } from "../../utils/helper";
-import { IContext } from "../../typing";
+import { WorkExperience, Company } from "../../../graphql/Recipe";
+import RecipeService from "../../../services/Recipe.service";
+import { log } from "../../../utils/helper";
+import { IContext } from "../../../typing";
 
 @Service()
 @Resolver((type) => WorkExperience)

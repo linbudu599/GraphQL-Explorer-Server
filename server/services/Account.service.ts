@@ -74,11 +74,11 @@ export default class AccountService implements IAccountService {
 
     relations: AccountRelation[] = []
   ): Promise<Account[]> {
-    const { cursor, offset } = pagination;
+    const { offset, take } = pagination;
 
     const accounts = await this.generateSelectBuilder(relations)
-      .take(offset)
-      .skip(cursor)
+      .skip(offset)
+      .take(take)
       .cache(TypeORMCacheIds.account, 1000 * 5)
       .getMany();
 

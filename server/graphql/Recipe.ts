@@ -41,7 +41,7 @@ export class Company {
   @Field()
   name!: string;
 
-  @Field((type) => CompanyScale, { nullable: true })
+  @Field((type) => CompanyScale)
   scale!: CompanyScale;
 
   @Field()

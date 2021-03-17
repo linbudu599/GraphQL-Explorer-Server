@@ -68,6 +68,7 @@ export default class SubstanceService implements ISubstanceService {
         .leftJoinAndSelect("records.recordTask", "recordTask")
         .leftJoinAndSelect("records.recordAccount", "recordAccount");
     }
+
     if (relations.includes("relatedTask")) {
       selectQueryBuilder = selectQueryBuilder.leftJoinAndSelect(
         "substance.relatedTask",
@@ -106,13 +107,13 @@ export default class SubstanceService implements ISubstanceService {
 
   async getAllSubstances(
     pagination: Required<PaginationOptions>,
-    relations: SubstanceRelation[]
+    relations: SubstanceRelation[] = []
   ): Promise<Substance[]> {
-    const { cursor, offset } = pagination;
+    const { offset, take } = pagination;
 
     const res = await this.generateSelectBuilder(relations)
-      .take(offset)
-      .skip(cursor)
+      .skip(offset)
+      .take(take)
       .cache(TypeORMCacheIds.substance, 1000 * 5)
       .getMany();
 
@@ -147,11 +148,11 @@ export default class SubstanceService implements ISubstanceService {
     pagination: Required<PaginationOptions>,
     relations: SubstanceRelation[] = []
   ): Promise<Substance[]> {
-    const { cursor, offset } = pagination;
+    const { offset, take } = pagination;
 
     const res = await this.SubstanceConditionQuery(conditions, relations)
-      .take(offset)
-      .skip(cursor)
+      .skip(offset)
+      .take(take)
       .getMany();
 
     return res;
@@ -186,5 +187,17 @@ export default class SubstanceService implements ISubstanceService {
       .execute();
 
     await this.connection.queryResultCache?.remove([TypeORMCacheIds.substance]);
+  }
+
+  async getFullSubstanceByRecordId(recordId: number): Promise<Substance[]> {
+    const res = await this.generateSelectBuilder([
+      "relatedRecord",
+      "assignee",
+      "relatedTask",
+    ])
+      .where("records.recordId = :recordId", { recordId })
+      .getMany();
+
+    return res;
   }
 }
