@@ -1,0 +1,90 @@
+fragment LoginOrRegistryFields on LoginOrRegisterStatus {
+  success
+  message
+  token
+  expiredDate
+}
+
+fragment AccountOnlyFields on Account {
+  accountId
+  accountName
+  accountPwd
+  accountType
+  registryDate
+  lastUpdateDate
+}
+
+fragment AccountProfileFields on AccountProfile {
+  selfIntro
+  VIPLevel
+  isLifeTimeVIP
+}
+
+fragment ExecutorDescFields on ExecutorDesc {
+  level
+  successRate
+  satisfaction
+}
+
+fragment ExecutorOnlyFields on Executor {
+  uid
+  name
+  age
+  job
+  isFool
+  avaliable
+  desc
+  region
+  spAgeField
+  ExecutorDescField {
+    ...ExecutorDescFields
+  }
+  joinDate
+  lastUpdateDate
+}
+
+fragment TaskOnlyFields on Task {
+  taskId
+  taskTitle
+  requireCleaner
+  requirePsychologicalIntervention
+  taskContent
+  allowAbort
+  taskSource
+  taskLevel
+  taskAccmplished
+  taskAvaliable
+  taskReward
+  taskRate
+  taskTarget
+  publishDate
+  lastUpdateDate
+}
+
+fragment SubstanceOnlyFields on Substance {
+  substanceId
+  substanceName
+  substanceAlive
+  substanceDesc
+  substanceIssues
+  substanceLevel
+  asylumed
+  substanceAppearDate
+  lastActiveDate
+}
+
+fragment RecordFields on Record {
+  recordId
+  recordExecutor {
+    ...ExecutorOnlyFields
+  }
+  recordTask {
+    ...TaskOnlyFields
+  }
+  recordSubstance {
+    ...SubstanceOnlyFields
+  }
+  recordAccount {
+    ...AccountOnlyFields
+  }
+}

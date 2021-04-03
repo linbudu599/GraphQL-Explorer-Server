@@ -1,0 +1,34 @@
+mutation AccountMutation {
+  AccountRegistry(
+    account: {
+      accountName: "xxxxxx"
+      accountPwd: "xxxxxxxxxx"
+      loginType: VISITOR
+    }
+  ) {
+    ...LoginOrRegistryFields
+  }
+
+  ModifyPassword(accountName: "xxxxxx", newPassword: "xxsdefqaf") {
+    ...LoginOrRegistryFields
+  }
+
+  AccountDestory(accountName: "xxxxxx12", accountPwd: "xxxxxxxxxx") {
+    ...LoginOrRegistryFields
+  }
+
+  AccountLevelMutate(accountId: "1", level: ENTERPRISE) {
+    __typename
+    ... on LoginOrRegisterStatus {
+      ...LoginOrRegistryFields
+    }
+
+    ... on AccountStatus {
+      success
+      message
+      data {
+        ...AccountFields
+      }
+    }
+  }
+}

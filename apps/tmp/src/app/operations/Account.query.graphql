@@ -1,0 +1,20 @@
+query AccountQuery {
+  QueryAllAccounts(relations: { joinRecord: true }) {
+    success
+    message
+    data {
+      accountId
+      accountName
+      accountPwd
+      accountType
+      AccountProfileField {
+        ...AccountProfileFields
+      }
+      relatedRecord {
+        ...RecordFields
+      }
+      registryDate
+      lastUpdateDate
+    }
+  }
+}
