@@ -30,6 +30,10 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
+    "paths": {
+      "apollo-server-types": ["node_modules/apollo-server-types"],
+      "apollo-server-plugin-base": ["node_modules/apollo-server-plugin-base"]
+    },
     "forceConsistentCasingInFileNames": true
   }
 }
