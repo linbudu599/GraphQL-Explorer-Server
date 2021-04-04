@@ -1,5 +1,5 @@
 import * as TypeORM from 'typeorm';
-import { Container } from 'typeorm-typedi-extensions';
+import { Container } from 'typedi';
 import AccountEntity from '../entities/Account';
 import ExecutorEntity from '../entities/Executor';
 // import RecipeEntity from "../entities/Recipe";
