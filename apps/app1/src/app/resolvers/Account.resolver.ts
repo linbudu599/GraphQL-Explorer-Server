@@ -7,8 +7,8 @@ import {
   Root,
   FieldResolver,
   Int,
-} from "type-graphql";
-import { plainToClass } from "class-transformer";
+} from 'type-graphql';
+import { plainToClass } from 'class-transformer';
 
 import {
   AccountStatus,
@@ -17,7 +17,7 @@ import {
   StatusHandler,
   AccountUnionResult,
   PaginationOptions,
-} from "../graphql/Common";
+} from '../graphql/Common';
 import {
   AccountRegistryInput,
   AccountLoginInput,
@@ -29,19 +29,19 @@ import {
   AccountRelation,
   getAccountRelations,
   AccountJSON,
-} from "../graphql/Account";
+} from '../graphql/Account';
 
-import Account, { AccountProfile } from "../entities/Account";
+import Account, { AccountProfile } from '../entities/Account';
 
-import AccountService from "../services/Account.service";
+import AccountService from '../services/Account.service';
 
-import { ExtraFieldLogMiddlewareGenerator } from "../middlewares/log";
+import { ExtraFieldLogMiddlewareGenerator } from '../middlewares/log';
 
-import { ACCOUNT_TYPE, RESPONSE_INDICATOR } from "../utils/constants";
+import { ACCOUNT_TYPE, RESPONSE_INDICATOR } from '../utils/constants';
 
-import { generatePagination, mergeJSONWithObj } from "../utils/helper";
-import { encode, compare } from "../utils/bcrypt";
-import { dispatchToken, validateToken } from "../utils/jwt";
+import { generatePagination, mergeJSONWithObj } from '../utils/helper';
+import { encode, compare } from '../utils/bcrypt';
+import { dispatchToken, validateToken } from '../utils/jwt';
 
 @Resolver((of) => Account)
 export default class AccountResolver {
@@ -50,14 +50,14 @@ export default class AccountResolver {
   // TODO: Private + Super User Autn Required
   @Query(() => AccountStatus, {
     nullable: false,
-    description: "查询所有用户",
+    description: '查询所有用户',
   })
-  @UseMiddleware(ExtraFieldLogMiddlewareGenerator("Check All Accounts"))
+  @UseMiddleware(ExtraFieldLogMiddlewareGenerator('Check All Accounts'))
   async QueryAllAccounts(
-    @Arg("pagination", { nullable: true })
+    @Arg('pagination', { nullable: true })
     pagination: PaginationOptions,
 
-    @Arg("relations", (type) => AccountRelationsInput, { nullable: true })
+    @Arg('relations', (type) => AccountRelationsInput, { nullable: true })
     relationOptions: AccountRelationsInput = {}
   ): Promise<AccountStatus> {
     try {
@@ -77,18 +77,18 @@ export default class AccountResolver {
 
   @Query(() => AccountStatus, {
     nullable: false,
-    description: "基于资料查找用户",
+    description: '基于资料查找用户',
   })
   async QueryAccountByProfile(
-    @Arg("profileQueryParams", (type) => AccountProfileQueryInput, {
+    @Arg('profileQueryParams', (type) => AccountProfileQueryInput, {
       nullable: true,
     })
     params: AccountProfileQueryInput,
 
-    @Arg("pagination", { nullable: true })
+    @Arg('pagination', { nullable: true })
     pagination: PaginationOptions,
 
-    @Arg("relations", (type) => AccountRelationsInput, { nullable: true })
+    @Arg('relations', (type) => AccountRelationsInput, { nullable: true })
     relationOptions: AccountRelationsInput = {}
   ): Promise<AccountStatus> {
     try {
@@ -101,10 +101,10 @@ export default class AccountResolver {
 
   @Query(() => LoginOrRegisterStatus, {
     nullable: false,
-    description: "账号登录",
+    description: '账号登录',
   })
   async AccountLogin(
-    @Arg("account", (type) => AccountLoginInput)
+    @Arg('account', (type) => AccountLoginInput)
     { accountName, accountPwd, accountType, accountRole }: AccountLoginInput
   ): Promise<LoginOrRegisterStatus> {
     try {
@@ -113,7 +113,7 @@ export default class AccountResolver {
         return new LoginOrRegisterStatusHandler(
           false,
           RESPONSE_INDICATOR.NOT_FOUND,
-          ""
+          ''
         );
       }
 
@@ -128,18 +128,18 @@ export default class AccountResolver {
         return new LoginOrRegisterStatusHandler(
           false,
           RESPONSE_INDICATOR.INCORRECT_PWD,
-          ""
+          ''
         );
       }
 
       // 这个真的会发生吗
-      if (savedType !== accountType || savedRole !== accountRole) {
-        return new LoginOrRegisterStatusHandler(
-          false,
-          RESPONSE_INDICATOR.INVALID_LOGIN_TYPE,
-          ""
-        );
-      }
+      // if (savedType !== accountType || savedRole !== accountRole) {
+      //   return new LoginOrRegisterStatusHandler(
+      //     false,
+      //     RESPONSE_INDICATOR.INVALID_LOGIN_TYPE,
+      //     ""
+      //   );
+      // }
 
       const token = dispatchToken(accountName, accountType, accountRole);
 
@@ -149,18 +149,18 @@ export default class AccountResolver {
         token
       );
     } catch (error) {
-      return new LoginOrRegisterStatusHandler(false, JSON.stringify(error), "");
+      return new LoginOrRegisterStatusHandler(false, JSON.stringify(error), '');
     }
   }
 
   @Query(() => AccountStatus, {
     nullable: false,
-    description: "账号详情",
+    description: '账号详情',
   })
   async CheckAccountDetail(
-    @Arg("accountId", (type) => Int) accountId: number,
+    @Arg('accountId', (type) => Int) accountId: number,
 
-    @Arg("relations", (type) => AccountRelationsInput, { nullable: true })
+    @Arg('relations', (type) => AccountRelationsInput, { nullable: true })
     relationOptions: Partial<AccountRelationsInput> = {}
   ): Promise<AccountStatus> {
     const relations: AccountRelation[] = getAccountRelations(relationOptions);
@@ -177,10 +177,10 @@ export default class AccountResolver {
 
   @Query(() => LoginOrRegisterStatus, {
     nullable: false,
-    description: "检验token是否合法",
+    description: '检验token是否合法',
   })
   async CheckIsTokenValid(
-    @Arg("token") token: string
+    @Arg('token') token: string
   ): Promise<LoginOrRegisterStatus> {
     const validateRes = validateToken(token);
     console.log(validateRes);
@@ -203,18 +203,18 @@ export default class AccountResolver {
 
   @Query(() => LoginOrRegisterStatus, {
     nullable: false,
-    description: "验证邮件",
+    description: '验证邮件',
   })
   async CheckVerifyCode(): Promise<LoginOrRegisterStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, '');
   }
 
   @Mutation(() => LoginOrRegisterStatus, {
     nullable: false,
-    description: "新用户注册",
+    description: '新用户注册',
   })
   async AccountRegistry(
-    @Arg("account", (type) => AccountRegistryInput)
+    @Arg('account', (type) => AccountRegistryInput)
     account: AccountRegistryInput
   ): Promise<LoginOrRegisterStatus> {
     try {
@@ -243,16 +243,16 @@ export default class AccountResolver {
         token
       );
     } catch (error) {
-      return new LoginOrRegisterStatusHandler(false, JSON.stringify(error), "");
+      return new LoginOrRegisterStatusHandler(false, JSON.stringify(error), '');
     }
   }
 
   @Mutation(() => LoginOrRegisterStatus, {
     nullable: false,
-    description: "修改密码",
+    description: '修改密码',
   })
   async ModifyPassword(
-    @Arg("accountInfo", (type) => AccountPasswordModifyInput)
+    @Arg('accountInfo', (type) => AccountPasswordModifyInput)
     {
       accountId,
       accountName,
@@ -283,25 +283,25 @@ export default class AccountResolver {
         accountPwd: encode(newPassword),
       });
 
-      const token = dispatchToken(accountName, isExistingAccount.accountType);
+      // const token = dispatchToken(accountName, isExistingAccount.accountType);
 
       return new LoginOrRegisterStatusHandler(
         true,
-        RESPONSE_INDICATOR.SUCCESS,
-        token
+        RESPONSE_INDICATOR.SUCCESS
+        // token
       );
     } catch (error) {
-      return new LoginOrRegisterStatusHandler(false, JSON.stringify(error), "");
+      return new LoginOrRegisterStatusHandler(false, JSON.stringify(error), '');
     }
   }
 
   @Mutation(() => LoginOrRegisterStatus, {
     nullable: false,
-    description: "用户永久注销",
+    description: '用户永久注销',
   })
   async AccountDestory(
-    @Arg("accountName") accountName: string,
-    @Arg("accountPwd") accountPwd: string
+    @Arg('accountName') accountName: string,
+    @Arg('accountPwd') accountPwd: string
   ) {
     try {
       const isExistingAccount = await this.accountService.getOneAccount(
@@ -325,7 +325,7 @@ export default class AccountResolver {
         return new LoginOrRegisterStatusHandler(
           false,
           RESPONSE_INDICATOR.INCORRECT_PWD,
-          ""
+          ''
         );
       }
 
@@ -334,21 +334,21 @@ export default class AccountResolver {
       return new LoginOrRegisterStatusHandler(
         true,
         RESPONSE_INDICATOR.SUCCESS,
-        ""
+        ''
       );
     } catch (error) {
-      return new LoginOrRegisterStatusHandler(false, JSON.stringify(error), "");
+      return new LoginOrRegisterStatusHandler(false, JSON.stringify(error), '');
     }
   }
 
   // Auth: ADMIN / DOMINATOR + Same Type Required
   @Mutation(() => AccountUnionResult, {
     nullable: false,
-    description: "提升/下降 用户类型",
+    description: '提升/下降 用户类型',
   })
   async AccountLevelMutate(
-    @Arg("accountId", (type) => Int) accountId: number,
-    @Arg("type", (type) => ACCOUNT_TYPE) type: ACCOUNT_TYPE
+    @Arg('accountId', (type) => Int) accountId: number,
+    @Arg('type', (type) => ACCOUNT_TYPE) type: ACCOUNT_TYPE
   ): Promise<AccountStatus | LoginOrRegisterStatus> {
     try {
       const isExistingAccount = await this.accountService.getOneAccountById(
@@ -363,7 +363,7 @@ export default class AccountResolver {
       }
 
       const updated = await this.accountService.updateAccount(accountId, {
-        accountType: type,
+        // accountType: type,
       });
 
       return plainToClass(AccountStatus, {
@@ -375,42 +375,42 @@ export default class AccountResolver {
       return plainToClass(LoginOrRegisterStatus, {
         success: false,
         message: JSON.stringify(error),
-        token: "",
+        token: '',
       });
     }
   }
 
   @Mutation(() => LoginOrRegisterStatus, {
     nullable: false,
-    description: "变更用户角色",
+    description: '变更用户角色',
   })
   async MutateAccountRole(): Promise<LoginOrRegisterStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, '');
   }
 
   @Mutation(() => LoginOrRegisterStatus, {
     nullable: false,
-    description: "发送邮件验证码",
+    description: '发送邮件验证码',
   })
   async SendEmailVerifyCode(): Promise<LoginOrRegisterStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, '');
   }
 
   @Mutation(() => LoginOrRegisterStatus, {
     nullable: false,
-    description: "发送短信验证码",
+    description: '发送短信验证码',
   })
   async SendPhoneVerifyCode(): Promise<LoginOrRegisterStatus> {
-    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, "");
+    return new StatusHandler(true, RESPONSE_INDICATOR.UNDER_DEVELOPING, '');
   }
 
   @Mutation(() => AccountStatus, {
     nullable: false,
-    description: "账号详情变更",
+    description: '账号详情变更',
   })
   async MutateAccountProfile(
-    @Arg("accountId", (type) => Int) accountId: number,
-    @Arg("modifiedAccountProfile") accountProfile: AccountProfileUpdateInput
+    @Arg('accountId', (type) => Int) accountId: number,
+    @Arg('modifiedAccountProfile') accountProfile: AccountProfileUpdateInput
   ): Promise<AccountStatus> {
     try {
       const account = await this.accountService.getOneAccountById(accountId);
@@ -418,7 +418,7 @@ export default class AccountResolver {
         return new LoginOrRegisterStatusHandler(
           false,
           RESPONSE_INDICATOR.NOT_FOUND,
-          ""
+          ''
         );
       }
 
@@ -437,10 +437,10 @@ export default class AccountResolver {
 
   @Mutation(() => AccountStatus, {
     nullable: false,
-    description: "冻结账号",
+    description: '冻结账号',
   })
   async FreezeAccount(
-    @Arg("accountId", (type) => Int) accountId: number
+    @Arg('accountId', (type) => Int) accountId: number
   ): Promise<AccountStatus> {
     try {
       const account = await this.accountService.getOneAccountById(accountId);
@@ -448,7 +448,7 @@ export default class AccountResolver {
         return new LoginOrRegisterStatusHandler(
           false,
           RESPONSE_INDICATOR.NOT_FOUND,
-          ""
+          ''
         );
       }
 
@@ -464,7 +464,7 @@ export default class AccountResolver {
 
   @FieldResolver(() => AccountProfile, {
     nullable: false,
-    description: "账号资料",
+    description: '账号资料',
   })
   async AccountProfileField(@Root() account: Account): Promise<AccountProfile> {
     console.log(account);
@@ -474,7 +474,7 @@ export default class AccountResolver {
 
   @FieldResolver(() => AccountJSON, {
     nullable: false,
-    description: "ACCOUNT_JSON_TYPE",
+    description: 'ACCOUNT_JSON_TYPE',
   })
   async AccountJSONField(@Root() account: Account): Promise<AccountJSON> {
     return account.accountJSON;

@@ -1,4 +1,5 @@
 import * as TypeORM from 'typeorm';
+import { Container } from 'typeorm-typedi-extensions';
 import AccountEntity from '../entities/Account';
 import ExecutorEntity from '../entities/Executor';
 // import RecipeEntity from "../entities/Recipe";
@@ -8,20 +9,25 @@ import TaskEntity from '../entities/Task';
 
 import { log } from './helper';
 
-const IS_DEV =
-  process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
+export const dbConnect = async (): Promise<TypeORM.Connection> => {
+  const IS_DEV =
+    process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test';
 
-export const dbConnect = async (): Promise<any> => {
   log('[TypeORM] TypeORM Connecting');
   log(`[TypeORM] Config Env:  ${IS_DEV ? '-DEV-' : '-PROD-'}`);
 
+  // do it before establishing a connection
+  // and importing any entity into TypeORM
+  TypeORM.useContainer(Container);
+
   const connection = await TypeORM.createConnection({
     type: 'sqlite',
-    name: 'default',
+    // name: 'default',
     database: IS_DEV ? 'db.sqlite' : 'db-prod.sqlite',
     // synchronize: IS_DEV,
     synchronize: true,
     dropSchema: IS_DEV,
+    // logging: 'all',
     // logging: IS_DEV ? false : "all",
     maxQueryExecutionTime: 1000,
     logger: 'advanced-console',
@@ -45,6 +51,5 @@ export const dbConnect = async (): Promise<any> => {
   });
 
   log(`[TypeORM] Connection >>>[${connection.name}]<<< Established`);
-
   return connection;
 };

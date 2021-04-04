@@ -1,17 +1,17 @@
-import { Service } from "typedi";
-import { Repository, Connection } from "typeorm";
-import { InjectRepository, InjectConnection } from "typeorm-typedi-extensions";
+import { Service } from 'typedi';
+import { Repository, Connection } from 'typeorm';
+import { InjectRepository, InjectConnection } from 'typeorm-typedi-extensions';
 
-import Account from "../entities/Account";
+import Account from '../entities/Account';
 import {
   IAccount,
   AccountRegistryInput,
   AccountRelation,
   AccountProfileQueryInput,
-} from "../graphql/Account";
+} from '../graphql/Account';
 
-import { PaginationOptions } from "../graphql/Common";
-import { TypeORMCacheIds } from "../utils/constants";
+import { PaginationOptions } from '../graphql/Common';
+import { TypeORMCacheIds } from '../utils/constants';
 
 export interface IAccountService {
   getAllAccounts(
@@ -44,7 +44,7 @@ export interface IAccountService {
 }
 
 @Service()
-export default class AccountService implements IAccountService {
+export default class AccountService {
   constructor(
     @InjectRepository(Account)
     private readonly accountRepository: Repository<Account>,
@@ -55,15 +55,15 @@ export default class AccountService implements IAccountService {
 
   private generateSelectBuilder(relations: AccountRelation[] = []) {
     let selectQueryBuilder = this.accountRepository.createQueryBuilder(
-      "account"
+      'account'
     );
 
-    if (relations.includes("relatedRecord")) {
+    if (relations.includes('relatedRecord')) {
       selectQueryBuilder = selectQueryBuilder
-        .leftJoinAndSelect("account.relatedRecord", "records")
-        .leftJoinAndSelect("records.recordExecutor", "executor")
-        .leftJoinAndSelect("records.recordTask", "task")
-        .leftJoinAndSelect("records.recordSubstance", "substance");
+        .leftJoinAndSelect('account.relatedRecord', 'records')
+        .leftJoinAndSelect('records.recordExecutor', 'executor')
+        .leftJoinAndSelect('records.recordTask', 'task')
+        .leftJoinAndSelect('records.recordSubstance', 'substance');
     }
 
     return selectQueryBuilder;
@@ -90,7 +90,7 @@ export default class AccountService implements IAccountService {
     relations: AccountRelation[] = []
   ): Promise<Account | undefined> {
     const account = await this.generateSelectBuilder(relations)
-      .where("account.accountName = :accountName", { accountName })
+      .where('account.accountName = :accountName', { accountName })
       .getOne();
 
     return account;
@@ -101,17 +101,17 @@ export default class AccountService implements IAccountService {
     relations: AccountRelation[] = []
   ): Promise<Account | undefined> {
     const account = await this.generateSelectBuilder(relations)
-      .where("account.accountId = :accountId", { accountId })
+      .where('account.accountId = :accountId', { accountId })
       .getOne();
 
     return account;
   }
 
-  async createAccount(account: AccountRegistryInput): Promise<Account> {
+  async createAccount(account: AccountRegistryInput) {
     // FIXME: this kind save action will not trigger After/BeforeInsert Hook
-    const res = await this.accountRepository.save(account);
-    await this.connection.queryResultCache?.remove([TypeORMCacheIds.account]);
-    return res;
+    // const res = await this.accountRepository.save(account);
+    // await this.connection.queryResultCache?.remove([TypeORMCacheIds.account]);
+    // return res;
   }
 
   async updateAccount(
@@ -130,8 +130,8 @@ export default class AccountService implements IAccountService {
       .createQueryBuilder()
       .delete()
       .from(Account)
-      .where("accountId = :accountId")
-      .setParameter("accountId", accountId)
+      .where('accountId = :accountId')
+      .setParameter('accountId', accountId)
       .execute();
 
     await this.connection.queryResultCache?.remove([TypeORMCacheIds.account]);

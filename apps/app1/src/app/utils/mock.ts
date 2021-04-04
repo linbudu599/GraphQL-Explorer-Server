@@ -1,5 +1,5 @@
-import Container from "typedi";
-import { plainToClass } from "class-transformer";
+import Container from 'typedi';
+import { plainToClass } from 'class-transformer';
 
 import {
   Difficulty,
@@ -9,18 +9,18 @@ import {
   Company,
   SaltFish,
   WorkExperience,
-} from "../graphql/Recipe";
-import { DifficultyLevel } from "../graphql/Public";
+} from '../graphql/Recipe';
+import { DifficultyLevel } from '../graphql/Public';
 
-import Executor, { ExecutorDesc } from "../entities/Executor";
-import Task from "../entities/Task";
-import Substance from "../entities/Substance";
-import Record from "../entities/Record";
-import Account from "../entities/Account";
+import Executor, { ExecutorDesc } from '../entities/Executor';
+import Task from '../entities/Task';
+import Substance from '../entities/Substance';
+import Record from '../entities/Record';
+import Account from '../entities/Account';
 
-import { log } from "./helper";
-import { dbConnect } from "./connect";
-import { getConnection } from "typeorm";
+import { log } from './helper';
+import { dbConnect } from './connect';
+import { getConnection } from 'typeorm';
 
 const createWorkExperience = (
   workExp: Partial<WorkExperience>
@@ -41,7 +41,7 @@ const createRecipe = (recipeData: Partial<Recipe>): Recipe =>
 export const sampleSaltFishes = [
   createSaltFish({
     EngelCoefficient: 80,
-    fishName: "Foo Bar", // @snake test foo_bar
+    fishName: 'Foo Bar', // @snake test foo_bar
     // fishName: "fooBar", // @kebab test foo-bar
     // fishName: "foobar", // @capitalize test
     // fishName: "   foobar    ", // @trim test
@@ -50,28 +50,28 @@ export const sampleSaltFishes = [
     // fishName: "SALT FISH 1", // @lower test
     // fishName: "salt fish 1", // @upper test
     date: new Date(),
-    str: "54655675656888rger",
+    str: '54655675656888rger',
     num: 8,
   }),
   createSaltFish({
     EngelCoefficient: 90,
-    fishName: "salt fish 2",
+    fishName: 'salt fish 2',
     date: new Date(),
   }),
 ];
 
 export const sampleCompanies = [
   createCompany({
-    name: "XX有限公司",
+    name: 'XX有限公司',
     scale: CompanyScale.Small,
     registerDate: new Date(),
-    description: "小公司罢了",
+    description: '小公司罢了',
   }),
   createCompany({
-    name: "不渡科技有限公司",
+    name: '不渡科技有限公司',
     scale: CompanyScale.Huge,
     registerDate: new Date(),
-    description: "我直接世界500强",
+    description: '我直接世界500强',
   }),
 ];
 
@@ -90,12 +90,12 @@ export const sampleWorkExperience = [
 
 export const sampleCooks = [
   createCook({
-    name: "Gordon Ramsay",
+    name: 'Gordon Ramsay',
     yearsOfExperience: 21,
     experience: sampleWorkExperience[0],
   }),
   createCook({
-    name: "Kim Kardashian",
+    name: 'Kim Kardashian',
     yearsOfExperience: 1,
     experience: sampleWorkExperience[1],
   }),
@@ -103,62 +103,62 @@ export const sampleCooks = [
 
 export const sampleRecipes = [
   createRecipe({
-    title: "Recipe 1",
-    description: "Desc 1",
+    title: 'Recipe 1',
+    description: 'Desc 1',
     preparationDifficulty: Difficulty.Easy,
-    ingredients: ["one", "two", "three"],
+    ingredients: ['one', 'two', 'three'],
     cook: sampleCooks[1],
   }),
   createRecipe({
-    title: "Recipe 2",
-    description: "Desc 2",
+    title: 'Recipe 2',
+    description: 'Desc 2',
     preparationDifficulty: Difficulty.Easy,
-    ingredients: ["four", "five", "six"],
+    ingredients: ['four', 'five', 'six'],
     cook: sampleCooks[0],
   }),
   createRecipe({
-    title: "Recipe 3",
-    description: "Desc 3",
+    title: 'Recipe 3',
+    description: 'Desc 3',
     preparationDifficulty: Difficulty.Beginner,
-    ingredients: ["seven", "eight", "nine"],
+    ingredients: ['seven', 'eight', 'nine'],
     cook: sampleCooks[1],
   }),
   createRecipe({
-    title: "Recipe 4",
-    description: "Desc 4",
+    title: 'Recipe 4',
+    description: 'Desc 4',
     preparationDifficulty: Difficulty.MasterChef,
-    ingredients: ["ten", "eleven", "twelve"],
+    ingredients: ['ten', 'eleven', 'twelve'],
     cook: sampleCooks[0],
   }),
   createRecipe({
-    title: "Recipe 5",
-    description: "Desc 5",
+    title: 'Recipe 5',
+    description: 'Desc 5',
     preparationDifficulty: Difficulty.Hard,
-    ingredients: ["thirteen", "fourteen", "fifteen"],
+    ingredients: ['thirteen', 'fourteen', 'fifteen'],
     cook: sampleCooks[0],
   }),
 ];
 
 export const setRecipeInContainer = (): void => {
-  log("[TypeDI] Recipe Set to Container");
+  log('[TypeDI] Recipe Set to Container');
   Container.set({
-    id: "RECIPES_DATA",
+    id: 'RECIPES_DATA',
     // create a copy for each request
     transient: true,
     factory: () => sampleRecipes.slice(),
   });
   Container.set({
-    id: "COOKS_DATA",
+    id: 'COOKS_DATA',
     transient: true,
     factory: () => sampleCooks.slice(),
   });
   Container.set({
-    id: "WORKEXP_DATA",
+    id: 'WORKEXP_DATA',
     transient: true,
     factory: () => sampleWorkExperience.slice(),
   });
   Container.set({
-    id: "COMPANYS_DATA",
+    id: 'COMPANYS_DATA',
     transient: true,
     factory: () => sampleCompanies.slice(),
   });
@@ -175,7 +175,7 @@ export const mockSubstance = (len: number) => {
       createSubstance({
         substanceName: `Substance-${i}-${Math.floor(Math.random() * 1000)}`,
         substanceDesc: `Substance Desc ${i}`,
-        substanceLevel: i <= 6 ? i : i % 6,
+        // substanceLevel: i <= 6 ? i : i % 6,
       })
     );
   }
@@ -195,8 +195,8 @@ export const mockTask = (len: number) => {
         taskContent: `task-${i} content`,
         taskReward: Math.floor(Math.random() * 5000),
         taskRate: Math.floor(Math.random() * 10),
-        taskSource: i <= 4 ? i : i % 4,
-        taskLevel: i <= 6 ? i : i % 6,
+        // taskSource: i <= 4 ? i : i % 4,
+        // taskLevel: i <= 6 ? i : i % 6,
       })
     );
   }
@@ -258,46 +258,46 @@ export const insertInitMockData = async (): Promise<any> => {
     await connection.manager.save(executor3);
 
     const sub1 = new Substance();
-    sub1.substanceName = "SCP-1128 深海巨妖";
-    sub1.substanceDesc = "离谱";
-    sub1.substanceLevel = DifficultyLevel.OLD_DOMINATOR;
+    sub1.substanceName = 'SCP-1128 深海巨妖';
+    sub1.substanceDesc = '离谱';
+    // sub1.substanceLevel = DifficultyLevel.OLD_DOMINATOR;
     mockTaskGroup[0].taskSubstance = sub1;
 
     const sub2 = new Substance();
-    sub2.substanceName = "机神G5";
-    sub2.substanceDesc = "来自组织";
-    sub2.substanceLevel = DifficultyLevel.LEGEND;
+    sub2.substanceName = '机神G5';
+    sub2.substanceDesc = '来自组织';
+    // sub2.substanceLevel = DifficultyLevel.LEGEND;
     mockTaskGroup[1].taskSubstance = sub2;
 
     const sub3 = new Substance();
-    sub3.substanceName = "夏油 杰";
-    sub3.substanceDesc = "假";
-    sub3.substanceLevel = DifficultyLevel.LEGEND;
+    sub3.substanceName = '夏油 杰';
+    sub3.substanceDesc = '假';
+    // sub3.substanceLevel = DifficultyLevel.LEGEND;
     mockTaskGroup[2].taskSubstance = sub3;
 
     const sub4 = new Substance();
-    sub4.substanceName = "宿傩";
-    sub4.substanceDesc = "即刻祓除";
-    sub4.substanceLevel = DifficultyLevel.OLD_DOMINATOR;
+    sub4.substanceName = '宿傩';
+    sub4.substanceDesc = '即刻祓除';
+    // sub4.substanceLevel = DifficultyLevel.OLD_DOMINATOR;
     mockTaskGroup[3].taskSubstance = sub4;
 
     const sub5 = new Substance();
-    sub5.substanceName = "尼禄";
-    sub5.substanceDesc = "黄金桂冠";
-    sub5.substanceLevel = DifficultyLevel.OLD_DOMINATOR;
+    sub5.substanceName = '尼禄';
+    sub5.substanceDesc = '黄金桂冠';
+    // sub5.substanceLevel = DifficultyLevel.OLD_DOMINATOR;
     mockTaskGroup[4].taskSubstance = sub5;
 
     const account1 = new Account();
-    account1.accountName = "mock-account-name-01";
-    account1.accountPwd = "mock-account-pwd-01";
+    account1.accountName = 'mock-account-name-01';
+    account1.accountPwd = 'mock-account-pwd-01';
 
     const account2 = new Account();
-    account2.accountName = "mock-account-name-02";
-    account2.accountPwd = "mock-account-pwd-02";
+    account2.accountName = 'mock-account-name-02';
+    account2.accountPwd = 'mock-account-pwd-02';
 
     const account3 = new Account();
-    account3.accountName = "mock-account-name-03";
-    account3.accountPwd = "mock-account-pwd-03";
+    account3.accountName = 'mock-account-name-03';
+    account3.accountPwd = 'mock-account-pwd-03';
 
     await account1.save();
     await account2.save();
@@ -343,8 +343,8 @@ export const insertInitMockData = async (): Promise<any> => {
     await record4.save();
     await record5.save();
 
-    log("[TypeORM] Initial Mock Data Inserted\n");
+    log('[TypeORM] Initial Mock Data Inserted\n');
   } catch (error) {
-    log(error, "red");
+    log(error, 'red');
   }
 };

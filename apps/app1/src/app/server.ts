@@ -5,7 +5,8 @@ import path from 'path';
 
 import { Context } from 'koa';
 import { getOperationAST, DocumentNode } from 'graphql';
-import { Container } from 'typedi';
+import { Container as TypeDIContainer } from 'typedi';
+import { Container } from 'typeorm-typedi-extensions';
 import { useContainer as TypeORMUseContainer, getConnection } from 'typeorm';
 import { buildSchemaSync, ResolverData } from 'type-graphql';
 import { ApolloServer } from 'apollo-server-koa';
@@ -101,13 +102,11 @@ import PrismaResolver from './resolvers/prisma/index.resolver';
 
 // const prisma = new PrismaClient();
 
-const dev = process.env.NODE_ENV === 'development';
-
-Container.set({ id: 'INIT_INJECT_DATA', factory: () => new Date() });
-
-TypeORMUseContainer(Container);
-
 export default async (): Promise<ApolloServer> => {
+  const dev = process.env.NODE_ENV === 'development';
+
+  TypeDIContainer.set({ id: 'INIT_INJECT_DATA', factory: () => new Date() });
+
   const basicMiddlewares = [
     ResolveTime,
     // InterceptorOnSCP1128,
@@ -177,7 +176,7 @@ export default async (): Promise<ApolloServer> => {
     // less: LessThanDirective,
   });
 
-  await dbConnect();
+  const connection = await dbConnect();
 
   const server = new ApolloServer({
     schema,
@@ -195,7 +194,7 @@ export default async (): Promise<ApolloServer> => {
       // const tokenValidation = validateToken(token);
       const { id, accountType, accountRole } = genarateRandomID();
       // 每次请求使用一个随机ID注册容器
-      const container = Container.of(String(id));
+      const container = TypeDIContainer.of(String(id));
 
       // if (!tokenValidation.valid) {
       //   return {};
@@ -222,7 +221,7 @@ export default async (): Promise<ApolloServer> => {
           initialized: false,
           loaders: {},
         },
-        connection: getConnection(),
+        connection,
       };
       container.set('context', context);
       return context;
@@ -238,7 +237,7 @@ export default async (): Promise<ApolloServer> => {
       SchemaUsagePlugin(),
       ComplexityPlugin(schema),
       ExtensionPlugin(),
-      ScopedContainerPlugin(Container),
+      ScopedContainerPlugin(TypeDIContainer),
       ApolloServerLoaderPlugin({
         connectionGetter: getConnection,
       }),

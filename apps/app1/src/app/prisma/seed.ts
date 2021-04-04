@@ -1,3 +1,4 @@
+export {};
 // import { PrismaClient } from "./client";
 // import chalk from "chalk";
 

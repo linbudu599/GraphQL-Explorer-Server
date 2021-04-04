@@ -1,4 +1,5 @@
 import { Resolver, Query, Arg } from 'type-graphql';
+import { useContainer as TypeORMUseContainer, getConnection } from 'typeorm';
 
 import Executor from '../entities/Executor';
 import Task from '../entities/Task';
@@ -8,22 +9,23 @@ import PublicService from '../services/Public.service';
 import TaskService from '../services/Task.service';
 import SubstanceService from '../services/Substance.service';
 
+import { Service } from 'typedi';
 import { IExecutorDesc } from '../graphql/Executor';
 import { PaginationOptions, PrimitiveStatus } from '../graphql/Common';
 import { LevelQueryResult, DifficultyLevel } from '../graphql/Public';
 
 import { DEFAULT_QUERY_PAGINATION } from '../utils/constants';
 
+@Service()
 @Resolver((of) => PrimitiveStatus)
 export default class PublicResolver {
   constructor(
     private readonly executorService: ExecutorService,
-    private readonly taskService: TaskService,
-    private readonly publicService: PublicService,
-
-    private readonly substanceService: SubstanceService
+    // private readonly taskService: TaskService,
+    // private readonly substanceService: SubstanceService,
+    private readonly publicService: PublicService
   ) {
-    console.log('publicService: ', publicService);
+    // console.log('publicService: ', publicService);
   }
 
   // @Query(() => [LevelQueryResult], {
@@ -59,7 +61,9 @@ export default class PublicResolver {
   //       (JSON.parse(executor.desc) as IExecutorDesc).level === difficulty
   //   );
 
-  //   const filterTasks = tasks.filter((task) => task.taskLevel === difficulty);
+  //   const filterTasks = tasks.filter(
+  //     (task) => String(task.taskLevel) === String(difficulty)
+  //   );
 
   //   return [...filterExecutors, ...filterTasks];
   // }
@@ -69,5 +73,11 @@ export default class PublicResolver {
     const registerDate = await this.publicService.ContainerRegisterTime();
 
     return registerDate;
+  }
+
+  @Query(() => String, { nullable: false, description: '容器注册时间' })
+  async str() {
+    console.log(getConnection().name);
+    return 'str';
   }
 }

@@ -1,12 +1,12 @@
-import { Resolver, Query, Arg, Mutation } from "type-graphql";
+import { Resolver, Query, Arg, Mutation } from 'type-graphql';
 
-import Task from "../entities/Task";
+import Task from '../entities/Task';
 
 import {
   PaginationOptions,
   StatusHandler,
   TaskStatus,
-} from "../graphql/Common";
+} from '../graphql/Common';
 import {
   TaskQueryInput,
   TaskCreateInput,
@@ -14,16 +14,16 @@ import {
   TaskRelationsInput,
   getTaskRelations,
   TaskRelation,
-} from "../graphql/Task";
-import { DifficultyLevel } from "../graphql/Public";
+} from '../graphql/Task';
+import { DifficultyLevel } from '../graphql/Public';
 
-import TaskService from "../services/Task.service";
-import ExecutorService from "../services/Executor.service";
-import SubstanceService from "../services/Substance.service";
+import TaskService from '../services/Task.service';
+import ExecutorService from '../services/Executor.service';
+import SubstanceService from '../services/Substance.service';
 
-import { RESPONSE_INDICATOR } from "../utils/constants";
+import { RESPONSE_INDICATOR } from '../utils/constants';
 
-import { generatePagination } from "../utils/helper";
+import { generatePagination } from '../utils/helper';
 
 @Resolver((of) => Task)
 export default class TaskResolver {
@@ -33,12 +33,12 @@ export default class TaskResolver {
     private readonly SubstanceService: SubstanceService
   ) {}
 
-  @Query(() => TaskStatus, { nullable: false, description: "获取所有任务" })
+  @Query(() => TaskStatus, { nullable: false, description: '获取所有任务' })
   async QueryAllTasks(
-    @Arg("pagination", { nullable: true })
+    @Arg('pagination', { nullable: true })
     pagination: PaginationOptions,
 
-    @Arg("relations", (type) => TaskRelationsInput, { nullable: true })
+    @Arg('relations', (type) => TaskRelationsInput, { nullable: true })
     relationOptions: Partial<TaskRelationsInput> = {}
   ): Promise<TaskStatus> {
     try {
@@ -53,11 +53,11 @@ export default class TaskResolver {
     }
   }
 
-  @Query(() => TaskStatus, { nullable: false, description: "基于ID获取任务" })
+  @Query(() => TaskStatus, { nullable: false, description: '基于ID获取任务' })
   async QueryTaskByID(
-    @Arg("taskId") taskId: number,
+    @Arg('taskId') taskId: number,
 
-    @Arg("relations", (type) => TaskRelationsInput, { nullable: true })
+    @Arg('relations', (type) => TaskRelationsInput, { nullable: true })
     relationOptions: Partial<TaskRelationsInput> = {}
   ): Promise<TaskStatus> {
     try {
@@ -76,12 +76,12 @@ export default class TaskResolver {
 
   @Query(() => TaskStatus, {
     nullable: false,
-    description: "基于条件获取单个任务",
+    description: '基于条件获取单个任务',
   })
   async QueryTaskByConditions(
-    @Arg("taskQueryParams") param: TaskQueryInput,
+    @Arg('taskQueryParams') param: TaskQueryInput,
 
-    @Arg("relations", (type) => TaskRelationsInput, { nullable: true })
+    @Arg('relations', (type) => TaskRelationsInput, { nullable: true })
     relationOptions: Partial<TaskRelationsInput> = {}
   ): Promise<TaskStatus> {
     try {
@@ -100,15 +100,15 @@ export default class TaskResolver {
 
   @Query(() => TaskStatus, {
     nullable: false,
-    description: "基于条件获取多个任务",
+    description: '基于条件获取多个任务',
   })
   async QueryTasksByConditions(
-    @Arg("taskQueryParams") param: TaskQueryInput,
+    @Arg('taskQueryParams') param: TaskQueryInput,
 
-    @Arg("pagination", { nullable: true })
+    @Arg('pagination', { nullable: true })
     pagination: PaginationOptions,
 
-    @Arg("relations", (type) => TaskRelationsInput, { nullable: true })
+    @Arg('relations', (type) => TaskRelationsInput, { nullable: true })
     relationOptions: Partial<TaskRelationsInput> = {}
   ): Promise<TaskStatus> {
     try {
@@ -130,25 +130,25 @@ export default class TaskResolver {
 
   @Query(() => TaskStatus, {
     nullable: false,
-    description: "查询执行者当前被分配的任务",
+    description: '查询执行者当前被分配的任务',
   })
   async QueryExecutorTasks(
-    @Arg("uid") uid: number,
+    @Arg('uid') uid: number,
 
-    @Arg("pagination", { nullable: true })
+    @Arg('pagination', { nullable: true })
     pagination: PaginationOptions,
 
-    @Arg("relations", (type) => TaskRelationsInput, { nullable: true })
+    @Arg('relations', (type) => TaskRelationsInput, { nullable: true })
     relationOptions: Partial<TaskRelationsInput> = {}
   ) {
     try {
       const queryPagination = generatePagination(pagination);
 
-      const executor = await this.executorService.getOneExecutorById(uid);
+      // const executor = await this.executorService.getOneExecutorById(uid);
 
-      if (!executor) {
-        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
-      }
+      // if (!executor) {
+      //   return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
+      // }
 
       const relations: TaskRelation[] = getTaskRelations(relationOptions);
 
@@ -168,8 +168,8 @@ export default class TaskResolver {
     }
   }
 
-  @Mutation(() => TaskStatus, { nullable: false, description: "变更任务状态" })
-  async ToggleTaskStatus(@Arg("taskId") taskId: number): Promise<TaskStatus> {
+  @Mutation(() => TaskStatus, { nullable: false, description: '变更任务状态' })
+  async ToggleTaskStatus(@Arg('taskId') taskId: number): Promise<TaskStatus> {
     try {
       const origin = await this.taskService.getOneTaskById(taskId);
 
@@ -186,8 +186,8 @@ export default class TaskResolver {
     }
   }
 
-  @Mutation(() => TaskStatus, { nullable: false, description: "删除任务" })
-  async DeleteTask(@Arg("taskId") taskId: number): Promise<TaskStatus> {
+  @Mutation(() => TaskStatus, { nullable: false, description: '删除任务' })
+  async DeleteTask(@Arg('taskId') taskId: number): Promise<TaskStatus> {
     try {
       const res = await this.taskService.getOneTaskById(taskId);
       if (!res) {
@@ -212,10 +212,10 @@ export default class TaskResolver {
 
   @Mutation(() => TaskStatus, {
     nullable: false,
-    description: "创建任务同时关联到实体",
+    description: '创建任务同时关联到实体',
   })
   async CreateNewTask(
-    @Arg("taskCreateParam") param: TaskCreateInput
+    @Arg('taskCreateParam') param: TaskCreateInput
   ): Promise<TaskStatus> {
     try {
       const { substanceId } = param;
@@ -238,7 +238,7 @@ export default class TaskResolver {
         {
           taskTitle,
         },
-        ["taskSubstance"]
+        ['taskSubstance']
       );
 
       if (isTitleUsed) {
@@ -259,10 +259,10 @@ export default class TaskResolver {
 
   @Mutation(() => TaskStatus, {
     nullable: false,
-    description: "变更任务基本信息",
+    description: '变更任务基本信息',
   })
   async UpdateTaskInfo(
-    @Arg("taskUpdateParam") param: TaskUpdateInput
+    @Arg('taskUpdateParam') param: TaskUpdateInput
   ): Promise<TaskStatus> {
     try {
       const taskExists = await this.taskService.getOneTaskById(param.taskId);
@@ -278,26 +278,23 @@ export default class TaskResolver {
     }
   }
 
-  @Mutation(() => TaskStatus, { nullable: false, description: "指派任务" })
+  @Mutation(() => TaskStatus, { nullable: false, description: '指派任务' })
   async AssignTask(
-    @Arg("taskId") taskId: number,
-    @Arg("uid") uid: number
+    @Arg('taskId') taskId: number,
+    @Arg('uid') uid: number
   ): Promise<TaskStatus> {
     try {
-      const assignee = await this.executorService.getOneExecutorById(uid);
-      const task = await this.taskService.getOneTaskById(taskId, ["assignee"]);
-
-      if (!task || !assignee) {
-        return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
-      }
-
-      if (task.assignee) {
-        return new StatusHandler(false, RESPONSE_INDICATOR.EXISTED, [task]);
-      }
-      task.assignee = assignee;
-
-      const assignRes = await this.taskService.createTask(task);
-      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [assignRes]);
+      // const assignee = await this.executorService.getOneExecutorById(uid);
+      // const task = await this.taskService.getOneTaskById(taskId, ["assignee"]);
+      // if (!task || !assignee) {
+      //   return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
+      // }
+      // if (task.assignee) {
+      //   return new StatusHandler(false, RESPONSE_INDICATOR.EXISTED, [task]);
+      // }
+      // task.assignee = assignee;
+      // const assignRes = await this.taskService.createTask(task);
+      // return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [assignRes]);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
     }
@@ -305,11 +302,11 @@ export default class TaskResolver {
 
   @Mutation(() => TaskStatus, {
     nullable: false,
-    description: "变更任务级别",
+    description: '变更任务级别',
   })
   async MutateTaskLevel(
-    @Arg("taskId") taskId: number,
-    @Arg("level", (type) => DifficultyLevel) level: DifficultyLevel
+    @Arg('taskId') taskId: number,
+    @Arg('level', (type) => DifficultyLevel) level: DifficultyLevel
   ): Promise<TaskStatus> {
     try {
       const res = await this.taskService.getOneTaskById(taskId);
@@ -317,11 +314,11 @@ export default class TaskResolver {
         return new StatusHandler(false, RESPONSE_INDICATOR.NOT_FOUND, []);
       }
 
-      const updated = await this.taskService.updateTask(taskId, {
-        taskLevel: level,
-      });
+      // const updated = await this.taskService.updateTask(taskId, {
+      //   taskLevel: level,
+      // });
 
-      return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updated]);
+      // return new StatusHandler(true, RESPONSE_INDICATOR.SUCCESS, [updated]);
     } catch (error) {
       return new StatusHandler(false, JSON.stringify(error), []);
     }
@@ -329,9 +326,9 @@ export default class TaskResolver {
 
   @Mutation(() => TaskStatus, {
     nullable: false,
-    description: "冻结任务 无法恢复",
+    description: '冻结任务 无法恢复',
   })
-  async FreezeTask(@Arg("taskId") taskId: number): Promise<TaskStatus> {
+  async FreezeTask(@Arg('taskId') taskId: number): Promise<TaskStatus> {
     try {
       const res = await this.taskService.getOneTaskById(taskId);
       if (!res) {
