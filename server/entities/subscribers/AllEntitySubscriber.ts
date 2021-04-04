@@ -11,6 +11,7 @@ import Executor from "../Executor";
 import Task from "../Task";
 import Substance from "../Substance";
 import Record from "../Record";
+import { Service } from "typedi";
 
 type AvaliableEntities = Account | Executor | Task | Substance | Record;
 
@@ -21,6 +22,8 @@ type AvaliableEntities = Account | Executor | Task | Substance | Record;
  * @class PostSubscriber
  * @implements {EntitySubscriberInterface}
  */
+
+@Service()
 @EventSubscriber()
 export class AllSubscriber implements EntitySubscriberInterface {
   beforeInsert(event: InsertEvent<AvaliableEntities>) {

@@ -14,6 +14,8 @@ import { encode } from "../../utils/bcrypt";
  * @class AccountSubscriber
  * @implements {EntitySubscriberInterface<Account>}
  */
+import { Service } from "typedi";
+@Service()
 @EventSubscriber()
 export class AccountSubscriber implements EntitySubscriberInterface<Account> {
   listenTo() {

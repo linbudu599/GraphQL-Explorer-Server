@@ -18,7 +18,9 @@ import Notification, {
 } from "../graphql/PubSub";
 
 // Mutation -> Trigger Subscription -> Push to Client
+import { Service } from "typedi";
 
+@Service()
 @Resolver((of) => Notification)
 export default class PubSubResolver {
   private autoIncrePointer: number = 0;

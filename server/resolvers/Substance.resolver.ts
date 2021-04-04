@@ -23,7 +23,9 @@ import { generatePagination } from "../utils/helper";
 
 import SubstanceService from "../services/Substance.service";
 import TaskService from "../services/Task.service";
+import { Service } from "typedi";
 
+@Service()
 @Resolver((of) => Substance)
 export default class SubstanceResolver {
   constructor(

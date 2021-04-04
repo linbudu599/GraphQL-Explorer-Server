@@ -40,7 +40,9 @@ import { InjectCurrentUser, CustomArgsValidation } from "../decorators";
 import { ExtraFieldLogMiddlewareGenerator } from "../middlewares/log";
 
 import { IContext } from "../typing";
+import { Service } from "typedi";
 
+@Service()
 @Resolver((of) => Executor)
 export default class ExecutorResolver {
   constructor(private readonly executorService: ExecutorService) {}

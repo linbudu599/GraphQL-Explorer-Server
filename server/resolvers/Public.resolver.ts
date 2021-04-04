@@ -13,7 +13,9 @@ import { PaginationOptions, PrimitiveStatus } from "../graphql/Common";
 import { LevelQueryResult, DifficultyLevel } from "../graphql/Public";
 
 import { DEFAULT_QUERY_PAGINATION } from "../utils/constants";
+import { Service } from "typedi";
 
+@Service()
 @Resolver((of) => PrimitiveStatus)
 export default class PublicResolver {
   constructor(

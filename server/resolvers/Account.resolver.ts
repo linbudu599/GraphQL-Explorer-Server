@@ -43,6 +43,9 @@ import { generatePagination, mergeJSONWithObj } from "../utils/helper";
 import { encode, compare } from "../utils/bcrypt";
 import { dispatchToken, validateToken } from "../utils/jwt";
 
+import { Service } from "typedi";
+
+@Service()
 @Resolver((of) => Account)
 export default class AccountResolver {
   constructor(private readonly accountService: AccountService) {}

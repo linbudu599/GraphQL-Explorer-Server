@@ -195,7 +195,7 @@ export default async (): Promise<ApolloServer> => {
       // const tokenValidation = validateToken(token);
       const { id, accountType, accountRole } = genarateRandomID();
       // 每次请求使用一个随机ID注册容器
-      const container = Container.of(id);
+      const container = Container.of(String(id));
 
       // if (!tokenValidation.valid) {
       //   return {};

@@ -8,7 +8,9 @@ import { RecordRelationsInput, getRecordRelations } from "../graphql/Record";
 import RecordService from "../services/Record.service";
 
 import { RESPONSE_INDICATOR } from "../utils/constants";
+import { Service } from "typedi";
 
+@Service()
 @Resolver((of) => Record)
 export default class RecordResolver {
   constructor(private readonly recordService: RecordService) {}

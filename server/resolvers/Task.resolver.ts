@@ -24,7 +24,9 @@ import SubstanceService from "../services/Substance.service";
 import { RESPONSE_INDICATOR } from "../utils/constants";
 
 import { generatePagination } from "../utils/helper";
+import { Service } from "typedi";
 
+@Service()
 @Resolver((of) => Task)
 export default class TaskResolver {
   constructor(
