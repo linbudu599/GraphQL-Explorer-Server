@@ -11,7 +11,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
       - name: Install Deps
-        run: npm install
+        run: |
+          npm install pnpm -g
+          pnpm install
       - name: Build Docs
         run: npm run gen
       - name: Deploy

@@ -22,8 +22,8 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install Dependencies
         run: |
-          npm install
-          npm install surge -g
+          npm install surge pnpm -g
+          pnpm install
       - name: Build Docs
         run: npm run gen
       - name: Deploy to Surge

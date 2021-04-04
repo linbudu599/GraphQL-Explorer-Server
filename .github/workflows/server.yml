@@ -29,8 +29,8 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          npm install
-          npm install pm2 -g
+          npm install pm2 pnpm -g
+          pnpm install
 
       - name: Serve By PM2
         run: npm run pm2
