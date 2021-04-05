@@ -34,7 +34,8 @@
     "prisma:migrate:dev": "prisma migrate dev --preview-feature",
     "prisma:migrate:reset": "prisma migrate reset --preview-feature",
     "prisma:seed": "ts-node ./server/prisma/seed.ts",
-    "generate": "ts-node ./scripts/command/index.ts generate"
+    "generate": "ts-node ./scripts/command/index.ts generate",
+    "nexus": "ts-node-dev --transpile-only --no-notify apps/nexus-server/src/main.ts"
   },
   "repository": {
     "type": "git",
@@ -106,6 +107,7 @@
     "koa": "^2.13.0",
     "lodash": "^4.17.20",
     "mysql": "^2.18.1",
+    "nexus": "^1.0.0",
     "node-fetch": "^2.6.1",
     "numeral": "^2.0.6",
     "prisma": "^2.20.1",
@@ -207,6 +209,7 @@
     "superagent": "^6.1.0",
     "ts-jest": "^26.3.0",
     "ts-node": "^9.0.0",
+    "ts-node-dev": "^1.1.6",
     "typescript": "^4.1.3"
   }
 }

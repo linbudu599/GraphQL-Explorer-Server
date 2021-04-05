@@ -1,5 +1,10 @@
 module.exports = {
-  projects: [, '<rootDir>/apps/server', '<rootDir>/apps/client'],
+  projects: [
+    ,
+    '<rootDir>/apps/server',
+    '<rootDir>/apps/client',
+    '<rootDir>/apps/nexus-server',
+  ],
   automock: false,
   bail: 5,
   clearMocks: true,

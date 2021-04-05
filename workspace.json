@@ -1,8 +1,6 @@
 {
   "version": 2,
-  "cli": {
-    "defaultCollection": "@nrwl/node"
-  },
+  "cli": { "defaultCollection": "@nrwl/node" },
   "defaultProject": "server",
   "generators": {
     "@nrwl/react": {
@@ -11,13 +9,8 @@
         "linter": "eslint",
         "babel": true
       },
-      "component": {
-        "style": "styled-components"
-      },
-      "library": {
-        "style": "styled-components",
-        "linter": "eslint"
-      }
+      "component": { "style": "styled-components" },
+      "library": { "style": "styled-components", "linter": "eslint" }
     }
   },
   "projects": {
@@ -51,15 +44,11 @@
         },
         "serve": {
           "executor": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "server:build"
-          }
+          "options": { "buildTarget": "server:build" }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
-          "options": {
-            "lintFilePatterns": ["apps/server/**/*.ts"]
-          }
+          "options": { "lintFilePatterns": ["apps/server/**/*.ts"] }
         },
         "test": {
           "executor": "@nrwl/jest:jest",
@@ -117,13 +106,9 @@
         },
         "serve": {
           "executor": "@nrwl/web:dev-server",
-          "options": {
-            "buildTarget": "client:build"
-          },
+          "options": { "buildTarget": "client:build" },
           "configurations": {
-            "production": {
-              "buildTarget": "client:build:production"
-            }
+            "production": { "buildTarget": "client:build:production" }
           }
         },
         "lint": {
@@ -155,15 +140,57 @@
             "devServerTarget": "client:serve"
           },
           "configurations": {
-            "production": {
-              "devServerTarget": "client:serve:production"
-            }
+            "production": { "devServerTarget": "client:serve:production" }
           }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
+          "options": { "lintFilePatterns": ["apps/client-e2e/**/*.{js,ts}"] }
+        }
+      }
+    },
+    "nexus-server": {
+      "root": "apps/nexus-server",
+      "sourceRoot": "apps\\nexus-server\\src",
+      "projectType": "application",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:build",
+          "outputs": ["{options.outputPath}"],
           "options": {
-            "lintFilePatterns": ["apps/client-e2e/**/*.{js,ts}"]
+            "outputPath": "dist/apps/nexus-server",
+            "main": "apps/nexus-server/src/main.ts",
+            "tsConfig": "apps/nexus-server/tsconfig.app.json",
+            "assets": ["apps/nexus-server/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/nexus-server/src/environments/environment.ts",
+                  "with": "apps/nexus-server/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "executor": "@nrwl/node:execute",
+          "options": { "buildTarget": "nexus-server:build" }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": { "lintFilePatterns": ["apps/nexus-server/**/*.ts"] }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/nexus-server"],
+          "options": {
+            "jestConfig": "apps/nexus-server/jest.config.js",
+            "passWithNoTests": true
           }
         }
       }

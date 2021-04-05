@@ -1,4 +1,4 @@
-import { Resolver, Query, Ctx } from 'type-graphql';
+import { Resolver, Query, Ctx, Mutation } from 'type-graphql';
 
 import PrismaUser from '../../graphql/prisma/User';
 import PrismaItem from '../../graphql/prisma/Item';
@@ -17,5 +17,10 @@ export default class PrismaResolver {
   async QueryAllPrismaItems(@Ctx() ctx: IContext): Promise<PrismaItem[]> {
     return await ctx.prisma.item.findMany({ include: { owner: true } });
     return [];
+  }
+
+  @Mutation((returns) => Boolean, { nullable: true })
+  async ReturnNullOnly(): Promise<boolean> {
+    return null;
   }
 }
