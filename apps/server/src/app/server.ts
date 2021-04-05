@@ -97,9 +97,9 @@ import { IContext } from './typing';
 
 // Prisma Related
 import PrismaResolver from './resolvers/prisma/index.resolver';
-// import { PrismaClient } from './prisma/client';
+import { PrismaClient } from './prisma/client';
 
-// const prisma = new PrismaClient();
+const prisma = new PrismaClient();
 
 export default async (): Promise<ApolloServer> => {
   const dev = process.env.NODE_ENV === 'development';
@@ -127,7 +127,7 @@ export default async (): Promise<ApolloServer> => {
       // Subscription Resolver
       PubSubResolver,
       // Prisma Resolver
-      // PrismaResolver,
+      PrismaResolver,
       // Field Resolver
       ExecutorFieldResolver,
       AccountFieldResolver,
@@ -154,25 +154,24 @@ export default async (): Promise<ApolloServer> => {
   });
 
   SchemaDirectiveVisitor.visitSchemaDirectives(schema, {
-    // sampleDeprecated: DeprecatedDirective,
-    // fetch: FetchDirective,
-    // date: DateFormatDirective,
-    // intl: IntlDirective,
-    // auth: AuthDirective,
-    // string transform directives
-    // upper: UpperDirective,
-    // lower: LowerDirective,
-    // camel: CamelCaseDirective,
-    // start: StartCaseDirective,
-    // capitalize: CapitalizeDirective,
-    // kebab: KebabCaseDirective,
-    // snake: SnakeCaseDirective,
-    // trim: TrimDirective,
-    // // restriction directives
-    // max: MaxLengthDirective,
-    // min: MinLengthDirective,
-    // greater: GreaterThanDirective,
-    // less: LessThanDirective,
+    sampleDeprecated: DeprecatedDirective,
+    fetch: FetchDirective,
+    date: DateFormatDirective,
+    intl: IntlDirective,
+    auth: AuthDirective,
+    upper: UpperDirective,
+    lower: LowerDirective,
+    camel: CamelCaseDirective,
+    start: StartCaseDirective,
+    capitalize: CapitalizeDirective,
+    kebab: KebabCaseDirective,
+    snake: SnakeCaseDirective,
+    trim: TrimDirective,
+    // restriction directives
+    max: MaxLengthDirective,
+    min: MinLengthDirective,
+    greater: GreaterThanDirective,
+    less: LessThanDirective,
   });
 
   const connection = await dbConnect();
@@ -215,7 +214,7 @@ export default async (): Promise<ApolloServer> => {
           accountRole,
         },
         container,
-        // prisma,
+        prisma,
         dataLoader: {
           initialized: false,
           loaders: {},

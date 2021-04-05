@@ -2,3 +2,12 @@
 
 /dist
 /coverage
+server-dist
+.github
+docs
+plan
+.circleci
+.travis.yml
+.cache
+codecov.yml
+

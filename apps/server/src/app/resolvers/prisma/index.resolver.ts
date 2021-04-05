@@ -9,13 +9,13 @@ import { IContext } from '../../typing';
 export default class PrismaResolver {
   @Query((returns) => [PrismaUser])
   async QueryAllPrismaUsers(@Ctx() ctx: IContext): Promise<PrismaUser[]> {
-    // return await ctx.prisma.user.findMany({ include: { items: true } });
+    return await ctx.prisma.user.findMany({ include: { items: true } });
     return [];
   }
 
   @Query((returns) => [PrismaItem])
   async QueryAllPrismaItems(@Ctx() ctx: IContext): Promise<PrismaItem[]> {
-    // return await ctx.prisma.item.findMany({ include: { owner: true } });
+    return await ctx.prisma.item.findMany({ include: { owner: true } });
     return [];
   }
 }
