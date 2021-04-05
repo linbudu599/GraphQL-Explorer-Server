@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "public": true,
+  "name": "graphql-faas",
+  "scope": "linbudu599",
+  "functions": {
+    "api/graphql/index.ts": {
+      "maxDuration": 10,
+      "memory": 1024
+    },
+    "api/sample/index.ts": {
+      "maxDuration": 10,
+      "memory": 1024
+    }
+  }
+}

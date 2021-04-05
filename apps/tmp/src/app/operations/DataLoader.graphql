@@ -1,9 +1,0 @@
-query {
-  Recipes {
-    RecipeExtraFieldResolver(title: "Recipe 1") {
-      CookExtraFieldResolver(name: "Gordon Ramsay") {
-        name
-      }
-    }
-  }
-}

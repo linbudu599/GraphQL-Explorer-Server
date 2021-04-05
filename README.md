@@ -1,90 +1,103 @@
-# GraphqlExplore
+# GraphQL-Explorer-Server
 
-This project was generated using [Nx](https://nx.dev).
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/linbudu599/GraphQL-Explorer-Server/GraphQL-Explorer-Server)
+![Codecov](https://img.shields.io/codecov/c/github/linbudu599/GraphQL-Explorer-Server)
+![GitHub last commit](https://img.shields.io/github/last-commit/linbudu599/GraphQL-Explorer-Server)
+![David](https://img.shields.io/david/dev/linbudu599/GraphQL-Explorer-Server?label=dependencies)
 
-<p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>
+![GitHub package.json dependency version (subfolder of monorepo)](https://img.shields.io/github/package-json/dependency-version/linbudu599/GraphQL-Explorer/graphql)
+![GitHub package.json dependency version (subfolder of monorepo)](https://img.shields.io/github/package-json/dependency-version/linbudu599/GraphQL-Explorer/type-graphql)
+![GitHub package.json dependency version (subfolder of monorepo)](https://img.shields.io/github/package-json/dependency-version/linbudu599/GraphQL-Explorer/apollo-server)
 
-🔎 **Nx is a set of Extensible Dev Tools for Monorepos.**
+This is a **demo** which contains `GraphQL` and framework based on it(or work with it perfectly), including these for now:
 
-## Adding capabilities to your workspace
+### Main
 
-Nx supports many plugins which add capabilities for developing different types of applications and different tools.
+- [x] GraphQL
+- [x] TypeGraphQL
+- [x] Apollo-Server
+- [x] DataLoader (Supported By [TypeGraphQL-DataLoader](https://github.com/slaypni/type-graphql-dataloader))
+- [x] TypeORM + SQLite3
+- [x] Prisma 2(As replacement for TypeORM)
+- [ ] Redis + IORedis
+- [ ] Winston
+- [ ] Subscription
 
-These capabilities include generating applications, libraries, etc as well as the devtools to test, and build projects as well.
+### Other Powerful Tools
 
-Below are our core plugins:
+- [x] [GraphQLDoc](https://github.com/2fd/graphdoc)
+- [x] [GraphQL-Voyager](https://github.com/APIs-guru/graphql-voyager)
+- [x] [GenQL](https://github.com/remorses/genql)
+- [x] [GraphQL-Code-Generator](https://github.com/dotansimha/graphql-code-generator)
+- [ ] [GraphQL-Tools](https://www.graphql-tools.com/)
 
-- [React](https://reactjs.org)
-  - `npm install --save-dev @nrwl/react`
-- Web (no framework frontends)
-  - `npm install --save-dev @nrwl/web`
-- [Angular](https://angular.io)
-  - `npm install --save-dev @nrwl/angular`
-- [Nest](https://nestjs.com)
-  - `npm install --save-dev @nrwl/nest`
-- [Express](https://expressjs.com)
-  - `npm install --save-dev @nrwl/express`
-- [Node](https://nodejs.org)
-  - `npm install --save-dev @nrwl/node`
+## Features
 
-There are also many [community plugins](https://nx.dev/nx-community) you could add.
+- [x] TypeORM Entity Relations [Setup](./server/entities): 1-1 1-m m-n
+- [x] Most API of TypeGraphQL: InputType / InterfaceType / AuthChecker / Middlewares / Containers / ...
+- [x] Configurated Apollo-Server With [Plugins](./server/plugins)
+- [x] Visualized API Graph by GraphQLDoc & GraphQL-Voyager
+- [x] Useful [Directives](./server/directives) & [Decorators](./server/decorators)
 
-## Generate an application
+## :satellite: Explain
 
-Run `nx g @nrwl/react:app my-app` to generate an application.
+- :construction: **WIP** [使用最流行的技术栈搭建一个 GraphQL 服务器](./docs/README.md)
 
-> You can use any of the plugins above to generate applications as well.
+## 🏗️ &nbsp; Server & Docs Deployment
 
-When using Nx, you can create multiple applications and libraries in the same workspace.
+- [x] [Docs by Surge](http://graphql-explorer-docs.surge.sh/)
+- [x] [Voyager by Surge](http://graphql-explorer-voyager.surge.sh/) **(Require Local Server To Be Active)**
+- [x] [Voyager on Remote Server](http://voyager.linbudu.top/)
+- [x] [Simple Example on Vercel Fucntions](https://graphql-faas.vercel.app/api/sample), see [Query Example](./api/sample/query.graphql)
+- [x] [Simple Example of Vercel Fucntions, with MySQL](https://graphql-faas.linbudu599.vercel.app/api/graphql)
+- [x] [Full Server Deployed at ALI Cloud ECS](http://47.97.183.158:4399/graphql)
+- [x] [Apollo Engine(**private**)](https://studio.apollographql.com/graph/My-Graph-innqj/explorer?schemaTag=current)
 
-## Generate a library
+## 🛠️&nbsp; Progress
 
-Run `nx g @nrwl/react:lib my-lib` to generate a library.
+**IN_PROGRESS**
 
-> You can also use any of the plugins above to generate libraries as well.
+see [ROADMAP](https://github.com/linbudu599/GraphQL-Explorer/issues/1) for more details.
 
-Libraries are shareable across libraries and applications. They can be imported from `@graphql-explore/mylib`.
+## 🚀&nbsp; Explore
 
-## Development server
+```bash
+npm install
+npm run dev
+```
 
-Run `nx serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+## 🛵&nbsp; Available Scripts
 
-## Code scaffolding
+- `dev`: develop server by [nodemon](https://github.com/remy/nodemon).
+- `build`: compile server code by [tsc](https://github.com/microsoft/TypeScript).
+  - `prebuild`: Generation of `GenQL` & `Prisma Client`.
+  - `postbuild`: copy generated `Prisma Client ` files, run `prisma db push` to create SQLite file.
+- `build:vercel`: build scripts on Vercel Functions.
+- `start`: run in prod by [nodemon](https://github.com/remy/nodemon)(recommended to run before deployment).
+- `clean`: remove `/dist`(build output) & `api-dist`(Vercel build output) directory.
+- `test`: run test cases by [Jest](https://github.com/facebook/jest).
+- `pm2`: run in prod by [PM2](https://github.com/Unitech/pm2).
+- `stress-test`: run pressure test to server, see [stress-fork.js](./st-fork.js) & [stress-main.js](./st-main.js).
+- `voyager`: represent GraphQL API as an interactive graph by [GraphQL-Voyager](https://github.com/APIs-guru/graphql-voyager), **require local server to be active**.
+- `gen:code`: generate type definitions from GraphQL schema by [GraphQL-Code-Generator](https://github.com/dotansimha/graphql-code-generator).
+- `gen:docs`: generate documentation site from GraphQL schema by [GraphDoc](https://github.com/2fd/graphdoc).
+- `gen`: generate docs & code, as `gen:code` & `gen:docs` require local server alive, **this command will use NodeJS `child_process` mod to handle server setup.**
+- `serve:docs`: generate & serve documentation site by [serve](https://github.com/vercel/serve).
+- `commit`: commit code by [custom commitlint config](.cz-config.js).
+- `prettier`: prettier all `.ts` / `.json` / `.graphql` ext file.
+- `typecheck`: check TypeScript type definitions.
+- `seed:config`: check [typeorm-seeding](https://github.com/w3tecch/typeorm-seeding) config.
+- `seed:run`: start seeding data in `/server/entity/seeds`.
+- `genql`: generate GraphQL query builder by [GenQL](https://github.com/remorses/genql).
+- `prisma:*` [Prisma 2](https://www.prisma.io/) Related Commands.
 
-Run `nx g @nrwl/react:component my-component --project=my-app` to generate a new component.
+## 📔&nbsp; Document
 
-## Build
+see offcial docs for more information.
 
-Run `nx build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `nx test my-app` to execute the unit tests via [Jest](https://jestjs.io).
-
-Run `nx affected:test` to execute the unit tests affected by a change.
-
-## Running end-to-end tests
-
-Run `ng e2e my-app` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
-
-Run `nx affected:e2e` to execute the end-to-end tests affected by a change.
-
-## Understand your workspace
-
-Run `nx dep-graph` to see a diagram of the dependencies of your projects.
-
-## Further help
-
-Visit the [Nx Documentation](https://nx.dev) to learn more.
-
-## ☁ Nx Cloud
-
-### Computation Memoization in the Cloud
-
-<p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-cloud-card.png"></p>
-
-Nx Cloud pairs with Nx in order to enable you to build and test code more rapidly, by up to 10 times. Even teams that are new to Nx can connect to Nx Cloud and start saving time instantly.
-
-Teams using Nx gain the advantage of building full-stack applications with their preferred framework alongside Nx’s advanced code generation and project dependency graph, plus a unified experience for both frontend and backend developers.
-
-Visit [Nx Cloud](https://nx.app/) to learn more.
+- [GraphQL](https://graphql.org/)
+- [Apollo-GraphQL](https://www.apollographql.com/docs/)
+- [TypeGraphQL](https://typegraphql.com/)
+- [TypeStack](https://github.com/typestack)
+- [TypeORM](https://github.com/typeorm)
+- [Prisma](https://www.prisma.io/)

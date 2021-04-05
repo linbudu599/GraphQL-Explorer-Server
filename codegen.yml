@@ -1,0 +1,23 @@
+overwrite: true
+schema: "http://localhost:4000/graphql"
+documents: "./server/typegraphql/*.graphql"
+generates:
+  server/generated/graphql.ts:
+    plugins:
+      # - 'typescript'
+      # - 'typescript-operations'
+      # - 'typescript-resolvers'
+      # - 'typescript-react-apollo'
+      - typescript-type-graphql
+      - fragment-matcher
+      - time:
+          message: "The file generated on: "
+          format: YYYY.MM.DD HH:MM:SS a-z
+    config:
+      avoidOptionals: true
+      enumsAsTypes: true
+      addUnderscoreToArgsType: true
+
+  server/codegen-generated/graphql.schema.json:
+    plugins:
+      - "introspection"
