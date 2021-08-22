@@ -59,7 +59,7 @@ import { SchemaReportPlugin, SchemaUsagePlugin } from "./plugins/report";
 import ScopedContainerPlugin from "./plugins/scopedContainer";
 
 // GraphQL Directives Related
-import { SchemaDirectiveVisitor } from "graphql-tools";
+// import { SchemaDirectiveVisitor } from "graphql-tools";
 import { DeprecatedDirective } from "./directives/deprecated";
 import { FetchDirective } from "./directives/fetch";
 import { DateFormatDirective } from "./directives/dateFormat";
@@ -155,36 +155,32 @@ export default async (): Promise<ApolloServer> => {
       : [...basicMiddlewares, ErrorLoggerMiddleware],
   });
 
-  SchemaDirectiveVisitor.visitSchemaDirectives(schema, {
-    sampleDeprecated: DeprecatedDirective,
-    fetch: FetchDirective,
-    date: DateFormatDirective,
-    intl: IntlDirective,
-    auth: AuthDirective,
-    // string transform directives
-    upper: UpperDirective,
-    lower: LowerDirective,
-    camel: CamelCaseDirective,
-    start: StartCaseDirective,
-    capitalize: CapitalizeDirective,
-    kebab: KebabCaseDirective,
-    snake: SnakeCaseDirective,
-    trim: TrimDirective,
-    // restriction directives
-    max: MaxLengthDirective,
-    min: MinLengthDirective,
-    greater: GreaterThanDirective,
-    less: LessThanDirective,
-  });
+  // SchemaDirectiveVisitor.visitSchemaDirectives(schema, {
+  //   sampleDeprecated: DeprecatedDirective,
+  //   fetch: FetchDirective,
+  //   date: DateFormatDirective,
+  //   intl: IntlDirective,
+  //   auth: AuthDirective,
+  //   // string transform directives
+  //   upper: UpperDirective,
+  //   lower: LowerDirective,
+  //   camel: CamelCaseDirective,
+  //   start: StartCaseDirective,
+  //   capitalize: CapitalizeDirective,
+  //   kebab: KebabCaseDirective,
+  //   snake: SnakeCaseDirective,
+  //   trim: TrimDirective,
+  //   // restriction directives
+  //   max: MaxLengthDirective,
+  //   min: MinLengthDirective,
+  //   greater: GreaterThanDirective,
+  //   less: LessThanDirective,
+  // });
 
   await dbConnect();
 
   const server = new ApolloServer({
     schema,
-    // tracing: true,
-    subscriptions: {
-      onConnect: () => log("[Subscription] Connected to websocket"),
-    },
     context: async ({ ctx }: { ctx: Context }) => {
       // const token: string = ctx.request?.headers?.token ?? null;
 
@@ -193,9 +189,9 @@ export default async (): Promise<ApolloServer> => {
       // }
 
       // const tokenValidation = validateToken(token);
-      const { id, accountType, accountRole } = genarateRandomID();
+      // const { id, accountType, accountRole } = genarateRandomID();
       // 每次请求使用一个随机ID注册容器
-      const container = Container.of(id);
+      // const container = Container.of(id);
 
       // if (!tokenValidation.valid) {
       //   return {};
@@ -211,12 +207,12 @@ export default async (): Promise<ApolloServer> => {
       // };
 
       const context: Partial<IContext> = {
-        currentUser: {
-          accountId: id,
-          accountType,
-          accountRole,
-        },
-        container,
+        // currentUser: {
+        //   accountId: id,
+        //   accountType,
+        //   accountRole,
+        // },
+        // container,
         prisma,
         dataLoader: {
           initialized: false,
@@ -225,10 +221,9 @@ export default async (): Promise<ApolloServer> => {
         connection: getConnection(),
       };
 
-      container.set("context", context);
+      // container.set("context", context);
       return context;
     },
-    extensions: [() => new CustomExtension()],
     // 其实放在context里就可以自己用了
     dataSources: () => ({
       SpaceXAPI: new SpaceXDataSource(),
@@ -243,13 +238,13 @@ export default async (): Promise<ApolloServer> => {
       ApolloServerLoaderPlugin({
         connectionGetter: getConnection,
       }),
-      ResponseCachePlugin({
-        // 被标记为PRIVATE的字段缓存只会用于相同sessionID
-        sessionId: (ctx: GraphQLRequestContext) =>
-          ctx.request.http?.headers.get("sessionId") || null,
-        shouldReadFromCache: (ctx: GraphQLRequestContext) => false,
-        shouldWriteToCache: (ctx: GraphQLRequestContext) => false,
-      }),
+      // ResponseCachePlugin({
+      //   // 被标记为PRIVATE的字段缓存只会用于相同sessionID
+      //   sessionId: (ctx: GraphQLRequestContext) =>
+      //     ctx.request.http?.headers.get("sessionId") || null,
+      //   shouldReadFromCache: (ctx: GraphQLRequestContext) => false,
+      //   shouldWriteToCache: (ctx: GraphQLRequestContext) => false,
+      // }),
     ],
     // 关于RootValue和Context：https://stackoverflow.com/questions/44344560/context-vs-rootvalue-in-apollo-graphql
     // 简单的说，RootValue就像是一个自定义的类型（和其他类型一样），但它只拥有一个动态解析的字段
@@ -275,12 +270,12 @@ export default async (): Promise<ApolloServer> => {
 
       return response as GraphQLResponse;
     },
-    playground: {
-      settings: PLAY_GROUND_SETTINGS,
-    },
-    cacheControl: {
-      defaultMaxAge: 60,
-    },
+    // playground: {
+    //   settings: PLAY_GROUND_SETTINGS,
+    // },
+    // cacheControl: {
+    //   defaultMaxAge: 60,
+    // },
   });
 
   await insertInitMockData();

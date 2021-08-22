@@ -11,54 +11,6 @@
 
 This is a **demo** which contains `GraphQL` and framework based on it(or work with it perfectly), including these for now:
 
-### Main
-
-- [x] GraphQL
-- [x] TypeGraphQL
-- [x] Apollo-Server
-- [x] DataLoader (Supported By [TypeGraphQL-DataLoader](https://github.com/slaypni/type-graphql-dataloader))
-- [x] TypeORM + SQLite3
-- [x] Prisma 2(As replacement for TypeORM)
-- [ ] Redis + IORedis
-- [ ] Winston
-- [ ] Subscription
-
-### Other Powerful Tools
-
-- [x] [GraphQLDoc](https://github.com/2fd/graphdoc)
-- [x] [GraphQL-Voyager](https://github.com/APIs-guru/graphql-voyager)
-- [x] [GenQL](https://github.com/remorses/genql)
-- [x] [GraphQL-Code-Generator](https://github.com/dotansimha/graphql-code-generator)
-- [ ] [GraphQL-Tools](https://www.graphql-tools.com/)
-
-## Features
-
-- [x] TypeORM Entity Relations [Setup](./server/entities): 1-1 1-m m-n
-- [x] Most API of TypeGraphQL: InputType / InterfaceType / AuthChecker / Middlewares / Containers / ...
-- [x] Configurated Apollo-Server With [Plugins](./server/plugins)
-- [x] Visualized API Graph by GraphQLDoc & GraphQL-Voyager
-- [x] Useful [Directives](./server/directives) & [Decorators](./server/decorators)
-
-## :satellite: Explain
-
-- :construction: **WIP** [使用最流行的技术栈搭建一个 GraphQL 服务器](./docs/README.md)
-
-## 🏗️ &nbsp; Server & Docs Deployment
-
-- [x] [Docs by Surge](http://graphql-explorer-docs.surge.sh/)
-- [x] [Voyager by Surge](http://graphql-explorer-voyager.surge.sh/) **(Require Local Server To Be Active)**
-- [x] [Voyager on Remote Server](http://voyager.linbudu.top/)
-- [x] [Simple Example on Vercel Fucntions](https://graphql-faas.vercel.app/api/sample), see [Query Example](./api/sample/query.graphql)
-- [x] [Simple Example of Vercel Fucntions, with MySQL](https://graphql-faas.linbudu599.vercel.app/api/graphql)
-- [x] [Full Server Deployed at ALI Cloud ECS](http://47.97.183.158:4399/graphql)
-- [x] [Apollo Engine(**private**)](https://studio.apollographql.com/graph/My-Graph-innqj/explorer?schemaTag=current)
-
-## 🛠️&nbsp; Progress
-
-**IN_PROGRESS**
-
-see [ROADMAP](https://github.com/linbudu599/GraphQL-Explorer/issues/1) for more details.
-
 ## 🚀&nbsp; Explore
 
 ```bash
@@ -90,6 +42,42 @@ npm run dev
 - `seed:run`: start seeding data in `/server/entity/seeds`.
 - `genql`: generate GraphQL query builder by [GenQL](https://github.com/remorses/genql).
 - `prisma:*` [Prisma 2](https://www.prisma.io/) Related Commands.
+
+### Main
+
+- [x] GraphQL
+- [x] TypeGraphQL
+- [x] Apollo-Server
+- [x] DataLoader (Supported By [TypeGraphQL-DataLoader](https://github.com/slaypni/type-graphql-dataloader))
+- [x] TypeORM + SQLite3
+- [x] Prisma 2(As replacement for TypeORM)
+- [ ] Subscription
+
+### Other Powerful Tools
+
+- [x] [GraphQLDoc](https://github.com/2fd/graphdoc)
+- [x] [GraphQL-Voyager](https://github.com/APIs-guru/graphql-voyager)
+- [x] [GenQL](https://github.com/remorses/genql)
+- [x] [GraphQL-Code-Generator](https://github.com/dotansimha/graphql-code-generator)
+
+
+## Features
+
+- [x] TypeORM Entity Relations [Setup](./server/entities): 1-1 1-m m-n
+- [x] Most API of TypeGraphQL: InputType / InterfaceType / AuthChecker / Middlewares / Containers / ...
+- [x] Configurated Apollo-Server With [Plugins](./server/plugins)
+- [x] Visualized API Graph by GraphQLDoc & GraphQL-Voyager
+- [x] Useful [Directives](./server/directives) & [Decorators](./server/decorators)
+
+## 🏗️ &nbsp; Server & Docs Deployment
+
+- [x] [Docs by Surge](http://graphql-explorer-docs.surge.sh/)
+- [x] [Voyager by Surge](http://graphql-explorer-voyager.surge.sh/) **(Require Local Server To Be Active)**
+- [x] [Voyager on Remote Server](http://voyager.linbudu.top/)
+- [x] [Simple Example on Vercel Fucntions](https://graphql-faas.vercel.app/api/sample), see [Query Example](./api/sample/query.graphql)
+- [x] [Simple Example of Vercel Fucntions, with MySQL](https://graphql-faas.linbudu599.vercel.app/api/graphql)
+- [x] [Full Server Deployed at ALI Cloud ECS](http://47.97.183.158:4399/graphql)
+- [x] [Apollo Engine(**private**)](https://studio.apollographql.com/graph/My-Graph-innqj/explorer?schemaTag=current)
 
 ## 📔&nbsp; Document
 

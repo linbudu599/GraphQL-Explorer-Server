@@ -1,8 +1,5 @@
 import { ObjectType } from "type-graphql";
 import { plainToClass } from "class-transformer";
-import bcrypt from "bcrypt";
-import { SALT } from "../utils/constants";
-
 import {
   Entity,
   Column,

@@ -25,10 +25,10 @@ async function bootstrap() {
     log(`[Apollo Server] Server ready at http://localhost:${PORT}/graphql`);
   });
 
+  await server.start();
+
   // or app.use(server.getMiddleware({}))
   server.applyMiddleware({ app });
-
-  server.installSubscriptionHandlers(httpServer);
 }
 
 log(`=== [GraphQL Explorer] Bootstrapping ===`);
