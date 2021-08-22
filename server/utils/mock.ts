@@ -345,6 +345,6 @@ export const insertInitMockData = async (): Promise<any> => {
 
     log("[TypeORM] Initial Mock Data Inserted\n");
   } catch (error) {
-    log(error, "red");
+    log(String((error as any).message), "red");
   }
 };

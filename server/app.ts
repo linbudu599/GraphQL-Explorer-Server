@@ -27,7 +27,6 @@ async function bootstrap() {
 
   await server.start();
 
-  // or app.use(server.getMiddleware({}))
   server.applyMiddleware({ app });
 }
 

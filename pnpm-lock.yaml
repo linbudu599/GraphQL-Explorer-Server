@@ -27,6 +27,7 @@ specifiers:
   '@types/numeral': ^2.0.1
   apollo-datasource-rest: ^3.1.1
   apollo-server: ^3.1.2
+  apollo-server-core: ^3.1.2
   apollo-server-koa: ^3.1.2
   apollo-server-plugin-base: ^3.1.1
   apollo-server-plugin-response-cache: ^3.1.1
@@ -45,6 +46,7 @@ specifiers:
   faker: ^5.5.3
   fs-extra: ^10.0.0
   graphql: ^15.5.1
+  graphql-query-complexity: ^0.9.0
   graphql-tag: ^2.12.5
   graphql-tools: ^8.1.0
   graphql-voyager: ^1.0.0-rc.31
@@ -68,6 +70,7 @@ specifiers:
   superagent: ^6.1.0
   ts-jest: ^27.0.5
   ts-node: ^10.2.1
+  ts-node-dev: ^1.1.8
   type-graphql: ^1.1.1
   type-graphql-dataloader: ^0.4.0
   typedi: ^0.10.0
@@ -83,6 +86,7 @@ dependencies:
   '@saeris/apollo-server-vercel': 0.4.0_f3263f777a205ab3ac72ae704a3cbd95
   apollo-datasource-rest: 3.1.1_graphql@15.5.1
   apollo-server: 3.1.2_graphql@15.5.1
+  apollo-server-core: 3.1.2_graphql@15.5.1
   apollo-server-koa: 3.1.2_graphql@15.5.1+koa@2.13.1
   apollo-server-plugin-base: 3.1.1_graphql@15.5.1
   apollo-server-plugin-response-cache: 3.1.1_graphql@15.5.1
@@ -92,6 +96,7 @@ dependencies:
   dataloader: 2.0.0
   dateformat: 4.5.1
   graphql: 15.5.1
+  graphql-query-complexity: 0.9.0_graphql@15.5.1
   graphql-tag: 2.12.5_graphql@15.5.1
   graphql-tools: 8.1.0_graphql@15.5.1
   graphql-voyager: 1.0.0-rc.31_graphql@15.5.1
@@ -152,6 +157,7 @@ devDependencies:
   superagent: 6.1.0
   ts-jest: 27.0.5_92306e36c1a4cf876b1cd4839a977b9c
   ts-node: 10.2.1_f50b86b1778cd2aa4e5405c08bb39559
+  ts-node-dev: 1.1.8_typescript@4.3.5
   typescript: 4.3.5
 
 packages:
@@ -2897,6 +2903,14 @@ packages:
     resolution: {integrity: sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==}
     dev: true
 
+  /@types/strip-bom/3.0.0:
+    resolution: {integrity: sha1-FKjsOVbC6B7bdSB5CuzyHCkK69I=}
+    dev: true
+
+  /@types/strip-json-comments/0.0.30:
+    resolution: {integrity: sha512-7NQmHra/JILCd1QqpSzl8+mJRc8ZHz3uDm8YV1Ks9IhK0epEiTw8aIErbvH9PI+6XbqhyIQy3462nEsn7UVzjQ==}
+    dev: true
+
   /@types/unist/2.0.6:
     resolution: {integrity: sha512-PBjIUxZHOuj0R15/xuwJYjFi+KZdNFrehocChv4g5hu6aFroHue8m0lBP0POdK2nKzbw0cgV1mws8+V/JAcEkQ==}
     dev: true
@@ -5452,6 +5466,12 @@ packages:
     resolution: {integrity: sha1-7gHdHKwO08vH/b6jfcCo8c4ALOI=}
     dev: true
 
+  /dynamic-dedupe/0.3.0:
+    resolution: {integrity: sha1-BuRMIj9eTpTXjvnbI6ZRXOL5YqE=}
+    dependencies:
+      xtend: 4.0.2
+    dev: true
+
   /ecc-jsbn/0.1.2:
     resolution: {integrity: sha1-OoOpBOVDUyh4dMVkt1SThoSamMk=}
     dependencies:
@@ -6740,6 +6760,15 @@ packages:
 
   /graphql-query-complexity/0.7.2_graphql@15.5.1:
     resolution: {integrity: sha512-+VgmrfxGEjHI3zuojWOR8bsz7Ycz/BZjNjxnlUieTz5DsB92WoIrYCSZdWG7UWZ3rfcA1Gb2Nf+wB80GsaZWuQ==}
+    peerDependencies:
+      graphql: ^0.13.0 || ^14.0.0 || ^15.0.0
+    dependencies:
+      graphql: 15.5.1
+      lodash.get: 4.4.2
+    dev: false
+
+  /graphql-query-complexity/0.9.0_graphql@15.5.1:
+    resolution: {integrity: sha512-jLRM4K4seKdz+TFQpmYsvFj4ZwlLnVEH0KbxE5vzw0oDCc6y0KRiALJiIzr8J6gSJ+LiAjUmCiJqtw1HJd3Udg==}
     peerDependencies:
       graphql: ^0.13.0 || ^14.0.0 || ^15.0.0
     dependencies:
@@ -12130,6 +12159,11 @@ packages:
       punycode: 2.1.1
     dev: true
 
+  /tree-kill/1.2.2:
+    resolution: {integrity: sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==}
+    hasBin: true
+    dev: true
+
   /trim-newlines/2.0.0:
     resolution: {integrity: sha1-tAPQuRvlDDMd/EuC7s6yLD3hbSA=}
     engines: {node: '>=4'}
@@ -12205,6 +12239,30 @@ packages:
     resolution: {integrity: sha512-XvB+OdKSJ708Dmf9ore4Uf/q62AYDTzFcAdxc8KNML1mmAWywRFVt/dn1KYJH8Agt5UJNujfM3znU5PxgAzA2w==}
     dev: true
 
+  /ts-node-dev/1.1.8_typescript@4.3.5:
+    resolution: {integrity: sha512-Q/m3vEwzYwLZKmV6/0VlFxcZzVV/xcgOt+Tx/VjaaRHyiBcFlV0541yrT09QjzzCxlDZ34OzKjrFAynlmtflEg==}
+    engines: {node: '>=0.8.0'}
+    hasBin: true
+    peerDependencies:
+      node-notifier: '*'
+      typescript: '*'
+    peerDependenciesMeta:
+      node-notifier:
+        optional: true
+    dependencies:
+      chokidar: 3.5.2
+      dynamic-dedupe: 0.3.0
+      minimist: 1.2.5
+      mkdirp: 1.0.4
+      resolve: 1.20.0
+      rimraf: 2.7.1
+      source-map-support: 0.5.19
+      tree-kill: 1.2.2
+      ts-node: 9.1.1_typescript@4.3.5
+      tsconfig: 7.0.0
+      typescript: 4.3.5
+    dev: true
+
   /ts-node/10.2.1_f50b86b1778cd2aa4e5405c08bb39559:
     resolution: {integrity: sha512-hCnyOyuGmD5wHleOQX6NIjJtYVIO8bPP8F2acWkB4W06wdlkgyvJtubO/I9NkI88hCFECbsEgoLc0VNkYmcSfw==}
     engines: {node: '>=12.0.0'}
@@ -12273,6 +12331,15 @@ packages:
       json5: 2.2.0
       minimist: 1.2.5
       strip-bom: 3.0.0
+    dev: true
+
+  /tsconfig/7.0.0:
+    resolution: {integrity: sha512-vZXmzPrL+EmC4T/4rVlT2jNVMWCi/O4DIiSj3UHg1OE5kCKbk4mfrXc6dZksLgRM/TZlKnousKH9bbTazUWRRw==}
+    dependencies:
+      '@types/strip-bom': 3.0.0
+      '@types/strip-json-comments': 0.0.30
+      strip-bom: 3.0.0
+      strip-json-comments: 2.0.1
     dev: true
 
   /tslib/1.14.1:

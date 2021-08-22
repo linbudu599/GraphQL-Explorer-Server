@@ -14,7 +14,6 @@ import { ApolloServer } from "apollo-server-koa";
 // TODO: generate resolver groups by fs mod
 import ExecutorResolver from "./resolvers/Executor.resolver";
 import TaskResolver from "./resolvers/Task.resolver";
-import PubSubResolver from "./resolvers/PubSub.resolver";
 import AccountResolver from "./resolvers/Account.resolver";
 import SubstanceResolver from "./resolvers/Substance.resolver";
 import PublicResolver from "./resolvers/Public.resolver";
@@ -33,15 +32,7 @@ import SubstanceFieldResolver from "./resolvers/fields/Substance.resolver";
 // Middlewares & Interceptors Related
 import ResolveTime from "./middlewares/time";
 import { InterceptorOnSCP1128 } from "./middlewares/interceptor";
-import LogAccessMiddleware from "./middlewares/log";
-import ErrorLoggerMiddleware from "./middlewares/error";
 import DataLoaderMiddleware from "./middlewares/dataLoader";
-
-// Extensions Related
-// Extension by TypeGraphQL
-// import { ExtensionsMetadataRetriever } from "./extensions/GetMetadata";
-// Extension on Apollo Plugin
-import { CustomExtension } from "./extensions/apollo";
 
 // Apollo Data Source
 import SpaceXDataSource from "./datasource/SpaceX";
@@ -52,10 +43,8 @@ import {
   GraphQLResponse,
 } from "apollo-server-plugin-base";
 import ResponseCachePlugin from "apollo-server-plugin-response-cache";
-import { ApolloServerLoaderPlugin } from "./lib/dataloader";
 import ComplexityPlugin from "./plugins/complexity";
 import ExtensionPlugin from "./plugins/extension";
-import { SchemaReportPlugin, SchemaUsagePlugin } from "./plugins/report";
 import ScopedContainerPlugin from "./plugins/scopedContainer";
 
 // GraphQL Directives Related
@@ -112,7 +101,6 @@ export default async (): Promise<ApolloServer> => {
     ResolveTime,
     // InterceptorOnSCP1128,
     // ExtensionsMetadataRetriever,
-    LogAccessMiddleware,
     DataLoaderMiddleware,
   ];
 
@@ -126,8 +114,6 @@ export default async (): Promise<ApolloServer> => {
       SubstanceResolver,
       PublicResolver,
       RecordResolver,
-      // Subscription Resolver
-      PubSubResolver,
       // Prisma Resolver
       PrismaResolver,
       // Field Resolver
@@ -150,9 +136,7 @@ export default async (): Promise<ApolloServer> => {
     authMode: "error",
     emitSchemaFile: path.resolve(__dirname, "./typegraphql/schema.graphql"),
     validate: true,
-    globalMiddlewares: dev
-      ? basicMiddlewares
-      : [...basicMiddlewares, ErrorLoggerMiddleware],
+    globalMiddlewares: basicMiddlewares,
   });
 
   // SchemaDirectiveVisitor.visitSchemaDirectives(schema, {
@@ -230,14 +214,9 @@ export default async (): Promise<ApolloServer> => {
     }),
 
     plugins: [
-      SchemaReportPlugin(),
-      SchemaUsagePlugin(),
       ComplexityPlugin(schema),
       ExtensionPlugin(),
       ScopedContainerPlugin(Container),
-      ApolloServerLoaderPlugin({
-        connectionGetter: getConnection,
-      }),
       // ResponseCachePlugin({
       //   // 被标记为PRIVATE的字段缓存只会用于相同sessionID
       //   sessionId: (ctx: GraphQLRequestContext) =>

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "API Usage of GraphQL Stack",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon ./server/app.ts",
+    "dev": "cross-env NODE_ENV=development ts-node-dev --respawn --transpile-only ./server/app.ts",
     "prebuild": "npm run genql && node ./scripts/clean.js --server && npm run prisma",
     "build": "cross-env NODE_ENV=production tsc",
     "postbuild": "node ./scripts/prisma/copy.js && npm run prisma:db:prod && node ./dist/prisma/seed.js",
@@ -70,6 +70,7 @@
     "@saeris/apollo-server-vercel": "^0.4.0",
     "apollo-datasource-rest": "^3.1.1",
     "apollo-server": "^3.1.2",
+    "apollo-server-core": "^3.1.2",
     "apollo-server-koa": "^3.1.2",
     "apollo-server-plugin-base": "^3.1.1",
     "apollo-server-plugin-response-cache": "^3.1.1",
@@ -79,6 +80,7 @@
     "dataloader": "^2.0.0",
     "dateformat": "^4.5.1",
     "graphql": "^15.5.1",
+    "graphql-query-complexity": "^0.9.0",
     "graphql-tag": "^2.12.5",
     "graphql-tools": "^8.1.0",
     "graphql-voyager": "^1.0.0-rc.31",
@@ -139,6 +141,7 @@
     "superagent": "^6.1.0",
     "ts-jest": "^27.0.5",
     "ts-node": "^10.2.1",
+    "ts-node-dev": "^1.1.8",
     "typescript": "^4.3.5"
   }
 }

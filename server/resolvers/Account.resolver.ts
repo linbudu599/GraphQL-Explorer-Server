@@ -35,8 +35,6 @@ import Account, { AccountProfile } from "../entities/Account";
 
 import AccountService from "../services/Account.service";
 
-import { ExtraFieldLogMiddlewareGenerator } from "../middlewares/log";
-
 import { ACCOUNT_TYPE, RESPONSE_INDICATOR } from "../utils/constants";
 
 import { generatePagination, mergeJSONWithObj } from "../utils/helper";
@@ -52,7 +50,6 @@ export default class AccountResolver {
     nullable: false,
     description: "查询所有用户",
   })
-  @UseMiddleware(ExtraFieldLogMiddlewareGenerator("Check All Accounts"))
   async QueryAllAccounts(
     @Arg("pagination", { nullable: true })
     pagination: PaginationOptions,

@@ -21,15 +21,15 @@ const emptyFullLifeCyclePluginUsage: PluginDefinition = {
     };
   },
 
-  requestDidStart(requestContext: GraphQLRequestContext<IContext>) {
+  async requestDidStart(requestContext: GraphQLRequestContext<IContext>) {
     return {
       didResolveSource: async (
         reqCtx: GraphQLRequestContextDidResolveSource<IContext>
       ) => {},
-      parsingDidStart: (
+      parsingDidStart: async (
         reqCtx: GraphQLRequestContextParsingDidStart<IContext>
       ) => {},
-      validationDidStart: (
+      validationDidStart: async (
         reqCtx: GraphQLRequestContextValidationDidStart<IContext>
       ) => {},
       didResolveOperation: async (
@@ -41,7 +41,7 @@ const emptyFullLifeCyclePluginUsage: PluginDefinition = {
       responseForOperation: async (
         reqCtx: GraphQLRequestContextResponseForOperation<IContext>
       ) => null,
-      executionDidStart: (
+      executionDidStart: async (
         reqCtx: GraphQLRequestContextExecutionDidStart<IContext>
       ) => {},
       willSendResponse: async (

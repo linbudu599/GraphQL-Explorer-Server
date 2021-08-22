@@ -12,8 +12,8 @@ import { IContext } from "../typing";
 
 const ComplexityPlugin = (schema: GraphQLSchema): PluginDefinition => ({
   // 在每次请求开始前销毁上一个容器
-  requestDidStart: (requestContext: GraphQLRequestContext<IContext>) => ({
-    didResolveOperation({ request, document }) {
+  requestDidStart: async (requestContext: GraphQLRequestContext<IContext>) => ({
+    async didResolveOperation({ request, document }) {
       const complexity = getComplexity({
         schema,
         operationName: request.operationName!,

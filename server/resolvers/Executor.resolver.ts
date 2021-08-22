@@ -37,8 +37,6 @@ import { RESPONSE_INDICATOR } from "../utils/constants";
 import { mergeJSONWithObj, generatePagination } from "../utils/helper";
 import { InjectCurrentUser, CustomArgsValidation } from "../decorators";
 
-import { ExtraFieldLogMiddlewareGenerator } from "../middlewares/log";
-
 import { IContext } from "../typing";
 
 @Resolver((of) => Executor)
@@ -49,7 +47,6 @@ export default class ExecutorResolver {
     nullable: false,
     description: "获取所有执行者",
   })
-  @UseMiddleware(ExtraFieldLogMiddlewareGenerator("Check All ExecutorS"))
   async QueryAllExecutors(
     @Ctx() ctx: IContext,
     @InjectCurrentUser() user: IContext["currentUser"],
