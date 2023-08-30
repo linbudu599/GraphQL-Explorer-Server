@@ -70,7 +70,7 @@
     "@saeris/apollo-server-vercel": "^0.4.0",
     "apollo-datasource-rest": "^3.1.1",
     "apollo-server": "^3.1.2",
-    "apollo-server-core": "^3.1.2",
+    "apollo-server-core": "^3.12.1",
     "apollo-server-koa": "^3.1.2",
     "apollo-server-plugin-base": "^3.1.1",
     "apollo-server-plugin-response-cache": "^3.1.1",
